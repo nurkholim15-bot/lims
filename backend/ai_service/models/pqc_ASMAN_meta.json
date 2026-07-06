@@ -1,0 +1,29 @@
+{
+    "features": [
+        "INANT",
+        "INBAT",
+        "INFRE",
+        "INMAN",
+        "INPEM",
+        "INPER"
+    ],
+    "medians": {
+        "INANT": 100.0,
+        "INBAT": 100.0,
+        "INFRE": 100.0,
+        "INMAN": 100.0,
+        "INPEM": 100.0,
+        "INPER": 100.0
+    },
+    "stds": {
+        "INANT": 14.352700094407323,
+        "INBAT": 14.004463574160917,
+        "INFRE": 13.647998283369512,
+        "INMAN": 13.298093311233973,
+        "INPEM": 12.95528022523194,
+        "INPER": 31.24899998399949
+    },
+    "trained_at": "2026-06-12T20:43:58.613349",
+    "num_samples": 8,
+    "num_features": 6
+}

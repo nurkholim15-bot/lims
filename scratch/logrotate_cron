@@ -1,0 +1,3 @@
+0 1 * * * root /usr/sbin/logrotate /etc/logrotate.d/nginx >> /var/log/logrotate_nginx.log 2>&1
+0 1 * * * root /usr/sbin/logrotate /etc/logrotate.d/lims-backend >> /var/log/logrotate_backend.log 2>&1
+0 1 * * * root /usr/sbin/logrotate /etc/logrotate.d/lims-frontend >> /var/log/logrotate_frontend.log 2>&1

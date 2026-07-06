@@ -1,0 +1,29 @@
+# VITE_SERVER_DOMAIN=lims.local
+# VITE_API_URL=http://lims.local:8081/api
+
+# Konfigurasi Semi-Release
+VITE_SERVER_DOMAIN=lims.local
+VITE_PROXY_TARGET=https://127.0.0.1:8081
+
+# API URL menggunakan proxy relatif (Best Practice)
+VITE_API_URL=/api
+
+# Konfigurasi SSL (Kosongkan jika tidak pakai HTTPS di dev)
+# Windows
+# VITE_SSL_CERT_PATH=D:\LIMS\sertifikat\lims.local+2.pem
+# VITE_SSL_KEY_PATH=D:\LIMS\sertifikat\lims.local+2-key.pem
+# Linux
+# FrontEnd/.env
+# VITE_SSL_CERT_PATH=/mnt/d/LIMS/sertifikat/lims.local+2.pem
+# VITE_SSL_KEY_PATH=/mnt/d/LIMS/sertifikat/lims.local+2-key.pem
+
+VITE_SSL_CERT_PATH="../sertifikat/lims.local+2.pem"
+VITE_SSL_KEY_PATH="../sertifikat/lims.local+2-key.pem"
+# VITE_SSL_KEY_PATH=./lims.local+2-key.pem
+VITE_PORT=3000
+
+VITE_SHOW_DEBUG_INFO=true
+# VITE_SHOW_DEBUG_INFO=false #disable DEBUG INFO
+VITE_ENABLE_TERMINAL_LOG=true
+# VITE_ENABLE_TERMINAL_LOG=false #disable log frontend  
+VITE_APP_VERSION=1.1

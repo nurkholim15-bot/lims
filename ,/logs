@@ -1,0 +1,1005 @@
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[22.342ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:143
+[3.091ms] [rows:1] SELECT * FROM "roles" WHERE "roles"."id" = 1 AND "roles"."deleted_at" IS NULL
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:143
+[21.140ms] [rows:1] SELECT * FROM "users" WHERE "users"."id" = 8 AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[162.618ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:164
+[11.575ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[196.679ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[203.539ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[10.633ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.692ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[4.756ms] [rows:10] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1881
+[35.414ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications_202605')
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:143
+[6.554ms] [rows:1] SELECT * FROM "roles" WHERE "roles"."id" = 1 AND "roles"."deleted_at" IS NULL
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:143
+[29.344ms] [rows:1] SELECT * FROM "users" WHERE "users"."id" = 8 AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1889
+[19.925ms] [rows:7] SELECT * FROM "notifications_202605" WHERE (role_name = 'ADMIN' OR role_name = '') AND is_read = false ORDER BY created_at desc LIMIT 10
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.655ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.937ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[2.005ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:164
+[7.675ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:09 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[8.492ms] [rows:10] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.786ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:164
+[4.202ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[4.646ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[1.521ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[3.543ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[2.440ms] [rows:10] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:164
+[4.671ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.199ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[3.156ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:51:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[3.213ms] [rows:10] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[3.345ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[4.992ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[19.638ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED','REVISI') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 
+[8.244ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:21 
+[11.433ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[28.951ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:21 
+[11.727ms] [rows:1] SELECT * FROM "cities" WHERE "cities"."city_code" = 'C006' AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 
+[7.302ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[29.708ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[67.623ms] [rows:1] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED','REVISI') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:21 
+[8.151ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[15.391ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[6.317ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[6.515ms] [rows:1] SELECT * FROM "models" WHERE "models"."code" = 'TR860' AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[6.007ms] [rows:1] SELECT * FROM "variants" WHERE "variants"."code" = 'DUMOD' AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[47.276ms] [rows:1] SELECT * FROM "testing_equipments_202605" WHERE id IN (43) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[9.349ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (35)
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[67.334ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (35)
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.495ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[2.497ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[9.154ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1)
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.990ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1881
+[4.116ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications_202605')
+
+2026/05/07 20:51:21 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1889
+[1.812ms] [rows:7] SELECT * FROM "notifications_202605" WHERE (role_name = 'ADMIN' OR role_name = '') AND is_read = false ORDER BY created_at desc LIMIT 10
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[3.399ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[2.536ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[2.681ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.465ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 
+[1.968ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[7.073ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:24 
+[2.758ms] [rows:2] SELECT * FROM "cities" WHERE "cities"."city_code" IN ('C006','C005') AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.591ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[11.293ms] [rows:2] SELECT * FROM "partners" WHERE "partners"."id" IN (2,12) AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[26.120ms] [rows:3] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:24 
+[1.649ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[4.397ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.798ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[2.358ms] [rows:2] SELECT * FROM "models" WHERE "models"."code" IN ('TR860','SPR61') AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[2.579ms] [rows:2] SELECT * FROM "variants" WHERE "variants"."code" IN ('DUMOD','UHF') AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[31.303ms] [rows:3] SELECT * FROM "testing_equipments_202605" WHERE id IN (41,39,37) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[3.011ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[3.978ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.210ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.668ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[7.545ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1,1)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.364ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[2.943ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[2.054ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.512ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 
+[1.853ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.952ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:24 
+[1.532ms] [rows:2] SELECT * FROM "cities" WHERE "cities"."city_code" IN ('C006','C005') AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[2.733ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[8.212ms] [rows:2] SELECT * FROM "partners" WHERE "partners"."id" IN (2,12) AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[19.460ms] [rows:3] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:24 
+[1.584ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[3.855ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.674ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[2.595ms] [rows:2] SELECT * FROM "models" WHERE "models"."code" IN ('TR860','SPR61') AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.652ms] [rows:2] SELECT * FROM "variants" WHERE "variants"."code" IN ('DUMOD','UHF') AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[16.785ms] [rows:3] SELECT * FROM "testing_equipments_202605" WHERE id IN (41,39,37) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[1.805ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[3.958ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[2.552ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.577ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[9.588ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1,1)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.414ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1881
+[3.003ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications_202605')
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1889
+[2.000ms] [rows:7] SELECT * FROM "notifications_202605" WHERE (role_name = 'ADMIN' OR role_name = '') AND is_read = false ORDER BY created_at desc LIMIT 10
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.862ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[2.649ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[2.095ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.489ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 
+[1.527ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.467ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:24 
+[1.428ms] [rows:2] SELECT * FROM "cities" WHERE "cities"."city_code" IN ('C006','C005') AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.668ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.346ms] [rows:2] SELECT * FROM "partners" WHERE "partners"."id" IN (2,12) AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[18.186ms] [rows:3] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:24 
+[1.223ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[4.103ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.155ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.964ms] [rows:2] SELECT * FROM "models" WHERE "models"."code" IN ('TR860','SPR61') AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.515ms] [rows:2] SELECT * FROM "variants" WHERE "variants"."code" IN ('DUMOD','UHF') AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[16.793ms] [rows:3] SELECT * FROM "testing_equipments_202605" WHERE id IN (41,39,37) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[1.582ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[3.382ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.249ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.990ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[6.659ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1,1)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.291ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[2.899ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[1.842ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.083ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 
+[1.546ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[5.932ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:24 
+[1.660ms] [rows:2] SELECT * FROM "cities" WHERE "cities"."city_code" IN ('C006','C005') AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.640ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.992ms] [rows:2] SELECT * FROM "partners" WHERE "partners"."id" IN (2,12) AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[17.271ms] [rows:3] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:24 
+[1.462ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[4.558ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.565ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.648ms] [rows:2] SELECT * FROM "models" WHERE "models"."code" IN ('TR860','SPR61') AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.556ms] [rows:2] SELECT * FROM "variants" WHERE "variants"."code" IN ('DUMOD','UHF') AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[16.138ms] [rows:3] SELECT * FROM "testing_equipments_202605" WHERE id IN (41,39,37) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[1.501ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[3.422ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.397ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.237ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[5.850ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1,1)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.333ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[2.426ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[1.538ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.026ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 
+[1.235ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.095ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:24 
+[1.179ms] [rows:2] SELECT * FROM "cities" WHERE "cities"."city_code" IN ('C006','C005') AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 
+[1.406ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[7.049ms] [rows:2] SELECT * FROM "partners" WHERE "partners"."id" IN (2,12) AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[18.283ms] [rows:3] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('VERIFIED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:24 
+[1.297ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[3.448ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.528ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.558ms] [rows:2] SELECT * FROM "models" WHERE "models"."code" IN ('TR860','SPR61') AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.406ms] [rows:2] SELECT * FROM "variants" WHERE "variants"."code" IN ('DUMOD','UHF') AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[12.853ms] [rows:3] SELECT * FROM "testing_equipments_202605" WHERE id IN (41,39,37) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[2.331ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[2.822ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (33,31,29)
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.105ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.317ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:24 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[5.417ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1,1)
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[3.359ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[2.660ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[2.163ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 
+[1.871ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:29 
+[3.046ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[11.770ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:29 
+[1.652ms] [rows:1] SELECT * FROM "cities" WHERE "cities"."city_code" = 'C006' AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 
+[1.427ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[7.390ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[23.881ms] [rows:1] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:29 
+[1.638ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[4.404ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.448ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.773ms] [rows:1] SELECT * FROM "models" WHERE "models"."code" = 'TR860' AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.838ms] [rows:1] SELECT * FROM "variants" WHERE "variants"."code" = 'DUMOD' AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[16.047ms] [rows:1] SELECT * FROM "testing_equipments_202605" WHERE id IN (43) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[1.623ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (35)
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[3.147ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (35)
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.324ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.607ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[6.192ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1)
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.416ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[1.830ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[1.542ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 
+[1.100ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:29 
+[2.298ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.824ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:29 
+[1.632ms] [rows:1] SELECT * FROM "cities" WHERE "cities"."city_code" = 'C006' AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 
+[1.430ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.785ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:29 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[17.241ms] [rows:1] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:30 
+[2.072ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[3.858ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.190ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.441ms] [rows:1] SELECT * FROM "models" WHERE "models"."code" = 'TR860' AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.499ms] [rows:1] SELECT * FROM "variants" WHERE "variants"."code" = 'DUMOD' AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[13.576ms] [rows:1] SELECT * FROM "testing_equipments_202605" WHERE id IN (43) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[1.445ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (35)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[2.312ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (35)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.395ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.521ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[6.155ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.435ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1881
+[2.758ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications_202605')
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1889
+[2.052ms] [rows:7] SELECT * FROM "notifications_202605" WHERE (role_name = 'ADMIN' OR role_name = '') AND is_read = false ORDER BY created_at desc LIMIT 10
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.571ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[1.672ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[1.546ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 
+[1.373ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:30 
+[1.488ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.607ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:30 
+[1.494ms] [rows:1] SELECT * FROM "cities" WHERE "cities"."city_code" = 'C006' AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 
+[1.328ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[6.011ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[17.273ms] [rows:1] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:30 
+[1.439ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[3.584ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.332ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.643ms] [rows:1] SELECT * FROM "models" WHERE "models"."code" = 'TR860' AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.456ms] [rows:1] SELECT * FROM "variants" WHERE "variants"."code" = 'DUMOD' AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[14.655ms] [rows:1] SELECT * FROM "testing_equipments_202605" WHERE id IN (43) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[2.133ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (35)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[3.165ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (35)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.100ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.243ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[5.458ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.336ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[1.577ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[1.752ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 
+[1.274ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:30 
+[1.511ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[5.558ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:30 
+[1.255ms] [rows:1] SELECT * FROM "cities" WHERE "cities"."city_code" = 'C006' AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 
+[1.212ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[5.751ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[14.685ms] [rows:1] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:51:30 
+[1.474ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[3.606ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.280ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.438ms] [rows:1] SELECT * FROM "models" WHERE "models"."code" = 'TR860' AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[1.351ms] [rows:1] SELECT * FROM "variants" WHERE "variants"."code" = 'DUMOD' AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:582
+[12.523ms] [rows:1] SELECT * FROM "testing_equipments_202605" WHERE id IN (43) AND "testing_equipments_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:638
+[1.728ms] [rows:0] SELECT * FROM "tester_applications_202605" WHERE application_id IN (35)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:654
+[2.333ms] [rows:0] SELECT * FROM "tester_applications" WHERE application_id IN (35)
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.258ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[1.355ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:30 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:687
+[5.430ms] [rows:1] SELECT * FROM "testing_packages" WHERE id IN (1)
+
+2026/05/07 20:51:31 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.710ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:32 
+[6.115ms] [rows:1] SELECT * FROM "locations" WHERE "locations"."code" = 'HO' AND "locations"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[6.241ms] [rows:1] SELECT * FROM "master_asset_statuses" WHERE "master_asset_statuses"."asset_status_code" = '1' AND "master_asset_statuses"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[2.603ms] [rows:1] SELECT * FROM "origins" WHERE "origins"."code" = 'CHINA' AND "origins"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[5.024ms] [rows:1] SELECT * FROM "brands" WHERE "brands"."code" = 'SECUC' AND "brands"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[1.462ms] [rows:1] SELECT * FROM "material_categories" WHERE "material_categories"."code" = 'COMM' AND "material_categories"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[1.359ms] [rows:1] SELECT * FROM "models" WHERE "models"."code" = 'TR860' AND "models"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[2.084ms] [rows:1] SELECT * FROM "variants" WHERE "variants"."code" = 'DUMOD' AND "variants"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[84.089ms] [rows:1] SELECT * FROM "testing_equipments" WHERE "testing_equipments"."id" = 43 AND "testing_equipments"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[3.643ms] [rows:0] SELECT * FROM "tester_applications" WHERE "tester_applications"."application_id" = 35
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[8.768ms] [rows:1] SELECT * FROM "invoices" WHERE "invoices"."application_id" = 35
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[2.793ms] [rows:0] SELECT * FROM "tester_applications" WHERE "tester_applications"."application_id" = 35
+
+2026/05/07 20:51:32 
+[1.124ms] [rows:2] SELECT * FROM "package_methodologies" WHERE "package_methodologies"."package_id" = 1
+
+2026/05/07 20:51:32 
+[1.412ms] [rows:2] SELECT * FROM "methodologies" WHERE "methodologies"."code" IN ('AKLAP','ALKOM') AND "methodologies"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[5.326ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:32 
+[1.339ms] [rows:1] SELECT * FROM "cities" WHERE "cities"."city_code" = 'C006' AND "cities"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 
+[1.632ms] [rows:1] SELECT * FROM "partner_types" WHERE "partner_types"."code" = 'PERS' AND "partner_types"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[7.697ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[2.350ms] [rows:0] SELECT * FROM "tester_applications" WHERE "tester_applications"."application_id" = 35
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:828
+[183.523ms] [rows:1] SELECT * FROM "testing_applications" WHERE "testing_applications"."id" = 35 AND "testing_applications"."deleted_at" IS NULL ORDER BY "testing_applications"."id" LIMIT 1
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:847
+[38.767ms] [rows:0] SELECT * FROM "testing_results" WHERE "testing_results"."application_id" = 35
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:848
+[28.140ms] [rows:0] SELECT * FROM "testing_aspect_scores" WHERE "testing_aspect_scores"."application_id" = 35
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:849
+[34.338ms] [rows:0] SELECT * FROM "testing_plans" WHERE "testing_plans"."application_id" = 35
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.372ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/billing_controller.go:38
+[3.048ms] [rows:1] SELECT count(*) FROM "invoices" WHERE application_id = '35'
+
+2026/05/07 20:51:32 
+[1.887ms] [rows:1] SELECT * FROM "testing_packages" WHERE "testing_packages"."id" = 1
+
+2026/05/07 20:51:32 
+[1.918ms] [rows:1] SELECT * FROM "partners" WHERE "partners"."id" = 12 AND "partners"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/billing_controller.go:44
+[15.244ms] [rows:1] SELECT * FROM "testing_applications" WHERE "testing_applications"."id" = 35 AND "testing_applications"."deleted_at" IS NULL
+
+2026/05/07 20:51:32 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/billing_controller.go:44
+[20.523ms] [rows:1] SELECT * FROM "invoices" WHERE application_id = '35' ORDER BY invoices.created_at DESC LIMIT 10
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.793ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:143
+[4.243ms] [rows:1] SELECT * FROM "roles" WHERE "roles"."id" = 1 AND "roles"."deleted_at" IS NULL
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:143
+[9.710ms] [rows:1] SELECT * FROM "users" WHERE "users"."id" = 8 AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.303ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:959
+[3.602ms] [rows:1] SELECT * FROM "testing_applications" WHERE "testing_applications"."id" = '35' AND "testing_applications"."deleted_at" IS NULL ORDER BY "testing_applications"."id" LIMIT 1
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:969
+[19.839ms] [rows:1] UPDATE "testing_applications" SET "reg_number"='LIMS-2026-00036',"status"='Verified',"partner_id"=12,"request_letter_path"='2026/05/Print Contract_202423712.pdf',"is_docs_complete"=true,"verification_notes"='',"equipment_no"=2,"equipment_total"=2,"approval_notes"='',"test_plan_doc_path"='',"methodology_code"=NULL,"lab_methodology_code"=NULL,"field_methodology_code"=NULL,"package_id"=1,"final_score"=0,"analysis_notes"='',"final_status"='',"report_doc_path"='',"certificate_path"='',"certificate_num"='',"expiry_date"=NULL,"camunda_process_id"='10e3efad-4a18-11f1-a243-00155d1bc04c',"updated_at"='2026-05-07 20:51:37.203',"created_user"='nur',"updated_user"='nur',"deleted_at"=NULL,"aspects_passed"=NULL,"aspect_failures"=NULL,"equipment_id"=43 WHERE "testing_applications"."deleted_at" IS NULL AND "id" = 35 AND "created_at" = '2026-05-07 20:24:24.765'
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1994
+[13.165ms] [rows:1] INSERT INTO "testing_applications_audit" ("application_id","reg_number","application_date","status","ip_address","user_agent","created_user","created_at") VALUES (35,'LIMS-2026-00036','2026-05-07 20:24:24.765','Verified','172.24.96.1','Google Chrome','nur','2026-05-07 20:51:37.222') RETURNING "id"
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:987
+[6.178ms] [rows:1] INSERT INTO "notifications" ("user_id","role_name","title","message","is_read","link","created_at") VALUES (0,'PIMPINAN_APPROVE','Persetujuan Administrasi (2.A)','Pengajuan LIMS-2026-00036 () telah lolos verifikasi supervisor dan memerlukan persetujuan Anda.',false,'#/approval','2026-05-07 20:51:37.236') RETURNING "id"
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/services/email_service.go:20
+[3.093ms] [rows:1] SELECT * FROM "roles" WHERE name = 'PIMPINAN_APPROVE' AND "roles"."deleted_at" IS NULL ORDER BY "roles"."id" LIMIT 1
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/services/email_service.go:26
+[5.760ms] [rows:2] SELECT * FROM "users" WHERE role_id = 15 AND "users"."deleted_at" IS NULL
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.362ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:513
+[1.868ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testing_applications_202605' AND table_schema = 'mecs')
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:562
+[2.070ms] [rows:1] SELECT count(*) FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL
+
+2026/05/07 20:51:37 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:565
+[1.925ms] [rows:0] SELECT * FROM "testing_applications_202605" WHERE UPPER(status) IN ('REGISTERED') AND testing_applications_202605.created_at >= '2026-05-01 00:00:00' AND testing_applications_202605.created_at <= '2026-05-31 23:59:59' AND "testing_applications_202605"."deleted_at" IS NULL ORDER BY testing_applications_202605.created_at desc LIMIT 10
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.640ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[1.903ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.763ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[3.964ms] [rows:10] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1881
+[5.968ms] [rows:1] SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications_202605')
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/application_controller.go:1889
+[2.178ms] [rows:7] SELECT * FROM "notifications_202605" WHERE (role_name = 'ADMIN' OR role_name = '') AND is_read = false ORDER BY created_at desc LIMIT 10
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.805ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[1.498ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:52:48 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[1.853ms] [rows:10] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:52:55 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.216ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:52:55 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[4.525ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:52:55 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[3.541ms] [rows:7] SELECT * FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.731ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:669
+[3.056ms] [rows:1] SELECT * FROM "global_parameters" WHERE "global_parameters"."id" = '44' AND "global_parameters"."deleted_at" IS NULL ORDER BY "global_parameters"."id" LIMIT 1
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:682
+[7.952ms] [rows:1] INSERT INTO "hist_global_parameters" ("gp_id","param_key","param_value","description","created_at","updated_at","created_user","updated_user","deleted_at","deleted_user") VALUES (44,'API_LOG_PATH','./logs','Path untuk log trafik API (Req/Res) -win:D:/LIMS/logs/api_traffic.log','2026-05-07 20:53:10.908','2026-05-07 20:53:10.908','','nur',NULL,'') RETURNING "id"
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:686
+[5.434ms] [rows:1] UPDATE "global_parameters" SET "param_key"='API_LOG_PATH',"param_value"='./logs/api_traffic.log',"description"='Path untuk log trafik API (Req/Res) -win:D:/LIMS/logs/api_traffic.log',"created_at"='0001-01-01 07:07:12',"updated_at"='2026-05-07 20:53:10.917',"created_user"='',"updated_user"='nur',"deleted_at"=NULL,"deleted_user"='' WHERE "global_parameters"."deleted_at" IS NULL AND "id" = 44
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:17
+[1.712ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.896ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[2.114ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:10 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[2.322ms] [rows:7] SELECT * FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.243ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:669
+[2.111ms] [rows:1] SELECT * FROM "global_parameters" WHERE "global_parameters"."id" = '45' AND "global_parameters"."deleted_at" IS NULL ORDER BY "global_parameters"."id" LIMIT 1
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:682
+[3.852ms] [rows:1] INSERT INTO "hist_global_parameters" ("gp_id","param_key","param_value","description","created_at","updated_at","created_user","updated_user","deleted_at","deleted_user") VALUES (45,'DB_LOG_PATH',',/logs','Path untuk log Query SQL - win:D:/LIMS/logs/db_query.log','2026-05-07 20:53:22.335','2026-05-07 20:53:22.335','','nur',NULL,'') RETURNING "id"
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:686
+[3.884ms] [rows:1] UPDATE "global_parameters" SET "param_key"='DB_LOG_PATH',"param_value"=',/logs/db_query.log',"description"='Path untuk log Query SQL - win:D:/LIMS/logs/db_query.log',"created_at"='0001-01-01 07:07:12',"updated_at"='2026-05-07 20:53:22.339',"created_user"='',"updated_user"='nur',"deleted_at"=NULL,"deleted_user"='' WHERE "global_parameters"."deleted_at" IS NULL AND "id" = 45
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:17
+[1.809ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.388ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[2.200ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:22 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[1.906ms] [rows:7] SELECT * FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.343ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:669
+[1.596ms] [rows:1] SELECT * FROM "global_parameters" WHERE "global_parameters"."id" = '43' AND "global_parameters"."deleted_at" IS NULL ORDER BY "global_parameters"."id" LIMIT 1
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:682
+[4.058ms] [rows:1] INSERT INTO "hist_global_parameters" ("gp_id","param_key","param_value","description","created_at","updated_at","created_user","updated_user","deleted_at","deleted_user") VALUES (43,'ERROR_LOG_PATH','./logs','folder dan file error.log - win:D:/LIMS/logs/error.log','2026-05-07 20:53:39.534','2026-05-07 20:53:39.534','','nur',NULL,'') RETURNING "id"
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:686
+[3.571ms] [rows:1] UPDATE "global_parameters" SET "param_key"='ERROR_LOG_PATH',"param_value"='./logs/error.log',"description"='folder dan file error.log - win:D:/LIMS/logs/error.log',"created_at"='0001-01-01 07:07:12',"updated_at"='2026-05-07 20:53:39.539',"created_user"='',"updated_user"='nur',"deleted_at"=NULL,"deleted_user"='' WHERE "global_parameters"."deleted_at" IS NULL AND "id" = 43
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:17
+[1.506ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.396ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[1.769ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:39 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[2.278ms] [rows:7] SELECT * FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[2.102ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:669
+[1.529ms] [rows:1] SELECT * FROM "global_parameters" WHERE "global_parameters"."id" = '42' AND "global_parameters"."deleted_at" IS NULL ORDER BY "global_parameters"."id" LIMIT 1
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:682
+[3.915ms] [rows:1] INSERT INTO "hist_global_parameters" ("gp_id","param_key","param_value","description","created_at","updated_at","created_user","updated_user","deleted_at","deleted_user") VALUES (42,'TRANS_LOG_PATH','./logs','folder dan file trans.log - win:D:/LIMS/logs/trans.log','2026-05-07 20:53:52.094','2026-05-07 20:53:52.094','','nur',NULL,'') RETURNING "id"
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:686
+[3.837ms] [rows:1] UPDATE "global_parameters" SET "param_key"='TRANS_LOG_PATH',"param_value"='./logs/trans.log',"description"='folder dan file trans.log - win:D:/LIMS/logs/trans.log',"created_at"='0001-01-01 07:07:12',"updated_at"='2026-05-07 20:53:52.1',"created_user"='',"updated_user"='nur',"deleted_at"=NULL,"deleted_user"='' WHERE "global_parameters"."deleted_at" IS NULL AND "id" = 42
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/models/models.go:17
+[1.659ms] [rows:48] SELECT * FROM "global_parameters" WHERE "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/middleware/auth.go:81
+[1.570ms] [rows:1] SELECT * FROM "user_sessions" WHERE token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgyNDgwNDUsInJvbGUiOiJBRE1JTiIsInJvbGVfaWQiOjEsInVzZXJfaWQiOjgsInVzZXJuYW1lIjoibnVyIn0.IR2ibBdCenVGpavOC9ltDP--kdUhuaT_E1YIffUKPpY' AND user_id = 8 ORDER BY "user_sessions"."id" LIMIT 1
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:647
+[2.413ms] [rows:1] SELECT count(*) FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL
+
+2026/05/07 20:53:52 /mnt/d/Data_NK/Project5/AI/LIM System/backend/controllers/master_data_controller.go:649
+[1.892ms] [rows:7] SELECT * FROM "global_parameters" WHERE (param_key ILIKE '%log%' OR description ILIKE '%log%') AND "global_parameters"."deleted_at" IS NULL ORDER BY param_key asc LIMIT 10

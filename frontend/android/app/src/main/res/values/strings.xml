@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LIM System</string>
+    <string name="title_activity_main">LIM System</string>
+    <string name="package_name">com.lims.app</string>
+    <string name="custom_url_scheme">com.lims.app</string>
+</resources>

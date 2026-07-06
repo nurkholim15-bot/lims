@@ -1,0 +1,47 @@
+{
+    "features": [
+        "KEAAN",
+        "KEDRF",
+        "KEJUM",
+        "KENAG",
+        "KENAL",
+        "KENEL",
+        "KEPAN",
+        "KERAK",
+        "KERAN",
+        "KERJA",
+        "KETEL",
+        "KETER"
+    ],
+    "medians": {
+        "KEAAN": 85.1,
+        "KEDRF": 84.56,
+        "KEJUM": 85.48,
+        "KENAG": 84.78,
+        "KENAL": 84.65,
+        "KENEL": 85.62,
+        "KEPAN": 85.99,
+        "KERAK": 85.54,
+        "KERAN": 85.52,
+        "KERJA": 74.73,
+        "KETEL": 84.6,
+        "KETER": 85.14
+    },
+    "stds": {
+        "KEAAN": 18.070791703310903,
+        "KEDRF": 16.921139272127956,
+        "KEJUM": 13.620054435947733,
+        "KENAG": 18.264324521351423,
+        "KENAL": 18.6491842743655,
+        "KENEL": 14.822159493728371,
+        "KEPAN": 22.37019254903238,
+        "KERAK": 15.174991098892079,
+        "KERAN": 17.19680720557568,
+        "KERJA": 15.38345882396896,
+        "KETEL": 17.692573126956916,
+        "KETER": 16.85421140120131
+    },
+    "trained_at": "2026-06-12T20:43:21.778696",
+    "num_samples": 113,
+    "num_features": 12
+}

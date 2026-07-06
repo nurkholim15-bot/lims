@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  # --- INSTANCE 1 ---
+  lims-be-1:
+    build: ./backend
+    container_name: lims-be-1
+    ports:
+      - "8081:8081"
+    env_file: ./backend/.env
+    environment:
+      - PORT=8081
+      - SSL_CERT_PATH=OFF
+    networks:
+      - lims-net
+
+  lims-fe-1:
+    build: ./frontend
+    container_name: lims-fe-1
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_PORT=3000
+      - VITE_PROXY_TARGET=http://lims-be-1:8081
+      - VITE_SSL_CERT_PATH=
+      - VITE_SSL_KEY_PATH=
+    networks:
+      - lims-net
+    depends_on:
+      - lims-be-1
+
+  # --- INSTANCE 2 ---
+  lims-be-2:
+    build: ./backend
+    container_name: lims-be-2
+    ports:
+      - "8086:8081"
+    env_file: ./backend/.env
+    environment:
+      - PORT=8081
+      - SSL_CERT_PATH=OFF
+    networks:
+      - lims-net
+
+  lims-fe-2:
+    build: ./frontend
+    container_name: lims-fe-2
+    ports:
+      - "3001:3000"
+    environment:
+      - VITE_PORT=3000
+      - VITE_PROXY_TARGET=http://lims-be-2:8081
+      - VITE_SSL_CERT_PATH=
+      - VITE_SSL_KEY_PATH=
+    networks:
+      - lims-net
+    depends_on:
+      - lims-be-2
+
+networks:
+  lims-net:
+    driver: bridge

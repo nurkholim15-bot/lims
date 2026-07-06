@@ -1,0 +1,17 @@
+[Unit]
+Description=LIMS Go Backend Service (Port 8081)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=lims
+Group=lims
+WorkingDirectory=/home/lims/lims1/backend
+ExecStart=/home/lims/lims1/backend/main
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+EnvironmentFile=/home/lims/lims1/backend/.env
+
+[Install]
+WantedBy=multi-user.target

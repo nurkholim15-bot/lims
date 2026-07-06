@@ -1,0 +1,20 @@
+/home/lims/lims1/backend/*.log
+/home/lims/lims1/backend/logs/api_traffic.log
+/home/lims/lims1/backend/logs/db_query.log
+/home/lims/lims2/backend/*.log
+/home/lims/lims2/backend/logs/api_traffic.log
+/home/lims/lims2/backend/logs/db_query.log {
+	su lims lims
+	daily
+	missingok
+	rotate 14
+	compress
+	delaycompress
+	copytruncate
+	notifempty
+	create 0664 lims lims
+	dateext
+	dateformat _%Y%m%d
+	extension .log
+	dateyesterday
+}

@@ -1,0 +1,15 @@
+/home/lims/.pm2/logs/*.log {
+	su lims lims
+	daily
+	missingok
+	rotate 14
+	compress
+	delaycompress
+	copytruncate
+	notifempty
+	create 0664 lims lims
+	dateext
+	dateformat _%Y%m%d
+	extension .log
+	dateyesterday
+}

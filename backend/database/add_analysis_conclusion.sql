@@ -1,0 +1,2 @@
+-- Reverted: AI reports are processed in-memory in the frontend and not stored in the database.
+-- No database schema changes are required for the AI report conclusion.

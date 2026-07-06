@@ -1,0 +1,1 @@
+0 10 * * * /usr/bin/python3 /home/lims/lims1/backend/ai_service/train.py >> /home/lims/lims1/backend/logs/lims_ai-train-$(date +\%Y\%m\%d).log 2>&1

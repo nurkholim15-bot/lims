@@ -1,0 +1,38 @@
+{
+    "features": [
+        "KEACA",
+        "KEAIR",
+        "KEANT",
+        "KEBAN",
+        "KEDAP",
+        "KEGET",
+        "KEHAN",
+        "KEOPE",
+        "KETUR"
+    ],
+    "medians": {
+        "KEACA": 100.0,
+        "KEAIR": 100.0,
+        "KEANT": 100.0,
+        "KEBAN": 100.0,
+        "KEDAP": 100.0,
+        "KEGET": 100.0,
+        "KEHAN": 100.0,
+        "KEOPE": 100.0,
+        "KETUR": 100.0
+    },
+    "stds": {
+        "KEACA": 38.36882415016998,
+        "KEAIR": 37.893271170486194,
+        "KEANT": 20.264912204760886,
+        "KEBAN": 20.713924463188203,
+        "KEDAP": 18.504053609952603,
+        "KEGET": 19.376962266223945,
+        "KEHAN": 19.81918262693999,
+        "KEOPE": 17.227884373886425,
+        "KETUR": 18.93849694845572
+    },
+    "trained_at": "2026-06-12T20:44:10.437028",
+    "num_samples": 6,
+    "num_features": 9
+}

@@ -1,0 +1,10 @@
+{
+  "appId": "com.lims.app",
+  "appName": "LIM System",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
+}

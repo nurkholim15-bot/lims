@@ -1,0 +1,20 @@
+{
+    "features": [
+        "PEANT",
+        "PEBAT",
+        "PEEAR"
+    ],
+    "medians": {
+        "PEANT": 98.5,
+        "PEBAT": 98.5,
+        "PEEAR": 98.5
+    },
+    "stds": {
+        "PEANT": 2.0,
+        "PEBAT": 2.0,
+        "PEEAR": 2.0
+    },
+    "trained_at": "2026-06-12T20:42:55.028260",
+    "num_samples": 6,
+    "num_features": 3
+}

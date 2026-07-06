@@ -1,0 +1,8 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# m h  dom mon dow   command
+# (Semua crontab LIMS telah dipindahkan ke user 'lims')
+# 0 19 * * * /home/nurlim/lims-ai-env/bin/python /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/ai_service/train.py >> /home/nurlim/lims-ai-train-$(date +\%Y\%m\%d).log 2>&1
+# 0 10 * * * /usr/bin/python3 /home/nurlim/project/lims1/backend/ai_service/train.py >> /home/nurlim/project/lims1/backend/logs/lims_ai-train-$(date +\%Y\%m\%d).log 2>&1
+# 0 8 * * * root /usr/sbin/logrotate /etc/logrotate.d/nginx >> /var/log/logrotate_nginx.log 2>&1
+# 0 8 * * * root /usr/sbin/logrotate /etc/logrotate.d/lims-backend >> /var/log/logrotate_backend.log 2>&1

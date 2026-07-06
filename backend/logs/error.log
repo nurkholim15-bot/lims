@@ -1,0 +1,1 @@
+2026-07-04 20:57:32 | 127.0.0.1       | nur             | CreateEquipment           | Error: ERROR: value too long for type character varying(100) (SQLSTATE 22001) | Details: <script>alert('xss-test')</script><script>alert('xss-test')</script>
