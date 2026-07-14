@@ -30,22 +30,7 @@ const Sidebar = ({ menus, onLogout, appConfig, collapsed, setCollapsed, onNaviga
   };
 
   const getExternalHref = (path) => {
-    if (!path) return "#";
-    const token = localStorage.getItem("token");
-    if (!token) return path;
-    
-    try {
-      const base = path.startsWith("http") ? undefined : window.location.origin;
-      const url = new URL(path, base);
-      url.searchParams.set("token", token);
-      if (!path.startsWith("http")) {
-        return url.pathname + url.search;
-      }
-      return url.toString();
-    } catch (e) {
-      const separator = path.includes("?") ? "&" : "?";
-      return `${path}${separator}token=${encodeURIComponent(token)}`;
-    }
+    return path || "#";
   };
 
   const renderMenuItem = (menu) => {

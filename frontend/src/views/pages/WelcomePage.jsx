@@ -140,7 +140,8 @@ const WelcomePage = ({ user, appConfig, onOpenApp, menus }) => {
         items: [
           { label: "Dinas / SPD", icon: "fas fa-plane-departure", path: "/travel", grad: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" },
           { label: "Asset Monitoring & Movement", icon: "fas fa-cubes", path: "/asset-tracking", grad: "linear-gradient(135deg, #64748b 0%, #475569 100%)" },
-          { label: "Reimbursement", icon: "fas fa-hand-holding-usd", path: "/reimbursement", grad: "linear-gradient(135deg, #ec4899 0%, #db2777 100%)" }
+          { label: "Reimbursement", icon: "fas fa-hand-holding-usd", path: "/reimbursement", grad: "linear-gradient(135deg, #ec4899 0%, #db2777 100%)" },
+          { label: "Cash Advance", icon: "fas fa-money-bill-wave", path: "/cash-advance", grad: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }
         ]
       },
       {
@@ -149,7 +150,8 @@ const WelcomePage = ({ user, appConfig, onOpenApp, menus }) => {
         icon: "fas fa-desktop",
         items: [
           { label: "Dashboard", icon: "fas fa-chart-line", path: "/dashboard", grad: "linear-gradient(135deg, #eab308 0%, #ca8a04 100%)" },
-          { label: "Logs Simulator", icon: "fas fa-terminal", path: "/simulator-logs", grad: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" }
+          { label: "Logs Simulator", icon: "fas fa-terminal", path: "/simulator-logs", grad: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" },
+          { label: "Analitik-GoAccess", icon: "fas fa-chart-bar", path: "/analytics-goaccess", grad: "linear-gradient(135deg, #f97316 0%, #c2410c 100%)" }
         ]
       },
       {
@@ -160,7 +162,12 @@ const WelcomePage = ({ user, appConfig, onOpenApp, menus }) => {
           { label: "Rekapitulasi (Summary)", icon: "fas fa-chart-pie", path: "/reports-summary", grad: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)" },
           { label: "Detail Pengujian", icon: "fas fa-file-medical-alt", path: "/reports-detail", grad: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)" },
           { label: "Laporan Daftar Aset", icon: "fas fa-clipboard-list", path: "/reports/asset-list", grad: "linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)" },
-          { label: "Serah Terima", icon: "fas fa-file-signature", path: "/reports/asset-handover", grad: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" }
+          { label: "Serah Terima", icon: "fas fa-file-signature", path: "/reports/asset-handover", grad: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" },
+          { label: "Laporan Tagihan", icon: "fas fa-file-invoice", path: "/reports/invoices", grad: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" },
+          { label: "Laporan Pembayaran", icon: "fas fa-receipt", path: "/reports/payments", grad: "linear-gradient(135deg, #10b981 0%, #059669 100%)" },
+          { label: "Laporan SPD", icon: "fas fa-plane", path: "/reports-finance/spd", grad: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" },
+          { label: "Laporan Cash-Advance", icon: "fas fa-money-check-alt", path: "/reports-finance/cash-advance", grad: "linear-gradient(135deg, #ec4899 0%, #db2777 100%)" },
+          { label: "Laporan Reimbursement", icon: "fas fa-file-invoice-dollar", path: "/reports-finance/reimbursement", grad: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)" }
         ]
       },
       {

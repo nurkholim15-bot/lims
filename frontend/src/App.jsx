@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation, Routes, Route } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import "@utils/dialog";
 import { apiRequest } from "@models/api";
@@ -14,6 +14,12 @@ import { workflowRoutes } from "@constants/routes";
 import MasterForm from "@components/MasterForm";
 import MainContent from "@layout/MainContent";
 import { printAssetLabel } from "@utils/print";
+
+// Extracted Components
+import ForceUpgradePage from "@pages/ForceUpgradePage";
+import MobileBottomNav from "@components/MobileBottomNav";
+import PasswordVerificationModal from "@components/PasswordVerificationModal";
+import AboutModal from "@components/AboutModal";
 
 function App() {
   const navigate = useNavigate();
@@ -46,18 +52,84 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-
-  useEffect(() => {
-    if (token) {
-      document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
-    } else {
-      document.cookie = `auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
-    }
-  }, [token]);
-
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [appConfig, setAppConfig] = useState({});
+
+  // Bootstrap session check on app load
+  useEffect(() => {
+    const bootstrapSession = async () => {
+      try {
+        const res = await apiRequest("/verify-session");
+        if (res && res.user) {
+          localStorage.setItem("is_logged_in", "true");
+          localStorage.setItem("user", JSON.stringify(res.user));
+          setUser(res.user);
+          setToken("ACTIVE");
+        } else {
+          localStorage.removeItem("is_logged_in");
+          localStorage.removeItem("user");
+          localStorage.removeItem("auth_token");
+          setToken(null);
+          setUser(null);
+        }
+      } catch (err) {
+        localStorage.removeItem("is_logged_in");
+        localStorage.removeItem("user");
+        localStorage.removeItem("auth_token");
+        setToken(null);
+        setUser(null);
+      }
+    };
+    bootstrapSession();
+  }, []);
+
+  // Idle timeout monitoring
+  const resetTimerRef = useRef(null);
+  useEffect(() => {
+    if (!token || !user) return;
+
+    const autoLogout = async () => {
+      try {
+        await apiRequest("/logout", "POST");
+      } catch (err) {
+        console.error("Auto logout request failed:", err);
+      }
+      localStorage.clear();
+      setToken(null);
+      setUser(null);
+      navigate("/login");
+    };
+
+    const idleMinutes = user.idle_timeout_minutes || parseInt(appConfig.DEFAULT_IDLE_TIMEOUT_MINUTES) || 30;
+    const timeoutMs = idleMinutes * 60 * 1000;
+
+    const resetTimer = () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = setTimeout(() => {
+        autoLogout();
+      }, timeoutMs);
+    };
+
+    let lastReset = 0;
+    const handleActivity = () => {
+      const now = Date.now();
+      if (now - lastReset > 5000) { // Throttle activity checks to every 5s
+        lastReset = now;
+        resetTimer();
+      }
+    };
+
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    events.forEach(e => window.addEventListener(e, handleActivity));
+    resetTimer();
+
+    return () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      events.forEach(e => window.removeEventListener(e, handleActivity));
+    };
+  }, [token, user, appConfig, navigate]);
+
   const [menus, setMenus] = useState([]);
   const [applications, setApplications] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
@@ -106,8 +178,7 @@ function App() {
     if (activePath === "/query") {
         fetchStatus = statusOverride || filters.status || "All";
     }
-    const currentToken = localStorage.getItem("token");
-    if (!currentToken) return null;
+    if (!token) return null;
 
     const { query: q = "", start: s_date, end: e_date, start_date, end_date, month, year } = filters;
     let start = s_date || start_date || "";
@@ -355,95 +426,24 @@ function App() {
 
 
   if (forceUpgrade) {
-    return (
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        width: "100vw",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)",
-        color: "white",
-        fontFamily: "'Outfit', 'Inter', sans-serif",
-        padding: "2rem",
-        boxSizing: "border-box"
-      }}>
-        <div style={{
-          background: "rgba(255, 255, 255, 0.05)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "24px",
-          padding: "3rem 2rem",
-          maxWidth: "480px",
-          width: "100%",
-          textAlign: "center",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
-        }}>
-          <div style={{
-            background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)",
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 2rem auto",
-            boxShadow: "0 10px 20px rgba(239, 68, 68, 0.3)"
-          }}>
-            <i className="fas fa-arrow-alt-circle-up" style={{ fontSize: "2.5rem", color: "white" }}></i>
-          </div>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "1rem", letterSpacing: "-0.025em" }}>Pembaruan Aplikasi Wajib</h2>
-          <p style={{ color: "#94a3b8", lineHeight: "1.6", marginBottom: "2rem" }}>
-            {forceUpgrade.message || `Versi aplikasi Anda sudah usang. Harap perbarui ke versi ${forceUpgrade.minimum_version} untuk melanjutkan.`}
-          </p>
-          <div style={{
-            background: "rgba(255, 255, 255, 0.03)",
-            borderRadius: "12px",
-            padding: "1rem",
-            marginBottom: "2rem",
-            border: "1px solid rgba(255, 255, 255, 0.05)"
-          }}>
-            <span style={{ display: "block", fontSize: "0.85rem", color: "#64748b", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.05em", marginBottom: "0.25rem" }}>Batas Versi Minimum</span>
-            <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "#10b981" }}>v{forceUpgrade.minimum_version}</span>
-          </div>
-          <a href={forceUpgrade.download_url} style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            width: "100%",
-            padding: "14px",
-            borderRadius: "12px",
-            fontSize: "1.1rem",
-            fontWeight: 700,
-            textDecoration: "none",
-            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            boxShadow: "0 10px 20px rgba(16, 185, 129, 0.2)",
-            transition: "all 0.2s"
-          }}>
-            <i className="fas fa-download"></i> Unduh & Perbarui Sekarang
-          </a>
-        </div>
-      </div>
-    );
+    return <ForceUpgradePage forceUpgrade={forceUpgrade} />;
   }
 
   if (!token) {
     return (
       <Login
         appConfig={appConfig}
-        onLoginSuccess={async (username, password) => {
-          const data = await apiRequest("/login", "POST", { username, password });
+        onLoginSuccess={async (username, password, force = false) => {
+          const data = await apiRequest("/login", "POST", { username, password, force_login: force });
           return data;
         }}
         onLoginComplete={(tokenVal, userVal) => {
-          localStorage.setItem("token", tokenVal);
+          localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(userVal));
-          setToken(tokenVal);
+          if (tokenVal) {
+            localStorage.setItem("auth_token", tokenVal);
+          }
+          setToken("ACTIVE");
           setUser(userVal);
         }}
       />
@@ -561,47 +561,19 @@ function App() {
 
       {/* Mobile Bottom Navigation Bar */}
       {isMobile && (
-        <div style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "60px",
-          background: "white",
-          borderTop: "1px solid #e2e8f0",
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
-          zIndex: 2000,
-          boxShadow: "0 -4px 12px rgba(0,0,0,0.05)"
-        }}>
-          {mobileNavItems.map((item, index) => (
-            <div 
-              key={index}
-              onClick={() => {
-                if (item.path === "/logout") {
-                  handleLogout(true);
-                } else if (item.path === "/about") {
-                  setModalType("about");
-                } else {
-                  handleNavigate(item.path);
-                }
-              }} 
-              style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                alignItems: "center", 
-                cursor: "pointer", 
-                color: activePath === item.path ? "#065f46" : "#94a3b8", 
-                flex: 1, 
-                padding: "5px 0" 
-              }}
-            >
-              <i className={item.icon} style={{ fontSize: "1.15rem" }}></i>
-              <span style={{ fontSize: "0.65rem", fontWeight: 700, marginTop: "2px" }}>{item.label}</span>
-            </div>
-          ))}
-        </div>
+        <MobileBottomNav
+          items={mobileNavItems}
+          activePath={activePath}
+          onItemClick={(item) => {
+            if (item.path === "/logout") {
+              handleLogout(true);
+            } else if (item.path === "/about") {
+              setModalType("about");
+            } else {
+              handleNavigate(item.path);
+            }
+          }}
+        />
       )}
 
       <Modal isOpen={!!successNotif} onClose={() => setSuccessNotif(null)} title="Konfirmasi">
@@ -654,94 +626,22 @@ function App() {
           </div>
         )}
         {modalType === "about" && (
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            padding: "2.5rem 2rem",
-            background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-            color: "white",
-            borderRadius: "16px",
-            textAlign: "center",
-            fontFamily: "'Outfit', 'Inter', sans-serif"
-          }}>
-            <div style={{
-              background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
-              width: "70px",
-              height: "70px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "1.5rem",
-              boxShadow: "0 10px 15px -3px rgba(5, 150, 105, 0.4)"
-            }}>
-              <i className="fas fa-info-circle" style={{ fontSize: "2.5rem", color: "white" }}></i>
-            </div>
-            <h3 style={{ fontSize: "1.6rem", fontWeight: 800, margin: "0 0 0.5rem 0", letterSpacing: "-0.025em" }}>LIM System</h3>
-            <p style={{ fontSize: "0.95rem", color: "#94a3b8", margin: "0 0 1.5rem 0", maxWidth: "320px", lineHeight: "1.5" }}>
-              Laboratory Information Management System
-            </p>
-            <div style={{
-              width: "100%",
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-              borderRadius: "12px",
-              padding: "1rem 1.5rem",
-              marginBottom: "2rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.75rem",
-              boxSizing: "border-box"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 600 }}>TIPE APLIKASI</span>
-                <span style={{ fontSize: "0.95rem", color: "#e2e8f0", fontWeight: 700 }}>Mobile App</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.75rem" }}>
-                <span style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 600 }}>VERSI SISTEM</span>
-                <span style={{ fontSize: "0.95rem", color: "#10b981", fontWeight: 700 }}>v{import.meta.env.VITE_APP_VERSION || "1.0"}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.75rem" }}>
-                <span style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: 600 }}>PLATFORM</span>
-                <span style={{ fontSize: "0.95rem", color: "#3b82f6", fontWeight: 700 }}>{(typeof window !== "undefined" && window.Capacitor) ? window.Capacitor.getPlatform().toUpperCase() : "WEB"}</span>
-              </div>
-            </div>
-            <button
-              className="btn btn-primary"
-              onClick={() => setModalType(null)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: "8px",
-                fontWeight: 700,
-                fontSize: "0.95rem",
-                border: "none",
-                cursor: "pointer",
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                boxShadow: "0 10px 15px -3px rgba(16, 185, 129, 0.2)"
-              }}
-            >
-              Tutup
-            </button>
-          </div>
+          <AboutModal
+            isOpen={modalType === "about"}
+            onClose={() => { setModalType(null); setSelectedApp(null); setEditingItem(null); setEditingEndpoint(null); }}
+            appConfig={appConfig}
+          />
         )}
       </Modal>
 
-      {showPasswordModal && (
-        <div className="modal-overlay" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10000 }}>
-          <div className="modal-card" style={{ background: "#fff", padding: "2rem", borderRadius: "8px", width: "90%", maxWidth: "400px", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-            <h2 style={{ marginTop: 0, marginBottom: "0.5rem", fontSize: "1.25rem", fontWeight: 700, color: "#065f46" }}>Verifikasi Password</h2>
-            <p style={{ marginBottom: "1.5rem", color: "#666", fontSize: "0.95rem" }}>Silakan masukkan password Anda untuk melanjutkan.</p>
-            <input type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="Masukkan password" style={{ width: "100%", padding: "0.75rem", border: passwordErrorMsg ? "2px solid #dc2626" : "1px solid #ddd", borderRadius: "4px", marginBottom: "0.5rem", boxSizing: "border-box" }} onKeyPress={(e) => e.key === "Enter" && handlePasswordSubmit()} />
-            {passwordErrorMsg && <p style={{ color: "#dc2626", fontSize: "0.875rem", marginBottom: "1.5rem" }}>{passwordErrorMsg}</p>}
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-              <button onClick={() => setShowPasswordModal(false)} className="btn btn-secondary">Batal</button>
-              <button onClick={handlePasswordSubmit} className="btn btn-primary">Verifikasi</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PasswordVerificationModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        passwordInput={passwordInput}
+        setPasswordInput={setPasswordInput}
+        onSubmit={handlePasswordSubmit}
+        errorMsg={passwordErrorMsg}
+      />
 
       {/* Debug Info Display (Enabled via .env VITE_SHOW_DEBUG_INFO) */}
       {import.meta.env.VITE_SHOW_DEBUG_INFO === "true" && (

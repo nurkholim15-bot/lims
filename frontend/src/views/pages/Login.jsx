@@ -20,11 +20,17 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
     const [pendingAuthData, setPendingAuthData] = useState(null);
     const [showValidationModal, setShowValidationModal] = useState(false);
     const [validationError, setValidationError] = useState('');
+    const [showTakeoverModal, setShowTakeoverModal] = useState(false);
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [otpCode, setOtpCode] = useState("");
+    const [otpLoading, setOtpLoading] = useState(false);
+    const [otpError, setOtpError] = useState("");
 
     // Server settings states
     const [showServerSettingsModal, setShowServerSettingsModal] = useState(false);
     const [connectionType, setConnectionType] = useState('wifi'); // 'wifi' or 'internet'
     const [wifiIp, setWifiIp] = useState('192.168.1.50');
+    const [wifiPort, setWifiPort] = useState('8087');
     const [internetUrl, setInternetUrl] = useState('');
     const [connectionStatus, setConnectionStatus] = useState('idle'); // 'idle', 'testing', 'success', 'failed'
     const [testVersion, setTestVersion] = useState('');
@@ -38,7 +44,7 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
                 setConnectionStatus('failed');
                 return;
             }
-            targetUrl = `http://${wifiIp.trim()}:8087/api`;
+            targetUrl = `http://${wifiIp.trim()}:${wifiPort.trim() || '8087'}/api`;
         } else {
             if (!internetUrl) {
                 setConnectionStatus('failed');
@@ -77,7 +83,7 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
         let targetUrl = '';
         if (connectionType === 'wifi') {
             if (!wifiIp) return;
-            targetUrl = `http://${wifiIp.trim()}:8087/api`;
+            targetUrl = `http://${wifiIp.trim()}:${wifiPort.trim() || '8087'}/api`;
         } else {
             if (!internetUrl) return;
             targetUrl = `${internetUrl.trim().replace(/\/$/, '')}/api`;
@@ -145,27 +151,36 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
     const [cpShowNewPassword, setCpShowNewPassword] = useState(false);
     const [cpShowConfirmPassword, setCpShowConfirmPassword] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e, force = false) => {
+        if (e) e.preventDefault();
         setError('');
         setSuccessMessage('');
         setLoading(true);
 
         try {
-            const data = await onLoginSuccess(username, password);
-            if (data && data.token) {
-                if (data.pwd_warning && data.pwd_warning.expiring_soon) {
-                    setPendingAuthData({ token: data.token, user: data.user });
-                    setModalWarningText(`Password Anda akan expired tanggal ${data.pwd_warning.expiry_date} jam ${data.pwd_warning.expiry_time}, segera ganti password Anda.`);
-                    setShowExpiryModal(true);
+            const data = await onLoginSuccess(username, password, force);
+            if (data) {
+                if (data.code === "OTP_REQUIRED") {
+                    setShowTakeoverModal(false);
+                    setShowOtpModal(true);
+                } else if (data.token) {
+                    if (data.pwd_warning && data.pwd_warning.expiring_soon) {
+                        setPendingAuthData({ token: data.token, user: data.user });
+                        setModalWarningText(`Password Anda akan expired tanggal ${data.pwd_warning.expiry_date} jam ${data.pwd_warning.expiry_time}, segera ganti password Anda.`);
+                        setShowExpiryModal(true);
+                    } else {
+                        onLoginComplete(data.token, data.user);
+                    }
                 } else {
-                    onLoginComplete(data.token, data.user);
+                    setError('Username atau password tidak valid');
                 }
             } else {
                 setError('Username atau password tidak valid');
             }
         } catch (err) {
-            if (err.response && err.response.code === "PWD_EXPIRED") {
+            if (err.response && err.response.code === "ACTIVE_SESSION_EXISTS") {
+                setShowTakeoverModal(true);
+            } else if (err.response && err.response.code === "PWD_EXPIRED") {
                 setError('Password Anda harus diperbarui. Silakan ubah password Anda di bawah.');
                 setMode('expired');
             } else {
@@ -173,6 +188,29 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
             }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        setOtpError('');
+        setOtpLoading(true);
+        try {
+            const data = await apiRequest("/verify-otp", "POST", {
+                username,
+                password,
+                code: otpCode
+            });
+            if (data && data.token) {
+                setShowOtpModal(false);
+                onLoginComplete(data.token, data.user);
+            } else {
+                setOtpError('Verifikasi gagal. Silakan coba lagi.');
+            }
+        } catch (err) {
+            setOtpError(err.message || 'Kode OTP salah atau telah kedaluwarsa.');
+        } finally {
+            setOtpLoading(false);
         }
     };
 
@@ -284,19 +322,41 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
             type="button"
             onClick={() => {
               const currentUrl = localStorage.getItem("CUSTOM_API_URL") || "";
+              const fallbackVpsUrl = "https://lims-d4551821.nip.io:8082";
+              
               if (currentUrl.startsWith("http")) {
-                if (currentUrl.includes(":8087")) {
+                const portMatch = currentUrl.match(/:(\d+)/);
+                const currentPort = portMatch ? portMatch[1] : '8087';
+                if (currentUrl.startsWith("http://") && (currentPort === '8087' || currentPort === '8081' || currentPort === '3000')) {
                   setConnectionType('wifi');
                   const ipMatch = currentUrl.match(/http:\/\/([^:/]+)/);
                   setWifiIp(ipMatch ? ipMatch[1] : '192.168.1.50');
+                  setWifiPort(currentPort);
+                  setInternetUrl(fallbackVpsUrl); // Selalu isi default VPS agar tidak kosong
                 } else {
                   setConnectionType('internet');
                   setInternetUrl(currentUrl.replace(/\/api$/, ''));
+                  setWifiIp('192.168.1.50');
+                  setWifiPort('8087');
                 }
               } else {
-                setConnectionType('wifi');
-                setWifiIp('192.168.1.50');
-                setInternetUrl('');
+                // Fallback to defaults from environment variables
+                const defaultUrl = import.meta.env.VITE_MOBILE_API_URL || import.meta.env.VITE_API_URL || "https://212.85.24.33:8082/api";
+                const cleanDefault = defaultUrl.replace(/\/api$/, '');
+                const portMatch = cleanDefault.match(/:(\d+)/);
+                const defaultPort = portMatch ? portMatch[1] : '8082';
+                if (cleanDefault.startsWith("http://") && (defaultPort === '8087' || defaultPort === '8081' || defaultPort === '3000')) {
+                  setConnectionType('wifi');
+                  const ipMatch = cleanDefault.match(/http:\/\/([^:/]+)/);
+                  setWifiIp(ipMatch ? ipMatch[1] : '192.168.1.50');
+                  setWifiPort(defaultPort);
+                  setInternetUrl(fallbackVpsUrl); // Selalu isi default VPS agar tidak kosong
+                } else {
+                  setConnectionType('internet');
+                  setInternetUrl(cleanDefault.startsWith("http://192.168") ? fallbackVpsUrl : cleanDefault);
+                  setWifiIp('192.168.1.50');
+                  setWifiPort('8087');
+                }
               }
               setConnectionStatus('idle');
               setShowServerSettingsModal(true);
@@ -620,6 +680,146 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
           )}
         </div>
         
+        {/* Takeover Sesi Modal */}
+        {showTakeoverModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1.5rem'
+          }}>
+            <div className="card" style={{
+              width: '100%',
+              maxWidth: '480px',
+              padding: '2.5rem',
+              background: 'white',
+              borderRadius: '16px',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
+              textAlign: 'center'
+            }}>
+              <div>
+                <i className="fas fa-exclamation-triangle" style={{ fontSize: '3rem', color: '#f59e0b', marginBottom: '1rem' }}></i>
+                <h3 style={{ color: '#1e293b', fontFamily: "'Outfit'", fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                  Session Anda masih aktif
+                </h3>
+                <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                  Akun Anda sedang terhubung di perangkat atau browser lain. Apakah Anda ingin keluar dari sesi lain dan masuk di perangkat ini?
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowTakeoverModal(false)}
+                  className="btn btn-secondary"
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', background: '#e2e8f0', color: '#475569', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(null, true)}
+                  className="btn btn-primary"
+                  style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Ya, Masuk
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* OTP Verification Modal */}
+        {showOtpModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1.5rem'
+          }}>
+            <div className="card" style={{
+              width: '100%',
+              maxWidth: '480px',
+              padding: '2.5rem',
+              background: 'white',
+              borderRadius: '16px',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <i className="fas fa-shield-alt" style={{ fontSize: '3rem', color: '#10b981', marginBottom: '1rem' }}></i>
+                <h3 style={{ color: '#1e293b', fontFamily: "'Outfit'", fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                  Verifikasi Keamanan
+                </h3>
+                <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                  Masukkan kode OTP 6-digit yang dikirimkan ke Telegram / WhatsApp terdaftar Anda.
+                </p>
+              </div>
+              <form onSubmit={handleVerifyOtp} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <div className="form-group" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    className="form-control"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                    required
+                    placeholder="E.g., 123456"
+                    style={{ background: '#eff6ff', color: '#1e293b', border: '1px solid #dbeafe', flex: 1, textAlign: 'center', fontSize: '1.5rem', letterSpacing: '0.5rem', fontWeight: 700, padding: '0.5rem' }}
+                    autoFocus
+                  />
+                </div>
+
+                {otpError && (
+                  <div style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center', fontWeight: 500 }}>
+                    <i className="fas fa-exclamation-circle" style={{ marginRight: '6px' }}></i>
+                    {otpError}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowOtpModal(false)}
+                    className="btn btn-secondary"
+                    style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', background: '#e2e8f0', color: '#475569', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={otpLoading}
+                    className="btn btn-primary"
+                    style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    {otpLoading ? 'Memverifikasi...' : 'Verifikasi'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Custom Ganti Password Modal popup */}
         {showChangePwdModal && (
           <div style={{
@@ -1041,14 +1241,14 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  <i className="fas fa-globe" style={{ marginRight: '6px' }}></i> Internet (Ngrok)
+                  <i className="fas fa-globe" style={{ marginRight: '6px' }}></i> Internet (VPS / Ngrok)
                 </button>
               </div>
 
               {/* Inputs */}
               {connectionType === 'wifi' ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ color: '#475569', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>IP Laptop Server</label>
+                  <label style={{ color: '#475569', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Alamat & Port Server Lokal</label>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <input
                       type="text"
@@ -1058,25 +1258,33 @@ const Login = ({ onLoginSuccess, onLoginComplete, appConfig }) => {
                       placeholder="Contoh: 192.168.1.50"
                       style={{ background: '#eff6ff', color: '#1e293b', border: '1px solid #dbeafe', flex: 1, margin: 0 }}
                     />
-                    <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600 }}>:8087</span>
+                    <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600 }}>:</span>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={wifiPort}
+                      onChange={(e) => { setWifiPort(e.target.value); setConnectionStatus('idle'); }}
+                      placeholder="8087"
+                      style={{ background: '#eff6ff', color: '#1e293b', border: '1px solid #dbeafe', width: '75px', textAlign: 'center', margin: 0 }}
+                    />
                   </div>
                   <span style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: '1.4' }}>
-                    * HP dan Laptop harus terhubung ke Wi-Fi yang sama. Port HTTP 8087 digunakan untuk bypass blokir SSL HP.
+                    * Gunakan port **8087** jika lewat Nginx HTTP, port **8081** jika menembak Go Backend langsung, atau port **3000** jika lewat Node dev server.
                   </span>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ color: '#475569', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Domain / URL Ngrok</label>
+                  <label style={{ color: '#475569', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Domain / IP Publik VPS</label>
                   <input
                     type="text"
                     className="form-control"
                     value={internetUrl}
                     onChange={(e) => { setInternetUrl(e.target.value); setConnectionStatus('idle'); }}
-                    placeholder="Contoh: https://xxxx.ngrok-free.app"
+                    placeholder="Contoh: https://212.85.24.33:8082 atau https://lims.com"
                     style={{ background: '#eff6ff', color: '#1e293b', border: '1px solid #dbeafe', margin: 0 }}
                   />
                   <span style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: '1.4' }}>
-                    * Gunakan URL terenkripsi HTTPS publik dari Ngrok atau domain server resmi Anda.
+                    * Gunakan HTTPS untuk domain resmi yang tepercaya. Gunakan HTTP jika terhubung ke alamat IP publik VPS secara langsung (tanpa domain) untuk menghindari pemblokiran sertifikat SSL oleh WebView.
                   </span>
                 </div>
               )}

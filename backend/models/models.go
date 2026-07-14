@@ -196,6 +196,8 @@ type User struct {
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 	DeletedUser    string         `gorm:"type:varchar(30)" json:"deleted_user"`
 	ForcePwdChange bool           `gorm:"column:force_pwd_change;default:false;not null" json:"force_pwd_change"`
+	IsActive       bool           `gorm:"column:is_active;default:true;not null" json:"is_active"`
+	IdleTimeoutMinutes *int       `gorm:"column:idle_timeout_minutes" json:"idle_timeout_minutes"`
 }
 
 type HistUser struct {
@@ -214,6 +216,8 @@ type HistUser struct {
 	DeletedAt      time.Time `json:"deleted_at"`
 	DeletedUser    string    `gorm:"type:varchar(30)" json:"deleted_user"`
 	ForcePwdChange bool      `gorm:"column:force_pwd_change;default:false;not null" json:"force_pwd_change"`
+	IsActive       bool      `gorm:"column:is_active;default:true;not null" json:"is_active"`
+	IdleTimeoutMinutes *int      `gorm:"column:idle_timeout_minutes" json:"idle_timeout_minutes"`
 }
 
 type Role struct {
@@ -308,6 +312,51 @@ type UserSession struct {
 	UpdatedUser    string    `gorm:"type:varchar(30)" json:"updated_user"`
 	ClientVersion  string    `gorm:"type:varchar(50)" json:"client_version"`
 	ClientPlatform string    `gorm:"type:varchar(50)" json:"client_platform"`
+	UserAgent      string    `gorm:"type:varchar(255)" json:"user_agent"`
+	LastActivityAt time.Time `gorm:"column:last_activity_at" json:"last_activity_at"`
+}
+
+type OtpCode struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	UserID    uint      `gorm:"not null" json:"user_id"`
+	Code      string    `gorm:"not null;type:varchar(10)" json:"code"`
+	ExpiresAt time.Time `gorm:"not null" json:"expires_at"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func (OtpCode) TableName() string {
+	return "otp_codes"
+}
+
+func SaveOTP(db *gorm.DB, userID uint, code string, expiresAt time.Time) error {
+	// Hapus OTP lama user ini agar tidak menumpuk
+	db.Where("user_id = ?", userID).Delete(&OtpCode{})
+	
+	otp := OtpCode{
+		UserID:    userID,
+		Code:      code,
+		ExpiresAt: expiresAt,
+		CreatedAt: time.Now(),
+	}
+	return db.Create(&otp).Error
+}
+
+func VerifyOTP(db *gorm.DB, userID uint, code string) (bool, error) {
+	// Hapus OTP kedaluwarsa secara berkala saat verifikasi dipanggil
+	db.Where("expires_at < ?", time.Now()).Delete(&OtpCode{})
+
+	var otp OtpCode
+	err := db.Where("user_id = ? AND code = ? AND expires_at > ?", userID, code, time.Now()).First(&otp).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+	
+	// Hapus OTP setelah berhasil diverifikasi agar tidak bisa digunakan ulang
+	db.Delete(&otp)
+	return true, nil
 }
 
 type GlobalParameter struct {

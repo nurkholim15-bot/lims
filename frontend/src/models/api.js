@@ -28,17 +28,16 @@ export const API_URL = getApiUrl();
 
 export const getDownloadUrl = (path) => {
   if (!path) return "";
-  const token = localStorage.getItem("token");
   const base = API_URL.startsWith("http") ? API_URL : `${window.location.origin}${API_URL}`;
-  return `${base}/download?path=${encodeURIComponent(path)}&token=${token}`;
+  return `${base}/download?path=${encodeURIComponent(path)}`;
 };
 
 export const apiRequest = async (endpoint, method = "GET", body = null) => {
-  const token = localStorage.getItem("token");
-  const isPublicEndpoint = endpoint.includes("/login") || endpoint.includes("/change-expired-password") || endpoint.includes("/check-password-expiry") || endpoint.includes("/check-version");
+  const isLoggedIn = localStorage.getItem("is_logged_in") === "true";
+  const isPublicEndpoint = endpoint.includes("/login") || endpoint.includes("/verify-otp") || endpoint.includes("/verify-session") || endpoint.includes("/change-expired-password") || endpoint.includes("/check-password-expiry") || endpoint.includes("/check-version");
 
-  if (!token && !isPublicEndpoint) {
-    console.warn("API Request blocked: No token found for protected endpoint", endpoint);
+  if (!isLoggedIn && !isPublicEndpoint) {
+    console.warn("API Request blocked: User is not logged in for protected endpoint", endpoint);
     // Redirect to root if not already there, to trigger the Login screen in App.jsx
     if (typeof window !== "undefined" && window.location.pathname !== "/") {
       window.location.href = "/";
@@ -50,11 +49,17 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
   const appPlatform = (typeof window !== "undefined" && window.Capacitor) ? window.Capacitor.getPlatform() : "Web";
 
   const headers = {
-    Authorization: token ? `Bearer ${token}` : "",
     "ngrok-skip-browser-warning": "true", // Bypass ngrok browser warning page
     "X-App-Version": appVersion,
     "X-App-Platform": appPlatform,
   };
+
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+  }
 
   if (!(body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
@@ -92,7 +97,7 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
       // Catch 401 specifically for auth cleanup
       if (response.status === 401 && !isPublicEndpoint) {
         console.warn("Session unauthorized or revoked. Logging out...");
-        localStorage.removeItem("token");
+        localStorage.removeItem("is_logged_in");
         localStorage.removeItem("user");
         
         // Redirect to root if not already there, to trigger re-render in App.jsx

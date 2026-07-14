@@ -109,7 +109,7 @@ Backend Go dikompilasi menjadi biner dan dijalankan sebagai dua layanan sistem (
 Lakukan kompilasi silang (*Cross-Compile*) jika build dilakukan dari mesin Windows ke Linux:
 ```powershell
 # Dari Windows PowerShell ke Linux
-$env:GOOS="linux"; $env:GOARCH="amd64"; go build -ldflags="-s -w" -o main main.go
+$env:GOOS="linux"; $env:GOARCH="amd64"; go build -ldflags="-s -w" -o main .
 ```
 Pindahkan biner `main` ke server target di `/var/www/lims/backend/`.
 
@@ -241,7 +241,7 @@ http {
 }
 ```
 
-### B. Konfigurasi Blok Virtual Host LIMS (`/etc/nginx/sites-available/lims`)
+### B. Konfigurasi Blok Virtual Host LIMS (`/etc/nginx/conf.d/lims.conf`)
 Terapkan file konfigurasi NGINX berikut untuk menyambungkan semua cluster:
 
 ```nginx
@@ -338,6 +338,16 @@ server {
         proxy_read_timeout 90s;
     }
 
+    # Proxy Halaman Simulator ke Go Backend Cluster
+    location /simulator {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
     # Proxy untuk file unggahan
     location /uploads {
         proxy_pass http://lims_backend_cluster/uploads;
@@ -348,6 +358,30 @@ server {
     # Output Log file dengan log_format khusus
     access_log /var/log/nginx/lims_access.log upstream_monitoring;
     error_log /var/log/nginx/lims_error.log;
+}
+
+# Blok HTTPS Alternatif untuk Telegram Webhook (Port 8443)
+server {
+    listen 8443 ssl;
+    server_name 212.85.24.33;
+
+    # Menggunakan sertifikat khusus IP (Common Name = 212.85.24.33)
+    ssl_certificate /etc/nginx/ssl/telegram.crt;
+    ssl_certificate_key /etc/nginx/ssl/telegram.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location /api {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 }
 ```
 

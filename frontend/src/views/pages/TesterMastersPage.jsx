@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import AuditHistoryModal from "@components/AuditHistoryModal";
 import { useToast } from '@context/ToastContext';
 
 const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [allData, setAllData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -80,6 +82,24 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
             </button>
             <button className="btn btn-primary" onClick={() => onEdit(null)}>
               <i className="fas fa-plus"></i> Tambah Penguji
+            </button>
+            <button
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: "#475569",
+                color: "white",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <i className="fas fa-times"></i> Tutup
             </button>
           </div>
         </div>

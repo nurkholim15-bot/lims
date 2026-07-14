@@ -329,6 +329,9 @@ const ReimbursementPage = ({ user }) => {
             <button className="btn btn-primary" onClick={handleOpenForm}>
               <i className="fas fa-plus"></i> Ajukan Reimbursement
             </button>
+            <button className="btn btn-secondary" onClick={() => window.location.href='/welcome'} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <i className="fas fa-times"></i> Tutup
+            </button>
           </div>
         </div>
 
@@ -692,7 +695,12 @@ const ReimbursementPage = ({ user }) => {
                   {selectedDetail.receipt_path && (
                       <div>
                           <span style={{ color: '#64748b', fontSize: '0.8rem', display: 'block', marginBottom: '4px' }}>Bukti Kwitansi</span>
-                          <a href={`http://localhost:8080/${selectedDetail.receipt_path}`} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '0.85rem' }}>
+                          <a 
+                              href="#" 
+                              onClick={(e) => handleViewReceipt(e, selectedDetail.receipt_path)} 
+                              className="btn btn-secondary" 
+                              style={{ padding: '4px 10px', fontSize: '0.85rem' }}
+                          >
                               <i className="fas fa-paperclip"></i> Buka File Kwitansi
                           </a>
                       </div>

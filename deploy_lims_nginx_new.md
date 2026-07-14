@@ -28,7 +28,7 @@ Jika Anda menggunakan **2 VM terpisah**, disk lokal kedua VM tersebut secara fis
 
 ```mermaid
 graph TD
-    Client[Web Browser / HP Client] -->|HTTPS Port 8082 / 443| Nginx[NGINX Gateway & Load Balancer]
+    Client[Web Browser / HP Client] -->|HTTPS Port 8082 / 8443 / 443| Nginx[NGINX Gateway & Load Balancer]
     
     Nginx -->|Reverse Proxy /| FE_Cluster[Frontend Cluster]
     FE_Cluster -->|Port 3000| FE1[PM2 Serve: lims-frontend-3000]
@@ -101,6 +101,7 @@ Untuk mencegah kegagalan startup layanan akibat port yang tabrakan (*port confli
 | :--- | :--- | :---: | :---: | :--- |
 | **Nginx HTTP** | HTTP Redirect | TCP | `8088` (Redirect ke HTTPS) | Publik / Eksternal |
 | **Nginx HTTPS** | Gateway Utama | TCP | `8082` (atau `443` di prod asli) | Publik / Eksternal |
+| **Nginx Telegram** | Webhook Gateway | TCP | `8443` | Publik / Eksternal |
 | **Frontend 1** | PM2 Node.js Instance 1 | TCP | `3000` | Internal (Lokal) |
 | **Frontend 2** | PM2 Node.js Instance 2 | TCP | `3001` | Internal (Lokal) |
 | **Backend 1** | Go Backend Instance 1 | TCP | `8081` | Internal (Lokal) |
@@ -121,7 +122,7 @@ sudo lsof -i :8081
 
 # 2. Memeriksa Banyak Port Sekaligus (Multiple Ports)
 # Memeriksa seluruh ekosistem port LIMS
-sudo ss -tulpn | grep -E '8088|8082|3000|3001|8081|8091|7890|5433|9000|9001|8085'
+sudo ss -tulpn | grep -E '8088|8082|8443|3000|3001|8081|8091|7890|5433|9000|9001|8085'
 ```
 
 ### C. Menghentikan/Membunuh Proses pada Port yang Bermasalah (Stop/Kill Port)
@@ -278,7 +279,7 @@ Karena Go adalah bahasa terkompilasi (*compiled language*), seluruh kode logika 
 cd /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/
 
 # Lakukan build biner Linux
-GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o main main.go
+GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o main .
 ```
 
 #### 3. Berkas yang Dicopy ke `/home/lims/`:
@@ -429,12 +430,12 @@ log_format upstream_monitoring '$remote_addr - ClientIP: $real_client_ip - [$tim
                                'app_ver="$http_x_app_version" app_plat="$http_x_app_platform"';
 ```
 
-### B. Konfigurasi Situs LIMS (`/etc/nginx/sites-available/lims`)
+### B. Konfigurasi Situs LIMS (`/etc/nginx/conf.d/lims.conf`)
 Salin konfigurasi berikut untuk menangani pemisahan static assets, load-balancing backend, dan direktori bersama `/uploads/`:
 
 ```nginx
 # =========================================================================
-# FILE CONFIGURATION: /etc/nginx/sites-available/lims
+# FILE CONFIGURATION: /etc/nginx/conf.d/lims.conf
 # =========================================================================
 
 # --- CLUSTER LOAD BALANCER BACKEND ---
@@ -456,11 +457,12 @@ upstream lims_frontend_cluster {
 # =========================================================================
 server {
     listen 8082 ssl;
-    server_name lims.local localhost;
+    server_name lims-d4551821.nip.io lims.local localhost;
 
     # --- SERTIFIKAT SSL ---
-    ssl_certificate /etc/nginx/ssl/lims.local+2.pem;
-    ssl_certificate_key /etc/nginx/ssl/lims.local+2-key.pem;
+    # Jika menggunakan Let's Encrypt (nip.io), sesuaikan path-nya:
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
     ssl_ciphers HIGH:!aNULL:!MD5;
@@ -498,7 +500,12 @@ server {
         auth_request /api/auth/check-report-access;
 
         # Jika backend mengembalikan HTTP 200 OK, sajikan file dari alias berikut:
-        alias /home/lims/shared_reports/;
+        alias /home/lims/shared_reports/report.html;
+    }
+
+    # 2b. Redirect /report.html/ ke /report.html (Mengatasi isu trailing slash dari link)
+    location = /report.html/ {
+        return 301 $scheme://$http_host/report.html$is_args$args;
     }
 
     # 3. Lokasi Proxy Internal untuk Autentikasi Keamanan report.html
@@ -546,6 +553,16 @@ server {
         proxy_read_timeout 90s;
     }
 
+    # 5b. Proxy Halaman Simulator ke Go Backend Cluster
+    location /simulator {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
     # 6. Penyajian Berkas Unggahan (Direct Alias)
     location /uploads/ {
         alias /home/lims/shared_uploads/;
@@ -570,7 +587,7 @@ server {
 # =========================================================================
 server {
     listen 8087;
-    server_name localhost 192.168.0.103; # Sesuaikan IP ini dengan IP Laptop Anda saat tersambung Wi-Fi
+    server_name localhost 192.168.0.103 212.85.24.33; # Sesuaikan IP ini dengan IP Laptop (Wi-Fi) atau IP Publik VPS Anda
 
     client_max_body_size 50M;
 
@@ -600,6 +617,35 @@ server {
 
     access_log /var/log/nginx/lims_access.log upstream_monitoring;
     error_log /var/log/nginx/lims_error.log;
+}
+
+# =========================================================================
+# BLOK SERVER 3: PORT 8443 (HTTPS - TELEGRAM WEBHOOK DENGAN SERTIFIKAT IP)
+# Telegram mewajibkan Webhook dipasang di port 80, 88, 443, atau 8443.
+# Blok ini menggunakan sertifikat telegram.crt yang diterbitkan khusus untuk IP VPS.
+# =========================================================================
+server {
+    listen 8443 ssl;
+    server_name 212.85.24.33;
+
+    # Menggunakan sertifikat khusus IP (Common Name = 212.85.24.33)
+    ssl_certificate /etc/nginx/ssl/telegram.crt;
+    ssl_certificate_key /etc/nginx/ssl/telegram.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # Teruskan request API ke backend cluster LIMS
+    location /api {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 }
 ```
 
@@ -817,11 +863,16 @@ Meskipun saat ini kita telah mengonfigurasinya dengan utilitas **system logrotat
 Dasbor dipasang di latar belakang dengan target file output di folder bersama `/home/lims/shared_reports/report.html`:
 
 ```bash
+# 1. Pastikan folder output sudah terbuat dan memiliki izin akses yang benar
+mkdir -p /home/lims/shared_reports
+sudo chown -R lims:lims /home/lims/shared_reports
+
+# 2. Jalankan GoAccess di latar belakang (Ganti <IP_VPS_ANDA> dengan IP VPS Anda, misal 212.85.24.33)
 sudo goaccess /var/log/nginx/lims_access.log \
   --log-format='%h - ClientIP: %^ - [%d:%t %^] "%r" %s %b to_server=%v status=%^ resp_time=%^ agent="%u"' \
   --date-format='%d/%b/%Y' \
   --time-format='%H:%M:%S' \
-  --ws-url=wss://lims.local/ws \
+  --ws-url=wss://<IP_VPS_ANDA>:8082/ws \
   -o /home/lims/shared_reports/report.html \
   --real-time-html &
 ```
@@ -850,7 +901,7 @@ Namun, jika Anda tetap ingin menggunakan Basic Auth statis, berikut adalah conto
    ```
 
 2. **Konfigurasi Nginx untuk Basic Auth:**
-   Edit file konfigurasi Nginx Anda (`/etc/nginx/sites-available/lims`), cari atau buat blok `/report.html` berikut:
+   Edit file konfigurasi Nginx Anda (`/etc/nginx/conf.d/lims.conf`), cari atau buat blok `/report.html` berikut:
    ```nginx
    # --- COPY-PASTE KE KONFIGURASI NGINX ---
    location = /report.html {
@@ -866,7 +917,7 @@ Namun, jika Anda tetap ingin menggunakan Basic Auth statis, berikut adalah conto
 #### OPSI 2: Proxy Melalui API Otentikasi LIMS (Paling Aman - DINAMIS & TERINTEGRASI DB)
 Metode ini sangat direkomendasikan karena **menyelesaikan masalah ekspirasi password 90 hari**. Autentikasi dilakukan oleh Go backend dengan memeriksa token session (JWT) pengguna yang login dari database. Jika password user `nur` berubah di database, token lamanya otomatis tidak valid dan ia harus login ulang dengan password baru untuk mengakses halaman laporan.
 
-##### Langkah 1: Ubah Konfigurasi Nginx (`/etc/nginx/sites-available/lims`)
+##### Langkah 1: Ubah Konfigurasi Nginx (`/etc/nginx/conf.d/lims.conf`)
 Hapus atau beri tanda komentar pada blok `/report.html` lama agar file tidak bisa diakses secara langsung oleh siapa pun tanpa token:
 ```nginx
 # --- COPY-PASTE: HAPUS ATAU HILANGKAN BLOK INI ---
@@ -963,17 +1014,21 @@ Daftarkan rute pemeriksaan di bawah `AuthMiddleware`:
 protected.GET("/auth/check-report-access", controllers.CheckReportAccess)
 ```
 
-##### Langkah 3: Konfigurasi Nginx dengan `auth_request` (`/etc/nginx/sites-available/lims`)
+##### Langkah 3: Konfigurasi Nginx dengan `auth_request` (`/etc/nginx/conf.d/lims.conf`)
 Ganti blok `/report.html` lama Anda dengan konfigurasi copy-paste berikut:
 ```nginx
-# --- COPY-PASTE KE KONFIGURASI NGINX ---
 # 1. Halaman Laporan GoAccess yang Dilindungi
 location = /report.html {
     # Nginx akan mengirimkan sub-request internal ke path /api/auth/check-report-access
     auth_request /api/auth/check-report-access;
 
     # Jika sub-request mengembalikan HTTP 200 OK, sajikan file ini:
-    alias /home/lims/shared_reports/;
+    alias /home/lims/shared_reports/report.html;
+}
+
+# 1b. Redirect /report.html/ ke /report.html (Mengatasi isu trailing slash dari link)
+location = /report.html/ {
+    return 301 $scheme://$http_host/report.html$is_args$args;
 }
 
 # 2. Lokasi Proxy Internal untuk Pemeriksaan Autentikasi Backend LIMS
@@ -1397,7 +1452,7 @@ Jika server LIMS diletakkan di dalam jaringan kantor/pabrik (on-premise) di bali
   * Port luar `443` (HTTPS) --> Port lokal server LIMS `8082` (atau `443`)
 
 #### 3. Penyesuaian Konfigurasi Nginx (`server_name` & SSL Let's Encrypt)
-Perbarui berkas `/etc/nginx/sites-available/lims` agar mengenali nama domain resmi Anda pada parameter `server_name`:
+Perbarui berkas `/etc/nginx/conf.d/lims.conf` agar mengenali nama domain resmi Anda pada parameter `server_name`:
 ```nginx
 server {
     listen 80;
@@ -1653,13 +1708,13 @@ Sebelum melakukan build, sesuaikan berkas `frontend/.env.production` (atau `.env
 
    ###### Metode B: Lewat HTTP Port 8087 (Paling Mudah, Tanpa Internet, Bebas Kendala SSL)
    * Karena kita telah mengaktifkan **`android:usesCleartextTraffic="true"`** pada berkas `AndroidManifest.xml` aplikasi, HP Android diizinkan melakukan request HTTP biasa tanpa enkripsi (bebas dari pemblokiran SSL self-signed).
-   * **Tambahkan Blok Server HTTP Baru di Nginx (`/etc/nginx/sites-available/lims`):**
+   * **Tambahkan Blok Server HTTP Baru di Nginx (`/etc/nginx/conf.d/lims.conf`):**
      Tambahkan server block ini di sebelah blok port 8082 Anda:
      ```nginx
      # --- COPY-PASTE KE CONFIG NGINX (UNTUK WI-FI LOKAL LOAD BALANCER HTTP) ---
      server {
          listen 8087;
-         server_name localhost 192.168.0.103; # Ganti dengan IP laptop Anda saat ini
+         server_name localhost 192.168.0.103 212.85.24.33; # Ganti dengan IP laptop (Wi-Fi) atau IP Publik VPS Anda
 
          client_max_body_size 50M;
 

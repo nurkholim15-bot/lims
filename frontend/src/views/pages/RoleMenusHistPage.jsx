@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
 import Pagination from "@components/Pagination";
 
 const RoleMenusHistPage = () => {
+  const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -87,6 +89,24 @@ const RoleMenusHistPage = () => {
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button className="btn btn-secondary" onClick={handleShowAllHistory}>
               <i className="fas fa-history"></i> Riwayat Seluruh Role
+            </button>
+            <button
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: "#475569",
+                color: "white",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <i className="fas fa-times"></i> Tutup
             </button>
           </div>
         </div>

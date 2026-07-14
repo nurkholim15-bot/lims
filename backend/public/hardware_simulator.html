@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMS - Simulator Integrasi Peralatan</title>
+    <!-- No external assets for complete offline compliance -->
+    <style>
+        :root {
+            --bg-base: #0a0e17;
+            --bg-surface: #131a26;
+            --bg-card: #1b2433;
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.4);
+            --success: #39ff14;
+            --success-glow: rgba(57, 255, 20, 0.4);
+            --warning: #ffb700;
+            --danger: #ff3b30;
+            --text-main: #f0f4f8;
+            --text-muted: #8a9bb4;
+            --border: #2c3a4e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            padding: 30px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 240, 255, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(57, 255, 20, 0.03) 0px, transparent 50%);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Arial Black", Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(57, 255, 20, 0.1);
+            border: 1px solid var(--success);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success);
+            text-shadow: 0 0 5px var(--success-glow);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+        }
+
+        .section-title {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Arial Black", Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+        }
+
+        .protocol-selector {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .protocol-option {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .protocol-option:hover {
+            border-color: var(--primary);
+            background-color: rgba(0, 240, 255, 0.02);
+        }
+
+        .protocol-option.active {
+            border-color: var(--primary);
+            background-color: rgba(0, 240, 255, 0.05);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.1);
+        }
+
+        .protocol-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .protocol-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .protocol-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .protocol-badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .protocol-option.active .protocol-badge {
+            background-color: rgba(0, 240, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        .btn-send {
+            background: linear-gradient(90deg, #007bff, #00c6ff);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-send:active {
+            transform: translateY(0);
+        }
+
+        /* Flow Visualizer */
+        .flow-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            position: relative;
+        }
+
+        .flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .flow-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--bg-surface);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .flow-node.active .flow-icon {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background-color: rgba(0, 240, 255, 0.1);
+        }
+
+        .flow-node.success-node.active .flow-icon {
+            border-color: var(--success);
+            color: var(--success);
+            box-shadow: 0 0 15px var(--success-glow);
+            background-color: rgba(57, 255, 20, 0.1);
+        }
+
+        .flow-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .flow-node.active .flow-label {
+            color: var(--text-main);
+        }
+
+        .flow-line {
+            height: 2px;
+            background-color: var(--border);
+            flex-grow: 1;
+            margin: 0 -15px;
+            margin-top: -20px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .flow-line.active {
+            background-color: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        /* Console styling */
+        .console-container {
+            background-color: #05070b;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .console-header {
+            background-color: #0e131d;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-title {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Arial Black", Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .console-body {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 12px;
+            color: #00ff00;
+            padding: 16px;
+            height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .log-time { color: #888; }
+        .log-info { color: #00f0ff; }
+        .log-success { color: #39ff14; }
+        .log-error { color: #ff3b30; }
+
+        /* Instruction Card */
+        .instruction-card {
+            background-color: rgba(255, 183, 0, 0.05);
+            border: 1px dashed var(--warning);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .instruction-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--warning);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .instruction-body {
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .code-block {
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 11px;
+            overflow-x: auto;
+            border: 1px solid #222;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>⚡ LIMS - Simulator Integrasi Peralatan</h1>
+        <div class="status-pill"><span style="display:inline-block; width:8px; height:8px; background-color:var(--success); border-radius:50%; box-shadow:0 0 8px var(--success-glow);"></span> ONLINE (SAME-ORIGIN)</div>
+    </div>
+
+    <div class="grid">
+        <!-- Configuration Card -->
+        <div class="card">
+            <h2 class="section-title">⚙️ Konfigurasi Peralatan</h2>
+
+            <div class="form-group">
+                <label>Pilih Protokol Integrasi</label>
+                <div class="protocol-selector">
+                    <div class="protocol-option active" data-protocol="http-direct">
+                        <div class="protocol-info">
+                            <span class="protocol-name">HTTP/REST Webhook (Direct)</span>
+                            <span class="protocol-desc">Pengiriman telemetri langsung ke LIMS Backend</span>
+                        </div>
+                        <span class="protocol-badge">Direct HTTP</span>
+                    </div>
+
+                    <div class="protocol-option" data-protocol="http-nodered">
+                        <div class="protocol-info">
+                            <span class="protocol-name">Node-RED + HTTP Webhook</span>
+                            <span class="protocol-desc">Melalui Node-RED (Port 1880) sebagai Translator</span>
+                        </div>
+                        <span class="protocol-badge">Node-RED</span>
+                    </div>
+
+                    <div class="protocol-option" data-protocol="mqtt">
+                        <div class="protocol-info">
+                            <span class="protocol-name">MQTT + Broker Integration</span>
+                            <span class="protocol-desc">Pengiriman data menggunakan broker MQTT (Port 1883)</span>
+                        </div>
+                        <span class="protocol-badge">MQTT</span>
+                    </div>
+
+                    <div class="protocol-option" data-protocol="modbus">
+                        <div class="protocol-info">
+                            <span class="protocol-name">Node-RED + Modbus / OPC-UA</span>
+                            <span class="protocol-desc">Simulasi pembacaan register PLC / sistem SCADA</span>
+                        </div>
+                        <span class="protocol-badge">Industrial</span>
+                    </div>
+
+                    <div class="protocol-option" data-protocol="socket">
+                        <div class="protocol-info">
+                            <span class="protocol-name">TCP/UDP Raw Socket Stream</span>
+                            <span class="protocol-desc">Pengiriman data mentah (ASCII/Hex) via socket</span>
+                        </div>
+                        <span class="protocol-badge">Raw Socket</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameters -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Application ID (Registrasi)</label>
+                    <input type="number" id="appId" value="205">
+                </div>
+                <div class="form-group">
+                    <label>Parameter Code</label>
+                    <input type="text" id="paramCode" value="KONSI">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Hasil / Skor Pengujian</label>
+                    <input type="number" id="score" step="0.01" value="98.50">
+                </div>
+                <div class="form-group">
+                    <label>Terminal / Machine ID</label>
+                    <input type="text" id="machineId" value="RADAR-SIM-99">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Catatan Telemetri</label>
+                <textarea id="notes" rows="2">Simulasi data telemetri otomatis.</textarea>
+            </div>
+
+            <div class="form-group" id="apiKeyGroup">
+                <label>🔑 API Key (X-Simulator-Key)</label>
+                <input type="text" id="apiKey" value="89669aa98816a7e5f754d3065bb5b7525a31b81529ee810ec265c7306e959c11" style="font-family: monospace; font-size: 13px;">
+            </div>
+
+            <button class="btn-send" id="btnSend">🚀 Kirim Data Telemetri</button>
+        </div>
+
+        <!-- Monitoring & Output -->
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+            <!-- Flow Diagram Card -->
+            <div class="card">
+                <h2 class="section-title">📊 Visualisasi Alur Transmisi</h2>
+
+                <div class="flow-container" id="flowDiagram">
+                    <div class="flow-node active" id="nodeEquipment">
+                        <div class="flow-icon" style="font-size: 20px;">⚙️</div>
+                        <span class="flow-label">Equipment</span>
+                    </div>
+                    
+                    <div class="flow-line" id="line1"></div>
+
+                    <div class="flow-node" id="nodeMiddleware">
+                        <div class="flow-icon" style="font-size: 20px;">🔀</div>
+                        <span class="flow-label">Node-RED</span>
+                    </div>
+
+                    <div class="flow-line" id="line2"></div>
+
+                    <div class="flow-node success-node" id="nodeLims">
+                        <div class="flow-icon" style="font-size: 20px;">🗄️</div>
+                        <span class="flow-label">LIMS DB</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Instruction Box -->
+                <div class="instruction-card" id="instructionBox">
+                    <div class="instruction-title">ℹ️ Petunjuk Pengujian Khusus</div>
+                    <div class="instruction-body" id="instructionBody">
+                        Pilih protokol lain untuk memuat instruksi.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Output Card -->
+            <div class="console-container">
+                <div class="console-header">
+                    <span class="console-title">📟 Live IoT Connection Console</span>
+                    <span style="color:var(--text-muted); font-size: 10px;">ESC to Clear</span>
+                </div>
+                <div class="console-body" id="consoleBody"></div>
+            </div>
+    <!-- Hidden form & iframe for Node-RED CORS bypass -->
+    <form id="hiddenNodeRedForm" action="http://127.0.0.1:1880/data-peralatan" method="POST" target="node_red_iframe" style="display:none;">
+        <input type="hidden" name="app_id" id="formAppId">
+        <input type="hidden" name="param_code" id="formParamCode">
+        <input type="hidden" name="value" id="formValue">
+        <input type="hidden" name="device_id" id="formDeviceId">
+        <input type="hidden" name="notes" id="formNotes">
+    </form>
+    <form id="hiddenMqttForm" action="http://127.0.0.1:1880/publish-mqtt" method="POST" target="node_red_iframe" style="display:none;">
+        <input type="hidden" name="app_id" id="mqttFormAppId">
+        <input type="hidden" name="param_code" id="mqttFormParamCode">
+        <input type="hidden" name="value" id="mqttFormValue">
+        <input type="hidden" name="device_id" id="mqttFormDeviceId">
+        <input type="hidden" name="notes" id="mqttFormNotes">
+    </form>
+    <form id="hiddenModbusForm" action="" method="POST" target="node_red_iframe" style="display:none;">
+        <input type="hidden" name="app_id" id="modbusFormAppId">
+        <input type="hidden" name="param_code" id="modbusFormParamCode">
+        <input type="hidden" name="value" id="modbusFormValue">
+        <input type="hidden" name="device_id" id="modbusFormDeviceId">
+        <input type="hidden" name="notes" id="modbusFormNotes">
+    </form>
+    <form id="hiddenSocketForm" action="" method="POST" target="node_red_iframe" style="display:none;">
+        <input type="hidden" name="app_id" id="socketFormAppId">
+        <input type="hidden" name="param_code" id="socketFormParamCode">
+        <input type="hidden" name="value" id="socketFormValue">
+        <input type="hidden" name="device_id" id="socketFormDeviceId">
+        <input type="hidden" name="notes" id="socketFormNotes">
+    </form>
+    <iframe name="node_red_iframe" style="display:none;"></iframe>
+    </div>
+
+    <script>
+
+        const consoleBody = document.getElementById('consoleBody');
+        const instructionBox = document.getElementById('instructionBox');
+        const instructionBody = document.getElementById('instructionBody');
+        const apiKeyGroup = document.getElementById('apiKeyGroup');
+        const btnSend = document.getElementById('btnSend');
+
+        // Flow nodes
+        const nodeEquipment = document.getElementById('nodeEquipment');
+        const nodeMiddleware = document.getElementById('nodeMiddleware');
+        const nodeLims = document.getElementById('nodeLims');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+
+        let selectedProtocol = 'http-direct';
+
+        // Set dynamic proxy endpoint for Node-RED CORS/PNA bypass
+        let proxyBase = '/api/simulator/proxy-nodered';
+        if (window.location.protocol === 'file:') {
+            proxyBase = 'http://127.0.0.1:8081/api/simulator/proxy-nodered';
+        }
+        document.getElementById('hiddenNodeRedForm').action = `${proxyBase}/data-peralatan`;
+        document.getElementById('hiddenMqttForm').action = `${proxyBase}/publish-mqtt`;
+        document.getElementById('hiddenModbusForm').action = `${proxyBase}/publish-modbus`;
+        document.getElementById('hiddenSocketForm').action = `${proxyBase}/publish-socket`;
+
+        function log(msg, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            let colorClass = 'log-info';
+            if (type === 'success') colorClass = 'log-success';
+            if (type === 'error') colorClass = 'log-error';
+
+            consoleBody.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> <span class="${colorClass}">${msg}</span></div>`;
+            consoleBody.scrollTop = consoleBody.scrollHeight;
+        }
+
+        // Clear console on ESC
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                consoleBody.innerHTML = '';
+                log('System logs cleared.', 'info');
+            }
+        });
+
+        // Initialize logger
+        log('LIMS Equipment Simulator v2.3 (Proxy-Bypass Mode) initialized.', 'info');
+        log('Ready to simulate and send payloads...', 'info');
+
+        // Protocol Selector Click Handlers
+        document.querySelectorAll('.protocol-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.protocol-option').forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+                
+                selectedProtocol = option.getAttribute('data-protocol');
+                updateProtocolView();
+            });
+        });
+
+        function updateProtocolView() {
+            // Reset flow states
+            nodeEquipment.classList.add('active');
+            nodeMiddleware.classList.remove('active');
+            nodeLims.classList.remove('active');
+            line1.classList.remove('active');
+            line2.classList.remove('active');
+
+            // Reset UI components
+            apiKeyGroup.style.display = 'block';
+            instructionBox.style.display = 'none';
+            btnSend.disabled = false;
+            btnSend.style.opacity = '1';
+
+            if (selectedProtocol === 'http-direct') {
+                log('Protokol diubah: Direct HTTP/REST Webhook (Same-Origin).', 'info');
+                // Diagram: Direct connection (highlight Line 1, bypass Middleware node, highlight Line 2 & Lims)
+                line1.classList.add('active');
+                nodeLims.classList.add('active');
+            }
+            else if (selectedProtocol === 'http-nodered') {
+                log('Protokol diubah: Node-RED HTTP Webhook.', 'info');
+                nodeMiddleware.classList.add('active');
+                line1.classList.add('active');
+                line2.classList.add('active');
+                nodeLims.classList.add('active');
+                apiKeyGroup.style.display = 'none'; // Node-RED injects the key itself
+            }
+            else if (selectedProtocol === 'mqtt') {
+                log('Protokol diubah: MQTT Broker.', 'info');
+                nodeMiddleware.classList.add('active');
+                line1.classList.add('active');
+                line2.classList.add('active');
+                nodeLims.classList.add('active');
+                apiKeyGroup.style.display = 'none';
+
+                // Display MQTT instruction
+                instructionBox.style.display = 'block';
+                const appId = document.getElementById('appId').value;
+                const paramCode = document.getElementById('paramCode').value;
+                const score = document.getElementById('score').value;
+                const machineId = document.getElementById('machineId').value;
+
+                instructionBody.innerHTML = `
+                    Browser tidak mendukung koneksi MQTT biner secara langsung. Namun, simulator ini telah dilengkapi dengan <strong>HTTP-to-MQTT Bridge</strong> di Node-RED.
+                    <br><br>
+                    Anda dapat mengeklik tombol <strong>🚀 Kirim Data Telemetri</strong> di bawah untuk memicu pengiriman data ke Broker MQTT secara otomatis melalui bridge Node-RED.
+                    <br><br>
+                    Alternatif pengujian via CLI:
+                    <div class="code-block">
+mosquitto_pub -h localhost -p 1883 -t "mecs/peralatan/hasil" -m "{\\"app_id\\":${appId},\\"param_code\\":\\"${paramCode}\\",\\"value\\":${score},\\"device_id\\":\\"${machineId}\\"}"
+                    </div>
+                `;
+            }
+            else if (selectedProtocol === 'modbus' || selectedProtocol === 'socket') {
+                const protoName = selectedProtocol === 'modbus' ? 'Modbus/OPC-UA' : 'Raw TCP/UDP Socket';
+                log(`Protokol diubah: ${protoName}.`, 'info');
+                nodeMiddleware.classList.add('active');
+                line1.classList.add('active');
+                line2.classList.add('active');
+                nodeLims.classList.add('active');
+                apiKeyGroup.style.display = 'none';
+
+                instructionBox.style.display = 'block';
+                instructionBody.innerHTML = `
+                    Untuk mensimulasikan protokol industrial <strong>${protoName}</strong>, Node-RED berfungsi sebagai parser.
+                    <br><br>
+                    1. Aktifkan aliran <strong>Modbus Read / TCP Socket Listener</strong> di Node-RED (Port 1880).
+                    <br>
+                    2. Nyalakan simulator PLC Modbus (seperti Modbrsim) atau kirimkan stream teks raw ke port socket Node-RED.
+                    <br>
+                    3. Node-RED secara otomatis men-transform data register menjadi model JSON dan meneruskannya ke LIMS Backend.
+                `;
+            }
+        }
+
+        // Update instructions dynamically if values change
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                if (selectedProtocol === 'mqtt') {
+                    updateProtocolView();
+                }
+            });
+        });
+
+        // Send Button Click Handler
+        btnSend.addEventListener('click', async () => {
+            const appId = parseInt(document.getElementById('appId').value);
+            const paramCode = document.getElementById('paramCode').value.trim();
+            const score = parseFloat(document.getElementById('score').value);
+            const machineId = document.getElementById('machineId').value.trim();
+            const notes = document.getElementById('notes').value;
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!appId || !paramCode || isNaN(score)) {
+                log('Validasi Gagal: Parameter input tidak lengkap!', 'error');
+                return;
+            }
+
+            if (selectedProtocol === 'http-direct') {
+                let targetUrl = '/api/machine-integration/results';
+                if (window.location.protocol === 'file:') {
+                    log('[WARNING] Dijalankan via file:// (Bukan Same-Origin). Menggunakan fallback target http://127.0.0.1:8081', 'error');
+                    targetUrl = 'http://127.0.0.1:8081/api/machine-integration/results';
+                }
+                log(`Mengirim Direct HTTP POST ke ${targetUrl} ...`);
+                
+                try {
+                    const response = await fetch(targetUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Simulator-Key': apiKey
+                        },
+                        body: JSON.stringify({
+                            application_id: appId,
+                            scoring_parameter_code: paramCode,
+                            score: score,
+                            machine_id: machineId,
+                            notes: notes
+                        })
+                    });
+
+                    const resData = await response.json();
+                    
+                    if (response.ok) {
+                        log(`RESPON SUKSES [HTTP 200]: Data tersimpan ke staging table!`, 'success');
+                        log(`Detail Data: ${JSON.stringify(resData.data)}`, 'success');
+                    } else {
+                        log(`RESPON EROR [HTTP ${response.status}]: ${resData.error || 'Terjadi kesalahan'}`, 'error');
+                    }
+                } catch (err) {
+                    log(`Koneksi Gagal: ${err.message}`, 'error');
+                }
+            }
+            else if (selectedProtocol === 'http-nodered') {
+                log(`Mengirim HTTP POST (Form-Submit via Proxy) ke ${document.getElementById('hiddenNodeRedForm').action} ...`);
+                
+                try {
+                    // Isi data form
+                    document.getElementById('formAppId').value = appId;
+                    document.getElementById('formParamCode').value = paramCode;
+                    document.getElementById('formValue').value = score;
+                    document.getElementById('formDeviceId').value = machineId;
+                    document.getElementById('formNotes').value = notes;
+
+                    // Kirim form secara terprogram ke hidden iframe
+                    document.getElementById('hiddenNodeRedForm').submit();
+                    
+                    log(`[SUCCESS] Form data telemetri berhasil terkirim ke Node-RED! Periksa log konsol Node-RED dan database LIMS untuk verifikasi.`, 'success');
+                } catch (err) {
+                    log(`Gagal memicu pengiriman form: ${err.message}`, 'error');
+                }
+            }
+            else if (selectedProtocol === 'mqtt') {
+                log(`Mengirim data telemetri via MQTT (Proxy Bridge) ke ${document.getElementById('hiddenMqttForm').action} ...`);
+                
+                try {
+                    // Isi data form MQTT
+                    document.getElementById('mqttFormAppId').value = appId;
+                    document.getElementById('mqttFormParamCode').value = paramCode;
+                    document.getElementById('mqttFormValue').value = score;
+                    document.getElementById('mqttFormDeviceId').value = machineId;
+                    document.getElementById('mqttFormNotes').value = notes;
+
+                    // Kirim form secara terprogram ke hidden iframe
+                    document.getElementById('hiddenMqttForm').submit();
+                    
+                    log(`[SUCCESS] Data telemetri dipublikasikan ke MQTT Broker! Node-RED akan menerimanya dari topik 'mecs/peralatan/hasil' dan meneruskannya ke LIMS.`, 'success');
+                } catch (err) {
+                    log(`Gagal memicu pengiriman MQTT via Bridge: ${err.message}`, 'error');
+                }
+            }
+            else if (selectedProtocol === 'modbus') {
+                log(`Mengirim data telemetri via Modbus/OPC-UA Simulator ke ${document.getElementById('hiddenModbusForm').action} ...`);
+                
+                try {
+                    // Isi data form Modbus
+                    document.getElementById('modbusFormAppId').value = appId;
+                    document.getElementById('modbusFormParamCode').value = paramCode;
+                    document.getElementById('modbusFormValue').value = score;
+                    document.getElementById('modbusFormDeviceId').value = machineId;
+                    document.getElementById('modbusFormNotes').value = notes;
+
+                    // Kirim form secara terprogram ke hidden iframe
+                    document.getElementById('hiddenModbusForm').submit();
+                    
+                    log(`[SUCCESS] Data telemetri dikirim ke Modbus Listener! Node-RED akan menerjemahkan register Modbus Holding ke JSON dan meneruskannya ke LIMS.`, 'success');
+                } catch (err) {
+                    log(`Gagal memicu pengiriman Modbus: ${err.message}`, 'error');
+                }
+            }
+            else if (selectedProtocol === 'socket') {
+                log(`Mengirim data telemetri via TCP Socket Stream ke ${document.getElementById('hiddenSocketForm').action} ...`);
+                
+                try {
+                    // Isi data form Socket
+                    document.getElementById('socketFormAppId').value = appId;
+                    document.getElementById('socketFormParamCode').value = paramCode;
+                    document.getElementById('socketFormValue').value = score;
+                    document.getElementById('socketFormDeviceId').value = machineId;
+                    document.getElementById('socketFormNotes').value = notes;
+
+                    // Kirim form secara terprogram ke hidden iframe
+                    document.getElementById('hiddenSocketForm').submit();
+                    
+                    log(`[SUCCESS] Data telemetri dikirim ke TCP Socket Bridge! Node-RED akan membuka TCP connection ke listener port 1888 dan menyalurkan stream data mentah.`, 'success');
+                } catch (err) {
+                    log(`Gagal memicu pengiriman Socket: ${err.message}`, 'error');
+                }
+            }
+            else {
+                log(`Info: Protokol '${selectedProtocol}' memerlukan trigger eksternal. Silakan ikuti petunjuk pengujian khusus di atas.`, 'warning');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -6,32 +6,34 @@ import (
 	"lim-system/utils"
 	"lim-system/views"
 	"lim-system/database"
+	"lim-system/services"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type loginAttempt struct {
+	count       int
+	lockedUntil time.Time
+}
+
+var (
+	loginAttempts   = make(map[string]*loginAttempt)
+	loginAttemptsMu sync.Mutex
+)
+
 var BootTime time.Time
 
 type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
-type RegisterRequest struct {
-	Username       string `json:"username" binding:"required"`
-	Password       string `json:"password" binding:"required"`
-	Email          string `json:"email"`
-	Phone          string `json:"phone"`
-	RoleID         uint   `json:"role_id" binding:"required"`
-	TelegramChatID string `json:"telegram_chat_id"`
-	WhatsAppPhone  string `json:"whatsapp_phone"`
-	TeamsUserID    string `json:"teams_user_id"`
+	Username   string `json:"username" binding:"required"`
+	Password   string `json:"password" binding:"required"`
+	ForceLogin bool   `json:"force_login"`
 }
 
 func Login(c *gin.Context) {
@@ -41,16 +43,83 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	ipAddress := strings.TrimPrefix(c.ClientIP(), "::ffff:")
+	attemptKey := req.Username + ":" + ipAddress
+
+	maxAttemptsStr := models.GetGlobalParam("LOGIN_MAX_ATTEMPTS", "5")
+	maxAttempts, _ := strconv.Atoi(maxAttemptsStr)
+	lockoutMinStr := models.GetGlobalParam("LOGIN_LOCKOUT_MINUTES", "15")
+	lockoutMin, _ := strconv.Atoi(lockoutMinStr)
+
+	// Cek apakah akun/IP sedang dikunci
+	loginAttemptsMu.Lock()
+	attempt, exists := loginAttempts[attemptKey]
+	if exists && attempt.lockedUntil.After(time.Now()) {
+		loginAttemptsMu.Unlock()
+		c.JSON(http.StatusForbidden, gin.H{
+			"status":  http.StatusForbidden,
+			"message": fmt.Sprintf("Akun Anda telah dikunci sementara selama %d menit akibat terlalu banyak kegagalan login.", lockoutMin),
+			"code":    "ACCOUNT_LOCKED",
+		})
+		return
+	}
+	loginAttemptsMu.Unlock()
+
+	recordFailedAttempt := func() {
+		loginAttemptsMu.Lock()
+		defer loginAttemptsMu.Unlock()
+		attempt, exists := loginAttempts[attemptKey]
+		if !exists {
+			attempt = &loginAttempt{}
+			loginAttempts[attemptKey] = attempt
+		}
+		attempt.count++
+		if attempt.count >= maxAttempts {
+			attempt.lockedUntil = time.Now().Add(time.Duration(lockoutMin) * time.Minute)
+		}
+	}
+
 	var user models.User
 	if err := user.GetByUsername(database.DB, req.Username); err != nil {
+		recordFailedAttempt()
 		views.Unauthorized(c, "Invalid username or password")
 		return
 	}
 
-	if !utils.CheckPasswordHash(req.Password, user.Password) {
-		views.Unauthorized(c, "Invalid username or password")
+	// 1. Cek Status Aktif Pengguna
+	if !user.IsActive {
+		views.Forbidden(c, "Akun Anda dinonaktifkan. Silakan hubungi administrator.")
 		return
 	}
+
+	if !utils.CheckPasswordHash(req.Password, user.Password) {
+		recordFailedAttempt()
+		loginAttemptsMu.Lock()
+		count := 0
+		if attempt, exists := loginAttempts[attemptKey]; exists {
+			count = attempt.count
+		}
+		loginAttemptsMu.Unlock()
+		remaining := maxAttempts - count
+		if remaining <= 0 {
+			c.JSON(http.StatusForbidden, gin.H{
+				"status":  http.StatusForbidden,
+				"message": fmt.Sprintf("Akun Anda telah dikunci selama %d menit karena terlalu banyak kesalahan.", lockoutMin),
+				"code":    "ACCOUNT_LOCKED",
+			})
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"status":  http.StatusUnauthorized,
+				"message": fmt.Sprintf("Username atau password salah. Sisa percobaan: %d", remaining),
+			})
+		}
+		return
+	}
+
+	// Reset catatan kegagalan jika login berhasil
+	loginAttemptsMu.Lock()
+	delete(loginAttempts, attemptKey)
+	loginAttemptsMu.Unlock()
 
 	// Check password rotation or forced change
 	rotationDaysStr := models.GetGlobalParam("PWD_ROTATION_DAYS", "90")
@@ -62,6 +131,74 @@ func Login(c *gin.Context) {
 			"code":    "PWD_EXPIRED",
 		})
 		return
+	}
+
+	// 2. Cek Single Session Mode secara real-time dari database (bypass cache VPS multi-node)
+	var singleSessionParam models.GlobalParameter
+	singleSessionStr := "false"
+	if err := database.DB.Where("param_key = ?", "SINGLE_SESSION_MODE").First(&singleSessionParam).Error; err == nil {
+		singleSessionStr = singleSessionParam.ParamValue
+	}
+
+	if strings.ToLower(singleSessionStr) == "true" {
+		var activeSession models.UserSession
+		err := database.DB.Where("user_id = ? AND expires_at > ?", user.ID, time.Now()).First(&activeSession).Error
+		if err == nil { // Sesi aktif lain ditemukan
+			var allowTakeoverParam models.GlobalParameter
+			allowTakeoverStr := "true"
+			if err := database.DB.Where("param_key = ?", "ALLOW_SESSION_TAKEOVER").First(&allowTakeoverParam).Error; err == nil {
+				allowTakeoverStr = allowTakeoverParam.ParamValue
+			}
+			allowTakeover := strings.ToLower(allowTakeoverStr) == "true"
+
+			if req.ForceLogin && allowTakeover {
+				LoadUserSocialAccounts(&user)
+				
+				if user.TelegramChatID == "" && user.WhatsAppPhone == "" {
+					// Bypass OTP since user has no registered contact, delete old sessions
+					database.DB.Where("user_id = ?", user.ID).Delete(&models.UserSession{})
+					// Do not return, let it fall through to generate JWT below
+				} else {
+					// Generate OTP
+					otpCode := services.GenerateRandomOTP(6)
+					expiresAtOtp := time.Now().Add(5 * time.Minute)
+					if err := models.SaveOTP(database.DB, user.ID, otpCode, expiresAtOtp); err != nil {
+						views.InternalError(c, "Failed to generate OTP", err.Error())
+						return
+					}
+
+					// Kirim OTP
+					message := fmt.Sprintf("⚠️ [LIMS PERUSAHAAN]\n\nSeseorang mencoba login ke akun LIMS Anda (%s) dari perangkat baru. \n\nKode OTP Anda adalah: %s\n(Masa berlaku 5 menit. Jangan bagikan kode ini kepada siapapun).", user.Username, otpCode)
+
+					var sendErr error
+					if user.TelegramChatID != "" {
+						sendErr = services.SendTelegramMessage(user.TelegramChatID, message)
+					} else {
+						sendErr = services.SendWhatsAppMessage(user.WhatsAppPhone, message)
+					}
+
+					if sendErr != nil {
+						views.InternalError(c, "Gagal mengirim OTP", sendErr.Error())
+						return
+					}
+
+					c.JSON(http.StatusOK, gin.H{
+						"status":  http.StatusOK,
+						"code":    "OTP_REQUIRED",
+						"message": "Kode OTP telah dikirim ke Telegram/WhatsApp Anda.",
+					})
+					return
+				}
+			} else {
+				// Blokir login
+				c.JSON(http.StatusConflict, gin.H{
+					"status":  http.StatusConflict,
+					"code":    "ACTIVE_SESSION_EXISTS",
+					"message": "Session Anda masih aktif",
+				})
+				return
+			}
+		}
 	}
 
 	// Generate JWT
@@ -95,9 +232,11 @@ func Login(c *gin.Context) {
 		UserID:         user.ID,
 		Token:          tokenString,
 		ExpiresAt:      expiresAt,
-		IPAddress:      strings.TrimPrefix(c.ClientIP(), "::ffff:"),
+		IPAddress:      ipAddress,
+		UserAgent:      c.GetHeader("User-Agent"),
 		ClientVersion:  c.GetHeader("X-App-Version"),
 		ClientPlatform: c.GetHeader("X-App-Platform"),
+		LastActivityAt: time.Now(),
 	}
 	if err := session.Create(database.DB); err != nil {
 		views.InternalError(c, "Failed to save session", err.Error())
@@ -214,25 +353,37 @@ func Logout(c *gin.Context) {
 		userID = uint(v)
 	}
 
+	var tokenString string
 	authHeader := c.GetHeader("Authorization")
-	if authHeader == "" {
-		views.BadRequest(c, "Authorization header is required", "")
+	if authHeader != "" {
+		parts := strings.Split(authHeader, " ")
+		if len(parts) == 2 && parts[0] == "Bearer" {
+			tokenString = parts[1]
+		}
+	}
+
+	// Fallback to HttpOnly cookie if header is missing
+	if tokenString == "" {
+		cookie, err := c.Cookie("auth_token")
+		if err == nil {
+			tokenString = cookie
+		}
+	}
+
+	if tokenString == "" {
+		views.BadRequest(c, "Token is required for logout", "")
 		return
 	}
 
-	parts := strings.Split(authHeader, " ")
-	if len(parts) != 2 || parts[0] != "Bearer" {
-		views.BadRequest(c, "Invalid authorization format", "")
-		return
-	}
-
-	tokenString := parts[1]
-	
 	var session models.UserSession
 	if err := session.Delete(database.DB, tokenString, userID); err != nil {
 		views.InternalError(c, "Failed to logout", err.Error())
 		return
 	}
+
+	// Clear the HttpOnly cookie
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("auth_token", "", -1, "/", "", false, true)
 
 	// Pastikan user_id tetap ada di context untuk RateLimiter activity log
 	c.Set("user_id", userID)
@@ -444,6 +595,140 @@ func isVersionOutdated(clientVer, minVer string) bool {
 		}
 	}
 	return false
+}
+
+type VerifyOTPRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Code     string `json:"code" binding:"required"`
+}
+
+func VerifyOTP(c *gin.Context) {
+	var req VerifyOTPRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		views.BadRequest(c, "Invalid request format", err.Error())
+		return
+	}
+
+	var user models.User
+	if err := user.GetByUsername(database.DB, req.Username); err != nil {
+		views.Unauthorized(c, "Invalid username or password")
+		return
+	}
+
+	if !user.IsActive {
+		views.Forbidden(c, "Akun Anda dinonaktifkan. Silakan hubungi administrator.")
+		return
+	}
+
+	if !utils.CheckPasswordHash(req.Password, user.Password) {
+		views.Unauthorized(c, "Invalid username or password")
+		return
+	}
+
+	// Verifikasi OTP
+	valid, err := models.VerifyOTP(database.DB, user.ID, req.Code)
+	if err != nil || !valid {
+		views.Unauthorized(c, "Kode OTP salah atau telah kedaluwarsa")
+		return
+	}
+
+	// Hapus semua sesi lama pengguna ini (Takeover)
+	database.DB.Where("user_id = ?", user.ID).Delete(&models.UserSession{})
+
+	// Generate JWT
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		views.InternalError(c, "JWT_SECRET is not configured", "")
+		return
+	}
+	
+	expiryMinStr := models.GetGlobalParam("SESSION_EXPIRY_MINUTES", "120")
+	expiryMin, _ := strconv.Atoi(expiryMinStr)
+	expiresAt := time.Now().Add(time.Duration(expiryMin) * time.Minute)
+	
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":  user.ID,
+		"username": user.Username,
+		"role":     user.Role.Name,
+		"role_id":  user.RoleID,
+		"exp":      expiresAt.Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		views.InternalError(c, "Failed to generate token", err.Error())
+		return
+	}
+
+	// Simpan sesi baru
+	session := models.UserSession{
+		UserID:         user.ID,
+		Token:          tokenString,
+		ExpiresAt:      expiresAt,
+		IPAddress:      strings.TrimPrefix(c.ClientIP(), "::ffff:"),
+		UserAgent:      c.GetHeader("User-Agent"),
+		ClientVersion:  c.GetHeader("X-App-Version"),
+		ClientPlatform: c.GetHeader("X-App-Platform"),
+		LastActivityAt: time.Now(),
+	}
+	if err := session.Create(database.DB); err != nil {
+		views.InternalError(c, "Failed to save session", err.Error())
+		return
+	}
+
+	c.Set("user_id", user.ID)
+	c.Set("username", user.Username)
+
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("auth_token", tokenString, expiryMin*60, "/", "", false, true)
+
+	views.Success(c, gin.H{
+		"token": tokenString,
+		"user": gin.H{
+			"id":       user.ID,
+			"username": user.Username,
+			"role":     user.Role.Name,
+			"role_id":  user.RoleID,
+		},
+	}, "Login successful via OTP")
+}
+
+func VerifySession(c *gin.Context) {
+	userIDVal, exists := c.Get("user_id")
+	if !exists {
+		views.Unauthorized(c, "User not authenticated")
+		return
+	}
+
+	username, _ := c.Get("username")
+	role, _ := c.Get("role")
+	roleIDVal, _ := c.Get("role_id")
+
+	var userID uint
+	switch v := userIDVal.(type) {
+	case uint:
+		userID = v
+	case float64:
+		userID = uint(v)
+	}
+
+	var roleID uint
+	switch v := roleIDVal.(type) {
+	case uint:
+		roleID = v
+	case float64:
+		roleID = uint(v)
+	}
+
+	views.Success(c, gin.H{
+		"user": gin.H{
+			"id":       userID,
+			"username": username,
+			"role":     role,
+			"role_id":  roleID,
+		},
+	}, "Session verified successfully")
 }
 
 

@@ -426,6 +426,9 @@ const AssetManagementPage = ({ currentUser, appConfig }) => {
               <button className="btn" style={{ backgroundColor: "#1e293b", color: "white" }} onClick={() => startScanner("search")}>
                 <i className="fas fa-barcode"></i> Scan
               </button>
+              <button className="btn btn-secondary" onClick={() => window.location.href='/welcome'} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', height: '38px' }}>
+                <i className="fas fa-times"></i> Tutup
+              </button>
             </div>
           </div>
         </div>

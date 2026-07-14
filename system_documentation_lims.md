@@ -29,20 +29,21 @@ Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alu
   - [5. Modul Keuangan & Perjalanan (Finance & Travel)](#5-modul-keuangan--perjalanan-finance--travel)
   - [6. Modul Manajemen Aset Peralatan Client (Asset Tracking)](#6-modul-manajemen-aset-peralatan-client-asset-tracking)
   - [7. Modul Manajemen Testing Tools (Testing Tools Tracking)](#7-modul-manajemen-testing-tools-testing-tools-tracking)
-  - [8. Modul AI & Otomatisasi IoT](#8-modul-ai--otomatisasi-iot)
-  - [9. Modul Monitoring](#9-modul-monitoring)
-  - [10. Modul Reporting](#10-modul-reporting)
-  - [11. Modul Pemeliharaan Sistem](#11-modul-pemeliharaan-system)
+  - [8. Modul Kecerdasan Buatan (AI)](#8-modul-kecerdasan-buatan-ai)
+  - [9. Modul Integrasi Simulator IoT](#9-modul-integrasi-simulator-iot)
+  - [10. Modul Monitoring](#10-modul-monitoring)
+  - [11. Modul Reporting](#11-modul-reporting)
+  - [12. Modul Pemeliharaan Sistem](#12-modul-pemeliharaan-sistem)
 - [6. Arsitektur & Konfigurasi Paket Layanan (Testing Packages)](#6-arsitektur--konfigurasi-paket-layanan-testing-packages)
 - [7. Tabel Basis Data (Database Tables Directory)](#7-tabel-basis-data-database-tables-directory)
 - [8. Panduan Deployment Produksi LIMS (Multi-Direktori Backend & Frontend)](#8-panduan-deployment-produksi-lims-multi-direktori-backend--frontend)
   - [A. Arsitektur Produksi (Multi-Direktori vs Multi-VM)](#a-arsitektur-produksi-multi-direktori-vs-multi-vm)
   - [B. Prasyarat Sistem & Manajemen Pengguna Linux](#b-prasyarat-sistem--manajemen-pengguna-linux)
   - [C. Port Mapping & Manajemen Konflik Port](#c-port-mapping--manajemen-konflik-port)
-  - [D. Deployment & Konfigurasi Frontend (PM2)](#d-deployment--konfigurasi-frontend-pm2)
-  - [E. Deployment & Konfigurasi Backend (Multi-Direktori)](#e-deployment--konfigurasi-backend-multi-direktori)
-  - [F. Konfigurasi NGINX](#f-konfigurasi-nginx)
-  - [G. Rotasi Log Harian (Logrotate) & Penjadwalan 01:00 Dini Hari](#g-rotasi-log-harian-logrotate--penjadwalan-0100-dini-hari)
+  - [D. Deployment & Konfigurasi Frontend (PM2) di VPS](#d-deployment--konfigurasi-frontend-pm2-di-vps)
+  - [E. Deployment & Konfigurasi Backend (Multi-Direktori) di VPS](#e-deployment--konfigurasi-backend-multi-direktori-di-vps)
+  - [F. Konfigurasi NGINX di VPS](#f-konfigurasi-nginx-di-vps)
+  - [G. Rotasi Log Harian (Logrotate) & Penjadwalan di VPS](#g-rotasi-log-harian-logrotate--penjadwalan-di-vps)
   - [H. Real-Time Analytics dengan GoAccess](#h-real-time-analytics-dengan-goaccess)
   - [I. Pemantauan & Pemeliharaan (Checklist)](#i-pemantauan--pemeliharaan-checklist)
   - [J. Pelatihan Model AI (PQC) & Penjadwalan Otomatis (Crontab)](#j-pelatihan-model-ai-pqc--penjadwalan-otomatis-crontab)
@@ -120,7 +121,7 @@ Berikut adalah ringkasan (*summary table*) dari seluruh modul dan sub-modul yang
 | | ↳ Deteksi Anomali Statistik (Outlier) | Identifikasi skor parameter yang menyimpang secara statistik dari distribusi normal data historis menggunakan model *Isolation Forest*. | Go native inference (`onnxruntime_go`), `lims.testing_pqc_ai_anomalies` | UI form eksekusi (modal warning) |
 | | ↳ Validasi Batas Toleransi | Pengecekan otomatis apakah nilai skor yang diinput masih berada dalam rentang toleransi batas minimum–maksimum parameter pengujian. | `services/scoring_service.go`, `lims.scoring_sub_aspects` | `AppDetail.jsx` (Form Input) |
 | | ↳ Mekanisme Blokir & Override | Pemblokiran otomatis input skor anomali disertai notifikasi peringatan, dengan opsi *supervisor override* berbasis otorisasi peran. | `controllers/ai_controller.go`, `lims.ai_anomaly_logs` | UI form eksekusi (modal supervisor override) |
-| | Integrasi Simulator IoT | Penerimaan data log otomatis secara *real-time* langsung dari perangkat uji fisik/eksternal. | `controllers/machine_controller.go` (webhook), `lims.simulator_data_logs` | `hardware_simulator.html` (statis/test) |
+| | Integrasi Simulator IoT | Penerimaan data log otomatis secara *real-time* langsung dari perangkat uji fisik/eksternal. | `controllers/machine_controller.go` (webhook), `flows.json` (Node-RED HTTP & MQTT bridge), `mecs.simulator_data_logs` | `hardware_simulator.html` (statis/test, hosted di `/simulator`), `test_http_scoring.ps1` (HTTP), `test_mqtt_scoring.ps1` (MQTT), `test_quick.ps1` (Quick) |
 | **9. Monitoring** | *Dashboard* & *Tracking* | Pemantauan progres tahapan pengujian (aplikasi) dan SLA layanan harian. | NGINX Load Balancer, GoAccess WebSocket (`port 7890`) | `WelcomePage.jsx`, `report.html` (GoAccess static) |
 | **10. Reporting** | Sertifikat Hasil Pengujian (SHP) | Penghasil (*generator*) laporan kelulusan dan laporan teknis akhir untuk dicetak/didistribusikan. | `utils/print.js` (printing helper) | `AppDetail.jsx` (trigger print SHP) |
 | | Laporan Summary Testing | Ringkasan statistik seluruh hasil pengujian per periode/status. | `controllers/report_controller.go`, `lims.testing_applications` | Report Page |
@@ -155,6 +156,75 @@ Sebelum melakukan deployment LIMS, sistem server harus terpasang perangkat lunak
 | **Web Server** | NGINX | 1.18+ | Reverse proxy & load balancing |
 | **OCR Engine** | Python & PaddleOCR | Python 3.8+ | Pengenal dokumen/hasil uji |
 | **AI LLM Runner** | Ollama | Latest Stable | Runner model AI lokal (jika tidak via Groq Cloud) |
+| **Broker Pesan (MQTT)** | Mosquitto Broker | 2.0+ | Broker pesan untuk telemetri sensor IoT |
+| **Middleware Integrasi** | Node-RED | 3.0+ | Penerjemah protokol & data pipeline peralatan |
+| **Utilitas PDF Parser** | `poppler-utils` (`pdfinfo` & `pdftotext`) | Latest Stable | Mengekstrak teks & halaman PDF untuk modul RAG Chatbot |
+
+#### Panduan Instalasi Paket Perangkat Lunak di VPS (Langkah-demi-Langkah)
+
+Berikut adalah daftar perintah terpadu untuk memasang seluruh perangkat lunak prasyarat di server VPS Ubuntu Anda secara langsung:
+
+##### 1. Update Paket Sistem & Utilitas Dasar
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install curl wget git tmux unzip build-essential -y
+```
+
+##### 2. Pasang Runtime Go (Golang 1.23)
+```bash
+wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+source ~/.profile
+```
+
+##### 3. Pasang Node.js, NPM, & PM2 (Frontend & Service Manager)
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo npm install -g pm2 pm2-logrotate
+```
+
+##### 4. Pasang PostgreSQL dengan Ekstensi pgvector
+```bash
+sudo apt install postgresql postgresql-contrib -y
+sudo apt install postgresql-$(pgcode=$(psql --version | egrep -o '[0-9]+' | head -n1); echo $pgcode)-pgvector -y
+```
+
+##### 5. Pasang Utilitas PDF Parser (Untuk RAG Chatbot)
+```bash
+sudo apt install poppler-utils -y
+```
+
+##### 6. Pasang Python Virtual Environment & Library AI Retraining
+```bash
+sudo apt install python3-venv python3-pip -y
+python3 -m venv /home/lims/lims-ai-env
+/home/lims/lims-ai-env/bin/pip install --upgrade pip
+/home/lims/lims-ai-env/bin/pip install pandas numpy scikit-learn==1.4.1.post1 sqlalchemy skl2onnx onnx cryptography psycopg2-binary ml_dtypes
+```
+
+##### 7. Pasang MinIO (Object Storage)
+```bash
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+sudo mv minio /usr/local/bin/
+```
+
+##### 8. Pasang Nginx Web Server & GoAccess (Monitoring)
+```bash
+sudo apt install nginx -y
+wget -O - https://deb.goaccess.io/gnugpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/goaccess.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/goaccess.gpg] https://deb.goaccess.io/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/goaccess.list
+sudo apt update
+sudo apt install goaccess -y
+```
+
+##### 9. Pasang MQTT Broker (Mosquitto) & Node-RED
+```bash
+sudo apt install mosquitto mosquitto-clients -y
+sudo npm install -g --unsafe-perm node-red
+```
 
 ---
 
@@ -315,12 +385,119 @@ Berikut adalah detail teknis dari masing-masing modul utama yang digunakan di LI
 
 
 ### 1. Modul Otentikasi & RBAC (Auth & Access Control)
-* **Deskripsi**: Penanganan otentikasi login pengguna, pencatatan sesi aktif, serta pembuatan struktur menu sampingan dinamis.
+* **Deskripsi**: Penanganan otentikasi login pengguna, pencatatan sesi aktif, manajemen status keaktifan user, lockout brute-force, pembatasan single-session, OTP takeover, serta pembuatan struktur menu sampingan dinamis.
 * **API Endpoints**:
-  - `POST /api/login` - Otentikasi kredensial pengguna & pembuatan JWT Token.
+  - `POST /api/login` - Otentikasi kredensial pengguna, pengecekan brute-force, status aktif, single-session, dan pemicu OTP pengambilalihan.
+  - `POST /api/verify-otp` - Verifikasi kode OTP 6-digit (via Telegram/WhatsApp) untuk takeover sesi.
+  - `GET /api/verify-session` - Memvalidasi token sesi HttpOnly cookie dan sidik jari klien secara berkala/saat bootstrap.
   - `GET /api/menus` - Mengambil menu sidebar aktif sesuai `role_id` pengguna.
   - `POST /api/logout` - Menghapus sesi aktif dari database.
-* **Tabel Terkait**: `lims.users`, `lims.roles`, `lims.menus`, `lims.role_menus`, `lims.user_sessions`.
+* **Tabel Terkait**: `lims.users`, `lims.hist_users`, `lims.roles`, `lims.menus`, `lims.role_menus`, `lims.user_sessions`, `lims.otp_codes`.
+
+#### Mekanisme Pengamanan Sesi & Hardening LIMS
+
+Untuk mencegah penyalahgunaan sesi dan mengamankan LIMS dari ancaman luar (seperti token sharing, hijack via Postman, atau brute-force tebak password), sistem mengimplementasikan mekanisme berikut:
+
+1. **Secure HttpOnly Cookie & Anti-XSS**:
+   * Token JWT tidak disimpan di `localStorage` frontend untuk menghindari pencurian via serangan Cross-Site Scripting (XSS).
+   * Token disimpan dalam cookie browser dengan atribut `HttpOnly`, `Secure` (untuk produksi), dan `SameSite=Lax`. Hal ini memastikan script Javascript di sisi client tidak memiliki akses baca langsung ke token.
+
+2. **Sidik Jari Klien (Client Fingerprinting - IP & User-Agent Binding)**:
+   * Setiap kali user membuat sesi baru, database mencatat `ip_address` dan `user_agent` perangkat.
+   * Pada middleware otentikasi, setiap request akan diverifikasi ulang kesesuaian IP & User-Agent-nya. Jika terdeteksi ketidakcocokan (misalnya token disalin ke Postman atau perangkat berbeda), middleware otomatis **menghapus sesi tersebut** dan mengembalikan status **401 Unauthorized** (pesan: `"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."`).
+
+3. **Batas Waktu Idle Dinamis (Dynamic Idle Timeout)**:
+   * Sesi akan kedaluwarsa secara otomatis jika pengguna tidak aktif (tidak ada aktivitas terdeteksi) selama kurun waktu tertentu.
+   * Waktu kedaluwarsa bersifat dinamis per-user (kolom `idle_timeout_minutes` di `lims.users`), dengan fallback ke nilai parameter global `DEFAULT_IDLE_TIMEOUT_MINUTES` (default 30 menit).
+   * Database diperbarui secara cerdas (*throttling*) hanya jika selisih waktu aktivitas terakhir (`last_activity_at`) lebih dari 1 menit untuk menghindari overloading database query.
+
+4. **Brute Force Lockout**:
+   * Percobaan login gagal berturut-turut dibatasi maksimal sesuai parameter `LOGIN_MAX_ATTEMPTS` (default 5 kali) dalam rentang waktu `LOGIN_LOCKOUT_MINUTES` (default 15 menit).
+   * Jika batas terlampaui, akun pengguna otomatis terkunci sementara, mencegah serangan bot tebak password.
+
+5. **Kebijakan Kata Sandi Kuat (Strong Password Policy)**:
+   * LIMS mengadopsi standar keamanan yang sangat ketat untuk kata sandi, yang dieksekusi baik di sisi antarmuka maupun validasi backend.
+   * Kata sandi **wajib** memiliki **minimal 9 karakter**.
+   * Kata sandi **wajib** mengandung setidaknya kombinasi dari: **1 huruf kapital (Uppercase), 1 huruf kecil (Lowercase), dan 1 karakter spesial/simbol (@, #, $, dsb)**.
+   * Jika kriteria ini tidak terpenuhi saat pembuatan atau penggantian sandi, sistem akan menolak permintaan tersebut secara langsung.
+
+6. **Kendali Single Session & Takeover dengan OTP**:
+   * LIMS mendukung pembatasan login tunggal per akun via parameter `SINGLE_SESSION_MODE` (true/false).
+   * Jika bernilai `true` dan pengguna mencoba login ketika sesi sebelumnya di perangkat lain masih aktif, sistem akan mengembalikan status `409 Conflict` (pesan: `"Session Anda masih aktif"`).
+   * Pengguna diberikan opsi untuk melakukan pengambilalihan sesi (**Session Takeover**). Jika dipilih, sistem akan mengirimkan kode OTP 6-digit ke WhatsApp/Telegram terdaftar dan menyimpan data sementara ke tabel `lims.otp_codes`. Pengguna wajib melakukan verifikasi OTP di endpoint `/api/verify-otp` untuk menghancurkan sesi lama dan mengaktifkan sesi baru.
+
+7. **Skrip Migrasi Basis Data (Database Migration SQL)**:
+   * Berikut adalah skrip DDL/DML lengkap yang harus dijalankan secara manual pada PostgreSQL (dengan skema `lims`) untuk mendukung seluruh fitur hardening sesi di atas:
+   ```sql
+   -- 1. Tambah kolom user_agent dan last_activity_at di tabel lims.user_sessions
+   ALTER TABLE lims.user_sessions ADD COLUMN IF NOT EXISTS user_agent VARCHAR(255) DEFAULT NULL;
+   ALTER TABLE lims.user_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW();
+
+   -- 2. Tambah kolom is_active dan idle_timeout_minutes di tabel lims.users & lims.hist_users
+   ALTER TABLE lims.users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+   ALTER TABLE lims.users ADD COLUMN IF NOT EXISTS idle_timeout_minutes INT DEFAULT NULL;
+
+   ALTER TABLE lims.hist_users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+   ALTER TABLE lims.hist_users ADD COLUMN IF NOT EXISTS idle_timeout_minutes INT DEFAULT NULL;
+
+   -- 3. Membuat tabel penyimpanan OTP sementara di schema lims
+   CREATE TABLE IF NOT EXISTS lims.otp_codes (
+       id SERIAL PRIMARY KEY,
+       user_id INT NOT NULL REFERENCES lims.users(id) ON DELETE CASCADE,
+       code VARCHAR(10) NOT NULL,
+       expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+       created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+   );
+
+   -- Index untuk mempercepat query pencocokan OTP
+   CREATE INDEX IF NOT EXISTS idx_otp_codes_user_code ON lims.otp_codes(user_id, code);
+
+   -- 4. Pengisian Parameter Global (DML) ke tabel lims.global_parameters
+   -- A. Parameter untuk mengaktifkan Single-Session (true/false)
+   INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+   VALUES (
+       'SINGLE_SESSION_MODE', 
+       'false', 
+       'Menentukan apakah user hanya boleh memiliki satu sesi aktif (true) atau multi sesi (false).', 
+       NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+   ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+   -- B. Parameter untuk mengizinkan pengambilalihan sesi/force login (true/false)
+   INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+   VALUES (
+       'ALLOW_SESSION_TAKEOVER', 
+       'true', 
+       'Mengizinkan user mengambil alih sesi aktif lainnya saat login kembali jika bernilai true.', 
+       NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+   ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+   -- C. Parameter untuk waktu idle global default (dalam menit)
+   INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+   VALUES (
+       'DEFAULT_IDLE_TIMEOUT_MINUTES', 
+       '30', 
+       'Batas waktu idle sistem default dalam menit sebelum sesi ditutup otomatis.', 
+       NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+   ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+   -- D. Parameter Batas Maksimal Percobaan Login Salah
+   INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+   VALUES (
+       'LOGIN_MAX_ATTEMPTS', 
+       '5', 
+       'Jumlah maksimal percobaan login salah sebelum akun dikunci sementara.', 
+       NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+   ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+   -- E. Parameter Durasi Waktu Akun Dikunci (Menit)
+   INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+   VALUES (
+       'LOGIN_LOCKOUT_MINUTES', 
+       '15', 
+       'Durasi waktu (dalam menit) akun dikunci akibat salah password berturut-turut.', 
+       NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+   ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+   ```
 
 
 ### 2. Modul Registrasi & Pengajuan (Submission)
@@ -521,20 +698,34 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
 ![DFD Tools](C:/Users/Fairuz/.gemini/antigravity/brain/14884c33-0d44-45f6-b83e-42212f6cae94/DFD_Tools.jpg)
 
 
-### 8. Modul AI & Otomatisasi IoT
-* **Deskripsi**: Rangkaian fitur kecerdasan buatan dan integrasi IoT/Simulator untuk mengotomatisasi penilaian pengujian, deteksi anomali, penyusunan draf laporan, dan tanya-jawab SOP secara omnichannel.
+### 8. Modul Kecerdasan Buatan (AI)
+* **Deskripsi**: Rangkaian fitur kecerdasan buatan untuk mengotomatisasi penilaian pengujian, deteksi anomali, penyusunan draf laporan, dan asisten panduan SOP secara omnichannel.
 
 #### A. Chatbot RAG Assistant (Lab Assistant)
 * **Deskripsi**: Asisten cerdas untuk panduan pengujian menggunakan model Retrieval-Augmented Generation (RAG). **Chatbot (Agen AI) ini dirancang secara *omnichannel*, sehingga pengguna dan analis dapat berinteraksi mengakses asisten ini dari berbagai channel: Aplikasi Web LIMS, Aplikasi Mobile Android, WhatsApp Bot, maupun Bot Telegram.**
 * **Estimasi Kebutuhan Sumber Daya (Offline/On-Premise)**:
-  - **Hardware**: Processor setara AMD Ryzen 5 / Intel i5, RAM minimal 16 GB, dan GPU Nvidia RTX 3060 dengan 12GB VRAM (untuk menjalankan model lokal seperti `llama3.2:3b` atau `qwen2.5:3b` dengan waktu respons instan).
+  - **Hardware (Rekomendasi Spesifikasi Server untuk Ollama Qwen 2.5)**:
+    
+    | Ukuran Model | RAM Minimum | Spesifikasi CPU Minimum | Spesifikasi GPU (Sangat Direkomendasikan) | Kecepatan Respon (Token/s) |
+    | :--- | :--- | :--- | :--- | :--- |
+    | **Qwen 2.5 3B (Default LIMS)** | 8 GB | 4 Cores CPU | CPU-Only (Latensi 1-3s) atau GPU VRAM 4GB+ (Instan) | Tinggi (~20-40 tok/s) |
+    | **Qwen 2.5 7B (Akurasi Tinggi)** | 16 GB | 8 Cores CPU | GPU dengan VRAM 8GB+ (Nvidia RTX 3060/4060) | Sedang-Tinggi (~15-30 tok/s) |
+    | **Qwen 2.5 14B (Sangat Akurat)** | 32 GB | 12 Cores CPU | GPU dengan VRAM 12GB+ (Nvidia RTX 3060 12GB/4070) | Sedang (~10-20 tok/s) |
+    | **Qwen 2.5 32B (Enterprise)** | 64 GB | 16 Cores CPU | GPU dengan VRAM 24GB+ (Nvidia RTX 3090/4090/A100) | Rendah-Sedang (~5-15 tok/s) |
+
+    > [!TIP]
+    > Untuk performa produksi yang stabil tanpa GPU, gunakan model **Qwen 2.5 3B** dengan minimal **16 GB RAM** dan **8 Cores CPU** pada VM khusus (Dedicated AI Server).
+
   - **Software & Engine**: PostgreSQL + ekstensi `pgvector`, LangChain Go / Native Go Vector, dan Ollama (untuk model lokal & *embedding*) atau Groq API SDK (online).
 * **Arsitektur Ingestion Pipeline (RAG)**:
   - **Schema Database**: Inisialisasi melalui `database/rag_schema.go` (membuat tabel `documents` & `document_chunks` menggunakan tipe data `vector`). Disediakan juga script SQL manual di `database/rag_schema.sql`.
   - **RAG Services (`services/rag_service.go`)**: 
     - `GetEmbedding`: Membuat vektor numerik menggunakan model `nomic-embed-text` dari Ollama secara dinamis (berdasarkan variabel `AI_EMBEDDING_API_URL`).
     - `SplitText`: Pemotong teks (*chunker*) dengan ukuran ~1000 karakter dan *overlap* ~200 karakter.
-    - `IngestPDF`: Mengekstrak teks dari PDF menggunakan utilitas Linux `pdftotext`, lalu mengonversinya menjadi *embeddings* secara asinkron (*background goroutine*).
+    - `IngestPDF`: Mengekstrak teks dari PDF menggunakan utilitas Linux `pdfinfo` dan `pdftotext` (dari paket `poppler-utils`), lalu mengonversinya menjadi *embeddings* secara asinkron (*background goroutine*).
+      > [!IMPORTANT]
+      > **Prasyarat Sistem Linux**: Pastikan paket `poppler-utils` terpasang di VPS Anda agar backend LIMS dapat menjalankan utilitas `pdfinfo` & `pdftotext`. Jalankan perintah instalasi berikut di VPS Anda:
+      > `sudo apt update && sudo apt install poppler-utils -y`
 
   ![Arsitektur RAG](C:/Users/Fairuz/.gemini/antigravity/brain/14884c33-0d44-45f6-b83e-42212f6cae94/architecture_RAG.jpg)
 
@@ -548,10 +739,77 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
   - `POST /api/sop/upload` - Mengunggah (upload) dokumen PDF SOP untuk diproses Ingestion Pipeline.
   - `GET /api/sop` - Menampilkan daftar referensi SOP yang telah terdaftar di database.
   - `DELETE /api/sop/:id` - Menghapus dokumen SOP (sistem akan otomatis menghapus seluruh *chunks* vektor terkait secara *cascading*).
-* **Tabel Terkait**: `chat_sch.chat_histories`, `lims.documents`, `lims.document_chunks`.
+* **Tabel Terkait**:
+  Seluruh data RAG dan integrasi omnichannel disimpan dalam skema terisolasi `chat_sch` untuk keamanan dan modularitas data:
+  1.  **`chat_sch.documents`**: Menyimpan data metadata berkas PDF SOP yang diunggah (Nama file asli, nama fisik unik di server, ukuran file, tanggal unggah, dan status pemrosesan seperti `processing`, `completed`, atau `failed`).
+  2.  **`chat_sch.document_chunks`**: Menyimpan potongan-potongan teks kecil dari halaman PDF (`content`), halaman asal (`page_number`), serta array koordinat vektor (`embedding` bertipe data `vector(768)`).
+  3.  **`chat_sch.chat_histories`**: Menyimpan riwayat percakapan tanya-jawab antara pengguna dengan asisten AI.
+  4.  **`chat_sch.user_social_accounts`**: Menghubungkan ID pengguna utama LIMS (`user_id`) dengan identitas akun sosial media/chat channel mereka (`telegram`, `whatsapp`, `teams`).
+
+###### **Skema Tabel `chat_sch.user_social_accounts` (DDL)**
+```sql
+CREATE TABLE IF NOT EXISTS chat_sch.user_social_accounts (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,                 -- Merujuk ke ID user pada tabel lims.users
+    channel_type VARCHAR(30) NOT NULL,    -- Jenis media sosial ('telegram', 'whatsapp', 'teams')
+    account_id VARCHAR(100) NOT NULL,     -- Chat ID Telegram, nomor HP WhatsApp, atau ID Teams
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_user_channel UNIQUE (user_id, channel_type)
+);
+```
+
+###### **Panduan SQL Registrasi Sosial Media Pengguna (Manual Binding)**
+Jika Anda ingin menghubungkan, memeriksa, atau menghapus binding Chat ID Telegram pengguna secara manual langsung dari database pgAdmin:
+
+*   **Pemeriksaan Status Hubungan Akun Pengguna (Misal User ID = 8)**:
+    ```sql
+    SELECT * FROM chat_sch.user_social_accounts 
+    WHERE user_id = 8 AND channel_type = 'telegram';
+    ```
+*   **Mendaftarkan Hubungan Akun Baru (Insert)**:
+    ```sql
+    INSERT INTO chat_sch.user_social_accounts (user_id, channel_type, account_id) 
+    VALUES (8, 'telegram', '6310846414');
+    ```
+*   **Mengupdate Chat ID Telegram Pengguna (Update)**:
+    ```sql
+    UPDATE chat_sch.user_social_accounts 
+    SET account_id = '6310846414' 
+    WHERE user_id = 8 AND channel_type = 'telegram';
+    ```
+*   **Memutuskan Hubungan Akun Telegram (Delete)**:
+    ```sql
+    DELETE FROM chat_sch.user_social_accounts 
+    WHERE user_id = 8 AND channel_type = 'telegram';
+    ```
+
+
+##### Panduan Memeriksa Data RAG di Database PostgreSQL
+Anda dapat melakukan audit dan pengecekan keberhasilan pengolahan PDF RAG secara langsung di PostgreSQL menggunakan perintah SQL berikut:
+
+*   **Pemeriksaan Status Dokumen PDF SOP yang Diunggah**:
+    ```sql
+    SELECT id, file_name, file_size, status, uploaded_at 
+    FROM chat_sch.documents 
+    ORDER BY uploaded_at DESC;
+    ```
+*   **Melihat Jumlah Potongan Vektor (Chunks) yang Berhasil Dibuat (Misal untuk Dokumen ID = 1)**:
+    ```sql
+    SELECT COUNT(*) FROM chat_sch.document_chunks WHERE document_id = 1;
+    ```
+*   **Mengintip Cuplikan Teks SOP dan Array Vektor Koordinat**:
+    ```sql
+    SELECT id, page_number, substring(content from 1 for 60) AS cuplikan_teks, embedding 
+    FROM chat_sch.document_chunks 
+    LIMIT 3;
+    ```
+*   **Memastikan Ekstensi `pgvector` Sudah Aktif di Database LIMS**:
+    ```sql
+    SELECT * FROM pg_extension WHERE extname = 'vector';
+    ```
 
   #### Sequence Diagram Query Chatbot
-  ![Sequence Diagram Chatbot RAG](C:/Users/Fairuz/.gemini/antigravity/brain/14884c33-0d44-45f6-b83e-42212f6cae94/Chatbot_sequence_Diagram.png)
+  ![Sequence Diagram Chatbot RAG](C:/Users/Fairuz/Downloads/chatbpt.png)
 
   **Penjelasan Alur Sequence Diagram:**
   
@@ -583,6 +841,174 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
   - **Rendering di UI (`AsistenLab.jsx`)**: Teks jawaban ditampilkan sebagai pesan chat, dan daftar sumber dirender sebagai tautan referensi di bawah pesan, memungkinkan analis laboratorium untuk memverifikasi lembar SOP fisik yang sah secara langsung.
 
 
+#### A2. Panduan Pengoperasian Ingestion SOP Chatbot (Upload, Verifikasi, & Detail Teknis)
+
+Untuk melatih asisten cerdas agar dapat menjawab berdasarkan dokumen Standard Operating Procedure (SOP) laboratorium Anda, ikuti panduan operasional berikut:
+
+##### 1. Cara Mengunggah Berkas (Upload SOP)
+1.  Buka aplikasi web LIMS dan masuk ke menu **Asisten Lab (AI Chatbot)**.
+2.  Di panel sebelah kiri bawah tab **File SOP**, Anda akan melihat area dropzone bertuliskan *"Pilih atau Tarik File PDF (Maksimal 10MB)"*.
+3.  Klik area tersebut untuk memilih berkas PDF dari laptop Anda, atau seret langsung berkas PDF Anda ke area tersebut.
+4.  Sistem akan mendeteksi file dan langsung memulai proses pengunggahan ke server.
+
+##### 2. Cara Memeriksa Status Ingestion (Checking Status)
+Setelah file dikirim, sistem akan memasukkannya ke dalam daftar antrean pemrosesan di bawah dropzone. Status dokumen ditandai dengan label warna:
+
+*   **`PROCESSING` (Kuning)**:
+    Dokumen sedang dibaca, dipotong, dan dikonversi menjadi vektor di latar belakang. Anda dapat menutup halaman ini karena proses berjalan asinkron di server.
+*   **`AKTIF` (Hijau)**:
+    Proses ekstraksi teks dan vektorisasi selesai dengan sukses. AI Chatbot sekarang sudah memahami isi dokumen tersebut dan siap menjawab kueri Anda berdasarkan konteks dokumen ini.
+*   **`GAGAL` (Merah)**:
+    Terjadi kesalahan saat memproses dokumen di latar belakang. Jika statusnya adalah **`GAGAL`**, lakukan pemeriksaan berikut:
+    1.  **Cek Utilitas OS**: Pastikan package `poppler-utils` sudah terpasang di VPS (`sudo apt install poppler-utils -y`).
+    2.  **Cek Ollama**: Pastikan model embedding `nomic-embed-text` sudah terunduh di Ollama (`ollama pull nomic-embed-text`).
+    3.  **Hapus & Unggah Ulang**: Hapus berkas yang gagal dengan menekan tombol **Tong Sampah**, kemudian unggah kembali.
+##### 3. Detail Proses di Latar Belakang (Detail Ingestion Pipeline)
+Ketika PDF diunggah, backend Go menjalankan pipeline pemrosesan data secara asinkron dalam 5 tahapan teknis:
+1.  **Validasi Format & Penyimpanan**: Memastikan file adalah PDF, mengubah namanya secara unik dengan unix timestamp prefix, dan menyimpannya di direktori `./public/uploads/sop/`.
+2.  **Penghitungan Halaman**: Backend memanggil perintah Linux `pdfinfo` secara native untuk mendeteksi total halaman PDF.
+3.  **Ekstraksi Teks**: Backend memanggil utilitas Linux `pdftotext` per halaman dengan bendera `-layout` untuk mengambil teks mentah dengan struktur spasial kolom yang rapi.
+4.  **Pemecahan Teks (Chunking)**: Teks dipecah menjadi beberapa bagian kecil (*chunks*) dengan ukuran karakter `AI_CHUNK_SIZE` (default: 1000) dan tumpang-tindih `AI_CHUNK_OVERLAP` (default: 200) untuk menjaga keutuhan konteks antar potongan.
+5.  **Vektorisasi & Penyimpanan**: Setiap potongan teks dikirim ke model `nomic-embed-text` di Ollama lokal untuk menghasilkan embedding vektor 768-dimensi. Teks beserta vektor koordinat tersebut akhirnya disimpan ke tabel `document_chunks` di PostgreSQL menggunakan ekstensi `pgvector`.
+
+
+#### A3. Integrasi Telegram Bot (Dual-Mode Chat & AI)
+
+LIMS memiliki integrasi bawaan dengan Telegram Bot yang berfungsi secara omnichannel untuk interaksi asisten AI (RAG) maupun percakapan langsung (*real-time*) dengan operator Helpdesk LIMS (Human-in-the-Loop).
+
+##### 1. Konfigurasi Awal di Server (VPS)
+Untuk mengaktifkan bot Telegram LIMS, lakukan langkah konfigurasi berikut:
+
+###### Langkah A: Dapatkan Token Bot dari Telegram BotFather
+1. Buka aplikasi Telegram, cari akun resmi **@BotFather**.
+2. Kirim perintah `/newbot` dan ikuti panduan untuk membuat bot baru (Dapatkan Nama Bot dan HTTP API Token).
+3. Salin token API tersebut (misal: `123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ`).
+
+###### Langkah B: Update Berkas `.env` LIMS di VPS
+1. Buka berkas konfigurasi `.env` instansi Anda di VPS:
+   ```bash
+   sudo nano /home/lims/lims1/backend/.env
+   sudo nano /home/lims/lims2/backend/.env
+   ```
+2. Tambahkan token bot Anda ke variabel lingkungan:
+   ```env
+   TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
+   ```
+3. Simpan berkas dan restart backend LIMS:
+   ```bash
+   sudo systemctl restart lims-backend-8081.service
+   sudo systemctl restart lims-backend-8091.service
+   ```
+
+###### Langkah C: Daftarkan Webhook URL LIMS ke Telegram
+Telegram membatasi port webhook HTTPS hanya pada port **80, 88, 443, dan 8443**. Karena LIMS default menggunakan port `8082`, Anda harus menambahkan port **`8443`** pada konfigurasi Nginx agar berjalan beriringan.
+
+Untuk mencegah error SSL Handshake karena sertifikat self-signed bawaan (seperti `lims.local`), ikuti salah satu opsi pendaftaran berikut:
+
+####### **Opsi A: Menggunakan IP Publik VPS (Sertifikat Self-Signed Khusus IP)**
+
+Jika Anda mengakses LIMS menggunakan alamat IP (seperti `212.85.24.33`), buatlah sertifikat self-signed khusus untuk IP tersebut agar diterima oleh Telegram:
+
+1.  **Buat Sertifikat SSL Khusus IP**:
+    Jalankan perintah ini di terminal VPS Anda (ganti `212.85.24.33` dengan IP VPS Anda):
+    ```bash
+    sudo openssl req -x509 -newkey rsa:2048 \
+      -keyout /etc/nginx/ssl/telegram.key \
+      -out /etc/nginx/ssl/telegram.crt \
+      -days 365 -nodes \
+      -subj "/CN=212.85.24.33" \
+      -addext "subjectAltName = IP:212.85.24.33"
+    ```
+2.  **Konfigurasi Blok Server 8443 di Nginx**:
+    Buka berkas konfigurasi Nginx:
+    ```bash
+    sudo nano /etc/nginx/conf.d/lims.conf
+    ```
+    Tambahkan blok server baru berikut di akhir berkas (pastikan berada di luar blok server lain):
+    ```nginx
+    server {
+        listen 8443 ssl;
+        server_name 212.85.24.33;
+
+        ssl_certificate /etc/nginx/ssl/telegram.crt;
+        ssl_certificate_key /etc/nginx/ssl/telegram.key;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers HIGH:!aNULL:!MD5;
+
+        location /api {
+            proxy_pass http://lims_backend_cluster;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+    ```
+3.  **Tes Sintaks & Restart Nginx**:
+    ```bash
+    sudo nginx -t && sudo systemctl restart nginx
+    ```
+4.  *(Jika firewall UFW aktif)* Izinkan akses port 8443:
+    ```bash
+    sudo ufw allow 8443/tcp
+    ```
+5.  **Daftarkan Webhook & Unggah Sertifikat ke Telegram**:
+    ```bash
+    curl -F "url=https://212.85.24.33:8443/api/webhook/telegram" \
+         -F "certificate=@/etc/nginx/ssl/telegram.crt" \
+         https://api.telegram.org/bot<TOKEN_BOT_ANDA>/setWebhook
+    ```
+
+####### **Opsi B: Menggunakan Domain Resmi (Sertifikat SSL Tepercaya / CA-Signed)**
+
+Jika Anda menggunakan domain resmi (seperti `lims.perusahaan.com`) dengan SSL tepercaya (seperti Let's Encrypt), Anda cukup mengarahkan port 443 atau 8443 langsung dan mendaftarkannya tanpa perlu mengunggah file sertifikat mentah:
+
+1.  Daftarkan Webhook URL menggunakan domain resmi Anda (tanpa melampirkan file `-F "certificate=@..."`):
+    ```bash
+    curl -F "url=https://lims.perusahaan.com/api/webhook/telegram" \
+         https://api.telegram.org/bot<TOKEN_BOT_ANDA>/setWebhook
+    ```
+
+---
+
+##### 2. Cara Menghubungkan Akun Telegram Pengguna (Binding Chat ID)
+Agar bot mengenali siapa Anda di sistem LIMS:
+1. Cari bot Telegram Anda berdasarkan username yang dibuat di BotFather, lalu klik **Start** (atau kirim pesan bebas).
+2. Bot akan mendeteksi bahwa akun Anda belum terhubung dan otomatis membalas:
+   > *"Halo! Akun Telegram Anda belum terhubung ke sistem LIMS. Chat ID Anda adalah: **XXXXXXXXX**..."*
+3. Salin angka **Chat ID** tersebut.
+4. Masuk ke Aplikasi Web LIMS, buka halaman **Profil Pengguna** (atau menu **User Management** jika Anda Admin).
+5. Masukkan angka tersebut pada kolom **Telegram Chat ID** lalu klik simpan.
+6. Sekarang akun Telegram Anda sudah terhubung secara dinamis!
+
+---
+
+##### 3. Fungsionalitas Dual-Mode (AI Chatbot vs Chat Operator)
+Setelah terhubung, bot akan menyaring pesan masuk secara otomatis berdasarkan format pesan:
+
+###### Mode A: Tanya AI Chatbot (`/ai <pertanyaan>`)
+*   **Format**: Kirim pesan diawali dengan kata kunci `/ai ` diikuti pertanyaan Anda.
+    *   *Contoh*: `/ai bagaimana prosedur kalibrasi alat X?`
+    *   *Contoh*: `/ai status aplikasi LIMS-2026-00018`
+*   **Proses**: Bot akan memanggil mesin RAG LIMS untuk mencari referensi dokumen SOP di database `pgvector` dan mencocokkan status pengajuan realtime.
+*   **Balasan**: Bot membalas pesan di Telegram secara instan berisi jawaban lengkap yang dihasilkan oleh LLM lokal (Ollama Qwen 2.5 3B), disertai daftar referensi file PDF SOP dan nomor halaman aslinya.
+
+###### Mode B: Chat Operator / Helpdesk (Tanpa Awalan `/ai`)
+*   **Format**: Kirim pesan teks biasa tanpa kata kunci khusus.
+    *   *Contoh*: `Halo admin, mohon bantuannya, alat saya mengalami error saat pengujian.`
+*   **Proses**: Bot menganggap ini sebagai pesan keluhan. Pesan tersebut akan disimpan di tabel riwayat chat internal dan **diteruskan secara otomatis (forwarded)** ke seluruh Telegram milik staf **Admin / Helpdesk** LIMS yang aktif.
+*   **Balasan Operator (Human-in-the-Loop)**: Staf Helpdesk/Admin dapat menjawab pesan tersebut langsung dari Telegram mereka sendiri dengan menekan tombol **Reply/Balas** pada pesan forward tersebut. Sistem akan mem-parsing pengirim asli dan merutekan balasan operator kembali ke Telegram pengguna asal secara personal.
+
+> [!NOTE]
+> **Catatan Penyimpanan Database:**
+> Chat dalam **Mode B (Chat Operator)** akan disimpan ke dalam tabel **`chat_sch.agent_chats`** agar operator Helpdesk dapat melihat log riwayat keluhan di dashboard web LIMS. 
+> Sedangkan interaksi obrolan asisten AI (**Mode A**) langsung diproses *on-the-fly* lewat RAG dan tidak dimasukkan ke dalam `agent_chats` demi menjaga kerapian pelacakan laporan operator.
+
+
 #### B. Rekomendasi Laporan AI (Report Generator)
 * **Deskripsi Report Generator**: Generator draf kesimpulan kelulusan dan saran teknis dari deviasi parameter uji menggunakan LLM.
 * **API Endpoints (Report Generator)**:
@@ -591,115 +1017,215 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
 
 
 #### C. Predictive Quality Control (PQC)
-Sistem LIMS mengintegrasikan modul Kecerdasan Buatan (AI-ML) untuk melakukan Predictive Quality Control (PQC) secara *real-time* pada saat operator menyimpan hasil pengujian parameter produk.
 
-**Fungsi Utama Modul AI PQC:**
-1. **Deteksi Anomali Statistik (Outlier)**: Mendeteksi apakah kombinasi nilai skor yang diinput oleh operator tidak wajar secara *multivariate* dibandingkan data historis normal.
-2. **Validasi Batas Toleransi**: Menerapkan pengecekan batas rentang kelayakan individual berdasarkan statistik historis parameter.
-3. **Mekanisme Blokir & Override**: Memblokir penyimpanan data anomali secara otomatis dan mewajibkan otorisasi supervisor jika ingin meloloskan penyimpanan.
+Sistem LIMS mengintegrasikan modul Kecerdasan Buatan (AI-ML) untuk melakukan **Predictive Quality Control (PQC)** secara *real-time* pada saat operator menyimpan hasil pengujian parameter produk. Sistem ini dirancang untuk mendeteksi data uji abnormal, mencegah kerusakan fatal pada peralatan uji, serta memprediksi kelayakan peralatan sebelum dilakukan pengujian fisik di lapangan.
+
+##### 1. Latar Belakang & Permasalahan
+Laboratorium pengujian LIMS melibatkan pengujian fisik bernilai tinggi, berisiko tinggi, dan memakan biaya besar. Beberapa permasalahan utama yang diselesaikan oleh PQC meliputi:
+*   **Deteksi Anomali Terlambat**: Ketidaknormalan data sensor sering kali baru terdeteksi setelah pengujian selesai, mengakibatkan pemborosan bahan bakar, energi, dan waktu.
+*   **Risiko Kerusakan Alat Uji (Fatal Damage)**: Menguji peralatan yang sebenarnya secara struktural tidak layak dapat merusak sensor lab atau fasilitas uji yang bernilai tinggi.
+*   **Keterbatasan Ambang Batas Statis**: Standar kelayakan statis (misal: suhu tidak boleh > 50°C) mengabaikan korelasi antar-variabel. Kombinasi parameter (suhu 45°C dengan getaran frekuensi tinggi dan tekanan oli rendah) bisa mengindikasikan anomali kritis meskipun masing-masing parameter masih di bawah batas aman individu.
+*   **Kesalahan Input Data (Human Error)**: Salah ketik desimal atau digit pada lembar kerja uji yang di-input manual oleh operator sering lolos verifikasi awal.
+
+##### 2. Solusi & Pilar Kecerdasan AI PQC
+Sistem PQC mengintegrasikan algoritma Machine Learning ke dalam backend LIMS untuk memberikan perlindungan dan rekomendasi prediktif secara *real-time*:
+*   **Anomaly Detection (Deteksi Anomali)**: Mendeteksi deviasi/ketidakwajaran data masukan secara cerdas dengan menganalisis korelasi multi-variabel (suhu, getaran, tekanan, listrik, dll.) secara simultan.
+*   **Feasibility Prediction (Prediksi Batas Kelayakan)**: Menghitung probabilitas keberhasilan atau risiko kegagalan pengujian sebelum pengujian fisik dijalankan (pre-test analysis).
+
+**Metode Pengisian & Pengambilan Data:**
+1.  **Metode Semi-Otomatis (Tanpa Integrasi Alat Uji)**: Operator memasukkan nilai pengukuran secara manual ke lembar kerja digital (Worksheet). LIMS mengirim data input ke AI Service untuk divalidasi sebelum disimpan ke database. Jika AI mendeteksi anomali (misal salah ketik), sistem menampilkan notifikasi peringatan seketika kepada operator sebelum data telanjur disimpan.
+2.  **Metode Otomatis (Terintegrasi)**: LIMS membaca langsung data log hasil uji dari IoT/sensor alat uji via API/koneksi serial, kemudian AI memproses data tersebut secara otomatis tanpa intervensi manusia.
+
+##### 3. Arsitektur Teknis & Alur Proses
+LIMS menggunakan arsitektur microservices untuk menjalankan model AI ini secara lokal (on-premise) demi menjamin keamanan data pengujian dan operasional sistem.
 
 **Arsitektur Hybrid ONNX:**
-Sistem ini telah dimigrasikan dari arsitektur *microservice* Python (FastAPI HTTP port 8086) ke arsitektur Hybrid ONNX. Model dilatih secara offline menggunakan Python, diekspor ke format ONNX (`.onnx`), lalu dimuat dan dieksekusi secara *native* langsung di dalam Go Backend menggunakan *shared library* C++ ONNX Runtime. Hal ini menghilangkan ketergantungan runtime Python (FastAPI) di server produksi.
+Sistem ini telah dimigrasikan dari arsitektur *microservice* Python (FastAPI HTTP port 8086) ke arsitektur Hybrid ONNX. Model dilatih secara offline menggunakan Python, diekspor ke format ONNX (`.onnx`), lalu dimuat dan dieksekusi secara *native* langsung di dalam Go Backend menggunakan *shared library* C++ ONNX Runtime. Hal ini menghilangkan ketergantungan runtime Python (FastAPI) di server produksi pada saat deteksi real-time.
 
-**Arsitektur Sistem & Aliran Data (DFD)**
-Modul AI PQC berjalan dalam siklus hibrida yang memisahkan proses pelatihan model (offline) dan inferensi deteksi (online/real-time). Peta aliran data beserta pustaka (library) pendukungnya dapat dilihat pada diagram berikut:
+*   **Inference (Deteksi Real-time - Sangat Ringan)**: AI hanya menjalankan model yang sudah jadi (Inference) untuk memvalidasi data baru. Proses ini berupa operasi matematika sederhana yang berjalan super cepat (di bawah 10 milidetik) dengan alokasi memori RAM hanya sekitar 50MB - 150MB, sehingga tidak akan menurunkan performa sistem.
+*   **Training (Pelatihan Ulang Model - Terjadwal)**: Pelatihan ulang model (retraining) membutuhkan daya komputasi tinggi dan dijadwalkan secara otomatis pada waktu-waktu tidak sibuk (off-peak hours) sebagai *Background Job* terisolasi di AI Microservice, sehingga sama sekali tidak mengganggu pengguna LIMS yang sedang aktif.
 
 ![Diagram Aliran AI PQC](C:/Users/Fairuz/.gemini/antigravity/brain/14884c33-0d44-45f6-b83e-42212f6cae94/AI_PQC.jpg)
 
-**Komponen Arsitektur:**
-- **Python (Offline Retraining)**: Script `train.py` berjalan terjadwal via *cron job* untuk melatih algoritma Isolation Forest menggunakan pustaka `scikit-learn`, lalu mengekspornya ke format ONNX (`.onnx`) menggunakan `skl2onnx`, serta menyusun berkas metadata JSON (`_meta.json`) berisi statistik median dan standar deviasi.
-- **Go Backend (Native Inference)**: Menggunakan driver `github.com/yalue/onnxruntime_go` (`v1.16.0`) untuk memuat *shared library* dinamis C++ ONNX Runtime saat *startup*:
-  - Windows (Development): `backend/lib/onnxruntime.dll`
-  - Linux/Ubuntu (Production): `backend/lib/libonnxruntime.so`
-- **Keamanan Fail-Safe (Soft-Bypass)**: Jika file model ONNX atau berkas metadata JSON tidak ditemukan/terjadi gangguan, sistem Go Backend akan melakukan *soft-bypass* — secara otomatis menganggap data pengujian normal (`is_anomaly = false`) dan tidak menampilkan modal peringatan. Transaksi penyimpanan data tetap berjalan lancar demi menjaga kelangsungan operasional laboratorium.
+##### 4. Fitur Utama AI PQC
+Sistem PQC ini diintegrasikan langsung pada form pengisian lembar kerja uji (testing worksheet):
+*   **Real-time Input Guard**: AI menganalisis nilai parameter secara *real-time*. Jika mendeteksi ketidakwajaran pola (misal: temperatur naik tapi tekanan drop drastis), form akan menolak penyimpanan otomatis dan meminta operator memverifikasi ulang (notifikasi alert kuning).
+*   **Pre-Test Feasibility Score**: Sebelum pengujian fisik berjalan, analis menginput data awal/kondisi lingkungan. AI mengeluarkan nilai persentase kelayakan uji (misal: *Kelayakan Uji: 94% - Aman Dijalankan*) dalam bentuk indikator *speedometer* radial (Merah - Kuning - Hijau).
+*   **Dynamic Tolerances Checker**: Batas toleransi dihitung secara cerdas berdasarkan merek, varian, umur, dan riwayat kerusakan alat pertahanan, bukan sekadar batas flat seragam.
+*   **Anomaly Audit Logger**: Halaman log audit khusus untuk supervisor yang menampilkan daftar data anomali yang berhasil diblokir atau di-override oleh operator, lengkap dengan analisis kontribusi variabel yang dicurigai oleh AI (SHAP values).
 
+##### 5. Detail Algoritma AI-ML & Pustaka Pendukung
+Sistem LIMS menggunakan berbagai algoritma Machine Learning sesuai kebutuhan:
+*   **Isolation Forest & One-Class SVM**: Digunakan untuk mendeteksi anomali pada data pengujian multi-dimensi (outliers) tanpa memerlukan banyak data berlabel anomali.
+*   **Autoencoders (Deep Learning)**: Menggunakan neural network sederhana untuk mempelajari pola normal dari parameter uji. Jika rekonstruksi eror (reconstruction error) dari input baru tinggi, data ditandai sebagai anomali.
+*   **XGBoost / Random Forest Classifier**: Digunakan untuk memprediksi kelayakan uji (Feasibility Scoring) berdasarkan fitur-fitur teknis historis peralatan sejenis yang pernah lulus atau gagal.
 
-##### Detail Algoritma AI-ML
+**5.1. Mekanisme Klasifikasi Isolation Forest**
+*   LIMS menggunakan Isolation Forest sebagai model deteksi anomali utama dengan parameter kontaminasi `0.05` dan jumlah pohon `100` (`random_state=42`).
+*   **Formulasi Skor Anomali**: Skor anomali $s(x)$ untuk sampel masukan $x$ didefinisikan sebagai:
+    $$s(x) = 2^{-\frac{\mathbb{E}(h(x))}{c(n)}}$$
+    Di mana:
+    *   $h(x)$: Panjang lintasan sampel $x$ (jumlah percabangan dari root ke ujung daun).
+    *   $\mathbb{E}(h(x))$: Rata-rata panjang lintasan $h(x)$ dari seluruh pohon di dalam hutan.
+    *   $c(n)$: Rata-rata panjang lintasan pencarian biner gagal pada dataset berukuran $n$:
+        $$c(n) = 2 \ln(n - 1) + 0.5772156649 - \frac{2(n - 1)}{n}$$
+*   **Normalisasi Skor**: Pustaka Scikit-Learn Python melaporkan skor sampel mentah (`score_samples`) dalam nilai negatif: $\text{raw\_score} = -s(x)$. Go Backend menormalkan nilai ini menjadi persentase tingkat anomali $[0.0, 1.0]$:
+    $$\text{anomalyScore} = \max(0.0, \min(1.0, 0.5 - \text{rawScore}))$$
+*   **Threshold Sistem**: Jika tingkat anomali $\ge 50\%$ (`0.5`), data dianggap sebagai **anomali**.
 
-**3.1. Isolation Forest (Model Utama)**
-- LIMS menggunakan Isolation Forest sebagai model deteksi anomali utama dengan parameter kontaminasi `0.05` dan jumlah pohon `100`.
-- **Prinsip**: Mendeteksi pencilan statistik (*unsupervised outlier detection*) dengan mengisolasi titik data menggunakan pohon keputusan acak. Data anomali membutuhkan jumlah pembagian (*path length*) jauh lebih sedikit untuk terisolasi dibandingkan data normal.
-- **Skor Deviasi Raw**: Output model berupa nilai negatif (`raw_score`) dalam rentang `[-1.0, 0.0]`. Nilai mendekati `-1.0` menunjukkan tingkat anomali semakin tinggi.
-- **Normalisasi Skor**: Go Backend menormalkan skor mentah menjadi persentase tingkat anomali `[0.0, 1.0]`:
-  $$\text{anomalyScore} = \max(0.0, \min(1.0,\ 0.5 - \text{rawScore}))$$
-- **Threshold Sistem**: Jika tingkat anomali $\ge 50\%$ (`0.5`), data dianggap sebagai **anomali**.
+**5.2. Batas Toleransi Individual (Secondary Boundary Check)**
+Karena Isolation Forest mengevaluasi pola gabungan (*multivariate*), dilakukan pemeriksaan batas toleransi individu:
+    $$\text{Batas} = \text{Median} \pm (1.5 \times \text{Std})$$
+*   Batas atas dibatasi maksimal `100.0` dan batas bawah minimal `0.0`.
+*   Jika terdapat minimal 1 sub-aspek yang nilainya di luar batas toleransi, sistem secara otomatis menetapkan `is_anomaly = true` dan tingkat anomali minimal `55%` (`0.55`).
 
-**3.2. Batas Toleransi Individual (Secondary Boundary Check)**
-Karena Isolation Forest mengevaluasi pola gabungan (*multivariate*), ada kalanya sebuah parameter bernilai sangat ekstrim secara individual namun lolos. Rumus batas toleransi:
-$$\text{Batas} = \text{Median} \pm (1.5 \times \text{Std})$$
-- Batas atas dibatasi maksimal `100.0%` untuk mencegah rentang yang tidak realistis secara fisik.
-- **Threshold Deteksi Tunggal** (`MIN_OUT_OF_RANGE = 1`): Jika terdapat minimal 1 sub-aspek yang nilainya di luar batas toleransi, sistem secara otomatis menetapkan `is_anomaly = true` dan tingkat anomali minimal `55%`.
+**5.3. Pseudo-SHAP (Leave-One-Out Permutation)**
+Untuk mengurai kontribusi kesalahan dari masing-masing variabel:
+1.  Hitung skor anomali dasar dengan semua nilai aktual: $\text{baseScore} = \text{session.Run(aktual)}$
+2.  Untuk setiap sub-aspek $i$, ganti nilai aktual dengan median historis, hitung ulang skor, lalu hitung selisih:
+    $$\text{contrib}_i = \max(0.0, \text{tempScore}_i - \text{baseScore})$$
+3.  Normalisasi kontribusi menjadi persentase SHAP Value:
+    $$\text{SHAP}_i = \left( \frac{\text{contrib}_i}{\sum_{j} \text{contrib}_j} \right) \times 100\%$$
 
-**3.3. Pseudo-SHAP (Leave-One-Out Permutation)**
-Saat data dinyatakan anomali, Go Backend menghitung kontribusi relatif setiap parameter untuk transparansi kepada operator:
-
-1. Hitung skor anomali dasar dengan semua nilai aktual: $\text{baseScore} = \text{session.Run(aktual)}$
-2. Untuk setiap sub-aspek $i$, ganti nilai aktual dengan median historis, hitung ulang skor, lalu hitung selisih:
-   $$\text{contrib}_i = \max(0.0,\ \text{tempScore}_i - \text{baseScore})$$
-3. Normalisasi kontribusi menjadi persentase SHAP Value:
-   $$\text{SHAP}_i = \left( \frac{\text{contrib}_i}{\sum \text{contrib}} \right) \times 100\%$$
-
-**3.4. Daftar Pustaka (Library) & Komponen Teknis**
+**5.4. Daftar Pustaka (Library) & Komponen Teknis**
+*Daftar pustaka yang digunakan tercantum pada tabel di bawah ini:*
 
 | No | Nama Library | Lingkungan | Versi | Fungsi Utama |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | `github.com/yalue/onnxruntime_go` | Go (Backend) | `v1.16.0` | Memuat library C++ ONNX Runtime dan mengeksekusi model ONNX secara *native* |
 | 2 | `scikit-learn` | Python (Retrain) | `1.4.1.post1` | Melatih algoritma *Isolation Forest* |
-| 3 | `skl2onnx` | Python (Retrain) | `>=1.16.0` | Mengonversi model Scikit-Learn ke format ONNX |
-| 4 | `onnx` | Python (Retrain) | `>=1.15.0` | Serialisasi graf model ke berkas biner `.onnx` |
+| 3 | `skl2onnx` | Python (Retrain) | `...` | Mengonversi model Scikit-Learn ke format ONNX |
+| 4 | `onnx` | Python (Retrain) | `...` | Serialisasi graf model ke berkas biner `.onnx` |
 | 5 | `pandas` | Python (Retrain) | `2.2.1` | Memproses data transaksi historis dari PostgreSQL |
 | 6 | `numpy` | Python (Retrain) | `1.26.4` | Komputasi numerik array dan matriks data |
 | 7 | `sqlalchemy` | Python (Retrain) | `2.0.28` | ORM dan toolkit SQL untuk interaksi basis data |
 | 8 | `psycopg2-binary` | Python (Retrain) | `2.9.9` | Driver PostgreSQL untuk Python |
 | 9 | `cryptography` | Python (Retrain) | `42.0.5` | Mendekripsi password database yang terenkripsi AES-CFB |
 
+##### 6. Studi Kasus Perhitungan Matematis AI PQC (Aspek: KEPEN)
 
-##### Skema & Integrasi Basis Data
+Bagian ini menyajikan simulasi perhitungan keputusan anomali dan kontribusi SHAP menggunakan profil data statistik riil dari database LIMS Anda (berdasarkan seeder dataset transaksi).
 
-**4.1. Tabel `lims.ai_model_registry`**
-Mencatat riwayat model yang berhasil dilatih secara offline. Menggunakan partisi RANGE bulanan berdasarkan kolom `trained_at`.
+**6.1. Profil Statistik Riil Database (Aspek: KEPEN)**
+Berikut adalah nilai statistik riil untuk 6 sub-aspek `KEPEN`:
+
+| Sub-Aspect Code | Parameter Name | Median (Nilai Tengah) | Standard Deviation ($\sigma$) | Rentang Batas Toleransi ($1.5 \times \sigma$) |
+| :--- | :--- | :---: | :---: | :---: |
+| **KEDAI** | Daya output audio | 90.00 | 18.23 | 62.65 - 100.0 |
+| **KELCH** | Threshold/Squelch | 85.44 | 19.51 | 56.17 - 100.0 |
+| **KERUS** | Kerusakan fisik | 86.72 | 11.73 | 69.12 - 98.31 |
+| **KESEL** | Keselamatan kerja | 87.05 | 18.21 | 59.73 - 100.0 |
+| **KESEN** | Sensitivitas | 86.66 | 17.40 | 60.56 - 100.0 |
+| **KESUA** | Kualitas suara | 85.73 | 13.91 | 64.86 - 100.0 |
+
+> [!NOTE]
+> **Imputasi Nilai Kosong**: Jika operator mengosongkan parameter tertentu saat input (misal `KERUS`), sistem AI akan otomatis mengisi kolom kosong tersebut dengan nilai median historisnya (`86.72`) sebelum melakukan evaluasi model.
+
+**6.2. Simulasi Kasus 1: Input Data Normal**
+*   **Data Input Aktual**:
+    *   `KEDAI` = 90.0 (Operator mengetik aktif)
+    *   `KELCH` = 85.0 (Operator mengetik aktif)
+    *   `KERUS` = kosong (Diisi otomatis oleh AI menggunakan median = 86.72)
+    *   `KESEL` = kosong (Diisi otomatis oleh AI menggunakan median = 87.05)
+    *   `KESEN` = 85.0 (Operator mengetik aktif)
+    *   `KESUA` = kosong (Diisi otomatis oleh AI menggunakan median = 85.73)
+*   **Vektor Input (Urutan Alfabetis)**:
+    $$X_{\text{normal}} = [90.0, 85.0, 86.72, 87.05, 85.0, 85.73]$$
+*   **Kalkulasi Model**:
+    *   Nilai masukan berada di wilayah padat data historis normal, sehingga rata-rata panjang lintasan pohon panjang.
+    *   Model Isolation Forest menghasilkan skor mentah `raw_score` = `-0.3232`.
+    *   **Tingkat Anomali**: $\text{anomalyScore} = -(-0.3232) = 0.3232$ (atau $32.32\%$).
+    *   **Hasil**: Karena tingkat anomali $32.32\% \le 50\%$, sistem menyatakan data **NORMAL** (klasifikasi `1`) dan transaksi berhasil disimpan.
+
+**6.3. Simulasi Kasus 2: Input Data Anomali (Outlier)**
+*   **Data Input Aktual (Salah Ketik/Masalah Sensor)**:
+    *   `KEDAI` = 10.0 (Sangat jauh dari median normal 90.0)
+    *   `KELCH` = 12.0 (Sangat jauh dari median normal 85.44)
+    *   `KERUS` = kosong (Median: 86.72)
+    *   `KESEL` = kosong (Median: 87.05)
+    *   `KESEN` = 15.0 (Sangat jauh dari median normal 86.66)
+    *   `KESUA` = kosong (Median: 85.73)
+*   **Vektor Input**:
+    $$X_{\text{anomaly}} = [10.0, 12.0, 86.72, 87.05, 15.0, 85.73]$$
+*   **Kalkulasi Model**:
+    *   Karena nilai `10.0`, `12.0`, dan `15.0` sangat ekstrem, titik ini terisolasi sangat cepat di percabangan awal pohon.
+    *   Model Isolation Forest menghasilkan skor mentah `raw_score` = `-0.6319`.
+    *   **Tingkat Anomali**: $\text{anomalyScore} = -(-0.6319) = 0.6319$ (atau $63.19\%$).
+    *   **Hasil**: Karena tingkat anomali $63.19\% > 50\%$, sistem menyatakan data **ANOMALI** (klasifikasi `-1`). Penyimpanan dibatalkan (rollback), dan status transaksi di-set menjadi **BLOCKED**.
+
+**6.4. Perhitungan Kontribusi Anomali (SHAP Leave-One-Out)**
+Untuk mencari tahu parameter mana saja yang paling berkontribusi terhadap status anomali pada Kasus 2:
+1.  **Baseline Score**: `base_score` = `-0.6319` (skor riil transaksi anomali ini).
+2.  **Substitusi Satu per Satu (Leave-One-Out)**:
+    *   **Substitusi KEDAI (10.0 ➔ 90.0)**:
+        *   Vektor uji baru: $[90.0, 12.0, 86.72, 87.05, 15.0, 85.73]$
+        *   Model menghasilkan `new_raw_score` = `-0.5609`.
+        *   Selisih kontribusi: $\Delta\text{score}_{\text{KEDAI}} = -0.5609 - (-0.6319) = 0.0710$ (tingkat keanehan membaik sebesar 0.0710 poin).
+    *   **Substitusi KELCH (12.0 ➔ 85.44)**:
+        *   Vektor uji baru: $[10.0, 85.44, 86.72, 87.05, 15.0, 85.73]$
+        *   Model menghasilkan `new_raw_score` = `-0.5586`.
+        *   Selisih kontribusi: $\Delta\text{score}_{\text{KELCH}} = -0.5586 - (-0.6319) = 0.0733$ (tingkat keanehan membaik sebesar 0.0733 poin).
+    *   **Substitusi KESEN (15.0 ➔ 86.66)**:
+        *   Vektor uji baru: $[10.0, 12.0, 86.72, 87.05, 86.66, 85.73]$
+        *   Model menghasilkan `new_raw_score` = `-0.5482`.
+        *   Selisih kontribusi: $\Delta\text{score}_{\text{KESEN}} = -0.5482 - (-0.6319) = 0.0837$ (tingkat keanehan membaik sebesar 0.0837 poin).
+    *   **Substitusi Parameter Normal (KERUS, KESEL, KESUA)**:
+        *   Karena nilainya sudah sama dengan median historis, selisih kontribusinya: $\Delta\text{score} = 0.0$.
+3.  **Persentase Kontribusi**:
+    *   Total selisih kontribusi: $\sum \Delta\text{score} = 0.0710 + 0.0733 + 0.0837 = 0.2280$
+    *   **KESEN**: $\frac{0.0837}{0.2280} \times 100\% = 36.70\%$
+    *   **KELCH**: $\frac{0.0733}{0.2280} \times 100\% = 32.16\%$
+    *   **KEDAI**: $\frac{0.0710}{0.2280} \times 100\% = 31.14\%$
+    *   *Hasil persentase kontribusi ini dikirim ke frontend untuk ditampilkan sebagai grafik kontributor kesalahan.*
+
+##### 7. Skema Basis Data & Integrasi Otorisasi Keamanan
+
+**7.1. Tabel `lims.ai_model_registry`**
+Tabel registri mencatat setiap versi model yang sukses dilatih secara offline oleh skrip `train.py`:
 ```sql
-CREATE TABLE lims.ai_model_registry (
-    id SERIAL,
+CREATE TABLE IF NOT EXISTS lims.ai_model_registry (
+    id SERIAL PRIMARY KEY,
     model_name VARCHAR(100) NOT NULL,
     version VARCHAR(20) NOT NULL,
     accuracy_score NUMERIC(5, 4),
     f1_score NUMERIC(5, 4),
     trained_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     model_path VARCHAR(255) NOT NULL,
-    status VARCHAR(20) DEFAULT 'ACTIVE',
-    PRIMARY KEY (id, trained_at)
-) PARTITION BY RANGE (trained_at);
+    status VARCHAR(20) DEFAULT 'ACTIVE'
+);
+
+CREATE INDEX idx_ai_model_registry_model_name ON lims.ai_model_registry (model_name);
+CREATE INDEX idx_ai_model_registry_status ON lims.ai_model_registry (status);
 ```
-> [!NOTE]
-> Tabel ini hanya digunakan untuk pencatatan riwayat model (*audit trail*). Mengingat frekuensi penulisan sangat rendah (hanya saat *retraining*), indeks tambahan pada kolom `model_name` dan `status` dapat dihapus untuk mengoptimalkan kecepatan *insert*.
 
-**4.2. Tabel `lims.ai_anomaly_logs`**
-Mencatat setiap kejadian deteksi anomali beserta tindakan operator (pemblokiran atau override).
-
-| No | Kolom | Tipe Data | Keterangan |
-| :--- | :--- | :--- | :--- |
-| 1 | `id` | SERIAL (PK) | ID unik log anomali |
-| 2 | `application_id` | BIGINT | ID pengajuan aplikasi LIMS terkait |
-| 3 | `operator_username` | VARCHAR(50) | Username operator yang menginput nilai uji |
-| 4 | `parameters_data` | JSONB | Data aktual parameter uji yang diinput (format JSON) |
-| 5 | `anomaly_score` | NUMERIC(5,4) | Nilai tingkat anomali yang dihasilkan oleh model |
-| 6 | `shap_values` | JSONB | Persentase kontribusi anomali per sub-aspek (SHAP) |
-| 7 | `status` | VARCHAR(20) | Status akhir: `BLOCKED` atau `OVERRIDDEN` |
-| 8 | `override_reason` | TEXT | Alasan tertulis override serta nama supervisor |
-| 9 | `created_at` | TIMESTAMP | Waktu pencatatan log |
+**7.2. Tabel `lims.ai_anomaly_logs`**
+Tabel terpartisi bulanan untuk merekam log kejadian anomali:
+```sql
+CREATE TABLE IF NOT EXISTS lims.ai_anomaly_logs (
+    id BIGSERIAL,
+    application_id BIGINT,
+    operator_username VARCHAR(30),
+    parameters_data JSONB,
+    anomaly_score NUMERIC(5, 4),
+    shap_values JSONB,
+    status VARCHAR(20) DEFAULT 'BLOCKED', -- 'BLOCKED', 'OVERRIDDEN'
+    override_reason VARCHAR(500),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (id, created_at)
+) PARTITION BY RANGE (created_at);
+```
 
 **Tampilan UI Mekanisme Otorisasi & Override:**
 ![Otorisasi dan Override AI PQC](C:/Users/Fairuz/.gemini/antigravity/brain/14884c33-0d44-45f6-b83e-42212f6cae94/Otorisasi_Override.jpg)
 
-**Aturan Validasi Keamanan Override:**
-1. **Validasi Kredensial**: Go Backend memverifikasi `spv_username` and hash password supervisor menggunakan algoritma `bcrypt`.
-2. **Wewenang Peran Supervisor Spesifik**: Validasi ini **tidak berlaku untuk semua peran supervisor**. Otorisasi override hanya diperbolehkan bagi supervisor dengan peran khusus **`SUPERVISOR_SCORE`** atau **`ADMIN`**. Peran supervisor departemen lain (seperti `SUPERVISOR_LABORATORY`, `SUPERVISOR_FIELD`, dsb.) **TIDAK diizinkan** melakukan override demi menjaga akuntabilitas penilaian hasil pengujian.
-3. **Pencegahan Bypass**: Username supervisor yang dimasukkan **tidak boleh sama** dengan username operator yang sedang aktif melakukan pengujian (`spvUser !== loggedInUsername`).
-4. **Catatan Wajib**: Operator diwajibkan menulis catatan justifikasi khusus pada setiap parameter uji yang bernilai *"Di luar batas"* sebelum tombol override dapat aktif di frontend.
+**7.3. Validasi Keamanan Otorisasi Override (Supervisor Bypass)**
+Jika data uji ditandai anomali oleh model, operator dapat melakukan *override* dengan persetujuan supervisor di tempat (*on-site override*):
+1.  **Form Input Override**: Modal anomali menampilkan kolom Username Supervisor dan Password Supervisor.
+2.  **Otorisasi Satu Kali (One-Off Verification)**: Backend Go memverifikasi `spv_username` dan `spv_password` secara mandiri dari sesi operator yang sedang berjalan.
+3.  **Hak Akses Spesifik**: Akun supervisor yang melakukan otorisasi wajib memiliki role **`SUPERVISOR_SCORE`** atau **`ADMIN`**. Peran supervisor departemen lain (seperti `SUPERVISOR_LABORATORY`, `SUPERVISOR_FIELD`, dsb.) **TIDAK diizinkan** melakukan override demi menjaga akuntabilitas penilaian hasil pengujian.
+4.  **Audit Trail**: Jika otorisasi valid, status dicatat sebagai `OVERRIDDEN` dan kolom `override_reason` diisi dengan format: `[Override by: supervisor_username] alasan_override`. Jika gagal, status tetap `BLOCKED`.
 
-
-##### Penjadwalan Retraining Otomatis (Crontab)
+##### 8. Penjadwalan Retraining Otomatis (Crontab)
 
 **Format Perintah Crontab**
 
@@ -757,15 +1283,46 @@ tail -f /home/nurlim/lims-ai-train-$(date +%Y%m%d).log
 ```
 
 
+#### D. Parameter Global AI (Konfigurasi Dinamis & Env)
 
-#### D. Integrasi Simulator IoT (IoT & Data Simulator)
-* **Deskripsi**: Perekaman data otomatis dari mesin simulator/peralatan luar secara langsung melalui REST API. Modul ini memungkinkan skor hasil pengujian fisik dikirim secara otomatis dari alat militer atau simulator hardware ke LIMS, tanpa input manual oleh operator. Data masuk ke tabel *staging* `simulator_data_logs` sebelum dikonsumsi oleh proses Pelaksanaan Pengujian.
+Modul Kecerdasan Buatan (AI) di LIMS (PQC, RAG Chatbot, dan Report Generator) dikonfigurasi melalui kombinasi parameter dinamis pada basis data (tabel `lims.global_parameters`) serta variabel lingkungan (*environment variables* pada berkas `.env`).
+
+##### 1. Parameter Global di Database (`lims.global_parameters`)
+Parameter ini dapat diubah secara dinamis melalui database tanpa perlu merestart atau mengompilasi ulang aplikasi backend LIMS:
+
+| No | Parameter Key | Tipe / Format | Nilai Default | Keterangan & Fungsi |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | **`AI_PQC_ENABLED`** | Boolean (`true`/`false`) | `true` | Mengaktifkan/menonaktifkan modul deteksi anomali *Predictive Quality Control* secara global. Jika `false`, semua validasi anomali dilewati (*soft-bypass*). |
+| 2 | **`AI_METADATA_FOLDER`** | String / Path | `/home/lims/lims1/backend/ai_service/models` | Path absolut folder tempat Go Backend dan `train.py` membaca/menulis berkas model `.onnx` dan metadata statistik `.json`. |
+| 3 | **`AI_SIMILARITY_THRESHOLD`** | Float (`0.0` - `1.0`) | `0.65` | Batas jarak kemiripan maksimum (Cosine Distance) untuk matching chunks pada chatbot RAG. Hasil dengan jarak di atas batas ini akan diabaikan. |
+| 4 | **`AI_SEARCH_LIMIT`** | Integer | `4` | Batas maksimum jumlah potongan dokumen (*chunks*) terdekat yang diambil dari `document_chunks` sebagai basis konteks prompt LLM. |
+| 5 | **`AI_CHUNK_SIZE`** | Integer | `1000` | Batas maksimum panjang karakter per potongan (*chunk*) saat melakukan penyerapan (*ingestion*) dokumen PDF SOP. |
+| 6 | **`AI_CHUNK_OVERLAP`** | Integer | `200` | Jumlah panjang karakter tumpang tindih (*overlap*) antar potongan dokumen yang berdekatan untuk menjaga keutuhan arti kalimat. |
+| 7 | **`AI_MAX_TOKENS`** | Integer | `1000` | Batas maksimal panjang token respons yang dihasilkan oleh LLM (Chatbot & Report Generator). |
+| 8 | **`AI_TIMEOUT`** | Integer | `120` | Batas waktu (timeout) dalam satuan detik saat backend Go melakukan HTTP request API panggilan ke LLM. |
+| 9 | **`AI_OCR_ENABLED`** | Boolean (`true`/`false`) | `true` | Mengaktifkan/menonaktifkan parsing teks berbasis OCR untuk lampiran file PDF atau gambar dokumen pengujian. |
+| 10 | **`AI_INTERVAL_CHAT`** | Integer | `12000` | Batas jeda waktu minimum (rate limit) dalam milidetik antar request chat untuk mencegah pemborosan kuota API LLM. |
+
+##### 2. Variabel Lingkungan di Berkas `.env`
+Variabel lingkungan ini bersifat statis dan dimuat saat aplikasi *startup* (membutuhkan restart service LIMS jika nilainya diubah):
+
+| No | Environment Variable | Nilai Default / Contoh | Keterangan & Fungsi |
+| :--- | :--- | :--- | :--- |
+| 1 | **`AI_API_URL`** | `https://api.groq.com/openai/v1` | URL endpoint API dasar LLM eksternal (Groq, OpenAI, atau Ollama Local). |
+| 2 | **`AI_API_KEY`** | `gsk_hAVuGExM9...` | API Key/kunci otentikasi rahasia untuk mengakses LLM eksternal (gunakan `none` jika memakai Ollama lokal). |
+| 3 | **`AI_MODEL`** | `llama-3.1-8b-instant` | Nama model LLM yang digunakan untuk generasi teks asisten chatbot dan rekomendasi laporan. |
+| 4 | **`AI_EMBEDDING_API_URL`** | `http://127.0.0.1:11434` | URL API endpoint server Ollama lokal untuk pembuatan embedding vektor. |
+| 5 | **`AI_EMBEDDING_MODEL`** | `nomic-embed-text` | Nama model embedding lokal yang digunakan untuk mengonversi dokumen mentah menjadi representasi koordinat vektor. |
+
+
+### 9. Modul Integrasi Simulator IoT
+* **Deskripsi**: Perekaman data otomatis dari mesin simulator/peralatan luar secara langsung melalui REST API. Modul ini memungkinkan skor hasil pengujian fisik dikirim secara otomatis dari peralatan testing atau simulator hardware ke LIMS, tanpa input manual oleh operator. Data masuk ke tabel *staging* `simulator_data_logs` sebelum dikonsumsi oleh proses Pelaksanaan Pengujian.
 * **API Endpoints**:
   - `POST /api/machine-integration/results` - Menerima data payload skor pengujian dari sistem luar dengan validasi header `X-Simulator-Key`.
-* **Tabel Terkait**: `lims.simulator_data_logs`, `lims.testing_results`.
+* **Tabel Terkait**: `mecs.simulator_data_logs`, `mecs.testing_results`.
 
 
-##### Arsitektur Integrasi & Protokol
+#### A. Arsitektur Integrasi & Protokol
 
 **Protokol yang Didukung:**
 | Kondisi Peralatan | Protokol | Keterangan |
@@ -813,14 +1370,18 @@ return msg;
 ```
 
 > [!IMPORTANT]
-> **Keamanan API Key**: Simpan `X-Simulator-Key` di *Environment Variable* Node-RED, jangan di-*hardcode* langsung di dalam *flow*. Edit `~/.node-red/settings.js` dan tambahkan `LIMS_API_KEY: process.env.LIMS_API_KEY` di dalam `functionGlobalContext`.
+> * **Keamanan API Key**: Simpan `X-Simulator-Key` di *Environment Variable* Node-RED, jangan di-*hardcode* langsung di dalam *flow*. Edit `~/.node-red/settings.js` dan tambahkan `LIMS_API_KEY: process.env.LIMS_API_KEY` di dalam `functionGlobalContext`.
+> * **Resolusi Loopback Host (WSL 2)**: Jika LIMS Backend berjalan di dalam WSL 2 dan Node-RED berjalan di Windows Host, konfigurasi URL pada node **HTTP Request** di Node-RED harus menggunakan alamat IPv4 eksplisit **`http://127.0.0.1:8081/...`** bukan `localhost`. Jika menggunakan `localhost`, Node.js di Windows akan mencoba meresolusi alamat loopback IPv6 (`::1`) yang tidak didukung port forwarding bawaan WSL 2, mengakibatkan *timeout* (`no response from server`).
+> * **Karakteristik Logging Node-RED**:
+>   * **Jalur MQTT**: Dirancang bersuara/verbose. Setiap data MQTT yang masuk dicetak ke konsol debug Node-RED melalui node `mecs_debug` dan log fungsi.
+>   * **Jalur HTTP (`/data-peralatan`)**: Dirancang senyap (*silent*). Selama pengiriman dari skrip PowerShell/HTTP client berhasil, Node-RED akan merespon secara instan ke pengirim dengan status `200 OK` tanpa menulis log apa pun ke konsol untuk menghemat performa. Keberhasilan pengujian harus divalidasi langsung melalui output PowerShell (`SUCCESS [HTTP 200]`) atau dengan memeriksa record baru di tabel `staging.simulator_data_logs` database LIMS.
 
 
-##### Alur Data Simulator ke Scoring
+#### B. Alur Data Simulator ke Scoring
 ```
 Peralatan/Simulator ──POST──► /api/machine-integration/results
     → Validasi X-Simulator-Key
-    → Simpan ke lims.simulator_data_logs (staging)
+    → Simpan ke mecs.simulator_data_logs (staging)
     → Pelaksanaan Pengujian membaca log (is_simulator = true)
     → Skor auto-fill ke testing_results (read-only di UI)
 ```
@@ -842,23 +1403,86 @@ type SimulatorDataLog struct {
 Field `is_simulator = true` pada `scoring_sub_aspects` menandai parameter yang nilainya di-*auto-fill* dari log simulator dan bersifat *read-only* di UI Pelaksanaan Pengujian.
 
 
-##### Testing dengan Hardware Simulator HTML
+#### C. Testing dengan Hardware Simulator HTML (Same-Origin & Secure)
 
 ![IoT Testing Flow](C:/Users/Fairuz/.gemini/antigravity/brain/14884c33-0d44-45f6-b83e-42212f6cae94/IoT_Testing_Flow.jpg)
 
-Untuk keperluan pengujian integrasi tanpa perangkat fisik, LIMS menyediakan file `hardware_simulator.html` dapat dibuka langsung di browser:
+Untuk keperluan pengujian integrasi tanpa perangkat fisik, LIMS menyediakan file simulator interaktif `hardware_simulator.html` yang terintegrasi di dalam proyek.
 
-1. Buka `hardware_simulator.html` di browser (Chrome/Edge). Tidak perlu web server — file lokal sudah cukup.
-2. Ubah **ID Registrasi** (gunakan Application ID yang aktif di database), **Mesin Penguji**, dan **Skor Terukur**.
-3. Klik tombol **KIRIM DATA TELEMETRI KE LIMS**.
-4. Log konsol akan menampilkan respons langsung dari server, dan data akan masuk ke tabel `simulator_data_logs`.
+**Lokasi Berkas Fisik:**
+*   **Repositori Proyek (Windows)**: `backend/public/hardware_simulator.html`
+*   **Deployment VM (Ubuntu/WSL)**: 
+    *   `/home/lims/lims1/backend/public/hardware_simulator.html` (LIMS Instance 1)
+    *   `/home/lims/lims2/backend/public/hardware_simulator.html` (LIMS Instance 2)
+*   **Berkas Cadangan (UAT)**: `D:\Data_NK\Project5\Test-Militer\UAT\hardware_simulator.html`
+
+> [!CAUTION]
+> **Kebijakan Keamanan CORS & Bahaya `file://` (Origin: null)**:
+> Jangan pernah membuka file simulator UAT langsung sebagai file lokal (`file:///D:/.../hardware_simulator.html`) di browser pada server produksi. Membuka file lokal akan mengirimkan header `Origin: null`. Jika backend memperbolehkan `null` di `ALLOWED_ORIGINS` CORS, hal ini menciptakan celah keamanan berat (*CORS null origin vulnerability*) di mana penyerang dapat membaca data LIMS melalui script lokal berbahaya.
+> 
+> **Implementasi Verifikasi Origin**:
+> Logika validasi CORS di LIMS diimplementasikan pada middleware Go di berkas [security_headers.go](file:///d:/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/middleware/security_headers.go#L60-L108) melalui fungsi `CORSWithWhitelist()`.
+> 
+> **Solusi Secure (Same-Origin Hosting)**:
+> Simulator kini di-host secara *native* dan aman oleh Go Backend pada endpoint `/simulator`. Karena halaman simulator dimuat dari domain yang sama dengan API LIMS, semua request bersifat **Same-Origin** dan terbebas dari issue CORS tanpa perlu melonggarkan keamanan server.
+> 
+> **Keamanan Integrasi Perangkat IoT Fisik (Real IoT)**:
+> Ketika menggunakan perangkat keras IoT riil (fisik), koneksi dilakukan secara langsung (*Direct HTTP Client*) tanpa menggunakan browser. Karena request ini dikirim langsung oleh sistem tertanam (*embedded system*) atau *gateway*, request tidak menyertakan header `Origin`. Middleware LIMS secara otomatis melewati pemeriksaan CORS apabila header `Origin` kosong, sehingga perangkat IoT riil tetap dapat menyalurkan data telemetri dengan aman tanpa memerlukan celah CORS `null` di `.env`.
+
+**Alur Proses Pengujian (DFD Level 1 - M2M Simulator):**
+```
+Browser (Same-Origin) ──GET /simulator──► Go Backend (Serve hardware_simulator.html)
+                                                │
+Browser (Simulator UI) ◄──Render Form HTML──────┘
+    │
+    ├──POST /api/machine-integration/results (X-Simulator-Key)──► Go Backend
+                                                                       │
+Staging Data Logs ◄────────Simpan ke simulator_data_logs───────────────┘
+```
+
+**Panduan Langkah Pengujian:**
+1.  Buka browser dan akses simulator pada URL:
+    *   Development / Lokal: `http://localhost:8081/simulator`
+    *   Load Balancer / Produksi: `http://lims.local:8091/simulator`
+2.  Ubah **ID Registrasi** (gunakan Application ID yang aktif di database LIMS), **Mesin Penguji** (Terminal ID), dan **Parameter Pengujian** (misal `KONSI` atau `KONPE`).
+3.  Ubah **Hasil / Skor Terukur** (misal `98.50`).
+4.  Klik tombol **🚀 KIRIM DATA TELEMETRI KE MEC**.
+5.  Konsol log di bawah tombol akan menampilkan status koneksi dan respon sukses dari server. Data telemetri tersebut secara otomatis tersimpan ke tabel staging `simulator_data_logs`.
 
 > [!NOTE]
 > **Pastikan ID & Kode Parameter valid**: Database akan menolak data dengan Application ID atau Kode Parameter yang tidak terdaftar (*Foreign Key Constraint*). Gunakan ID registrasi dan kode parameter yang benar-benar ada di database LIMS.
 
+#### D. Pengujian Terbimbing MQTT (Simulasi MQTT Publisher)
+
+Untuk pengujian alur MQTT menggunakan skrip PowerShell yang tersedia di folder `Test-Militer/UAT/`:
+
+1.  **Prasyarat Layanan**:
+    *   LIMS Backend berjalan pada port `8081` (atau `8091` produksi).
+    *   MQTT Broker (Mosquitto) aktif pada port `1883`.
+    *   Node-RED aktif pada port `1880` dengan alur `mecs/peralatan/hasil` terpasang.
+2.  **Langkah Pengujian**:
+    *   Buka **PowerShell** pada Windows Host.
+    *   Arahkan ke folder UAT:
+        ```powershell
+        cd D:\Data_NK\Project5\Test-Militer\UAT\
+        ```
+    *   Jalankan skrip `test_mqtt_scoring.ps1` dengan parameter yang sesuai:
+        ```powershell
+        .\test_mqtt_scoring.ps1 -AppId 205 -ParamCode "KONSI" -Values @(70, 80, 90)
+        ```
+3.  **Verifikasi Log di Node-RED**:
+    *   Buka antarmuka Node-RED debug console (atau pantau log konsol startup Node-RED).
+    *   Log akan mencetak proses parsing dan transformasi payload seperti berikut:
+        ```text
+        [Parse JSON] JSON Parsed
+        [Transform + Auth] Transformed payload
+        [HTTP POST] HTTP 200
+        [Log] HTTP 200: Data simulator berhasil diterima...
+        ```
 
 
-### 9. Modul Monitoring
+
+### 10. Modul Monitoring
 * **Deskripsi**: Menyediakan visualisasi data secara real-time dan pemantauan SLA pengujian harian.
 * **API Endpoints**:
   - `GET /api/dashboard/summary` - Mengambil statistik ringkasan aplikasi (jumlah registrasi, verifikasi, selesai).
@@ -866,7 +1490,7 @@ Untuk keperluan pengujian integrasi tanpa perangkat fisik, LIMS menyediakan file
   - `/report.html` - Menyajikan berkas HTML statis lalu lintas sistem secara real-time, terhubung via WebSocket ke GoAccess server (port 7890).
 * **Tabel Terkait**: `lims.user_activity_logs`.
 
-### 10. Modul Reporting
+### 11. Modul Reporting
 * **Deskripsi**: Modul terpusat yang menangani pembuatan seluruh berkas laporan LIMS — mulai dari Sertifikat Hasil Pengujian (SHP), laporan teknis, laporan operasional pengujian, laporan keuangan & perjalanan, hingga laporan inventaris aset. Semua fitur laporan dikonsolidasikan dalam modul ini.
 * **Daftar Fitur Laporan**:
 
@@ -899,7 +1523,7 @@ Untuk keperluan pengujian integrasi tanpa perangkat fisik, LIMS menyediakan file
   - **Laporan Operasional & Keuangan**: Di-render di sisi frontend (React) menggunakan data JSON dari API, dengan opsi ekspor ke PDF atau cetak langsung via browser.
 * **Tabel Terkait**: `lims.testing_applications`, `lims.testing_results`, `lims.testing_aspect_scores`, `lims.testing_equipments`, `lims.asset_handovers`, `lims.invoices`, `lims.payments`, `lims.travel_requests`, `lims.cash_advances`, `lims.reimbursements`.
 
-### 11. Modul Pemeliharaan Sistem
+### 12. Modul Pemeliharaan Sistem
 * **Deskripsi**: Layanan backend terpusat untuk operasi perawatan basis data, pembagian partisi secara dinamis, identifikasi tabel bermasalah, dan pengamanan data (*backup/restore*).
 * **Mekanisme & Komponen**:
   - **Manajemen Partisi**: Menggunakan `models/schema_manager.go` untuk mengeksekusi PostgreSQL Native Partitioning tabel `testing_applications` dan `testing_results`.
@@ -990,7 +1614,7 @@ Berikut adalah informasi dari seluruh tabel yang beroperasi dalam ekosistem data
 | 33 | lims_prod_db | `lims.scoring_levels` | N | N | Y | Penilaian & Scoring | Rubrik ambang batas kelas kelulusan akhir (Level 5) |
 | 34 | lims_prod_db | `lims.scoring_sub_aspect_items` | N | N | Y | Penilaian & Scoring | Daftar item pengecekan detail parameter fisik |
 | 35 | lims_prod_db | `lims.scoring_sub_aspects` | N | N | Y | Penilaian & Scoring | Master parameter detail fisik yang diukur (Level 4) |
-| 36 | lims_prod_db | `lims.simulator_data_logs` | Y | Y | N | Integrasi IoT | Perekaman payload data *real-time* dari alat luar |
+| 36 | lims_prod_db | `mecs.simulator_data_logs` | Y | Y | N | Integrasi IoT | Perekaman payload data *real-time* dari alat luar |
 | 37 | lims_prod_db | `lims.status_applications` | N | N | Y | Master Data | Master status tahapan aplikasi (Draft, Verified, dll) |
 | 38 | lims_prod_db | `lims.test_types` | N | N | Y | Penilaian & Scoring | Level tertinggi penentuan jenis pengujian (Level 1) |
 | 39 | lims_prod_db | `lims.tester_applications` | Y | Y | N | Perencanaan Uji | Tim penguji (Laboratorium / Lapangan) bertugas |
@@ -1053,7 +1677,7 @@ Jika Anda menggunakan **2 VM terpisah**, disk lokal kedua VM tersebut secara fis
 
 ```mermaid
 graph TD
-    Client[Web Browser / HP Client] -->|HTTPS Port 8082 / 443| Nginx[NGINX Gateway & Load Balancer]
+    Client[Web Browser / HP Client] -->|HTTPS Port 8082 / 8443 / 443| Nginx[NGINX Gateway & Load Balancer]
     
     Nginx -->|Reverse Proxy /| FE_Cluster[Frontend Cluster]
     FE_Cluster -->|Port 3000| FE1[PM2 Serve: lims-frontend-3000]
@@ -1092,6 +1716,42 @@ sudo useradd -m -g lims -s /bin/bash lims
 sudo passwd lims
 ```
 
+#### Struktur Direktori `lims1` dan `lims2`
+Untuk menjalankan deployment dual-instance, buat struktur direktori di bawah `/home/lims` dengan menjalankan perintah berikut sebagai pengguna `lims` (atau gunakan `sudo` dan ubah kepemilikannya):
+
+```bash
+# 1. Membuat direktori untuk instansi lims1
+mkdir -p /home/lims/lims1/backend/ai_service
+mkdir -p /home/lims/lims1/backend/lib
+mkdir -p /home/lims/lims1/backend/logs
+mkdir -p /home/lims/lims1/backend/public
+mkdir -p /home/lims/lims1/backend/uploads
+mkdir -p /home/lims/lims1/frontend
+
+# 2. Membuat direktori untuk instansi lims2
+mkdir -p /home/lims/lims2/backend/ai_service
+mkdir -p /home/lims/lims2/backend/lib
+mkdir -p /home/lims/lims2/backend/logs
+mkdir -p /home/lims/lims2/backend/public
+mkdir -p /home/lims/lims2/backend/uploads
+mkdir -p /home/lims/lims2/frontend
+
+# 3. Mengatur kepemilikan seluruh folder ke pengguna lims
+sudo chown -R lims:lims /home/lims/lims1
+sudo chown -R lims:lims /home/lims/lims2
+```
+
+Berikut adalah penjelasan isi dari struktur direktori tersebut:
+*   `/home/lims/lims[1/2]/frontend/`: Tempat meletakkan berkas *build* aplikasi React frontend.
+*   `/home/lims/lims[1/2]/backend/`: Folder utama Go backend instance.
+    *   `main`: File binary executables Go backend hasil kompilasi.
+    *   `paddle_ocr.py`: Script python integrasi OCR.
+    *   `ai_service/`: Menyimpan konfigurasi dan berkas pendukung model AI.
+    *   `lib/`: Tempat meletakkan shared library C++ (`libonnxruntime.so`).
+    *   `logs/`: Tempat log aplikasi backend disimpan.
+    *   `public/`: Folder aset statis backend, termasuk berkas simulator (`hardware_simulator.html`).
+    *   `uploads/`: Folder penampungan unggahan lokal sementara.
+
 #### Konfigurasi Izin Direktori (Permissions)
 Berikan izin baca dan masuk (*execute*) ke dalam folder home `lims` agar NGINX (`www-data`) dapat menyajikan berkas di dalam subfolder bersama:
 ```bash
@@ -1122,6 +1782,7 @@ Untuk mencegah kegagalan startup layanan akibat port yang tabrakan (*port confli
 | :--- | :--- | :---: | :---: | :--- |
 | **Nginx HTTP** | HTTP Redirect | TCP | `8088` (Redirect ke HTTPS) | Publik / Eksternal |
 | **Nginx HTTPS** | Gateway Utama | TCP | `8082` (atau `443` di prod asli) | Publik / Eksternal |
+| **Nginx Telegram** | Webhook Gateway | TCP | `8443` | Publik / Eksternal |
 | **Frontend 1** | PM2 Node.js Instance 1 | TCP | `3000` | Internal (Lokal) |
 | **Frontend 2** | PM2 Node.js Instance 2 | TCP | `3001` | Internal (Lokal) |
 | **Backend 1** | Go Backend Instance 1 | TCP | `8081` | Internal (Lokal) |
@@ -1142,7 +1803,7 @@ sudo lsof -i :8081
 
 # 2. Memeriksa Banyak Port Sekaligus (Multiple Ports)
 # Memeriksa seluruh ekosistem port LIMS
-sudo ss -tulpn | grep -E '8088|8082|3000|3001|8081|8091|7890|5433|9000|9001|8085'
+sudo ss -tulpn | grep -E '8088|8082|8443|3000|3001|8081|8091|7890|5433|9000|9001|8085'
 ```
 
 #### Menghentikan/Membunuh Proses pada Port yang Bermasalah (Stop/Kill Port)
@@ -1192,7 +1853,7 @@ sudo systemctl stop nginx
 sudo systemctl disable nginx
 ```
 
-### D. Deployment & Konfigurasi Frontend (PM2)
+### D. Deployment & Konfigurasi Frontend (PM2) di VPS
 
 #### Alur Kompilasi & Pemindahan File
 Proses instalasi dependensi (`npm install`) dan kompilasi/build (`npm run build`) dilakukan di dalam folder kode sumber lokal (source code) Anda, yaitu:
@@ -1229,8 +1890,60 @@ cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist/* /home/lims/
 cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist/* /home/lims/lims2/frontend/dist/
 ```
 
-#### Jalankan Kluster dengan PM2
-Gunakan perintah `pm2` di bawah user **`lims`** untuk memicu HTTP server statis dari folder `dist/` masing-masing proyek:
+#### Jalankan Kluster dengan PM2 di VPS
+
+Untuk menjalankan frontend LIMS di server produksi VPS, Anda memiliki dua opsi. Menggunakan berkas konfigurasi `ecosystem.config.js` sangat direkomendasikan karena rapi, terstruktur, dan mudah dikelola dalam satu perintah.
+
+##### 📦 Persyaratan Awal di VPS:
+Pastikan paket `pm2` dan HTTP server statis `serve` sudah terpasang secara global di VPS Anda:
+```bash
+sudo npm install -g pm2 serve
+```
+
+##### Opsi A: Menggunakan Berkas Konfigurasi `ecosystem.config.js` (Sangat Direkomendasikan)
+1.  Buat berkas konfigurasi PM2 baru di folder `/home/lims/` VPS Anda:
+    ```bash
+    nano /home/lims/ecosystem.config.js
+    ```
+2.  Salin dan tempelkan (*paste*) konfigurasi kluster di bawah ini:
+    ```javascript
+    module.exports = {
+      apps: [
+        {
+          name: 'lims-frontend-3000',
+          script: 'serve',
+          args: '-s /home/lims/lims1/frontend/dist -l 3000',
+          instances: 1,
+          autorestart: true,
+          watch: false,
+          max_memory_restart: '1G',
+          env: {
+            NODE_ENV: 'production'
+          }
+        },
+        {
+          name: 'lims-frontend-3001',
+          script: 'serve',
+          args: '-s /home/lims/lims2/frontend/dist -l 3001',
+          instances: 1,
+          autorestart: true,
+          watch: false,
+          max_memory_restart: '1G',
+          env: {
+            NODE_ENV: 'production'
+          }
+        }
+      ]
+    };
+    ```
+    *(Simpan perubahan berkas dengan menekan `Ctrl + O`, `Enter`, lalu `Ctrl + X`).*
+3.  Jalankan seluruh kluster frontend LIMS dengan satu perintah mudah:
+    ```bash
+    pm2 start /home/lims/ecosystem.config.js
+    ```
+
+##### Opsi B: Menggunakan Perintah CLI Langsung
+Jalankan perintah `pm2` di bawah user **`lims`** secara terpisah untuk memicu masing-masing server instansi:
 ```bash
 # Menjalankan Server Frontend 1 (Port 3000)
 pm2 start "serve -s /home/lims/lims1/frontend/dist -l 3000" --name "lims-frontend-3000"
@@ -1238,6 +1951,8 @@ pm2 start "serve -s /home/lims/lims1/frontend/dist -l 3000" --name "lims-fronten
 # Menjalankan Server Frontend 2 (Port 3001)
 pm2 start "serve -s /home/lims/lims2/frontend/dist -l 3001" --name "lims-frontend-3001"
 ```
+
+*Tip Operasional: Setelah menjalankan PM2, jalankan perintah `pm2 save` untuk menyimpan daftar proses aktif agar otomatis menyala kembali ketika server VPS direboot.*
 
 #### Daftar Perintah PM2 (Cheat Sheet Operasional)
 Gunakan perintah-perintah berikut untuk mengelola layanan frontend:
@@ -1274,7 +1989,7 @@ Gunakan perintah-perintah berikut untuk mengelola layanan frontend:
     pm2 restart all
     ```
 
-### E. Deployment & Konfigurasi Backend (Multi-Direktori)
+### E. Deployment & Konfigurasi Backend (Multi-Direktori) di VPS
 
 #### Alur Kompilasi & Pemindahan File
 Proses kompilasi Go backend dilakukan di folder kode sumber:
@@ -1305,15 +2020,33 @@ Anda **TIDAK perlu menyalin folder kode sumber `.go`** (seperti `controllers`, `
 3.  Folder `lib/` (untuk AI ONNX)
 4.  Folder `ai_service/` (jika berisi file model `.onnx`)
 5.  Script `paddle_ocr.py` (untuk OCR)
+6.  *Opsional (Alat Bantu)*: `generate_db_password.go` dan `generate_bcrypt_hash.go` (untuk generate password di VPS)
 
+> [!TIP]
+> **Mempertahankan Timestamp File (Preserve Timestamps)**
+> Saat Anda menyalin file biner `main` ke server VPS (Production), sangat disarankan untuk mempertahankan stempel waktu (waktu modifikasi) aslinya menggunakan *flag* khusus agar Anda dapat melacak kapan versi tersebut dikompilasi secara presisi.
+
+**Opsi A: Menggunakan `rsync` (Direkomendasikan)**
+Gunakan *flag* `-vt` (verbose, times) atau `-av` (archive, verbose):
 ```bash
-# Buat direktori backend tujuan
+rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@<IP_VPS>:/home/lims/lims1/backend/
+rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@<IP_VPS>:/home/lims/lims2/backend/
+```
+
+**Opsi B: Menggunakan `scp`**
+Gunakan atribut `-p` (preserve modification times):
+```bash
+scp -p /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@<IP_VPS>:/home/lims/lims1/backend/
+```
+
+*(Jika Anda melakukan deployment langsung di dalam OS yang sama / WSL, Anda bisa menggunakan perintah `cp -p`)*:
+```bash
 mkdir -p /home/lims/lims1/backend
 mkdir -p /home/lims/lims2/backend
 
 # Salin berkas biner, library, dan konfigurasi
-cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main /home/lims/lims1/backend/
-cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main /home/lims/lims2/backend/
+cp -p /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main /home/lims/lims1/backend/
+cp -p /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main /home/lims/lims2/backend/
 
 cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/lib /home/lims/lims1/backend/
 cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/lib /home/lims/lims2/backend/
@@ -1323,6 +2056,10 @@ cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/ai_service /home/li
 
 cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/paddle_ocr.py /home/lims/lims1/backend/
 cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/paddle_ocr.py /home/lims/lims2/backend/
+
+# Salin utilitas pembantu password
+cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/generate_db_password.go /home/lims/lims1/backend/
+cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/generate_bcrypt_hash.go /home/lims/lims1/backend/
 ```
 
 #### Hubungkan Symbolic Link (Shared Storage)
@@ -1426,7 +2163,7 @@ Gunkan perintah-perintah berikut untuk mengelola layanan backend LIMS di server 
     sudo systemctl disable lims-backend-8081.service lims-backend-8091.service
     ```
 
-### F. Konfigurasi NGINX
+### F. Konfigurasi NGINX di VPS
 
 #### Edit Konfigurasi Utama (`/etc/nginx/nginx.conf`)
 Tambahkan pemetaan Client IP asli dan deklarasi log monitoring di dalam blok `http { ... }`:
@@ -1444,12 +2181,12 @@ log_format upstream_monitoring '$remote_addr - ClientIP: $real_client_ip - [$tim
                                'app_ver="$http_x_app_version" app_plat="$http_x_app_platform"';
 ```
 
-#### Konfigurasi Situs LIMS (`/etc/nginx/sites-available/lims`)
+#### Konfigurasi Situs LIMS (`/etc/nginx/conf.d/lims.conf`)
 Salin konfigurasi berikut untuk menangani pemisahan static assets, load-balancing backend, dan direktori bersama `/uploads/`:
 
 ```nginx
 # =========================================================================
-# FILE CONFIGURATION: /etc/nginx/sites-available/lims
+# FILE CONFIGURATION: /etc/nginx/conf.d/lims.conf
 # =========================================================================
 
 # --- CLUSTER LOAD BALANCER BACKEND ---
@@ -1471,11 +2208,12 @@ upstream lims_frontend_cluster {
 # =========================================================================
 server {
     listen 8082 ssl;
-    server_name lims.local localhost;
+    server_name lims-d4551821.nip.io lims.local localhost;
 
     # --- SERTIFIKAT SSL ---
-    ssl_certificate /etc/nginx/ssl/lims.local+2.pem;
-    ssl_certificate_key /etc/nginx/ssl/lims.local+2-key.pem;
+    # Jika menggunakan Let's Encrypt (nip.io), sesuaikan path-nya:
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
     ssl_ciphers HIGH:!aNULL:!MD5;
@@ -1513,7 +2251,12 @@ server {
         auth_request /api/auth/check-report-access;
 
         # Jika backend mengembalikan HTTP 200 OK, sajikan file dari alias berikut:
-        alias /home/lims/shared_reports/;
+        alias /home/lims/shared_reports/report.html;
+    }
+
+    # 2b. Redirect /report.html/ ke /report.html (Mengatasi isu trailing slash dari link)
+    location = /report.html/ {
+        return 301 $scheme://$http_host/report.html$is_args$args;
     }
 
     # 3. Lokasi Proxy Internal untuk Autentikasi Keamanan report.html
@@ -1561,6 +2304,16 @@ server {
         proxy_read_timeout 90s;
     }
 
+    # 5b. Proxy Halaman Simulator ke Go Backend Cluster
+    location /simulator {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
     # 6. Penyajian Berkas Unggahan (Direct Alias)
     location /uploads/ {
         alias /home/lims/shared_uploads/;
@@ -1585,7 +2338,7 @@ server {
 # =========================================================================
 server {
     listen 8087;
-    server_name localhost 192.168.0.103; # Sesuaikan IP ini dengan IP Laptop Anda saat tersambung Wi-Fi
+    server_name localhost 192.168.0.103 212.85.24.33; # Sesuaikan IP ini dengan IP Laptop (Wi-Fi) atau IP Publik VPS Anda
 
     client_max_body_size 50M;
 
@@ -1647,7 +2400,7 @@ Jika ekosistem LIMS Anda berkembang ke arsitektur **multi-VM** (misalnya 2 VM de
      * **SSL Termination:** Nginx memproses enkripsi/dekripsi SSL secara terpusat di satu VM, mengurangi beban kerja CPU pada VM aplikasi.
      * **Kemudahan Scaling:** Anda bisa menambah/mengurangi VM backend/frontend kapan saja di belakang Nginx tanpa perlu mengubah konfigurasi DNS atau client.
 
-### G. Rotasi Log Harian (Logrotate) & Penjadwalan 01:00 Dini Hari
+### G. Rotasi Log Harian (Logrotate) & Penjadwalan di VPS
 
 Rotasi log otomatis setiap hari dengan nama berakhiran `_YYYYMMDD.log` untuk menghemat ruang penyimpanan.
 
@@ -1828,11 +2581,16 @@ Meskipun saat ini kita telah mengonfigurasinya dengan utilitas **system logrotat
 Dasbor dipasang di latar belakang dengan target file output di folder bersama `/home/lims/shared_reports/report.html`:
 
 ```bash
+# 1. Pastikan folder output sudah terbuat dan memiliki izin akses yang benar
+mkdir -p /home/lims/shared_reports
+sudo chown -R lims:lims /home/lims/shared_reports
+
+# 2. Jalankan GoAccess di latar belakang (Ganti <IP_VPS_ANDA> dengan IP VPS Anda, misal 212.85.24.33)
 sudo goaccess /var/log/nginx/lims_access.log \
   --log-format='%h - ClientIP: %^ - [%d:%t %^] "%r" %s %b to_server=%v status=%^ resp_time=%^ agent="%u"' \
   --date-format='%d/%b/%Y' \
   --time-format='%H:%M:%S' \
-  --ws-url=wss://lims.local/ws \
+  --ws-url=wss://<IP_VPS_ANDA>:8082/ws \
   -o /home/lims/shared_reports/report.html \
   --real-time-html &
 ```
@@ -1861,7 +2619,7 @@ Namun, jika Anda tetap ingin menggunakan Basic Auth statis, berikut adalah conto
    ```
 
 2. **Konfigurasi Nginx untuk Basic Auth:**
-   Edit file konfigurasi Nginx Anda (`/etc/nginx/sites-available/lims`), cari atau buat blok `/report.html` berikut:
+   Edit file konfigurasi Nginx Anda (`/etc/nginx/conf.d/lims.conf`), cari atau buat blok `/report.html` berikut:
    ```nginx
    # --- COPY-PASTE KE KONFIGURASI NGINX ---
    location = /report.html {
@@ -1877,7 +2635,7 @@ Namun, jika Anda tetap ingin menggunakan Basic Auth statis, berikut adalah conto
 ##### OPSI 2: Proxy Melalui API Otentikasi LIMS (Paling Aman - DINAMIS & TERINTEGRASI DB)
 Metode ini sangat direkomendasikan karena **menyelesaikan masalah ekspirasi password 90 hari**. Autentikasi dilakukan oleh Go backend dengan memeriksa token session (JWT) pengguna yang login dari database. Jika password user `nur` berubah di database, token lamanya otomatis tidak valid dan ia harus login ulang dengan password baru untuk mengakses halaman laporan.
 
-###### Langkah 1: Ubah Konfigurasi Nginx (`/etc/nginx/sites-available/lims`)
+###### Langkah 1: Ubah Konfigurasi Nginx (`/etc/nginx/conf.d/lims.conf`)
 Hapus atau beri tanda komentar pada blok `/report.html` lama agar file tidak bisa diakses secara langsung oleh siapa pun tanpa token:
 ```nginx
 # --- COPY-PASTE: HAPUS ATAU HILANGKAN BLOK INI ---
@@ -1974,17 +2732,21 @@ Daftarkan rute pemeriksaan di bawah `AuthMiddleware`:
 protected.GET("/auth/check-report-access", controllers.CheckReportAccess)
 ```
 
-###### Langkah 3: Konfigurasi Nginx dengan `auth_request` (`/etc/nginx/sites-available/lims`)
+###### Langkah 3: Konfigurasi Nginx dengan `auth_request` (`/etc/nginx/conf.d/lims.conf`)
 Ganti blok `/report.html` lama Anda dengan konfigurasi copy-paste berikut:
 ```nginx
-# --- COPY-PASTE KE KONFIGURASI NGINX ---
 # 1. Halaman Laporan GoAccess yang Dilindungi
 location = /report.html {
     # Nginx akan mengirimkan sub-request internal ke path /api/auth/check-report-access
     auth_request /api/auth/check-report-access;
 
     # Jika sub-request mengembalikan HTTP 200 OK, sajikan file ini:
-    alias /home/lims/shared_reports/;
+    alias /home/lims/shared_reports/report.html;
+}
+
+# 1b. Redirect /report.html/ ke /report.html (Mengatasi isu trailing slash dari link)
+location = /report.html/ {
+    return 301 $scheme://$http_host/report.html$is_args$args;
 }
 
 # 2. Lokasi Proxy Internal untuk Pemeriksaan Autentikasi Backend LIMS
@@ -2048,70 +2810,211 @@ location = /api/auth/check-report-access {
 
 ### J. Pelatihan Model AI (PQC) & Penjadwalan Otomatis (Crontab)
 
-LIMS mengintegrasikan modul *Predictive Quality Control* (PQC) berbasis AI (Isolation Forest) yang melatih model di latar belakang menggunakan pustaka Python dan mengeluarkan model berformat ONNX.
+LIMS mengintegrasikan modul *Predictive Quality Control* (PQC) berbasis AI (Isolation Forest) yang melatih model di latar belakang menggunakan skrip Python (`train.py`) dan mengekspor hasilnya dalam format ONNX.
 
-#### Prasyarat Library Python di Server
-Pastikan Python 3, Pip, dan pustaka-pustaka pendukung berikut terinstal di server produksi Anda:
+#### Prasyarat Virtual Environment Python di Server
+Sangat disarankan menggunakan virtual environment terisolasi (`/home/lims/lims-ai-env`) demi keamanan paket dependency:
 ```bash
-# Instal pip jika belum ada
-sudo apt update && sudo apt install python3-pip -y
+# 1. Pastikan paket pendukung venv & pip sudah terpasang di VPS
+sudo apt update && sudo apt install python3-venv python3-pip -y
 
-# Instal modul pendukung manipulasi data, database, AI, dan enkripsi
-pip3 install pandas numpy scikit-learn sqlalchemy skl2onnx cryptography psycopg2-binary
+# 2. Buat virtual environment
+python3 -m venv /home/lims/lims-ai-env
+
+# Aktifkan virtual environment
+source /home/lims/lims-ai-env/bin/activate
+
+# Install dependensi pustaka pendukung manipulasi data, database, AI, dan enkripsi
+pip install pandas numpy scikit-learn==1.4.1.post1 sqlalchemy skl2onnx onnx cryptography psycopg2-binary
 ```
 
-#### Solusi Peringatan Lokasi Script (WARNING: Scripts not on PATH)
-Saat menginstal modul di atas melalui `pip3`, Anda mungkin akan melihat pesan peringatan seperti berikut:
-> `WARNING: The scripts f2py and numpy-config are installed in '/home/lims/.local/bin' which is not on PATH.`
+#### Kebijakan Latihan Ulang (Retraining) & Data Flow Diagram (DFD) Level 1
+Proses retraining dilakukan secara offline untuk memperbarui model tanpa membebani runtime Go Backend yang melayani user secara real-time. Alur kerjanya adalah sebagai berikut:
+1.  **Pengambilan Data**: Skrip `train.py` membaca data transaksi historis dari PostgreSQL (`lims.testing_results`).
+2.  **Pelatihan Model**: Isolation Forest dilatih ulang menggunakan `scikit-learn` dengan parameter terkini.
+3.  **Ekspor Model**: Model diekspor ke file biner ONNX (`pqc_<ASPECT>.onnx`) dan statistik median/std diekspor ke file JSON (`pqc_<ASPECT>_meta.json`).
+4.  **Registrasi**: Skrip mencatat entry model baru ke tabel registri `lims.ai_model_registry` dengan status `ACTIVE`.
+5.  **Pemuatan Model (Go)**: Go Backend secara dinamis membaca berkas model ONNX terupdate untuk deteksi transaksi berikutnya.
 
-Peringatan ini **tidak mengganggu** proses latihan model AI LIMS karena program mengimpor modul langsung dari Python (bukan via perintah terminal). Namun, untuk menghilangkan peringatan ini dan memastikan semua perintah binary python lokal dapat dieksekusi langsung oleh user `lims`, daftarkan direktori bin lokal ke variabel `PATH`:
-```bash
-# Jalankan ini di bawah user 'lims'
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
+#### Mekanisme Penemuan Berkas Model oleh Go Backend
+Untuk menemukan berkas model ONNX (`pqc_<ASPECT>.onnx`) dan metadatanya, Go Backend memanggil helper function `findModelFile(aspectCode, ext)` dengan urutan pencarian (precedence) sebagai berikut:
+1.  **Parameter Database**: Sistem mencari nilai parameter `AI_METADATA_FOLDER` pada tabel `lims.global_parameters`. Jika didefinisikan dan direktorinya ada, backend membaca berkas model dari path tersebut (misal: `/home/lims/lims1/backend/ai_service/models`).
+2.  **Direktori Relatif**: Jika parameter database kosong atau path tersebut tidak valid, backend mencari di direktori relatif bawaan proyek dengan urutan:
+    *   `ai_service/models/`
+    *   `backend/ai_service/models/`
+    *   `../backend/ai_service/models/`
+    *   Direktori kerja aktif (*current working directory*).
 
 #### Menjalankan Pelatihan Secara Manual
-Pelatihan model dilakukan menggunakan skrip `train.py` yang terletak di dalam folder backend.
-
-> [!IMPORTANT]
-> **Penyimpanan Berkas Model & Konfigurasi Parameter Database**:
-> Agar program Go Backend (UI LIMS) dan skrip pelatihan (`train.py`) membaca dan menulis dari folder yang sama pada deployment baru, Anda wajib memperbarui nilai parameter **`AI_METADATA_FOLDER`** di tabel `lims.global_parameters` database PostgreSQL Anda ke path folder baru:
-> `/home/lims/lims1/backend/ai_service/models`
->
-> **Cara memperbarui parameter di database (menjalankan query SQL):**
-> ```sql
-> UPDATE lims.global_parameters 
-> SET param_value = '/home/lims/lims1/backend/ai_service/models' 
-> WHERE param_key = 'AI_METADATA_FOLDER';
-> ```
-> *(Jika parameter ini diatur, output model pelatihan akan otomatis ditulis ke `/home/lims/lims1/backend/ai_service/models/` dan UI LIMS dari kedua backend port 8081 & 8091 akan otomatis membaca file model dari sana).*
-
-Anda dapat memicu pelatihan ulang (*offline retraining*) secara manual kapan saja dengan perintah:
+Anda dapat memicu pelatihan ulang (*offline retraining*) secara manual kapan saja dengan menjalankan perintah berikut menggunakan Python virtual environment:
 ```bash
-python3 /home/lims/lims1/backend/ai_service/train.py
+/home/lims/lims-ai-env/bin/python /home/lims/lims1/backend/ai_service/train.py
 ```
-*Skrip ini akan mengambil data historis dari database PostgreSQL, melatih model baru, mengekspor model berformat `.onnx` dan berkas `.json` metadata ke folder baru `/home/lims/lims1/backend/ai_service/models`, serta memperbarui database status model di registry menjadi `ACTIVE`.*
 
 #### Penjadwalan Otomatis Menggunakan Crontab (Cron Job)
-Untuk menjamin akurasi model selalu ter-update berdasarkan data baru, pelatihan diatur agar berjalan otomatis secara berkala (misalnya setiap hari pada pukul 01:00 dini hari).
-
+Untuk menjamin akurasi model selalu ter-update berdasarkan data baru, pelatihan diatur agar berjalan otomatis secara berkala (setiap hari Senin pukul 02:00 dini hari).
 1.  Buka editor crontab untuk user **`lims`**:
     ```bash
-    # Pindah ke user lims terlebih dahulu jika saat ini login sebagai user lain
-    sudo su - lims
     crontab -e
     ```
-2.  Tambahkan baris penjadwalan berikut di bagian paling bawah file:
+2.  Tambahkan baris penjadwalan berikut di bagian paling bawah berkas:
     ```cron
-    0 1 * * * /usr/bin/python3 /home/lims/lims1/backend/ai_service/train.py >> /home/lims/lims1/backend/logs/train_cron.log 2>&1
+    0 2 * * 1 /home/lims/lims-ai-env/bin/python /home/lims/lims1/backend/ai_service/train.py >> /home/lims/lims1/backend/logs/train_cron.log 2>&1
     ```
 3.  Simpan dan tutup editor. Cron daemon akan otomatis memuat jadwal baru.
 
-**Penjelasan Parameter Cron di atas:**
-*   `0 1 * * *`: Menunjukkan jadwal pengeksekusian script dilakukan pada **menit ke-0, jam ke-1 (01:00 AM WIB/server time), setiap hari, setiap bulan, dan setiap hari dalam seminggu**.
-*   `/usr/bin/python3`: Path absolut interpreter Python 3 di Linux.
-*   `>> /home/lims/lims1/backend/logs/train_cron.log 2>&1`: Mengarahkan keluaran log (`stdout` & `stderr`) ke berkas log `train_cron.log` agar proses pelatihan dapat dipantau dan di-debug apabila terjadi kendala/error.
+#### Penanganan Masalah (Troubleshooting): Error Permission Denied pada train.py
+Jika saat menjalankan skrip `train.py` (baik secara manual maupun terjadwal via cron) Anda menemui error seperti berikut:
+```text
+Error exporting aspect PESWT to ONNX: [Errno 13] Permission denied: '/home/lims/lims1/backend/ai_service/models/pqc_PESWT.onnx'
+```
+Hal ini terjadi karena folder `/home/lims/lims1/backend/ai_service/models` atau berkas model di dalamnya dimiliki oleh user lain (misalnya `root` akibat menjalankan skrip dengan `sudo`), sehingga user `lims` tidak memiliki izin menulis/menimpa berkas tersebut.
+
+**Langkah Solusi:**
+1.  **Ubah kepemilikan direktori** beserta berkas di dalamnya menjadi milik user `lims`:
+    ```bash
+    sudo chown -R lims:lims /home/lims/lims1/backend/ai_service/models
+    ```
+2.  **Atur hak akses** agar user `lims` dapat membaca dan menulis ke direktori tersebut:
+    ```bash
+    sudo chmod -R 755 /home/lims/lims1/backend/ai_service/models
+    ```
+
+#### Penanganan Masalah (Troubleshooting): Error `AttributeError: module 'ml_dtypes' has no attribute 'float4_e2m1fn'`
+
+Jika saat menjalankan skrip `train.py` Anda menemui kesalahan tipe data `ml_dtypes` seperti berikut:
+`AttributeError: module 'ml_dtypes' has no attribute 'float4_e2m1fn'`
+
+Hal ini disebabkan oleh ketidakcocokan versi (*version mismatch*) antara pustaka `onnx` dengan pustaka `ml_dtypes` pada lingkungan Python (khususnya Python 3.14+).
+
+**Langkah Solusi:**
+Perbarui pustaka `ml_dtypes` ke versi terbaru di dalam virtual environment Anda menggunakan perintah berikut:
+```bash
+/home/lims/lims-ai-env/bin/pip install --upgrade ml_dtypes
+```
+3.  **Jalankan kembali skrip** sebagai user `lims` (tanpa `sudo`):
+    ```bash
+    /home/lims/lims-ai-env/bin/python /home/lims/lims1/backend/ai_service/train.py
+    ```
+
+#### Penanganan Masalah (Troubleshooting): Error Generate Laporan AI (Invalid API Key / Error 401)
+
+Jika saat menggunakan fitur "Generate Laporan AI" di UI LIMS Anda menemui pesan kesalahan seperti berikut:
+`Error generate laporan AI: AI API mengembalikan kode error 401: {"error":{"message":"Invalid API Key","type":"invalid_request_error","code":"invalid_api_key"}}`
+
+Hal ini disebabkan karena kunci API (`AI_API_KEY`) yang dikonfigurasi pada berkas `.env` di VPS Anda salah, tidak valid, atau sudah kedaluwarsa.
+
+**Langkah Solusi:**
+1.  Buka berkas `.env` pada folder instansi LIMS Anda di VPS:
+    ```bash
+    sudo nano /home/lims/lims1/backend/.env
+    sudo nano /home/lims/lims2/backend/.env
+    ```
+2.  Perbarui nilai variabel **`AI_API_KEY`** dengan kunci API yang valid (misalnya kunci Groq baru dari `https://console.groq.com/keys` atau Gemini dari konsol Google):
+    ```env
+    # Contoh jika menggunakan Groq:
+    AI_API_URL=https://api.groq.com/openai/v1
+    AI_API_KEY=gsk_KUNCI_BARU_ANDA_DI_SINI
+    AI_MODEL=llama-3.1-8b-instant
+    ```
+3.  Simpan perubahan berkas, lalu restart layanan backend LIMS agar memuat konfigurasi yang baru:
+    ```bash
+    sudo systemctl restart lims-backend-8081.service
+    sudo systemctl restart lims-backend-8091.service
+    ```
+
+#### Panduan Instalasi & Konfigurasi LLM Lokal (Ollama - Qwen 2.5 3B / Llama 3.1 8B) di VPS
+
+Untuk menjalankan AI secara offline dan mandiri pada server VPS Anda:
+*   **Jika VPS Anda menggunakan CPU-only (RAM terbatas)**: Sangat direkomendasikan menggunakan model **Qwen 2.5 (3B)** karena sangat cepat dijalankan di CPU, ramah RAM, dan memiliki pemahaman Bahasa Indonesia yang luar biasa untuk ukurannya. Ini mencegah kendala *timeout*.
+*   **Jika VPS Anda memiliki GPU/vRAM Besar (8GB+ VRAM)**: Model **Llama 3.1 (8B)** adalah pilihan terbaik untuk akurasi dan kompleksitas laporan tingkat tinggi.
+
+##### Rekomendasi Pilihan Model LLM Lokal (Offline)
+
+Tergantung pada kapasitas vRAM GPU atau memori VPS Anda, berikut adalah beberapa pilihan model AI offline terbaik yang didukung:
+
+| Model | Ukuran Parameter | Kebutuhan vRAM | Kelebihan | Perintah Unduh |
+| :--- | :--- | :--- | :--- | :--- |
+| **Qwen 2.5 (3B)** *(Rekomendasi CPU)* | 3 Miliar | **~4 GB (RAM/vRAM)** | Sangat ringan, cepat di CPU biasa, dan pemahaman Bahasa Indonesia sangat baik. | `ollama pull qwen2.5:3b` |
+| **Llama 3.2 (3B)** | 3 Miliar | **~4 GB (RAM/vRAM)** | Ringan, cepat, dan robust untuk resource menengah. | `ollama pull llama3.2` |
+| **Qwen 2.5 (7B)** | 7 Miliar | **~8 GB vRAM** | Sangat cerdas dalam memahami Bahasa Indonesia dan struktur format JSON. | `ollama pull qwen2.5:7b` |
+| **Llama 3.1 (8B)** *(Rekomendasi GPU)* | 8 Miliar | **~8 GB vRAM** | Model standar industri, sangat cerdas, kreatif, dan robust untuk penyusunan laporan. | `ollama pull llama3.1` |
+
+##### 1. Langkah Instalasi Ollama di VPS
+Jalankan script instalasi resmi Ollama pada terminal VPS Anda:
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+##### 2. Mengunduh Model AI & Embedding
+Unduh model LLM utama serta model embedding teks (RAG) ke dalam server lokal Anda:
+```bash
+# 1. Unduh model utama Qwen 2.5 (3B) - Sangat cocok untuk CPU-only
+ollama pull qwen2.5:3b
+
+# (Opsional) Unduh model utama Llama 3.1 (8B) jika VPS memiliki GPU/vRAM besar
+# ollama pull llama3.1
+
+# 2. Unduh model Embedding teks (nomic-embed-text)
+ollama pull nomic-embed-text
+```
+
+##### 3. Konfigurasi Berkas `.env` LIMS di VPS
+Sesuaikan berkas konfigurasi agar menembak ke port lokal Ollama (`11434`):
+1.  Buka berkas konfigurasi `.env` instansi Anda:
+    ```bash
+    sudo nano /home/lims/lims1/backend/.env
+    sudo nano /home/lims/lims2/backend/.env
+    ```
+2.  Ubah bagian **AI Integration** menjadi konfigurasi lokal berikut (sesuaikan model dengan yang di-pull):
+    ```env
+    # --- KOORDINAT MODEL AI LOKAL (OLLAMA) ---
+    AI_API_URL=http://127.0.0.1:11434/v1
+    AI_API_KEY=none
+    AI_MODEL=qwen2.5:3b   # (Ganti ke llama3.1 jika menggunakan Llama 3.1)
+
+    # --- KOORDINAT EMBEDDING LOKAL (OLLAMA) ---
+    AI_EMBEDDING_API_URL=http://127.0.0.1:11434
+    AI_EMBEDDING_MODEL=nomic-embed-text
+    ```
+3.  Simpan berkas, lalu restart layanan backend LIMS:
+    ```bash
+    sudo systemctl restart lims-backend-8081.service
+    sudo systemctl restart lims-backend-8091.service
+    ```
+
+---
+
+#### Skrip Peluncuran Ubuntu Terpadu (start_lims.sh dengan Tmux)
+Di lingkungan produksi Ubuntu, seluruh komponen LIMS backend (port 8081 & 8091), frontend (PM2), dan services pendukung (Ollama) diluncurkan dalam sesi tmux terpisah menggunakan skrip `start_lims.sh`:
+
+```bash
+#!/bin/bash
+SESSION="lims_system"
+tmux has-session -t $SESSION 2>/dev/null
+
+if [ $? -ne 0 ]; then
+  # Buat sesi baru
+  tmux new-session -d -s $SESSION -n "backend-8081"
+  
+  # Window 1: Backend Port 8081
+  tmux send-keys -t $SESSION:"backend-8081" "cd /home/lims/lims1/backend && ./main" C-m
+  
+  # Window 2: Backend Port 8091 (Replikasi Load Balancer)
+  tmux new-window -t $SESSION -n "backend-8091"
+  tmux send-keys -t $SESSION:"backend-8091" "cd /home/lims/lims1/backend && PORT=8091 ./main" C-m
+  
+  # Window 3: Ollama Service (Vektor Embedding AI)
+  tmux new-window -t $SESSION -n "ollama"
+  tmux send-keys -t $SESSION:"ollama" "ollama serve" C-m
+  
+  # Window 4: Frontend (PM2 Monitoring)
+  tmux new-window -t $SESSION -n "frontend"
+  tmux send-keys -t $SESSION:"frontend" "pm2 logs" C-m
+fi
+
+tmux attach-target -t $SESSION
+```
 
 ### K. Administrasi & Pemeliharaan Modul Pendukung (PostgreSQL, MinIO, Camunda)
 
@@ -2281,6 +3184,20 @@ curl -I http://localhost:9000/minio/health/live
     *   *Standalone*: Mengalihkan output ke file log saat dijalankan (`minio server /data > /var/log/minio.log 2>&1 &`)
     *   *Docker*: `docker logs -f lims-minio`
 
+##### 6. Panduan Akses Konsol Web MinIO di VPS
+Karena port admin Console `9001` biasanya ditutup demi alasan keamanan pada firewall VPS, Anda direkomendasikan mengaksesnya menggunakan **SSH Tunneling (Port Forwarding)** dari komputer lokal Anda:
+
+1.  **Jalankan SSH Tunneling di terminal lokal Anda (Windows/Linux)**:
+    ```bash
+    ssh -L 9001:127.0.0.1:9001 -N username_vps@IP_VPS_ANDA
+    ```
+    *Masukkan sandi SSH VPS Anda. Jendela terminal ini akan tetap terbuka secara "diam" untuk menahan terowongan.*
+2.  **Buka Web Console di browser lokal Anda**:
+    Akses alamat **`http://localhost:9001`**
+3.  **Kredensial Login Default**:
+    *   **Access Key (Username)**: `adminmiliter`
+    *   **Secret Key (Password)**: `password12345`
+
 ---
 
 #### Workflow Engine (Camunda BPMN)
@@ -2326,6 +3243,131 @@ CAMUNDA_PASSWORD_ENCRYPTED=7Qnql7OCZ046YGu2pY3FAOQFg8TLv3u5k2A=
     docker logs -f lims-camunda
     ```
     *Cari baris yang mengandung tulisan `ENGINE-00000` atau `ERROR` untuk melacak kegagalan eksekusi skrip Java delegate atau kegagalan koneksi database.*
+
+##### 6. Panduan Akses Konsol Web Camunda Cockpit di VPS
+Karena port `8085` biasanya ditutup demi alasan keamanan pada firewall VPS, gunakan **SSH Tunneling (Port Forwarding)** dari komputer lokal Anda:
+
+1.  **Jalankan SSH Tunneling di terminal lokal Anda (Windows/Linux)**:
+    ```bash
+    ssh -L 8085:127.0.0.1:8085 -N username_vps@IP_VPS_ANDA
+    ```
+    *Masukkan sandi SSH VPS Anda. Jendela terminal ini akan tetap terbuka secara "diam" untuk menahan terowongan.*
+2.  **Buka Web Console di browser lokal Anda**:
+    Akses alamat **`http://localhost:8085/camunda/app/cockpit/`**
+3.  **Kredensial Login Default**:
+    *   **Username**: `demo`
+    *   **Password**: `demo`
+
+*(Tip: Anda dapat memetakan port Camunda dan MinIO sekaligus dalam satu perintah: `ssh -L 8085:127.0.0.1:8085 -L 9001:127.0.0.1:9001 -N username_vps@IP_VPS_ANDA`)*
+
+---
+
+#### Message Broker (MQTT - Mosquitto) di VPS
+
+Mosquitto Broker digunakan untuk menerima dan mendistribusikan data telemetri dari peralatan uji militer secara *real-time*.
+
+##### 1. Instalasi & Aktivasi
+Jalankan perintah berikut di terminal VPS Anda:
+```bash
+# 1. Perbarui daftar paket dan instal Mosquitto
+sudo apt update
+sudo apt install mosquitto mosquitto-clients -y
+
+# 2. Aktifkan agar otomatis menyala saat boot
+sudo systemctl enable mosquitto
+
+# 3. Jalankan broker Mosquitto
+sudo systemctl start mosquitto
+```
+
+##### 2. Konfigurasi Akses Luar (Port 1883)
+Pada Mosquitto versi 2.0+, akses eksternal secara default diblokir kecuali dikonfigurasi secara eksplisit.
+1.  Buat berkas konfigurasi baru di VPS Anda:
+    ```bash
+    sudo nano /etc/mosquitto/conf.d/lims-mqtt.conf
+    ```
+2.  Tempelkan baris berikut untuk membuka akses port `1883` tanpa sandi (untuk kebutuhan pengujian):
+    ```ini
+    listener 1883
+    allow_anonymous true
+    ```
+3.  Simpan berkas, lalu muat ulang Mosquitto:
+    ```bash
+    sudo systemctl restart mosquitto
+    ```
+
+##### 3. Pemeriksaan Status & Logs
+```bash
+# Cek status berjalan
+sudo systemctl status mosquitto
+
+# Pantau logs real-time Mosquitto
+tail -f /var/log/mosquitto/mosquitto.log
+```
+
+---
+
+#### Middleware Integrasi Data (Node-RED) di VPS
+
+Node-RED digunakan sebagai data pipeline untuk menerjemahkan data MQTT/Serial dari peralatan uji sebelum dikirim ke LIMS API.
+
+##### 1. Instalasi Node-RED di VPS
+Node-RED berjalan di atas Node.js. Jalankan perintah instalasi berikut secara global di VPS:
+```bash
+sudo npm install -g --unsafe-perm node-red
+```
+
+##### 2. Menjalankan Node-RED di Latar Belakang (Menggunakan PM2)
+Karena PM2 sudah terpasang di VPS Anda untuk menyajikan frontend, gunakan PM2 untuk mengelola dan memantau Node-RED dengan aman:
+```bash
+# 1. Jalankan Node-RED di PM2
+pm2 start node-red --name "lims-nodered" -- --max-old-space-size=512
+
+# 2. Simpan daftar proses aktif agar otomatis menyala saat reboot
+pm2 save
+```
+
+##### 3. Akses Dashboard Admin Node-RED
+Secara default, Node-RED mendengarkan port **`1880`**. Untuk alasan keamanan, port ini ditutup pada firewall VPS. Akses dashboard Node-RED menggunakan SSH Tunneling dari komputer lokal Anda:
+1.  **Buka terowongan SSH dari terminal laptop lokal Anda**:
+    ```bash
+    ssh -L 1880:127.0.0.1:1880 -N lims@212.85.24.33
+    ```
+2.  **Akses via browser lokal Anda**:
+    ➔ **`http://localhost:1880`**
+
+##### 4. Memantau Log Node-RED
+```bash
+pm2 logs lims-nodered
+```
+
+##### 5. Cara Mentransfer Konfigurasi/Alur (*Flows*) Node-RED dari Lokal ke VPS
+
+Anda memiliki dua opsi mudah untuk memindahkan seluruh rancangan alur (*flows*) Node-RED dari laptop lokal Anda ke VPS:
+
+###### **Opsi A: Ekspor & Impor via Web Console (Paling Mudah & Direkomendasikan)**
+1.  Buka **Node-RED Lokal** Anda (`http://localhost:1880`) di browser laptop.
+2.  Klik tombol menu (garis tiga) di sudut kanan atas -> pilih **Export**.
+3.  Pilih tab **JSON**, centang **All flows**, lalu klik **Download JSON** (atau pilih *Copy to Clipboard*).
+4.  Hubungkan laptop Anda ke **Node-RED VPS** menggunakan terowongan SSH (`ssh -L 1880:127.0.0.1:1880 ...`), lalu buka `http://localhost:1880` di browser.
+5.  Klik tombol menu kanan atas -> pilih **Import**.
+6.  Unggah berkas JSON yang diunduh tadi (atau tempelkan kodenya), lalu klik **Import**.
+7.  Klik tombol merah **Deploy** di kanan atas VPS Node-RED untuk mengaktifkan alur.
+
+###### **Opsi B: Salin Berkas `flows.json` Secara Langsung (CLI)**
+Node-RED menyimpan seluruh konfigurasi dalam satu berkas JSON di dalam folder `.node-red` pengguna.
+1.  **Lokasi Berkas Lokal (Windows)**:
+    `C:\Users\<Nama_User_Laptop>\.node-red\flows.json` (atau `flows_<nama_komputer>.json`)
+2.  **Lokasi Berkas Target di VPS**:
+    `/home/lims/.node-red/flows.json` (atau nama host VPS `/home/lims/.node-red/flows_srv1801975.json`)
+3.  Kirim berkas lokal langsung menggunakan `scp` dari terminal Ubuntu/WSL lokal Anda ke VPS:
+    ```bash
+    scp /mnt/c/Users/<Nama_User_Laptop>/.node-red/flows.json lims@212.85.24.33:/home/lims/.node-red/flows.json
+    ```
+4.  Masuk ke terminal VPS, lalu restart Node-RED agar memuat berkas konfigurasi baru tersebut:
+    ```bash
+    pm2 restart lims-nodered
+    ```
 
 ### L. Akses LIMS dari Internet (Ngrok Dev & Produksi Asli)
 
@@ -2400,7 +3442,7 @@ Jika server LIMS diletakkan di dalam jaringan kantor/pabrik (on-premise) di bali
   * Port luar `443` (HTTPS) --> Port lokal server LIMS `8082` (atau `443`)
 
 ##### 3. Penyesuaian Konfigurasi Nginx (`server_name` & SSL Let's Encrypt)
-Perbarui berkas `/etc/nginx/sites-available/lims` agar mengenali nama domain resmi Anda pada parameter `server_name`:
+Perbarui berkas `/etc/nginx/conf.d/lims.conf` agar mengenali nama domain resmi Anda pada parameter `server_name`:
 ```nginx
 server {
     listen 80;
@@ -2644,13 +3686,13 @@ Sebelum melakukan build, sesuaikan berkas `frontend/.env.production` (atau `.env
 
    ###### Metode B: Lewat HTTP Port 8087 (Paling Mudah, Tanpa Internet, Bebas Kendala SSL)
    * Karena kita telah mengaktifkan **`android:usesCleartextTraffic="true"`** pada berkas `AndroidManifest.xml` aplikasi, HP Android diizinkan melakukan request HTTP biasa tanpa enkripsi (bebas dari pemblokiran SSL self-signed).
-   * **Tambahkan Blok Server HTTP Baru di Nginx (`/etc/nginx/sites-available/lims`):**
+   * **Tambahkan Blok Server HTTP Baru di Nginx (`/etc/nginx/conf.d/lims.conf`):**
      Tambahkan server block ini di sebelah blok port 8082 Anda:
      ```nginx
      # --- COPY-PASTE KE CONFIG NGINX (UNTUK WI-FI LOKAL LOAD BALANCER HTTP) ---
      server {
          listen 8087;
-         server_name localhost 192.168.0.103; # Ganti dengan IP laptop Anda saat ini
+         server_name localhost 192.168.0.103 212.85.24.33; # Ganti dengan IP laptop (Wi-Fi) atau IP Publik VPS Anda
 
          client_max_body_size 50M;
 
@@ -2739,7 +3781,13 @@ APK Release digunakan untuk pengetesan resmi, distribusi internal, atau unggahan
 
 > [!IMPORTANT]
 > **Penting untuk Versi Rilis:**
-> 1. Buka berkas [build.gradle](file:///d:/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/android/app/build.gradle), temukan blok `defaultConfig`, lalu naikkan `versionCode` (angka bulat naik terus) dan sesuaikan `versionName` dengan versi frontend:
+> 
+> *   **Perbedaan Berkas `build.gradle` (Penting Agar Tidak Salah Edit):**
+>     Di proyek Android, terdapat **dua** berkas `build.gradle` dengan tujuan berbeda. Pastikan Anda membuka berkas **Modul / App-Level**:
+>     *   ➔ **Modul / App-Level (Edit yang ini):** [frontend/android/app/build.gradle](file:///d:/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/android/app/build.gradle) (menyimpan konfigurasi aplikasi seperti `versionCode`, `versionName`, `signingConfigs`, dan `dependencies`).
+>     *   ➔ **Root / Project-Level (Jangan edit yang ini):** [frontend/android/build.gradle](file:///d:/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/android/build.gradle) (menyimpan repositori buildscript global).
+> 
+> 1. Buka berkas [build.gradle App-level](file:///d:/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/android/app/build.gradle), temukan blok `defaultConfig`, lalu naikkan `versionCode` (angka bulat naik terus) dan sesuaikan `versionName` dengan versi frontend:
 >    ```groovy
 >    android {
 >        defaultConfig {
@@ -2840,5 +3888,669 @@ Jika aplikasi LIMS di HP Anda mengalami error `Failed to fetch` tetapi Anda tida
    * Buka browser Google Chrome di laptop Anda, lalu masuk ke alamat:
      `chrome://inspect`
    * Pastikan aplikasi LIMS sudah dibuka di HP Anda.
-   * Nama HP Anda dan tulisan **LIM System (com.lims.app)** akan muncul di bawah bagian **Remote Target / Devices**.
-   * Klik tombol **inspect** di bawah nama aplikasi tersebut. Jendela Developer Tools laptop akan terbuka untuk memantau log error konsol dan jaringan HP secara real-time.
+    * Nama HP Anda dan tulisan **LIM System (com.lims.app)** akan muncul di bawah bagian **Remote Target / Devices**.
+    * Klik tombol **inspect** di bawah nama aplikasi tersebut. Jendela Developer Tools laptop akan terbuka untuk memantau log error konsol dan jaringan HP secara real-time.
+
+---
+
+### Q. Migrasi Konfigurasi dari Lokal (Laptop) ke VPS
+
+Bagian ini memuat panduan teknis konfigurasi lengkap untuk memindahkan sistem LIMS dari berjalan lokal di laptop (`127.0.0.1`) ke server produksi VPS (**`212.85.24.33`**).
+
+---
+
+#### Panduan Metode Transfer Berkas dari Lokal (Laptop) ke VPS
+
+Untuk memindahkan kode, hasil kompilasi (build), atau folder konfigurasi dari komputer lokal Anda ke VPS, gunakan salah satu dari tiga metode berikut:
+
+##### Opsi A: Menggunakan Perintah `scp` (Melalui Terminal / WSL) - *Direkomendasikan untuk CLI*
+Perintah `scp` bawaan terminal Linux/WSL sangat cocok untuk mentransfer berkas biner tunggal, file `.env`, atau folder aset secara instan.
+
+*   **Mengirim Biner Backend `main` ke VPS**:
+    ```bash
+    scp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.85.24.33:/home/lims/lims1/backend/
+    scp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.85.24.33:/home/lims/lims2/backend/
+    ```
+*   **Mengirim Folder `dist/` Frontend ke VPS**:
+    ```bash
+    # Kirim folder dist ke instansi lims1
+    scp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist lims@212.85.24.33:/home/lims/lims1/frontend/
+    # Kirim folder dist ke instansi lims2
+    scp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist lims@212.85.24.33:/home/lims/lims2/frontend/
+    ```
+*   **Mengirim Berkas Konfigurasi `.env`**:
+    ```bash
+    scp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/.env lims@212.85.24.33:/home/lims/lims1/backend/
+    ```
+
+##### Opsi B: Menggunakan FileZilla atau WinSCP (Antarmuka Grafis / GUI) - *Paling Mudah*
+Jika Anda lebih menyukai metode seret-dan-lepas (*drag-and-drop*) file secara visual:
+1.  Unduh dan buka aplikasi **FileZilla** atau **WinSCP** di laptop Anda.
+2.  Buat koneksi baru dengan pengaturan berikut:
+    *   **Protokol**: SFTP (SSH File Transfer Protocol)
+    *   **Host (IP)**: `212.85.24.33`
+    *   **Port**: `22`
+    *   **Logon Type**: Normal
+    *   **User**: `lims`
+    *   **Password**: *Masukkan password SSH VPS untuk user lims.*
+3.  Klik **Connect**. Anda dapat langsung mengunggah file/folder dari panel kiri (Lokal Laptop) ke panel kanan (Direktori `/home/lims/...` di VPS) secara visual.
+
+##### Opsi C: Menggunakan Perintah `rsync` (Paling Cepat untuk Perubahan Berulang)
+`rsync` hanya mengirimkan bagian berkas yang mengalami perubahan (delta sync), sehingga sangat hemat bandwidth dan cepat.
+```bash
+# Mengirim backend dengan mengecualikan node_modules, logs, dan folder .git
+rsync -avz -e ssh --exclude 'node_modules' --exclude '.git' --exclude 'logs' /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/ lims@212.85.24.33:/home/lims/lims1/backend/
+```
+
+---
+
+#### 1. Templat Lengkap File `.env` Go Backend di VPS (`/home/lims/lims1/backend/.env` dan `/home/lims/lims2/backend/.env`)
+
+Salin konfigurasi berikut untuk berkas `.env` di VPS Anda. Sesuaikan port (`PORT=8081` untuk instance 1, dan `PORT=8091` untuk instance 2).
+
+```env
+# ==========================================
+# LIMS Production Environment Configuration
+# ==========================================
+
+# 1. Aplikasi & Domain
+SERVER_DOMAIN=212.85.24.33
+PORT=8081
+GIN_MODE=release
+
+# 2. Database Server (Menggunakan IP local loopback VPS karena DB di server yang sama)
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_NAME=lims_prod_db
+DB_USER=lims_app
+# Gunakan utility generate_db_password.go untuk mengisi nilai ini
+DB_PASSWORD_ENCRYPTED=Isi_Nilai_Hasil_Enkripsi_AES_Di_Sini
+DB_SCHEMA=lims
+DB_SSLMODE=disable
+
+# 3. Kunci Pengaman Token (Gunakan openssl rand -hex 32 untuk membuat token acak)
+JWT_SECRET=Ganti_Dengan_JWT_SECRET_Heksadesimal_Sangat_Rahasia_Anda
+JWT_EXPIRY_HOURS=24
+
+# 4. Object Storage (MinIO)
+MINIO_ENDPOINT=127.0.0.1:9000
+MINIO_ACCESS_KEY=adminmiliter
+# Kunci rahasia MinIO yang sudah dienkripsi
+MINIO_SECRET_KEY_ENCRYPTED=KZCFAMAtbDEiXlnaTCUCXcTdFykCe3ybMSQAsCA=
+MINIO_BUCKET=lims-docs
+MINIO_USE_SSL=false
+MINIO_ENV=production
+
+# 5. Workflow Engine (Camunda BPMN)
+CAMUNDA_URL=http://127.0.0.1:8085/engine-rest
+CAMUNDA_USER=demo
+# Sandi Camunda yang terenkripsi
+CAMUNDA_PASSWORD_ENCRYPTED=_4HLoRpb4_qnqBm2VlX7wLg5nrg=
+CAMUNDA_ENV=production
+
+# 6. Keamanan & Reverse Proxy
+# Menerima IP client asli dari Nginx proxy lokal
+TRUSTED_PROXIES=127.0.0.1
+# Pengaturan CORS (ALLOWED_ORIGINS - pisahkan dengan koma, tanpa spasi)
+ALLOWED_ORIGINS=http://212.85.24.33,http://212.85.24.33:8081,http://212.85.24.33:8092
+
+# 7. Pengaturan Tambahan
+TRACE_LEVEL=0
+DB_DEBUG=false
+DB_AUTO_MIGRATE=false
+SEED_DB=false
+MAX_UPLOAD_SIZE=4096
+COMPANY_NAME="LIM System"
+HEADER_TITLE="Laboratory Information Management System"
+APP_FOOTER="Laboratory Information Management System - Dokumen Rahasia & Terbatas"
+APP_ADMIN_NAME="LIMS Administrator"
+```
+
+##### ⚠️ Mengamankan JWT_SECRET dan Enkripsi Sandi Database (VPS)
+
+1.  **Membuat Kunci JWT_SECRET Acak**:
+    Gunakan terminal VPS atau lokal laptop Anda untuk menghasilkan kunci rahasia 256-bit acak yang aman.
+    *   **Opsi 1: Menggunakan OpenSSL (Bawaan VPS Linux)**:
+        ```bash
+        openssl rand -hex 32
+        ```
+    *   **Opsi 2: Menggunakan Python 3**:
+        ```bash
+        python3 -c "import secrets; print(secrets.token_hex(32))"
+        ```
+    *Salin hasilnya dan jadikan nilai variabel `JWT_SECRET=hasil_kunci_acak_tadi` di file `.env` VPS.*
+2.  **Mendapatkan Nilai `DB_PASSWORD_ENCRYPTED`**:
+    Pastikan `.env` sudah memuat `JWT_SECRET` terbaru, lalu jalankan utilitas pembuat sandi di direktori `backend/`:
+    ```bash
+    go run generate_db_password.go "Password_Database_Lims_App_Asli"
+    ```
+    Salin string keluaran yang dihasilkan ke dalam variabel `DB_PASSWORD_ENCRYPTED` di file `.env`.
+
+> [!WARNING]
+> **PERBEDAAN PENTING: Sandi `.env` vs Sandi Pengguna (Tabel Users)**
+> *   **Sandi Database di `.env` (`DB_PASSWORD_ENCRYPTED`)** menggunakan enkripsi **AES-CFB (simetris)** yang didekripsi menggunakan `JWT_SECRET`. Berkas `generate_db_password.go` dibuat **hanya** untuk mengenkripsi sandi database ini.
+> *   **Sandi Pengguna (Users) di Database** (tabel `lims.users` kolom `password`) menggunakan hash **Bcrypt (satu arah)** yang dibuat dengan library `golang.org/x/crypto/bcrypt`.
+> *   **Jangan memasukkan sandi hasil enkripsi AES ke tabel `users`**. Jika Anda memasukkannya, Go backend tidak akan bisa mendekripsinya dan akan menolak login Anda dengan error `Invalid username or password`.
+> *   **Cara Membuat Hash Bcrypt Sendiri**:
+>     Anda dapat menggunakan script utilitas **`generate_bcrypt_hash.go`** yang sudah disediakan di folder `backend/`:
+>     ```bash
+>     # Masuk ke folder backend
+>     cd backend/
+>     # Jalankan utilitas pembuat hash Bcrypt (Ganti "password_baru" dengan sandi Anda)
+>     go run generate_bcrypt_hash.go "password_baru"
+>     ```
+>     *Salin hash keluaran (misal: `$2a$10$...`) dan gunakan untuk memperbarui password di database.*
+> *   Jika Anda ingin mengubah password user `nur` langsung lewat SQL menjadi **`Nkl@130200`**, gunakan hash **Bcrypt** berikut:
+>     ```sql
+>     UPDATE lims.users SET password = '$2a$10$814uSRqX1VfqwNnEYZAYTui4O5A7STRErwy3LIeJSa8gaKYmuOaQi' WHERE username = 'nur';
+>     ```
+
+---
+
+##### 🛠️ Panduan & Solusi Error ONNX Runtime (`libonnxruntime.so`) Tidak Ditemukan di VPS
+
+Jika saat menjalankan backend LIMS di VPS (`lims-backend-8081` atau `lims-backend-8091`), layanan langsung mati (*crash*) dan logs `journalctl` menampilkan pesan kesalahan seperti berikut:
+`Failed to initialize ONNX Runtime: Platform-specific initialization failed: Error loading ONNX shared library "lib/libonnxruntime.so": lib/libonnxruntime.so: cannot open shared object file: No such file or directory`
+
+Hal ini disebabkan karena folder **`lib/`** yang berisi pustaka AI (`libonnxruntime.so`) belum disalin dari laptop lokal Anda ke direktori backend di VPS.
+
+###### **Langkah Pemecahan Masalah:**
+1.  Buka terminal **Ubuntu Lokal (WSL/Laptop)** Anda, lalu masuk ke direktori `backend/`.
+2.  Jalankan perintah `scp` ini untuk mentransfer folder `lib/` ke direktori instansi `lims1` dan `lims2` di VPS:
+    ```bash
+    # Mengirim ke instansi lims1 (Port 8081)
+    scp -r lib/ lims@212.85.24.33:/home/lims/lims1/backend/
+
+    # Mengirim ke instansi lims2 (Port 8091)
+    scp -r lib/ lims@212.85.24.33:/home/lims/lims2/backend/
+    ```
+3.  Masuk ke terminal **VPS Anda**, lalu jalankan ulang layanan backend LIMS untuk memuat pustaka tersebut:
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl restart lims-backend-8081.service
+    sudo systemctl restart lims-backend-8091.service
+    ```
+
+---
+
+#### 2. Templat Lengkap File `.env` dan `.env.production` React Frontend di VPS
+
+Frontend React menggunakan Vite untuk proses kompilasi. Berikut adalah konfigurasi berkas lingkungan untuk server VPS Anda:
+
+##### A. Berkas `.env` (Untuk Konfigurasi Menjalankan PM2 / Dev Server di VPS)
+```env
+# ==========================================
+# LIMS Frontend Environment (PM2/Dev Server)
+# ==========================================
+VITE_SERVER_DOMAIN=212.85.24.33
+VITE_API_URL=/api
+VITE_PORT=3000
+VITE_SHOW_DEBUG_INFO=false
+VITE_ENABLE_TERMINAL_LOG=false
+VITE_APP_VERSION=1.4
+```
+
+##### B. Berkas `.env.production` (Untuk Kompilasi Rilis / `npm run build` di VPS)
+Berkas ini dibaca secara otomatis oleh Vite saat Anda menjalankan perintah kompilasi rilis produksi (`npm run build`).
+```env
+# ==========================================
+# LIMS Frontend Production Build Environment
+# ==========================================
+# Mengarahkan pemicu API browser secara relatif (mengikuti asal origin browser secara dinamis)
+VITE_API_URL=/api
+
+# Digunakan khusus oleh Aplikasi Mobile Android APK (Tembak langsung ke API Nginx VPS)
+VITE_MOBILE_API_URL=https://lims-d4551821.nip.io:8082/api
+
+# Versi aplikasi (Wajib disamakan dengan versionName di build.gradle)
+VITE_APP_VERSION=1.4
+```
+
+*Catatan Penting:*
+*   **`VITE_API_URL=/api`** menggunakan path relatif. Karena diakses via browser, kode router API LIMS (`frontend/src/models/api.js`) akan otomatis menyesuaikan alamat asalnya (`window.location.origin` menjadi `http://212.85.24.33/api`) sehingga tidak terbentur masalah CORS.
+*   **`VITE_MOBILE_API_URL`**: Di lingkungan VPS produksi, ubah nilai ini dari sebelumnya menembak IP lokal pengembang/laptop (`http://192.168.0.103:8087/api`) menjadi menembak domain publik VPS HTTPS Anda (**`https://lims-d4551821.nip.io:8082/api`**) agar aplikasi Android LIMS APK yang diinstal di HP klien dapat berkomunikasi secara aman langsung ke server VPS Anda di internet.
+
+---
+
+##### 🛠️ Panduan & Solusi Error `EPERM` Saat Menjalankan `npm run build` di WSL
+
+Jika Anda mengompilasi frontend di dalam lingkungan WSL (Ubuntu) dan menemui kendala perizinan berkas seperti:
+`EPERM: operation not permitted, copyfile ...`
+Hal ini disebabkan oleh bentrokan penguncian berkas (*file locking*) oleh layanan Windows Defender / Explorer saat WSL mencoba menulis langsung ke partisi Windows (`/mnt/d/`).
+
+Berikut adalah 2 opsi solusi yang dapat Anda gunakan untuk mengatasinya:
+
+###### **Opsi A: Menggunakan Windows PowerShell / Command Prompt (Sangat Direkomendasikan)**
+Kompilasi dilakukan langsung menggunakan Node.js Windows pada drive fisik Windows untuk menghindari lapisan translasi file system WSL:
+1.  Buka **PowerShell** atau **CMD** di Windows Anda.
+2.  Masuk ke direktori frontend:
+    ```cmd
+    cd D:\Data_NK\Project5\AI\LIM_System_Linux_OK\frontend
+    ```
+3.  Jalankan perintah build:
+    ```cmd
+    npm run build
+    ```
+
+###### **Opsi B: Melakukan Kompilasi di File System Native Linux (WSL `/tmp/`)**
+Jika Anda harus tetap menggunakan terminal WSL, salin folder proyek ke folder native Linux untuk dikompilasi, kemudian salin folder `dist` hasilnya kembali ke Windows:
+```bash
+# 1. Salin folder frontend ke direktori native Linux
+cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend /tmp/frontend-build
+
+# 2. Jalankan build di folder native Linux (bebas dari error EPERM)
+cd /tmp/frontend-build
+npm run build
+
+# 3. Pindahkan folder dist hasil build kembali ke folder proyek Windows Anda
+rm -rf /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist
+cp -r dist /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/
+
+# 4. Hapus folder temporary
+rm -rf /tmp/frontend-build
+```
+
+---
+
+#### 3. Panduan Langkah demi Langkah Konfigurasi NGINX di VPS
+
+Bagian ini menjelaskan bagaimana berkas konfigurasi utama Nginx berkomunikasi dengan berkas konfigurasi situs LIMS, serta langkah-langkah detail implementasinya di VPS Anda.
+
+##### 🔗 Konsep & Hubungan Komunikasi Berkas Nginx:
+1.  **`/etc/nginx/nginx.conf`** adalah berkas konfigurasi **induk/utama** yang dibaca pertama kali oleh Nginx saat startup.
+2.  Di dalam blok `http { ... }` pada `nginx.conf` bawaan Nginx resmi, terdapat perintah `include /etc/nginx/conf.d/*.conf;`.
+3.  Perintah `include` tersebut menginstruksikan Nginx untuk otomatis **membaca dan menggabungkan** seluruh berkas konfigurasi yang berakhiran `.conf` di dalam direktori `/etc/nginx/conf.d/`.
+4.  **Solusi VPS Anda**: Karena Nginx di VPS Anda tidak memiliki folder `sites-available` / `sites-enabled`, Anda **tidak perlu** membuat folder tersebut atau menggunakan tautan simbolis (*symlink*). Anda cukup membuat satu berkas bernama **`lims.conf`** langsung di dalam folder **`/etc/nginx/conf.d/`**. Berkas ini akan otomatis dimuat oleh `nginx.conf`.
+
+---
+
+##### 📋 Langkah 1: Modifikasi Berkas Utama `/etc/nginx/nginx.conf`
+
+Anda perlu mendaftarkan format log monitoring (`upstream_monitoring`) dan pemetaan IP asli agar Nginx dapat meneruskannya ke backend Go LIMS.
+
+1.  Buka berkas konfigurasi utama menggunakan editor teks `nano`:
+    ```bash
+    sudo nano /etc/nginx/nginx.conf
+    ```
+2.  Cari blok **`http { ... }`** di dalam berkas tersebut. Tempelkan (*paste*) baris kode berikut di bagian dalam blok `http {` (taruh tepat di atas baris `include /etc/nginx/conf.d/*.conf;`):
+    ```nginx
+    # Pemetaan IP Client Asli jika melewati proxy
+    map $http_x_forwarded_for $real_client_ip {
+        ""      $remote_addr;
+        default $http_x_forwarded_for;
+    }
+
+    # Deklarasi format log untuk monitoring LIMS & GoAccess
+    log_format upstream_monitoring '$remote_addr - ClientIP: $real_client_ip - [$time_local] '
+                                   '"$request" $status $body_bytes_sent '
+                                   'to_server=$upstream_addr status=$upstream_status '
+                                   'resp_time=$upstream_response_time '
+                                   'agent="$http_user_agent" '
+                                   'app_ver="$http_x_app_version" app_plat="$http_x_app_platform"';
+    ```
+3.  Simpan berkas (`Ctrl + O`, lalu `Enter` untuk menyimpan, dan `Ctrl + X` untuk keluar).
+
+---
+
+##### 📋 Langkah 2: Buat Berkas Konfigurasi Situs `/etc/nginx/conf.d/lims.conf`
+
+Buat berkas konfigurasi reverse proxy khusus untuk situs LIMS agar permintaan eksternal ke IP VPS diteruskan ke backend Go dan PM2.
+
+1.  Jalankan perintah berikut untuk membuat berkas konfigurasi LIMS yang baru:
+    ```bash
+    sudo nano /etc/nginx/conf.d/lims.conf
+    ```
+2.  Salin seluruh kode blok konfigurasi di bawah ini dan tempelkan (*paste*) ke dalam berkas tersebut:
+
+```nginx
+# =========================================================================
+# FILE CONFIGURATION: LIMS NGINX PROXY CONFIG
+# =========================================================================
+
+# --- CLUSTER LOAD BALANCER BACKEND ---
+# Mendistribusikan request API ke dua instance Go backend
+upstream lims_backend_cluster {
+    server 127.0.0.1:8081 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8091 max_fails=3 fail_timeout=10s;
+}
+
+# --- CLUSTER LOAD BALANCER FRONTEND ---
+# Mendistribusikan request Frontend ke dua instance PM2 Node.js
+upstream lims_frontend_cluster {
+    server 127.0.0.1:3000 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:3001 max_fails=3 fail_timeout=10s;
+}
+
+# =========================================================================
+# BLOK SERVER: HTTP PORT 80 (Akses Publik Eksternal VPS)
+# =========================================================================
+server {
+    listen 80;
+    server_name 212.85.24.33; # Ganti dengan Domain jika ada
+
+    # Log Akses Khusus untuk Monitoring Upstream & Client IP
+    access_log /var/log/nginx/lims_access.log;
+    error_log /var/log/nginx/lims_error.log;
+
+    # Batas Maksimal Upload Lampiran Dokumen LIMS
+    client_max_body_size 20M;
+
+    # --- 1. PROXY FRONTEND REACT (PM2) ---
+    location / {
+        proxy_pass http://lims_frontend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Meneruskan Client IP asli ke PM2
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # --- 2. PROXY BACKEND API GO ---
+    location /api/ {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # Header Penting untuk Keamanan & IP Deteksi
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # --- 3. SERVING MEDIA / UPLOAD FILES (Shared Storage Link) ---
+    # File lampiran SPD, Reimbursement, dll dibaca langsung dari folder bersama
+    location /uploads/ {
+        alias /home/lims/shared_uploads/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+    }
+
+    # --- 4. SERVING LAPORAN ANALITIK (Shared Reports Link) ---
+    location /report.html {
+        alias /home/lims/shared_reports/report.html;
+        expires 5m;
+        add_header Cache-Control "public, no-transform";
+    }
+}
+```
+
+*Setelah menyalin berkas Nginx di atas, ikuti 3 nomor urut berikut untuk mengaktifkan konfigurasi situs di VPS:*
+
+###### **1. Nonaktifkan Konfigurasi Bawaan (Default) Nginx**
+Agar Nginx tidak mengarah ke halaman sambutan default "Welcome to nginx!", nonaktifkan berkas `default.conf`:
+```bash
+sudo mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled
+```
+
+###### **2. Verifikasi Sintaks Nginx**
+```bash
+sudo nginx -t
+```
+
+###### **3. Restart Layanan Nginx**
+```bash
+sudo systemctl restart nginx
+```
+
+---
+
+#### 4. Cara Mengakses Web Aplikasi LIMS di VPS
+
+Setelah seluruh kluster frontend, backend, database, dan proxy Nginx berhasil diaktifkan di VPS, gunakan rincian berikut untuk mengaksesnya:
+
+*   **URL Akses Utama LIMS (Web Browser):**
+    ➔ **`https://lims-d4551821.nip.io:8082`**
+    
+    > [!TIP]
+    > **Penggunaan Domain Dinamis & SSL Valid (Status: Terpasang & Berjalan Normal):**
+    > Untuk bypass peringatan "Not Secure" pada browser dan HP Android, sistem telah sukses dihubungkan menggunakan domain dinamis gratis **`lims-d4551821.nip.io`** yang secara otomatis menerjemahkan hex `d4551821` menjadi IP VPS Anda (`212.85.24.33`).
+    > Sertifikat SSL tepercaya telah di-generate menggunakan Let's Encrypt (`fullchain.pem` dan `privkey.pem`) sehingga koneksi HTTPS LIMS kini terverifikasi gembok hijau di web browser dan aplikasi mobile Android tanpa kendala keamanan.
+*   **Kredensial Login Utama:**
+    *   **Username:** `nur`
+    *   **Password:** *Gunakan password yang sama dengan akun 'nur' pada database lokal Anda yang telah di-restore ke VPS.*
+
+---
+
+Jika Anda ingin me-running server development Vite di laptop lokal Anda, namun datanya langsung sinkron menembak ke backend VPS, edit berkas **`frontend/.env`** di laptop lokal Anda:
+```env
+# Ganti IP target proxy lokal ke alamat backend VPS Anda
+VITE_PROXY_TARGET=http://212.85.24.33:8081
+```
+
+---
+
+##### 🔒 Opsi Tambahan: Menaruh Berkas Sertifikat SSL (`fullchain.pem`) di VPS
+
+Jika Anda ingin menggunakan berkas sertifikat SSL lokal yang sudah Anda miliki di VPS, berikut adalah langkah penempatan foldernya:
+
+###### **1. Buat Folder `/etc/nginx/ssl/` di VPS**
+Jalankan perintah ini di terminal VPS Anda untuk membuat direktori penyimpanan sertifikat:
+```bash
+sudo mkdir -p /etc/nginx/ssl
+```
+
+###### **2. Letakkan Berkas Sertifikat di VPS**
+Salin atau buat berkas di VPS dan letakkan ke dalam folder tersebut dengan nama berkas yang sama persis:
+*   **Path Sertifikat:** `/etc/nginx/ssl/fullchain.pem`
+*   **Path Kunci Privat:** `/etc/nginx/ssl/privkey.pem`
+
+*Opsi A: Membuat Berkas Secara Manual via Editor `nano` di VPS:*
+```bash
+sudo nano /etc/nginx/ssl/fullchain.pem
+sudo nano /etc/nginx/ssl/privkey.pem
+```
+
+*Opsi B: Transfer Berkas Secara Langsung Menggunakan `scp` dari Terminal Ubuntu Lokal:*
+*(Catatan: Karena pengguna login SSH biasa `lims` tidak diizinkan menulis berkas secara langsung ke folder `/etc/nginx/ssl/` milik root, berkas dikirim terlebih dahulu ke folder `/tmp/` di VPS, baru kemudian dipindahkan menggunakan hak akses `sudo mv`).*
+
+1.  Jalankan perintah transfer ini **di terminal Ubuntu Lokal Anda** (ganti `/path/to/` dengan lokasi folder sertifikat Anda):
+    ```bash
+    scp /path/to/fullchain.pem lims@212.85.24.33:/tmp/
+    scp /path/to/privkey.pem lims@212.85.24.33:/tmp/
+    ```
+2.  Jalankan perintah ini **di terminal VPS Anda** untuk memindahkan berkas ke folder tujuan Nginx SSL:
+    ```bash
+    sudo mv /tmp/fullchain.pem /etc/nginx/ssl/
+    sudo mv /tmp/privkey.pem /etc/nginx/ssl/
+    ```
+
+###### **3. Amankan Hak Akses Kunci Privat**
+Batasi izin akses agar kunci privat aman:
+```bash
+sudo chmod 600 /etc/nginx/ssl/privkey.pem
+sudo chmod 644 /etc/nginx/ssl/fullchain.pem
+```
+
+---
+
+
+# PROPOSAL TEKNIS (REVISI 4): INTEGRASI KEAMANAN & HARDENING LIMS
+
+Dokumen ini menambahkan aspek keamanan tingkat tinggi untuk mencegah kebocoran token, penyalahgunaan token oleh pihak ketiga (Postman/hacker), serta pengamanan fitur Login Overwrite dengan skrip SQL berbasis skema `lims`.
+
+---
+
+## TANGGAPAN TERHADAP CATATAN KEAMANAN & PRIVASI
+
+### 1. Pencegahan Penggunaan Token Bersamaan (Anti-Token Sharing / Hijacking)
+> **Catatan:** *"Seharusnya jika session di database active maka token tidak boleh digunakan berbarengan. Bagaimana kontrolnya supaya orang lain tidak bisa akses LIMS menggunakan token orang lain?"*
+
+**Solusi Teknis:**
+Untuk mencegah seseorang menyalin token JWT orang lain dan menaruhnya di Postman atau perangkat berbeda, kita menerapkan **Validasi Sidik Jari Client (Client Fingerprinting)** pada middleware.
+
+1. **IP Address & User-Agent Binding (Pengikatan Perangkat):**
+   * Saat user sukses melakukan login, backend mencatat `IP Address` dan `User-Agent` (informasi browser/aplikasi) ke dalam database tabel `lims.user_sessions`.
+   * Pada setiap request API, `AuthMiddleware` akan mencocokkan `IP Address` dan `User-Agent` pengirim request dengan data yang terdaftar di database untuk token tersebut.
+   * Jika tidak cocok (misalnya token asli dari Chrome PC, lalu dicoba diakses dari Postman/PC lain dengan IP/User-Agent berbeda), backend langsung mengembalikan **401 Unauthorized**, **menghapus sesi tersebut dari database**, dan memaksa logout di kedua sisi.
+   
+   *Catatan Optimasi:* Pada jaringan seluler yang IP-nya dinamis, kita bisa mengombinasikan dengan **Device Fingerprint** unik yang dikirimkan via Header khusus (misal `X-Device-ID`).
+
+2. **Perlindungan Token via Secure HttpOnly Cookie:**
+   * Token JWT **tidak boleh disimpan di localStorage** karena rentan dicuri lewat serangan XSS (Cross-Site Scripting).
+   * Token harus disimpan secara eksklusif dalam cookie dengan atribut `HttpOnly`, `Secure`, dan `SameSite=Strict`.
+   * Atribut `HttpOnly` menjamin bahwa kode JavaScript (termasuk script berbahaya) **tidak dapat membaca token** lewat browser. Hanya browser yang secara otomatis menempelkan cookie tersebut saat melakukan request ke backend.
+
+---
+
+### 2. Mengamankan LIMS dari Hacker (Hardening Login & Takeover)
+> **Catatan:** *"Bagaimana membuat LIMS aman dari hacker?"*
+
+Untuk memastikan fitur pengambilalihan sesi (`force_login: true`) tidak dieksploitasi oleh hacker yang mencoba melakukan Brute Force (tebak password) atau pembajakan sesi, kita menerapkan langkah pengamanan berikut:
+
+1. **Rate Limiting & Account Lockout (Anti Brute-Force):**
+   * Membatasi percobaan login maksimal 5 kali dalam 15 menit per akun/IP.
+   * Jika melebihi batas, akun akan dikunci otomatis selama 15 menit, dan IP tersebut akan diblokir sementara dari akses endpoint `/login`. Hal ini mencegah hacker menggunakan bot untuk menebak password.
+
+2. **Notifikasi Pengambilalihan Sesi (Real-time Alert):**
+   * Ketika sesi pengguna diambil alih (`force_login` bernilai `true`), backend secara otomatis mengirimkan notifikasi instan kepada pemilik akun melalui channel komunikasi yang terhubung (WhatsApp / Telegram Bot LIMS).
+   * **Pesan Notifikasi:**
+     > *"⚠️ Peringatan Keamanan LIMS: Akun Anda baru saja login dari perangkat lain (IP: 192.168.10.12). Sesi lama Anda telah dinonaktifkan. Jika ini bukan Anda, segera ganti password Anda."*
+
+3. **Multi-Factor Authentication (MFA) / OTP:**
+   * Untuk akun dengan hak akses krusial (seperti Administrator atau Supervisor), saat mendeteksi adanya sesi aktif di perangkat lain, proses `force_login` tidak langsung masuk, melainkan meminta kode OTP 6-digit yang dikirimkan ke Telegram/WhatsApp terdaftar pengguna. Hacker tidak akan bisa masuk meskipun mengetahui password, karena tidak memiliki akses fisik ke Telegram/WhatsApp pengguna.
+
+4. **Enkripsi Lalu Lintas Data (HTTPS & SSL Pinning):**
+   * Seluruh API LIMS wajib berjalan di atas protokol HTTPS (SSL/TLS versi terbaru). Hal ini mencegah hacker melakukan penyadapan data di jaringan (Man-in-the-Middle Attack).
+   * Untuk aplikasi LIMS berbasis mobile Android, terapkan **SSL Pinning** agar koneksi aplikasi tidak bisa di-intercept oleh tools seperti Fiddler atau Charles Proxy.
+
+---
+
+## DETETKSI BINDING PADA KODE BACKEND (GO)
+
+### A. Penyimpanan Sidik Jari Sesi saat Login (`controllers/auth_controller.go`)
+```go
+// Menangkap IP dan User-Agent saat membuat sesi baru
+session := models.UserSession{
+    UserID:         user.ID,
+    Token:          tokenString,
+    ExpiresAt:      expiresAt,
+    IPAddress:      strings.TrimPrefix(c.ClientIP(), "::ffff:"),
+    UserAgent:      c.GetHeader("User-Agent"), // Kolom Baru: Menyimpan sidik jari browser/klien
+    ClientVersion:  c.GetHeader("X-App-Version"),
+    ClientPlatform: c.GetHeader("X-App-Platform"),
+    LastActivityAt: time.Now(),
+}
+```
+
+### B. Validasi Sidik Jari pada Middleware (`middleware/auth.go`)
+```go
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// ... pembacaan token ...
+
+		var session models.UserSession
+		result := database.DB.Where("token = ? AND user_id = ?", tokenString, userID).First(&session)
+		if result.Error != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Session tidak ditemukan"})
+			c.Abort()
+			return
+		}
+
+		// 1. VALIDASI SIDIK JARI (Anti-Token Sharing / Hijacking)
+		currentIP := strings.TrimPrefix(c.ClientIP(), "::ffff:")
+		currentUserAgent := c.GetHeader("User-Agent")
+
+		if session.IPAddress != currentIP || session.UserAgent != currentUserAgent {
+			// Deteksi akses ilegal: Hapus sesi dari DB segera
+			database.DB.Delete(&session)
+			
+			// Catat ke log keamanan
+			utils.WriteSecurityLog(userID, currentIP, currentUserAgent, "TOKEN_HIJACKING_ATTEMPT")
+
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Akses Ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup.",
+			})
+			c.Abort()
+			return
+		}
+
+		// ... Validasi status user aktif & idle timeout ...
+		c.Next()
+	}
+}
+```
+
+---
+
+## SKRIP DATABASE UPDATE (DDL MANUWAL)
+
+Untuk mengimplementasikan fitur keamanan di atas, jalankan skrip DDL berikut pada PostgreSQL secara manual. Pastikan untuk menyertakan prefix skema `lims.` pada setiap nama tabel agar tidak terjadi kesalahan `relation does not exist`:
+
+```sql
+-- 1. Tambah kolom user_agent dan last_activity_at di tabel lims.user_sessions
+ALTER TABLE lims.user_sessions ADD COLUMN IF NOT EXISTS user_agent VARCHAR(255) DEFAULT NULL;
+ALTER TABLE lims.user_sessions ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW();
+
+-- 2. Tambah kolom is_active dan idle_timeout_minutes di tabel lims.users & lims.hist_users
+ALTER TABLE lims.users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE lims.users ADD COLUMN IF NOT EXISTS idle_timeout_minutes INT DEFAULT NULL;
+
+ALTER TABLE lims.hist_users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE lims.hist_users ADD COLUMN IF NOT EXISTS idle_timeout_minutes INT DEFAULT NULL;
+
+-- 3. Membuat tabel penyimpanan OTP sementara di skema lims
+CREATE TABLE IF NOT EXISTS lims.otp_codes (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES lims.users(id) ON DELETE CASCADE,
+    code VARCHAR(10) NOT NULL,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+);
+
+-- Index untuk mempercepat query pencocokan OTP
+CREATE INDEX IF NOT EXISTS idx_otp_codes_user_code ON lims.otp_codes(user_id, code);
+
+-- 4. Pengisian Parameter Global (DML)
+-- A. Parameter untuk mengaktifkan Single-Session (true/false)
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'SINGLE_SESSION_MODE', 
+    'false', 
+    'Menentukan apakah user hanya boleh memiliki satu sesi aktif (true) atau multi sesi (false).', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+-- B. Parameter untuk mengizinkan pengambilalihan sesi/force login (true/false)
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'ALLOW_SESSION_TAKEOVER', 
+    'true', 
+    'Mengizinkan user mengambil alih sesi aktif lainnya saat login kembali jika bernilai true.', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+-- C. Parameter untuk waktu idle global default (dalam menit)
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'DEFAULT_IDLE_TIMEOUT_MINUTES', 
+    '30', 
+    'Batas waktu idle sistem default dalam menit sebelum sesi ditutup otomatis.', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+-- D. Parameter Batas Maksimal Percobaan Login Salah
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'LOGIN_MAX_ATTEMPTS', 
+    '5', 
+    'Jumlah maksimal percobaan login salah sebelum akun dikunci sementara.', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+-- E. Parameter Durasi Waktu Akun Dikunci (Menit)
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'LOGIN_LOCKOUT_MINUTES', 
+    '15', 
+    'Durasi waktu (dalam menit) akun dikunci akibat salah password berturut-turut.', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+```

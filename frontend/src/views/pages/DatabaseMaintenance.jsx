@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import { useToast } from '@context/ToastContext';
 
 const DatabaseMaintenance = ({ user }) => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState("archive");
   const [loading, setLoading] = useState(false);
@@ -86,8 +88,7 @@ const DatabaseMaintenance = ({ user }) => {
   const handleBackup = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      window.open(`${import.meta.env.VITE_API_BASE_URL || ""}/api/management/db/backup?token=${token}`, "_blank");
+      window.open(`${import.meta.env.VITE_API_BASE_URL || ""}/api/management/db/backup`, "_blank");
     } catch (err) {
       showToast('Download Backup Gagal', 'error');
     } finally {
@@ -487,16 +488,36 @@ const DatabaseMaintenance = ({ user }) => {
       default: return "";
     }
   };
-
   return (
     <div className="maintenance-container" style={{ padding: "2rem" }}>
       <div className="card" style={{ maxWidth: "1000px", margin: "0 auto", overflow: "hidden" }}>
         <div style={{ background: "#065f46", padding: "1.5rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center", color: "#fff" }}>
           <h2 style={{ margin: 0 }}>Database Management</h2>
-          <div style={{ display: "flex", gap: "4px" }}>
-            {["archive", "backup", "restore", "sync", "bloat"].map(tab => (
-              <button key={tab} onClick={() => { setActiveTab(tab); if (tab === "bloat") fetchBloat(); }} style={{ padding: "8px 16px", background: activeTab === tab ? "#fff" : "transparent", color: activeTab === tab ? "#065f46" : "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>{tab.toUpperCase()}</button>
-            ))}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "4px" }}>
+              {["archive", "backup", "restore", "sync", "bloat"].map(tab => (
+                <button key={tab} onClick={() => { setActiveTab(tab); if (tab === "bloat") fetchBloat(); }} style={{ padding: "8px 16px", background: activeTab === tab ? "#fff" : "transparent", color: activeTab === tab ? "#065f46" : "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>{tab.toUpperCase()}</button>
+              ))}
+            </div>
+            <button
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: "#0f766e",
+                color: "white",
+                border: "1px solid #14b8a6",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                marginLeft: "0.5rem"
+              }}
+            >
+              <i className="fas fa-times"></i> Tutup
+            </button>
           </div>
         </div>
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
 import MasterForm from "@components/MasterForm";
 import { useToast } from '@context/ToastContext';
 
 const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -195,6 +197,24 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             <button className="btn btn-primary" onClick={() => { setEditingItem(null); setIsMasterModalOpen(true); }}>
               <i className="fas fa-plus"></i> Tambah Alat Baru
             </button>
+            <button
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: "#475569",
+                color: "white",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <i className="fas fa-times"></i> Tutup
+            </button>
           </div>
         </div>
 
@@ -367,6 +387,9 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
           ) : (
             <p style={{ textAlign: "center", padding: "2rem", color: "#94a3b8" }}>Belum ada riwayat transaksi.</p>
           )}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <button className="btn btn-secondary" onClick={() => setIsHistoryModalOpen(false)}>Tutup</button>
+          </div>
         </div>
       </Modal>
 
@@ -450,6 +473,9 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
                 <p>Tidak ada data transaksi ditemukan untuk periode ini.</p>
               </div>
             )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <button className="btn btn-secondary" onClick={() => setIsReportModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>

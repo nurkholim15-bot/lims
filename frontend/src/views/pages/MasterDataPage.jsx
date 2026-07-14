@@ -260,6 +260,27 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
                 <i className="fas fa-plus"></i> Tambah Data
               </button>
             )}
+            <button 
+              className="btn btn-secondary" 
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: '#475569',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '6px 16px',
+                fontSize: '0.875rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              <i className="fas fa-times"></i> Tutup
+            </button>
           </div>
         </div>
 

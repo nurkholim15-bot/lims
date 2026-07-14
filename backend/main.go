@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"lim-system/controllers"
+	"lim-system/database"
 	"lim-system/routes"
 	"lim-system/services"
-	"lim-system/database"
+	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +44,24 @@ func main() {
 	services.InitCamunda()
 
 	r := gin.Default()
-	r.SetTrustedProxies([]string{"127.0.0.1"})
+
+	// Configure Trusted Proxies dynamically
+	trustedProxiesEnv := os.Getenv("TRUSTED_PROXIES")
+	var trustedProxies []string
+	if trustedProxiesEnv != "" {
+		parts := strings.Split(trustedProxiesEnv, ",")
+		for _, part := range parts {
+			trimmed := strings.TrimSpace(part)
+			if trimmed != "" {
+				trustedProxies = append(trustedProxies, trimmed)
+			}
+		}
+	}
+	if len(trustedProxies) == 0 {
+		// Fallback default
+		trustedProxies = []string{"127.0.0.1"}
+	}
+	r.SetTrustedProxies(trustedProxies)
 
 	// Initialize routes
 	routes.SetupRoutes(r)
@@ -74,6 +92,8 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Starting HTTP server on http://localhost:%s...\n", port)
-	r.Run(":" + port)
+	fmt.Printf("Starting HTTP server on port %s...\n", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }

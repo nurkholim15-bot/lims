@@ -118,6 +118,19 @@ func GetUser(c *gin.Context) {
 	views.Success(c, user, "User retrieved")
 }
 
+type RegisterRequest struct {
+	Username           string `json:"username" binding:"required"`
+	Password           string `json:"password" binding:"required"`
+	Email              string `json:"email"`
+	Phone              string `json:"phone"`
+	RoleID             uint   `json:"role_id" binding:"required"`
+	TelegramChatID     string `json:"telegram_chat_id"`
+	WhatsAppPhone      string `json:"whatsapp_phone"`
+	TeamsUserID        string `json:"teams_user_id"`
+	IsActive           *bool  `json:"is_active"`
+	IdleTimeoutMinutes *int   `json:"idle_timeout_minutes"`
+}
+
 func CreateUser(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -141,16 +154,23 @@ func CreateUser(c *gin.Context) {
 		usernameStr = username.(string)
 	}
 
+	isActive := true
+	if req.IsActive != nil {
+		isActive = *req.IsActive
+	}
+
 	user := models.User{
-		Username:       req.Username,
-		Password:       hashedPassword,
-		Email:          req.Email,
-		Phone:          req.Phone,
-		RoleID:         req.RoleID,
-		LastPwdChange:  time.Now(),
-		CreatedUser:    usernameStr,
-		UpdatedUser:    usernameStr,
-		ForcePwdChange: true,
+		Username:           req.Username,
+		Password:           hashedPassword,
+		Email:              req.Email,
+		Phone:              req.Phone,
+		RoleID:             req.RoleID,
+		LastPwdChange:      time.Now(),
+		CreatedUser:        usernameStr,
+		UpdatedUser:        usernameStr,
+		ForcePwdChange:     true,
+		IsActive:           isActive,
+		IdleTimeoutMinutes: req.IdleTimeoutMinutes,
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {
@@ -206,18 +226,20 @@ func UpdateUser(c *gin.Context) {
 	input["updated_user"] = username.(string)
 
 	hist := models.HistUser{
-		UserID:         user.ID,
-		Username:       user.Username,
-		Password:       user.Password,
-		Email:          user.Email,
-		Phone:          user.Phone,
-		RoleID:         user.RoleID,
-		LastPwdChange:  user.LastPwdChange,
-		CreatedAt:      user.CreatedAt,
-		UpdatedAt:      user.UpdatedAt,
-		CreatedUser:    user.CreatedUser,
-		UpdatedUser:    username.(string),
-		ForcePwdChange: user.ForcePwdChange,
+		UserID:             user.ID,
+		Username:           user.Username,
+		Password:           user.Password,
+		Email:              user.Email,
+		Phone:              user.Phone,
+		RoleID:             user.RoleID,
+		LastPwdChange:      user.LastPwdChange,
+		CreatedAt:          user.CreatedAt,
+		UpdatedAt:          user.UpdatedAt,
+		CreatedUser:        user.CreatedUser,
+		UpdatedUser:        username.(string),
+		ForcePwdChange:     user.ForcePwdChange,
+		IsActive:           user.IsActive,
+		IdleTimeoutMinutes: user.IdleTimeoutMinutes,
 	}
 	database.DB.Create(&hist)
 

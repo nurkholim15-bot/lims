@@ -1,0 +1,202 @@
+# IP WSL = 172.24.104.39 # non ingix
+# lims.local  = 172.24.104.39
+# lims.local=localhost (Catatan: DNS resolver menggunakan file C:\Windows\System32\drivers\etc\hosts)
+SERVER_DOMAIN=212.85.24.33
+# IP Windows
+IP_WINDOWS=127.0.0.1
+
+DB_SERVER_DOMAIN=127.0.0.1
+MINIO_SERVER_DOMAIN=127.0.0.1
+CAMUNDA_SERVER_DOMAIN=127.0.0.1
+
+# DB_SERVER_DOMAIN=db.lims.local
+# SSL Configuration
+# Gunakan "OFF" untuk menonaktifkan HTTPS pada Backend
+# Cert Windows
+# SSL_CERT_PATH="D:\LIMS\sertifikat\lims.local+2.pem" 
+# SSL_KEY_PATH="D:\LIMS\sertifikat\lims.local+2-key.pem"
+# Cert untuk Linux
+
+SSL_CERT_PATH=OFF
+SSL_KEY_PATH=OFF
+# SSL_CERT_PATH=./sertifikat/lims.local+2.pem
+# SSL_KEY_PATH=./sertifikat/lims.local+2-key.pem
+
+# 
+# Database configuration
+DB_HOST=127.0.0.1
+# DB_HOST=lims.local
+
+# 
+DB_PORT=5432
+# DB_USER=lims_app
+DB_USER=admin_lims
+DB_PASSWORD_ENCRYPTED=HV4iTF8SbsATiW7kUfMP8h0xxoOz-GxM99k=
+# DB_PASSWORD=Nkl@031166
+# DB_NAME=mec_db
+# DB_NAME=mec_prod_db
+DB_NAME=lims_prod_db
+# DB_SCHEMA=public
+# DB_SCHEMA=mecs
+DB_SCHEMA=lims
+DB_SSLMODE=disable
+
+# ==========================================
+# Chatbot Dedicated Database Configuration (Microservices Isolation)
+# ==========================================
+# CHATBOT_DB_HOST=127.0.0.1
+# CHATBOT_DB_PORT=5432
+# CHATBOT_DB_USER=admin_lims
+# CHATBOT_DB_PASSWORD_ENCRYPTED=hhWT9CLQDmJP8EkFsQuzbn0KKy7QXhN94FE=
+# CHATBOT_DB_NAME=chatbot_db
+# CHATBOT_DB_SCHEMA=chat_sch
+# CHATBOT_DB_SSLMODE=disable
+
+# TRACE_LEVEL (0 atau OFF disable)
+TRACE_LEVEL=3
+# GIN_MODE=debug
+# GIN_MODE=release (Release berarti Production)
+GIN_MODE=release
+# TRUSTED_PROXIES utk IP reverse proxy (misal Nginx) yang mengirim request ke backend. Jika tidak ada, gunakan
+TRUSTED_PROXIES=127.0.0.1
+# DB_DEBUG=true (Ubah ke true jika ingin melihat log database (query SQL))
+DB_DEBUG=false
+# DB_AUTO_MIGRATE (Ubah ke true jika mengizinkan GORM mengubah struktur tabel (DDL) untuk archive juga)
+DB_AUTO_MIGRATE=false
+# SEED_DB (ubah ke true jika ingin seeding semua data)
+SEED_DB=false
+# Jika ingin selective seeding, gunakan flag di bawah (set SEED_DB=false dulu):
+# Seed global parameters (sistem config: colors, formats, emails, etc)
+SEED_PARAMS=false
+# Seed default roles dan menus
+SEED_ROLES_MENUS=false
+# Seed master data (brands, models, methodologies, test-types, dll)
+SEED_MASTER_DATA=false
+# PAGINATION_LIMIT=10
+
+
+JWT_SECRET=98d5627ddcd3b66e17404bc13245d6f8f79ad58772e1c143fb43cb9531f83a8d
+JWT_EXPIRY_HOURS=24
+# 
+# MINIO_ENDPOINT=localhost:9000
+# MINIO_ENDPOINT=${DB_SERVER_DOMAIN}:9000
+MINIO_ENDPOINT=127.0.0.1:9000
+
+# MINIO_ACCESS_KEY=adminmiliter
+# MINIO_SECRET_KEY=password12345
+# MINIO_SECRET_KEY_ENCRYPTED=FiamSTdRZ5sa1sw1bd71RGbnjUujoNzRixJhpns=
+# MINIO di VPS
+MINIO_ACCESS_KEY=minioadmin
+# MINIO_SECRET_KEY=miniopassword
+MINIO_SECRET_KEY_ENCRYPTED=KZCFAMAtbDEiXlnaTCUCXcTdFykCe3ybMSQAsCA=
+MINIO_BUCKET=lims-docs
+MINIO_USE_SSL=false
+# 
+# CAMUNDA_URL=http://localhost:8085/engine-rest
+# CAMUNDA_URL=http://${DB_SERVER_DOMAIN}:8085/engine-rest
+CAMUNDA_URL=http://127.0.0.1:8085/engine-rest
+
+# CAMUNDA_USER=nurcamunda
+# CAMUNDA_PASSWORD=Nkl@130200
+# CAMUNDA VPS
+CAMUNDA_USER=demo
+# CAMUNDA_PASSWORD=demo
+CAMUNDA_PASSWORD_ENCRYPTED=_4HLoRpb4_qnqBm2VlX7wLg5nrg=
+
+
+COMPANY_NAME=LIM System
+HEADER_TITLE=Laboratory Information Management System
+APP_FOOTER=Laboratory Information Management System - Dokumen Rahasia & Terbatas
+APP_ADMIN_NAME=LIMS Administrator
+MAX_UPLOAD_SIZE=4096
+
+PORT=8081
+
+# ==========================================
+# Security Configuration
+# ==========================================
+# CORS Whitelist: pisahkan domain dengan koma (tidak ada spasi)
+# Tambah/hapus domain di sini tanpa perlu rebuild backend
+# Domain CORS Tambahkan di .env — pisahkan dengan koma
+# ALLOWED_ORIGINS=http://lims.local:3000,http://lims.local:8082,https://lims.local
+# 
+# 6. Keamanan & Reverse Proxy
+# Menerima IP client asli dari Nginx proxy lokal
+# 
+ALLOWED_ORIGINS=http://lims.local:3000,http://lims.local:8082,http://lims.local:8087,https://lims.local,http://localhost,https://localhost,capacitor://localhost
+
+CAMUNDA_ENV=development
+# CAMUNDA_ENV=production
+# MINIO_ENV=production
+MINIO_ENV=development
+
+# API Key untuk simulator/peralatan militer (kirim di header: X-Simulator-Key)
+SIMULATOR_API_KEY=89669aa98816a7e5f754d3065bb5b7525a31b81529ee810ec265c7306e959c11
+
+# Konfigurasi SMTP (Contoh Gmail: host=smtp.gmail.com port=587)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=nurkholim15@gmail.com
+SMTP_PASSWORD=crvcuqerhvwvbuwn
+# sistem akan baca table testing_applications dengan partisi bulan ini s/d partisi N-1 (2) bulan lalu 
+DATA_RETENTION_MONTHS=3
+
+# ==========================================
+# AI Integration Settings (Dual-Mode)
+# ==========================================
+# AI_API_URL=https://api.groq.com/openai/v1
+# AI_API_KEY=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
+# AI_MODEL=llama3-8b-8192
+
+# ==========================================
+# AI Integration Settings (Dual-Mode)
+# ==========================================
+AI_API_URL=https://api.groq.com/openai/v1
+AI_API_KEY=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
+AI_MODEL=llama-3.1-8b-instant
+
+# ==========================================
+# AI Integration Settings (Dual-Mode) - Gemini 1.5 Flash (Google Gemini API)
+# ==========================================
+# AI_API_URL=https://generativelanguage.googleapis.com/v1beta/openai
+# AI_API_KEY=AIzaSyBbbxaciKSrMYYDSmoe9HrLrnwqzppVnNo
+# AI_MODEL=gemini-flash-latest
+
+# ==========================================
+# AI Integration Settings (Dual-Mode)
+# ==========================================
+# Ollama windows
+# AI_API_URL=http://172.24.96.1:11434/v1
+# Ollama Linux (WSL)
+# AI_API_URL=http://localhost:11434/v1
+# AI_API_KEY=none
+# AI_MODEL=llama3
+# AI_MODEL=llama3.1
+# ganti llama3.2 (2GB)
+# AI_MODEL=qwen2.5:1.5b
+
+# Dedicated embedding service for RAG (Ollama Windows host from WSL)
+AI_EMBEDDING_API_URL=http://127.0.0.1:11434
+AI_EMBEDDING_MODEL=nomic-embed-text
+
+# ==========================================
+# Chatbot Dedicated Database Configuration (Microservices Isolation)
+# ==========================================
+CHATBOT_DB_HOST=127.0.0.1
+CHATBOT_DB_PORT=5432
+CHATBOT_DB_USER=lims_app
+CHATBOT_DB_PASSWORD_ENCRYPTED=HV4iTF8SbsATiW7kUfMP8h0xxoOz-GxM99k=
+CHATBOT_DB_NAME=chatbot_db
+CHATBOT_DB_SCHEMA=chat_sch
+CHATBOT_DB_SSLMODE=disable
+
+# ==========================================
+# Konfigurasi Telegram Bot
+# ==========================================
+TELEGRAM_BOT_TOKEN=8985135158:AAH_5evubEsgibXAyTd8FisoMso-p23DCx8
+
+# ==========================================
+# AI PQC Integration Configuration
+# ==========================================
+# # AI_PQC_ENABLED=true # moved to database global_parameters table
+# AI_PQC_URL=http://127.0.0.1:8086

@@ -234,6 +234,9 @@ const FinanceReportPage = ({ user, reportType = 'all' }) => {
             <button className="btn btn-primary" onClick={fetchReport}>
                 <i className="fas fa-sync-alt"></i> Refresh
             </button>
+            <button className="btn btn-secondary" onClick={() => window.location.href='/welcome'} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <i className="fas fa-times"></i> Tutup
+            </button>
         </div>
       </div>
 

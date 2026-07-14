@@ -30,6 +30,7 @@ DB_SCHEMA=mecs
 DB_SSLMODE=disable
 # GIN_MODE=debug
 GIN_MODE=release #Release berarti Production
+TRUSTED_PROXIES=127.0.0.1
 # DB_DEBUG=true # Ubah ke true jika ingin melihat log database (query SQL)
 DB_DEBUG=true # Ubah ke true jika ingin melihat log database (query SQL)
 DB_AUTO_MIGRATE=false # Ubah ke true jika mengizinkan GORM mengubah struktur tabel (DDL)

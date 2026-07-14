@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
 import AppDetail from "@components/AppDetail";
 import { useToast } from '@context/ToastContext';
 
 const ReportsSummaryPage = () => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -86,9 +88,29 @@ const ReportsSummaryPage = () => {
           </h2>
           <p style={{ margin: "5px 0 0 0", color: "#64748b" }}>Laporan Rekapitulasi Status Aplikasi</p>
         </div>
-        <button className="btn btn-outline-success" onClick={handlePrint} disabled={!hasSearched || data.length === 0}>
-          <i className="fas fa-print"></i> Cetak PDF
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button className="btn btn-outline-success" onClick={handlePrint} disabled={!hasSearched || data.length === 0}>
+            <i className="fas fa-print"></i> Cetak PDF
+          </button>
+          <button
+            onClick={() => navigate("/welcome")}
+            style={{
+              background: "#475569",
+              color: "white",
+              border: "none",
+              padding: "0.5rem 1rem",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "0.95rem",
+              fontWeight: "500",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <i className="fas fa-times"></i> Tutup
+          </button>
+        </div>
       </div>
 
       {/* Header Cetak */}

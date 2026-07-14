@@ -11,8 +11,8 @@ export const useAppController = () => {
 
   // Authentication Logic
   const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const isLoggedIn = localStorage.getItem("is_logged_in") === "true";
+    if (!isLoggedIn) {
       setIsAuthChecking(false);
       return;
     }

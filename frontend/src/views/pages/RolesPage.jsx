@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
 import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
 const RolesPage = ({ onChangeRole }) => {
+  const navigate = useNavigate();
   console.log("RolesPage rendering...");
   const { showToast } = useToast();
   const [data, setData] = useState([]);
@@ -208,8 +210,10 @@ const RolesPage = ({ onChangeRole }) => {
   return (
     <div className="section-view active">
       <div className="card">
-        <div className="card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <span>Manajemen Role & Hak Akses Menus</span>
+        <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#1e293b' }}>Manajemen Role & Hak Akses Menus</h2>
+          </div>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <i className="fas fa-search" style={{ position: 'absolute', left: '10px', color: '#94a3b8' }}></i>
@@ -235,6 +239,25 @@ const RolesPage = ({ onChangeRole }) => {
             </button>
             <button className="btn btn-primary" onClick={() => openForm(null)}>
               <i className="fas fa-plus"></i> Tambah Role
+            </button>
+            <button
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: "#475569",
+                color: "white",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                marginLeft: "0.5rem"
+              }}
+            >
+              <i className="fas fa-times"></i> Tutup
             </button>
           </div>
         </div>

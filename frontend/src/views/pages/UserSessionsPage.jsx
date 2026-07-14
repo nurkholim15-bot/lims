@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import { useToast } from '@context/ToastContext';
 
 const UserSessionsPage = ({ refreshTrigger }) => {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -95,27 +97,48 @@ const UserSessionsPage = ({ refreshTrigger }) => {
           }}
         >
           <h2 style={{ margin: 0, color: "#065f46", fontSize: "1.4rem" }}>Sesi Pengguna</h2>
-          <button
-            onClick={handleCleanupExpired}
-            disabled={loading}
-            style={{
-              background: "#dc2626",
-              color: "white",
-              border: "none",
-              padding: "0.6rem 1.2rem",
-              borderRadius: "6px",
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.6 : 1,
-              fontSize: "0.95rem",
-              fontWeight: "500",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-          >
-            <i className="fas fa-trash-alt"></i>
-            {loading ? "Memproses..." : "Bersihkan Sesi Kadaluarsa"}
-          </button>
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            <button
+              onClick={handleCleanupExpired}
+              disabled={loading}
+              style={{
+                background: "#dc2626",
+                color: "white",
+                border: "none",
+                padding: "0.6rem 1.2rem",
+                borderRadius: "6px",
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.6 : 1,
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <i className="fas fa-trash-alt"></i>
+              {loading ? "Memproses..." : "Bersihkan Sesi Kadaluarsa"}
+            </button>
+            <button
+              onClick={() => navigate("/welcome")}
+              style={{
+                background: "#475569",
+                color: "white",
+                border: "none",
+                padding: "0.6rem 1.2rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <i className="fas fa-times"></i>
+              Tutup
+            </button>
+          </div>
         </div>
 
         {loading && sessions.length === 0 ? (
@@ -149,7 +172,9 @@ const UserSessionsPage = ({ refreshTrigger }) => {
                   <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>User ID</th>
                   <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>Token</th>
                   <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>Alamat IP</th>
+                  <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>User Agent</th>
                   <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>Dibuat</th>
+                  <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>Aktivitas Terakhir</th>
                   <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600", borderRight: "1px solid #e5e7eb" }}>Kadaluarsa</th>
                   <th style={{ padding: "1rem", textAlign: "left", fontWeight: "600" }}>Aksi</th>
                 </tr>
@@ -179,7 +204,9 @@ const UserSessionsPage = ({ refreshTrigger }) => {
                       {truncateToken(session.token)}
                     </td>
                     <td style={{ padding: "1rem", borderRight: "1px solid #e5e7eb", fontSize: "0.9rem" }}>{session.ip_address || "-"}</td>
+                    <td style={{ padding: "1rem", borderRight: "1px solid #e5e7eb", fontSize: "0.85rem", color: "#64748b" }} title={session.user_agent || ""}>{session.user_agent ? (session.user_agent.length > 25 ? session.user_agent.substring(0, 25) + "..." : session.user_agent) : "-"}</td>
                     <td style={{ padding: "1rem", borderRight: "1px solid #e5e7eb", fontSize: "0.9rem" }}>{formatDate(session.created_at)}</td>
+                    <td style={{ padding: "1rem", borderRight: "1px solid #e5e7eb", fontSize: "0.9rem" }}>{formatDate(session.last_activity_at)}</td>
                     <td
                       style={{
                         padding: "1rem",

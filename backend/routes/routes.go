@@ -24,6 +24,7 @@ func SetupRoutes(r *gin.Engine) {
 
 	// Serve uploads
 	r.Static("/uploads", "./public/uploads")
+	r.StaticFile("/simulator", "./public/hardware_simulator.html")
 
 	// Routes
 	api := r.Group("/api")
@@ -32,12 +33,14 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		// Public Routes (Minimal)
 		api.POST("/login", middleware.RateLimiter("RATE_LIMIT_LOGIN_RPM", 10), controllers.Login) // Strict for login: 10 rpm
+		api.POST("/verify-otp", middleware.RateLimiter("RATE_LIMIT_LOGIN_RPM", 10), controllers.VerifyOTP)
 		api.POST("/change-expired-password", middleware.RateLimiter("RATE_LIMIT_LOGIN_RPM", 10), controllers.ChangeExpiredPassword)
 		api.GET("/check-password-expiry", middleware.RateLimiter("RATE_LIMIT_LOGIN_RPM", 20), controllers.CheckPasswordExpiry)
 		api.GET("/check-version", middleware.RateLimiter("RATE_LIMIT_LOGIN_RPM", 20), controllers.CheckAppVersion)
 
 		// IoT / Hardware Integration Webhook (Uses X-Simulator-Key validation in controller)
 		api.POST("/machine-integration/results", controllers.ReceiveMachineResult)
+		api.POST("/simulator/proxy-nodered/:action", controllers.ProxyNodeRed)
 
 		// Telegram Bot Webhook
 		api.POST("/webhook/telegram", controllers.TelegramWebhookHandler)
@@ -51,6 +54,7 @@ func SetupRoutes(r *gin.Engine) {
 			protected.GET("/download", controllers.DownloadDocument)
 
 			protected.GET("/menus", controllers.GetSidebarMenus)
+			protected.GET("/verify-session", controllers.VerifySession)
 			protected.GET("/master-data", controllers.GetMasterData)
 			protected.GET("/dashboard-stats", controllers.GetDashboardStats)
 			protected.POST("/logout", controllers.Logout)

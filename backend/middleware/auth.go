@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -90,6 +91,51 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Session not found or revoked"})
 			c.Abort()
 			return
+		}
+
+		// 1. Validasi Status Aktif Pengguna
+		var user models.User
+		if err := database.DB.Select("is_active", "idle_timeout_minutes").First(&user, userID).Error; err != nil || !user.IsActive {
+			// Hapus seluruh sesi aktif dari database agar token tidak valid lagi
+			database.DB.Where("user_id = ?", userID).Delete(&models.UserSession{})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Akun Anda dinonaktifkan. Silakan hubungi administrator."})
+			c.Abort()
+			return
+		}
+
+		// 2. Validasi Sidik Jari Klien (Anti-Token Sharing / Hijacking)
+		currentIP := strings.TrimPrefix(c.ClientIP(), "::ffff:")
+		currentUserAgent := c.GetHeader("User-Agent")
+		if session.IPAddress != currentIP || session.UserAgent != currentUserAgent {
+			// Hapus sesi curian
+			database.DB.Delete(&session)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."})
+			c.Abort()
+			return
+		}
+
+		// 3. Validasi Idle Timeout Dinamis
+		idleLimitMinutes := 30 // default fallback
+		if user.IdleTimeoutMinutes != nil && *user.IdleTimeoutMinutes > 0 {
+			idleLimitMinutes = *user.IdleTimeoutMinutes
+		} else {
+			globalIdleStr := models.GetGlobalParam("DEFAULT_IDLE_TIMEOUT_MINUTES", "30")
+			if limit, err := strconv.Atoi(globalIdleStr); err == nil && limit > 0 {
+				idleLimitMinutes = limit
+			}
+		}
+
+		if time.Since(session.LastActivityAt) > time.Duration(idleLimitMinutes)*time.Minute {
+			// Hapus sesi karena kedaluwarsa akibat idle
+			database.DB.Delete(&session)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Sesi Anda telah berakhir karena tidak ada aktivitas."})
+			c.Abort()
+			return
+		}
+
+		// 4. Perbarui Waktu Aktivitas Terakhir (Optimasi: hanya jika selisih > 1 menit)
+		if time.Since(session.LastActivityAt) > 1*time.Minute {
+			database.DB.Model(&session).Update("last_activity_at", time.Now())
 		}
 
 		// Set user context

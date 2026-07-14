@@ -162,3 +162,43 @@ func GetSimulatorLogs(c *gin.Context) {
 		"limit": limit,
 	}, "Simulator logs retrieved")
 }
+
+// ProxyNodeRed acts as an endpoint-to-endpoint reverse proxy to bypass browser CORS / PNA blocks.
+func ProxyNodeRed(c *gin.Context) {
+	action := c.Param("action")
+	if action != "data-peralatan" && action != "publish-mqtt" && action != "publish-socket" && action != "publish-modbus" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Aksi simulator tidak dikenal"})
+		return
+	}
+
+	targetURL := "http://127.0.0.1:1880/" + action
+	req, err := http.NewRequest(c.Request.Method, targetURL, c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membuat request proxy: " + err.Error()})
+		return
+	}
+
+	// Copy headers
+	for k, vv := range c.Request.Header {
+		for _, v := range vv {
+			req.Header.Add(k, v)
+		}
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Node-RED tidak merespons: " + err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	// Copy response headers and body
+	for k, vv := range resp.Header {
+		for _, v := range vv {
+			c.Header(k, v)
+		}
+	}
+	c.Status(resp.StatusCode)
+	c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
+}
