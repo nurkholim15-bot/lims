@@ -101,7 +101,7 @@ function App() {
       navigate("/login");
     };
 
-    const idleMinutes = user.idle_timeout_minutes || parseInt(appConfig.DEFAULT_IDLE_TIMEOUT_MINUTES) || 30;
+    const idleMinutes = parseInt(appConfig.DEFAULT_IDLE_TIMEOUT_MINUTES) || 30;
     const timeoutMs = idleMinutes * 60 * 1000;
 
     const resetTimer = () => {

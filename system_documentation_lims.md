@@ -2062,6 +2062,63 @@ cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/generate_db_password.g
 cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/generate_bcrypt_hash.go /home/lims/lims1/backend/
 ```
 
+#### Instalasi Dependensi Python & Mesin OCR (PaddleOCR / Tesseract)
+Fitur `AI_OCR_ENABLED` membutuhkan instalasi modul eksternal Python dan pustaka pembaca gambar di OS VPS. 
+
+**PERINGATAN STANDAR PRODUCTION:** Karena OS server rilis terbaru (seperti Ubuntu 24.04 atau yang lebih baru) umumnya datang dengan versi Python mutakhir (3.13 / 3.14) yang seringkali **tidak kompatibel** dengan beberapa pustaka Kecerdasan Buatan (AI), Anda **SANGAT DIWAJIBKAN** untuk membungkus instalasi mesin AI-nya menggunakan lingkungan yang terisolasi (*Virtual Environment*) dengan **Python 3.12**.
+
+Jalankan runtutan perintah ini di terminal VPS Anda:
+```bash
+# 1. Install Pustaka Sistem OS (PDF, Tesseract OCR, Dependensi Grafik OpenCV, dan Compiler C++)
+# Catatan: build-essential, ccache, dan ninja-build SANGAT diwajibkan agar model C++ PaddleX tidak mengalami crash!
+sudo apt update
+sudo apt install -y software-properties-common poppler-utils tesseract-ocr tesseract-ocr-ind tesseract-ocr-eng libgl1 libglib2.0-0 build-essential ccache ninja-build
+
+# 2. Tambahkan PPA Deadsnakes & Install Python 3.12
+# (Ini tidak merusak Python utama bawaan Ubuntu, ia hanya menambahkannya secara berdampingan)
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt update
+sudo apt install python3.12 python3.12-venv -y
+
+# 3. Buat Kotak Isolasi (Venv) khusus AI di dalam folder backend LIMS
+# (PENTING: Pastikan Anda menjalankan ini DENGAN AKUN BIASA, JANGAN GUNAKAN SUDO!)
+python3.12 -m venv venv_ocr
+
+# 3.1. [TROUBLESHOOTING] Jika Anda tidak sengaja menggunakan sudo di atas, 
+# kembalikan hak milik folder venv ke akun Anda agar pip tidak error "Permission denied"
+# sudo chown -R lims:lims venv_ocr
+
+# 4. Masuk ke dalam Venv tersebut dan pasang semua library yang dibutuhkan
+# (SEKALI LAGI: JANGAN GUNAKAN SUDO SAAT MENJALANKAN PIP DI DALAM VENV)
+source venv_ocr/bin/activate
+pip install --upgrade pip
+pip install Pillow numpy paddlepaddle paddleocr
+deactivate
+```
+> **Info:** Backend LIMS Go telah dilengkapi *Auto-Discovery*. Ia otomatis akan melacak ke dalam folder `venv_ocr/bin/python` tanpa mengharuskan Anda melakukan pengaturan rumit di file konfigurasi `.env`.
+
+**Langkah Verifikasi (Pengecekan):**
+Jika Anda menemui kendala terkait versi Python di kemudian hari, Anda dapat mengecek lokasi *Virtual Environment* dan versi Python yang tertanam di dalamnya menggunakan perintah berikut:
+```bash
+# Mengecek letak direktori venv_ocr (atau venv) berada di VPS
+find /home/lims -type d -name "venv_ocr" -o -name "venv" 2>/dev/null
+
+# Mengecek versi Python yang terinstal di dalam venv tersebut
+# (Ganti path-nya sesuai hasil temuan dari perintah find di atas)
+/home/lims/venv_ocr/bin/python -V
+# Pastikan outputnya menampilkan Python 3.12.x atau 3.10.x, BUKAN 3.14.x
+```
+
+> [!WARNING]  
+> **Konfigurasi Timeout Nginx Wajib untuk OCR**  
+> Proses inferensi PaddleOCR untuk satu halaman penuh dapat memakan waktu 20 hingga 40 detik. Karena Nginx memutus koneksi secara *default* dalam 60 detik, Anda **DIWAJIBKAN** menambahkan konfigurasi *timeout* di blok `server` Nginx Anda untuk menghindari pesan error HTML `504 Gateway Timeout` di *frontend*.  
+> Tambahkan baris berikut ke dalam `/etc/nginx/sites-available/default` di blok *port* API Anda (misal `listen 8082 ssl;`):  
+> ```nginx  
+> proxy_read_timeout 300s;  
+> proxy_connect_timeout 300s;  
+> proxy_send_timeout 300s;  
+> ```
+
 #### Hubungkan Symbolic Link (Shared Storage)
 Guna menyatukan folder penyimpanan hasil uji uploads, hubungkan folder uploads lokal ke folder bersama `shared_uploads`:
 ```bash

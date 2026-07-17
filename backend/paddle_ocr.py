@@ -34,31 +34,84 @@ def main():
         except ValueError:
             filter_cols = False
 
-    # Get image dimensions using PIL
+    # Get image dimensions using PIL and resize if too large to speed up inference (avoid timeouts)
     img_width = 1000
-    if filter_cols:
-        try:
-            with Image.open(img_path) as img:
-                img_width, _ = img.size
-        except Exception as e:
-            print(f"Warning: Failed to open image to get width: {e}", file=sys.stderr)
-            filter_cols = False
+    try:
+        with Image.open(img_path) as img:
+            img_width, img_height = img.size
+            
+            # Auto-compress image to dramatically reduce processing time (max width 1200px)
+            MAX_WIDTH = 1200
+            if img_width > MAX_WIDTH:
+                ratio = MAX_WIDTH / float(img_width)
+                new_height = int(float(img_height) * float(ratio))
+                img = img.resize((MAX_WIDTH, new_height), Image.Resampling.LANCZOS)
+                img_width = MAX_WIDTH
 
-    # Initialize PaddleOCR
-    # lang='id' for Indonesian/English, use_textline_orientation=True and use_angle_cls=True to auto-rotate and orient text
-    ocr = PaddleOCR(use_angle_cls=True, use_textline_orientation=True, lang='id', show_log=False)
+            # Auto-Enhance: Increase Contrast and Sharpness to help OCR read blurry camera photos
+            try:
+                from PIL import ImageEnhance
+                enhancer_contrast = ImageEnhance.Contrast(img)
+                img = enhancer_contrast.enhance(1.5) # Increase contrast by 50%
+                
+                enhancer_sharpness = ImageEnhance.Sharpness(img)
+                img = enhancer_sharpness.enhance(2.0) # Double the sharpness
+            except Exception as e:
+                print(f"Warning: Failed to enhance image: {e}", file=sys.stderr)
+
+            img.save(img_path)
+    except Exception as e:
+        print(f"Warning: Failed to process image width/resizing: {e}", file=sys.stderr)
+        filter_cols = False
+    # Suppress verbose C++ logs from paddle
+    os.environ["GLOG_minloglevel"] = "2"
+
+    # Redirect fd 1 (stdout) to a black hole to suppress C++ logs
+    fd = sys.stdout.fileno()
+    original_fd = os.dup(fd)
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    os.dup2(devnull, fd)
 
     try:
-        result = ocr.ocr(img_path, cls=True)
+        from paddleocr import PaddleOCR
+        # enable_mkldnn=False avoids C++ crashes on VPS.
+        # use_textline_orientation=False speeds up processing by 30% (assuming documents are mostly upright)
+        ocr = PaddleOCR(use_textline_orientation=False, lang='id', enable_mkldnn=False)
+        result = ocr.ocr(img_path)
     except Exception as e:
+        os.dup2(original_fd, fd)
         print(f"Error running PaddleOCR: {e}", file=sys.stderr)
         sys.exit(1)
+    finally:
+        # Restore normal stdout fd
+        os.dup2(original_fd, fd)
+        os.close(original_fd)
+        os.close(devnull)
 
     if not result or not result[0]:
         return
 
-    # Extract box and text info
-    boxes_info = result[0]
+    # Extract box and text info depending on PaddleOCR version
+    if isinstance(result[0], dict) and 'rec_texts' in result[0]:
+        # New PaddleX v3/PP-OCRv6 format
+        boxes_info = []
+        page_data = result[0]
+        polys = page_data.get('dt_polys', page_data.get('rec_polys', []))
+        texts = page_data.get('rec_texts', [])
+        scores = page_data.get('rec_scores', [])
+        
+        for i in range(len(texts)):
+            try:
+                # Convert numpy array to standard python lists of floats
+                box = [[float(p[0]), float(p[1])] for p in polys[i]]
+                text = texts[i]
+                score = float(scores[i])
+                boxes_info.append([box, (text, score)])
+            except Exception:
+                pass
+    else:
+        # Legacy PaddleOCR v2 format
+        boxes_info = result[0]
     
     # Estimate average text tilt/slope using median to make grouping tilt-robust
     slopes = []

@@ -128,7 +128,6 @@ type RegisterRequest struct {
 	WhatsAppPhone      string `json:"whatsapp_phone"`
 	TeamsUserID        string `json:"teams_user_id"`
 	IsActive           *bool  `json:"is_active"`
-	IdleTimeoutMinutes *int   `json:"idle_timeout_minutes"`
 }
 
 func CreateUser(c *gin.Context) {
@@ -170,7 +169,6 @@ func CreateUser(c *gin.Context) {
 		UpdatedUser:        usernameStr,
 		ForcePwdChange:     true,
 		IsActive:           isActive,
-		IdleTimeoutMinutes: req.IdleTimeoutMinutes,
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {
@@ -239,7 +237,6 @@ func UpdateUser(c *gin.Context) {
 		UpdatedUser:        username.(string),
 		ForcePwdChange:     user.ForcePwdChange,
 		IsActive:           user.IsActive,
-		IdleTimeoutMinutes: user.IdleTimeoutMinutes,
 	}
 	database.DB.Create(&hist)
 

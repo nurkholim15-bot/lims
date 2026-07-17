@@ -19,7 +19,7 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
     else if (baseEndpoint === "/global-parameters") defaults = { param_key: "", param_value: "", description: "" };
     else if (baseEndpoint === "/models") defaults = { code: "", name: "", brand_code: "" };
     else if (baseEndpoint === "/variants") defaults = { code: "", name: "", model_code: "" };
-    else if (baseEndpoint === "/users") defaults = { username: "", email: "", phone: "", role_id: "", password: "", telegram_chat_id: "", whatsapp_phone: "", teams_user_id: "", force_pwd_change: false, is_active: true, idle_timeout_minutes: 30 };
+    else if (baseEndpoint === "/users") defaults = { username: "", email: "", phone: "", role_id: "", password: "", telegram_chat_id: "", whatsapp_phone: "", teams_user_id: "", force_pwd_change: false, is_active: true };
     else if (baseEndpoint === "/scoring-aspects") defaults = { code: "", name: "", methodology_code: "", weight: 0, is_used: true };
     else if (baseEndpoint === "/scoring-sub-aspects") defaults = { code: "", name: "", aspect_code: "", weight: 0, is_simulator: false, ocr_keywords: "" };
     else if (baseEndpoint === "/scoring-sub-aspect-items") defaults = { id: "", sub_aspect_code: "", name: "", score: 0 };
@@ -865,21 +865,6 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
                 <span style={{ fontSize: "0.85rem", color: "#64748b" }}>{formData[key] !== false ? "Aktif" : "Non-Aktif"}</span>
               </div>
             ), required, isFullWidth);
-          }
-
-          if (key === "idle_timeout_minutes" && baseEndpoint === "/users") {
-            return renderField(key, "Idle Timeout (Menit)", (
-              <input
-                type="number"
-                name={key}
-                value={formData[key] === null || formData[key] === undefined ? "" : formData[key]}
-                onChange={handleChange}
-                placeholder="Default (30 menit)"
-                style={inputStyle}
-                onFocus={focusStyle}
-                onBlur={blurStyle}
-              />
-            ), false, isFullWidth);
           }
 
           if (key === "force_pwd_change") {

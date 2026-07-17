@@ -114,15 +114,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// 3. Validasi Idle Timeout Dinamis
+		// 3. Validasi Idle Timeout Global
 		idleLimitMinutes := 30 // default fallback
-		if user.IdleTimeoutMinutes != nil && *user.IdleTimeoutMinutes > 0 {
-			idleLimitMinutes = *user.IdleTimeoutMinutes
-		} else {
-			globalIdleStr := models.GetGlobalParam("DEFAULT_IDLE_TIMEOUT_MINUTES", "30")
-			if limit, err := strconv.Atoi(globalIdleStr); err == nil && limit > 0 {
-				idleLimitMinutes = limit
-			}
+		globalIdleStr := models.GetGlobalParam("DEFAULT_IDLE_TIMEOUT_MINUTES", "30")
+		if limit, err := strconv.Atoi(globalIdleStr); err == nil && limit > 0 {
+			idleLimitMinutes = limit
 		}
 
 		if time.Since(session.LastActivityAt) > time.Duration(idleLimitMinutes)*time.Minute {

@@ -4042,3 +4042,1220 @@ Content-Disposition: form-data; name="results"
 [2026-07-14 10:48:02] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 15ms
       Request: 
       Response: {"error":"Session not found or revoked"}
+[2026-07-15 20:51:09] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-07-15 20:51:34] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-07-15 20:51:38] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-15 20:51:38] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 6ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-15 20:51:39] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-15 20:51:39] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-15 20:51:44] 192.168.0.100 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 131ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-15 20:51:52] 192.168.0.100 | GUEST | POST | /api/login | Status: Success | Latency: 12.327s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-15 20:52:05] 192.168.0.100 | GUEST | GET | /api/menus | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-15 20:52:05] 192.168.0.100 | GUEST | GET | /api/config | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-15 20:52:10] 192.168.0.100 | GUEST | GET | /api/applications | Status: Success | Latency: 468ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-15 20:52:13] 192.168.0.100 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 584ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-15 20:52:14] 192.168.0.100 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 173ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-15 20:52:14] 192.168.0.100 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-15 20:52:14] 192.168.0.100 | GUEST | GET | /api/invoices | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-15 20:54:43] 192.168.0.100 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 487ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-15 20:54:44] 192.168.0.100 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 139ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-15 20:54:44] 192.168.0.100 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-15 20:54:44] 192.168.0.100 | GUEST | GET | /api/invoices | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-15 20:55:17] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 34.791s
+      Request: ------WebKitFormBoundarybJWzXU5NfSu5pxeD
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"status":500,"message":"Failed to run PaddleOCR.","error":"PaddleOCR error: exit status 1, stderr: RuntimeError: module compiled against ABI version 0x1000009 but this version of numpy is 0x2000000\nRuntimeError: module compiled against ABI version 0x1000...(truncated)
+[2026-07-15 20:56:21] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 5.54s
+      Request: ------WebKitFormBoundaryQlxNHIwLfpJwJD3K
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"status":500,"message":"Failed to run PaddleOCR.","error":"PaddleOCR error: exit status 1, stderr: RuntimeError: module compiled against ABI version 0x1000009 but this version of numpy is 0x2000000\nRuntimeError: module compiled against ABI version 0x1000...(truncated)
+[2026-07-15 20:56:52] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 19.416s
+      Request: ------WebKitFormBoundaryNHuUMDCBHkZVPLoB
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"status":500,"message":"Failed to run PaddleOCR.","error":"PaddleOCR error: exit status 1, stderr: RuntimeError: module compiled against ABI version 0x1000009 but this version of numpy is 0x2000000\nRuntimeError: module compiled against ABI version 0x1000...(truncated)
+[2026-07-15 21:01:56] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 11.184s
+      Request: ------WebKitFormBoundaryWatYgnOvgmiMV2AH
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-15 21:02:08] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-15 21:02:08] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 12ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-15 21:02:26] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-07-15 21:02:29] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-15 21:02:29] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-15 21:02:37] 192.168.0.100 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 1.994s
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-15 21:02:45] 192.168.0.100 | GUEST | POST | /api/login | Status: Success | Latency: 2.373s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-15 21:02:50] 192.168.0.100 | GUEST | GET | /api/menus | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-15 21:02:50] 192.168.0.100 | GUEST | GET | /api/config | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-15 21:02:54] 192.168.0.100 | GUEST | GET | /api/applications | Status: Success | Latency: 237ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-15 21:02:58] 192.168.0.100 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 525ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-15 21:02:58] 192.168.0.100 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 128ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-15 21:02:58] 192.168.0.100 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-15 21:02:59] 192.168.0.100 | GUEST | GET | /api/invoices | Status: Success | Latency: 95ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-15 21:03:25] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 40.513s
+      Request: ------WebKitFormBoundary5rQ2hAW7AKdw9i24
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/15 21:03:44] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-15 21:04:36] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 11.148s
+      Request: ------WebKitFormBoundaryAb7zUAVeIeaKxQvN
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/15 21:04:41] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 05:52:48] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-07-16 05:52:51] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 05:52:51] 192.168.0.104 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 29ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 05:52:57] 192.168.0.104 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 208ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 05:53:06] 192.168.0.104 | GUEST | POST | /api/login | Status: Failed | Latency: 325ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-07-16 05:53:42] 192.168.0.104 | GUEST | POST | /api/login | Status: Failed | Latency: 193ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"code":"ACTIVE_SESSION_EXISTS","message":"Session Anda masih aktif","status":409}
+[2026-07-16 05:54:32] 192.168.0.104 | GUEST | POST | /api/login | Status: Success | Latency: 145ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 05:54:33] 192.168.0.104 | GUEST | GET | /api/menus | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 05:54:33] 192.168.0.104 | GUEST | GET | /api/config | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 05:54:39] 192.168.0.104 | GUEST | GET | /api/applications | Status: Success | Latency: 413ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-16 05:54:48] 192.168.0.104 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 613ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 05:54:49] 192.168.0.104 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 123ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 05:54:49] 192.168.0.104 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 213ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 05:54:50] 192.168.0.104 | GUEST | GET | /api/invoices | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 05:55:06] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 41.706s
+      Request: ------WebKitFormBoundaryyhd32iK9jUHivxVQ
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 05:55:28] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:12:44] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-07-16 06:12:46] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 06:12:46] 192.168.0.104 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 23ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 06:12:53] 192.168.0.104 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 234ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 06:13:05] 192.168.0.104 | GUEST | POST | /api/login | Status: Failed | Latency: 3.945s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"code":"ACTIVE_SESSION_EXISTS","message":"Session Anda masih aktif","status":409}
+[2026-07-16 06:13:38] 192.168.0.104 | GUEST | POST | /api/login | Status: Success | Latency: 5.681s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 06:13:44] 192.168.0.104 | GUEST | GET | /api/menus | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 06:13:44] 192.168.0.104 | GUEST | GET | /api/config | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 06:13:48] 192.168.0.104 | GUEST | GET | /api/applications | Status: Success | Latency: 508ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-16 06:13:52] 192.168.0.104 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 676ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 06:13:53] 192.168.0.104 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 170ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 06:13:53] 192.168.0.104 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 06:13:54] 192.168.0.104 | GUEST | GET | /api/invoices | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 06:14:16] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 06:14:16] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 06:14:16] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 06:14:16] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 06:14:21] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 59.216s
+      Request: ------WebKitFormBoundaryL5RNaLktQH5LNc3N
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:15:01] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:16:48] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 8.316s
+      Request: ------WebKitFormBoundary2uLL8EgAoxfKLiZh
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-16 06:16:57] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 06:16:57] 192.168.0.104 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 13ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 06:17:07] 192.168.0.104 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 2.748s
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 06:17:18] 192.168.0.104 | GUEST | POST | /api/login | Status: Failed | Latency: 5.211s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-07-16 06:17:32] 192.168.0.104 | GUEST | POST | /api/login | Status: Success | Latency: 2.146s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 06:17:35] 192.168.0.104 | GUEST | GET | /api/menus | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 06:17:35] 192.168.0.104 | GUEST | GET | /api/config | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 06:17:38] 192.168.0.104 | GUEST | GET | /api/applications | Status: Success | Latency: 228ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-16 06:17:40] 192.168.0.104 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 467ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 06:17:41] 192.168.0.104 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 127ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 06:17:41] 192.168.0.104 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 06:17:42] 192.168.0.104 | GUEST | GET | /api/invoices | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 06:18:07] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 16.473s
+      Request: ------WebKitFormBoundarylBr0khOLe0rhYDLU
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:18:18] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:18:46] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.745s
+      Request: ------WebKitFormBoundaryk4LFEtA1jlt4bWd1
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:18:49] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:19:11] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.497s
+      Request: ------WebKitFormBoundary3POWcJW3B74MBG0c
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:19:15] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:19:41] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.5s
+      Request: ------WebKitFormBoundaryLSe2wLMaaNMU9UNK
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:19:44] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:20:08] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.361s
+      Request: ------WebKitFormBoundaryHdgoRPVpK7qpcghN
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:20:11] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:20:34] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 6.742s
+      Request: ------WebKitFormBoundaryBn3PHfnOgjzSxtVd
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:20:37] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:21:03] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.737s
+      Request: ------WebKitFormBoundaryZwA8Z07Y9pzGHPAS
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:21:06] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:21:19] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.843s
+      Request: ------WebKitFormBoundary6YhiBQEW9lULac8V
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:21:22] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:21:40] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.725s
+      Request: ------WebKitFormBoundaryuUBDzP4yovgd9Izs
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:21:44] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:21:57] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 6.926s
+      Request: ------WebKitFormBoundaryQAe9Gp3XJObaajS3
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:22:01] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:22:19] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.719s
+      Request: ------WebKitFormBoundaryv3gkQe8BtxKZrRBe
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:22:22] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:22:42] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.53s
+      Request: ------WebKitFormBoundaryOzVuAilT5eOGxa1c
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:22:45] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:23:04] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 6.178s
+      Request: ------WebKitFormBoundaryfOgoQR4bwMFV2H5W
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:23:07] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:23:21] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 6.29s
+      Request: ------WebKitFormBoundary44ZBxkBTCcc9gBLi
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:23:25] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:24:05] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.421s
+      Request: ------WebKitFormBoundaryRtru502SReVr2wyK
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:24:08] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 06:26:55] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 06:26:55] 192.168.0.104 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-16 06:26:55] 192.168.0.104 | GUEST | GET | /api/verify-session | Status: Success | Latency: 88ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 06:26:55] 192.168.0.104 | GUEST | GET | /api/menus | Status: Success | Latency: 61ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 06:26:55] 192.168.0.104 | GUEST | GET | /api/config | Status: Success | Latency: 295ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 06:26:55] 192.168.0.104 | GUEST | GET | /api/config | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 06:27:00] 192.168.0.104 | GUEST | GET | /api/applications | Status: Success | Latency: 845ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-16 06:27:03] 192.168.0.104 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 948ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 06:27:04] 192.168.0.104 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 144ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 06:27:04] 192.168.0.104 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 61ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 06:27:05] 192.168.0.104 | GUEST | GET | /api/invoices | Status: Success | Latency: 85ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 06:29:05] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 5m1.186s
+      Request: ------WebKitFormBoundarylhY4HA2dfO9nBWxs
+Content-Disposition: form-data; name="document"; filename="IMG-20260716-WA0001.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                       ...(truncated)
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-16 06:35:04] 192.168.0.104 | GUEST | GET | /api/check-version | Status: Success | Latency: 213ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 06:35:03] 192.168.0.104 | GUEST | GET | /api/applications/205 | Status: Failed | Latency: 3.155s
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 06:35:04] 192.168.0.104 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3.125s
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 06:25:17] 192.168.0.104 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 10m34.079s
+      Request: ------WebKitFormBoundary7RCC4KcaWXBFMXCk
+Content-Disposition: form-data; name="document"; filename="20260716_062507.jpg"
+Content-Type: image/jpeg
+
+ÿØÿám¡Exif  II*         ¢    	   ª              ’       š   (       1    ´  ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 06:27:05] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 09:27:50] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 09:27:50] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 09:27:50] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 09:27:50] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 09:27:53] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 09:27:53] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 133ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 09:27:53] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 55ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 09:27:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 09:28:08] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 09:28:08] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 09:28:13] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":87,"param_key":"ALLOW_SESSION_TAKEOVER","param_value":"true","description":"Mengizinkan user mengambil alih sesi aktif lainnya saat login kembali jika bernilai true.","created_at":"2026-07-11T20:51:30.29695...(truncated)
+[2026-07-16 09:28:21] 127.0.0.1 | GUEST | PUT | /api/management/global-parameters/86 | Status: Success | Latency: 43ms
+      Request: {"param_key":"SINGLE_SESSION_MODE","param_value":"false","description":"Menentukan apakah user hanya boleh memiliki satu sesi aktif (true) atau multi sesi (false).","id":86,"created_at":"2026-07-11T20:51:30.296953+07:00","updated_at":"2026-07-11T21:43:07.3...(truncated)
+      Response: {"status":200,"message":"Updated","data":{"id":86,"param_key":"SINGLE_SESSION_MODE","param_value":"false","description":"Menentukan apakah user hanya boleh memiliki satu sesi aktif (true) atau multi sesi (false).","created_at":"2026-07-11T20:51:30.296953+0...(truncated)
+[2026-07-16 09:28:21] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":87,"param_key":"ALLOW_SESSION_TAKEOVER","param_value":"true","description":"Mengizinkan user mengambil alih sesi aktif lainnya saat login kembali jika bernilai true.","created_at":"2026-07-11T20:51:30.29695...(truncated)
+[2026-07-16 10:26:36] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 646ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-16 10:26:45] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:26:45] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 103ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 10:26:45] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:26:45] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 26ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 10:26:46] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 82ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 10:26:46] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 410ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 10:26:47] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 176ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 10:26:47] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 59ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 10:32:12] 127.0.0.1 | GUEST | GET | /api/applications | Status: Failed | Latency: 41ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-16 10:32:13] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:32:13] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 10:32:13] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:32:13] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 10:32:16] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 10:32:16] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 92ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 10:32:16] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 10:32:16] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 10:32:23] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 107ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 10:32:23] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 10:32:26] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":36,"username":"nur2","email":"","phone":"","role_id":11,"role":{"id":11,"name":"OPERATOR_TEST","description":"Operator Pelaksana Uji","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-04-21T15:00...(truncated)
+[2026-07-16 10:32:29] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 10:32:29] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 10:32:36] 127.0.0.1 | GUEST | PUT | /api/management/users/8 | Status: Success | Latency: 62ms
+      Request: {"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"password":"","telegram_chat_id":"6310846414","whatsapp_phone":"6285882500073","teams_user_id":"","force_pwd_change":false,"is_active":true,"idle_timeout_minutes":"60","id":8,"last_pw...(truncated)
+      Response: {"status":200,"message":"User updated successfully","data":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-16 10:32:36] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":36,"username":"nur2","email":"","phone":"","role_id":11,"role":{"id":11,"name":"OPERATOR_TEST","description":"Operator Pelaksana Uji","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-04-21T15:00...(truncated)
+[2026-07-16 10:32:42] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-16 10:32:43] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 10:32:43] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 91ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 10:32:43] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 10:32:43] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 10:32:48] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 405ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-16 10:32:50] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 586ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 10:32:51] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 108ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 10:32:51] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 10:32:51] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 10:34:21] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 57.195s
+      Request: ------WebKitFormBoundarygb7iTKmEDE2DX3ME
+Content-Disposition: form-data; name="document"; filename="89.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 72588
+/Length1...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:35:04] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:35:47] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:35:47] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 8ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 10:35:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 10:35:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:36:00] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 63ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 10:36:11] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 3.701s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 10:36:16] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 10:36:16] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 10:36:48] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-07-16 10:36:48] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-07-16 10:36:48] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 200ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-07-16 10:36:48] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-07-16 10:37:01] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KOLOC","name":"Konstruksi-Frekuensi lock","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":"\u003e=","standard_unit":"","is_simulator":f...(truncated)
+[2026-07-16 10:37:09] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 3.399s
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONSI","name":"Konstruksi-Dimensi","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":"\u003e=","standard_unit":"","is_simulator":true,"is...(truncated)
+[2026-07-16 10:37:17] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 10.516s
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-07-16 10:37:28] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 79ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-07-16 10:37:29] 127.0.0.1 | GUEST | PUT | /api/management/scoring-sub-aspects/KONSI | Status: Success | Latency: 75ms
+      Request: {"code":"KONSI","name":"Konstruksi-Dimensi","aspect_code":"KONPE","weight":15,"is_simulator":false,"ocr_keywords":"XONSI","description":"","standard_value":65,"standard_value_max":100,"standard_operator":">=","standard_unit":"","is_active":true,"ocr_keywor...(truncated)
+      Response: {"status":200,"message":"Updated","data":{"code":"KONSI","name":"Konstruksi-Dimensi","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_a...(truncated)
+[2026-07-16 10:37:30] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONSI","name":"Konstruksi-Dimensi","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"i...(truncated)
+[2026-07-16 10:38:32] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 451ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 10:38:33] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 81ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 10:38:33] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 10:38:33] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 10:47:39] 192.168.0.100 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-16 10:47:39] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:47:39] 192.168.0.100 | GUEST | GET | /api/config | Status: Failed | Latency: 128ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 10:47:39] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 135ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 10:47:39] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:47:39] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 10:47:48] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-07-16 10:47:49] 192.168.0.100 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 10:47:49] 192.168.0.100 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 10:47:54] 192.168.0.100 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 10:48:03] 192.168.0.100 | GUEST | POST | /api/login | Status: Failed | Latency: 89ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-07-16 10:48:14] 192.168.0.100 | GUEST | POST | /api/login | Status: Success | Latency: 127ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 10:48:14] 192.168.0.100 | GUEST | GET | /api/menus | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 10:48:14] 192.168.0.100 | GUEST | GET | /api/config | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 10:48:17] 192.168.0.100 | GUEST | GET | /api/applications | Status: Success | Latency: 182ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-16 10:48:22] 192.168.0.100 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 241ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-16 10:48:22] 192.168.0.100 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 60ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-16 10:48:22] 192.168.0.100 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-16 10:48:22] 192.168.0.100 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-16 10:48:40] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 25.988s
+      Request: ------WebKitFormBoundary5LZiuXGMtVUiLzht
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:48:57] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:49:58] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 16.115s
+      Request: ------WebKitFormBoundarySj5H7HcTBnmhxRpr
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:50:11] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:50:40] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.764s
+      Request: ------WebKitFormBoundaryfeRu4YjN6Iqzn3AA
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:50:43] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:51:04] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.462s
+      Request: ------WebKitFormBoundary5mEgROGlq3bwrRSC
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:51:07] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:51:45] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 3.806s
+      Request: ------WebKitFormBoundaryAqXPFW6hRK7T4s3v
+Content-Disposition: form-data; name="document"; filename="IMG-20260716-WA0003.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                       ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:51:47] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:57:14] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 9.444s
+      Request: ------WebKitFormBoundaryyx3BgAJDUcf8lQpF
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:57:19] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:57:42] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 6.381s
+      Request: ------WebKitFormBoundaryMswGIjO3POKXyCEm
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:57:48] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 10:58:11] 192.168.0.100 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 5.135s
+      Request: ------WebKitFormBoundary9fThWGakGsBah1FC
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026/07/16 10:58:14] ppocr DEBUG: Namespace(help='==SUPPRESS==', use_gpu=False, use_xpu=False, use_npu=False, ir_optim=True, use_tensorrt=False, min_subgraph_size=15,...(truncated)
+[2026-07-16 11:18:38] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:18:38] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:18:39] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 229ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:18:38] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 886ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:18:38] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 1.125s
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:18:38] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 1.187s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:18:40] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:18:40] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:18:40] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:18:40] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:18:40] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 61ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:18:40] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:18:52] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 155ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:18:53] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:19:05] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:19:05] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:19:26] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:19:26] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:19:44] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:19:44] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:19:59] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:19:59] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:20:03] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":67,"param_key":"AI_TIMEOUT","param_value":"300","description":"Interval Response Time-out AI dalam second (default 120 detik)","created_at":"2026-06-05T06:53:13.945426+07:00","updated_at":"2026-06-05T06:54:...(truncated)
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 148ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-16 11:32:10] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 261ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:32:09] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 298ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:32:10] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:32:10] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:32:10] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:32:10] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:32:10] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:32:17] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 63ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:32:18] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 43ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:32:21] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":36,"username":"nur2","email":"","phone":"","role_id":11,"role":{"id":11,"name":"OPERATOR_TEST","description":"Operator Pelaksana Uji","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-04-21T15:00...(truncated)
+[2026-07-16 11:32:24] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:32:24] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:32:36] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:32:36] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:32:40] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":67,"param_key":"AI_TIMEOUT","param_value":"300","description":"Interval Response Time-out AI dalam second (default 120 detik)","created_at":"2026-06-05T06:53:13.945426+07:00","updated_at":"2026-06-05T06:54:...(truncated)
+[2026-07-16 11:32:49] 127.0.0.1 | GUEST | PUT | /api/management/global-parameters/88 | Status: Success | Latency: 34ms
+      Request: {"param_key":"DEFAULT_IDLE_TIMEOUT_MINUTES","param_value":"3","description":"Batas waktu idle sistem default dalam menit sebelum sesi ditutup otomatis.","id":88,"created_at":"2026-07-11T20:51:30.296953+07:00","updated_at":"2026-07-11T20:51:30.296953+07:00"...(truncated)
+      Response: {"status":200,"message":"Updated","data":{"id":88,"param_key":"DEFAULT_IDLE_TIMEOUT_MINUTES","param_value":"3","description":"Batas waktu idle sistem default dalam menit sebelum sesi ditutup otomatis.","created_at":"2026-07-11T20:51:30.296953+07:00","updat...(truncated)
+[2026-07-16 11:32:49] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":67,"param_key":"AI_TIMEOUT","param_value":"300","description":"Interval Response Time-out AI dalam second (default 120 detik)","created_at":"2026-06-05T06:53:13.945426+07:00","updated_at":"2026-06-05T06:54:...(truncated)
+[2026-07-16 11:32:54] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 50ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:32:54] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:32:57] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-07-16 11:33:07] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:33:20] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:33:24] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-16 11:33:31] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:33:31] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 86ms
+      Request: {"username":"sv_score","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-07-16 11:33:40] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 99ms
+      Request: {"username":"sv_score","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 3","status":401}
+[2026-07-16 11:33:42] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 79ms
+      Request: {"username":"sv_score","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 2","status":401}
+[2026-07-16 11:33:51] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 99ms
+      Request: {"username":"sv_score","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":22,"role":"SUPERVISOR_SCORE","role_id":14,"username":"sv_score"}}}
+[2026-07-16 11:33:51] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:33:52] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:33:58] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-16 11:34:03] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:34:05] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 89ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:34:05] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:34:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:34:19] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":14,"name":"SUPERVISOR_SCORE","description":"Supervisor Scoring / Analisa","created_at":"0001-01-01T00:00:00...(truncated)
+[2026-07-16 11:34:21] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:34:21] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:34:23] 127.0.0.1 | GUEST | PUT | /api/management/users/22 | Status: Success | Latency: 33ms
+      Request: {"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"password":"","telegram_chat_id":"","whatsapp_phone":"","teams_user_id":"","force_pwd_change":false,"is_active":false,"id":22,"last_pwd_change":"2026-06-24T11:27:52.088089+07:00"...(truncated)
+      Response: {"status":200,"message":"User updated successfully","data":{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00...(truncated)
+[2026-07-16 11:34:23] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":14,"name":"SUPERVISOR_SCORE","description":"Supervisor Scoring / Analisa","created_at":"0001-01-01T00:00:00...(truncated)
+[2026-07-16 11:34:26] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-16 11:34:33] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:34:34] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 7ms
+      Request: {"username":"sv_score","password":"***","force_login":false}
+      Response: {"status":403,"message":"Akun Anda dinonaktifkan. Silakan hubungi administrator.","error":"Access forbidden"}
+[2026-07-16 11:34:41] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 11:34:41] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:34:41] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 11:34:41] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:34:45] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:34:45] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 101ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:34:45] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:34:45] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:34:53] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:34:53] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-07-16 11:35:00] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":14,"name":"SUPERVISOR_SCORE","description":"Supervisor Scoring / Analisa","created_at":"0001-01-01T00:00:00...(truncated)
+[2026-07-16 11:35:02] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:35:02] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-07-16 11:35:10] 127.0.0.1 | GUEST | PUT | /api/management/users/22 | Status: Success | Latency: 24ms
+      Request: {"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"password":"","telegram_chat_id":"","whatsapp_phone":"","teams_user_id":"","force_pwd_change":false,"is_active":true,"id":22,"last_pwd_change":"2026-06-24T11:27:52.088089+07:00",...(truncated)
+      Response: {"status":200,"message":"User updated successfully","data":{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00...(truncated)
+[2026-07-16 11:35:10] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":14,"name":"SUPERVISOR_SCORE","description":"Supervisor Scoring / Analisa","created_at":"0001-01-01T00:00:00...(truncated)
+[2026-07-16 11:35:17] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 112ms
+      Request: {"username":"sv_score","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":22,"role":"SUPERVISOR_SCORE","role_id":14,"username":"sv_score"}}}
+[2026-07-16 11:35:17] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:35:17] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:35:28] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-16 11:35:30] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:35:35] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:35:58] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:37:02] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:37:02] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 11:37:02] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:37:02] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 11:37:05] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:37:08] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 105ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:37:08] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:37:09] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:40:10] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 16ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-16 11:40:11] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:40:11] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 11:40:11] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:40:11] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 11:41:13] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:41:14] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 92ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:41:14] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:41:14] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:44:14] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 16ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-16 11:44:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:44:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 6ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 11:44:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 11:44:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-16 11:45:20] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-16 11:45:20] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 137ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-16 11:45:21] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 38ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-16 11:45:21] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-16 11:45:35] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:45:35] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-07-16 11:45:42] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":67,"param_key":"AI_TIMEOUT","param_value":"300","description":"Interval Response Time-out AI dalam second (default 120 detik)","created_at":"2026-06-05T06:53:13.945426+07:00","updated_at":"2026-06-05T06:54:...(truncated)
+[2026-07-16 11:45:49] 127.0.0.1 | GUEST | PUT | /api/management/global-parameters/88 | Status: Success | Latency: 40ms
+      Request: {"param_key":"DEFAULT_IDLE_TIMEOUT_MINUTES","param_value":"120","description":"Batas waktu idle sistem default dalam menit sebelum sesi ditutup otomatis.","id":88,"created_at":"2026-07-11T20:51:30.296953+07:00","updated_at":"2026-07-16T11:32:49.444808+07:0...(truncated)
+      Response: {"status":200,"message":"Updated","data":{"id":88,"param_key":"DEFAULT_IDLE_TIMEOUT_MINUTES","param_value":"120","description":"Batas waktu idle sistem default dalam menit sebelum sesi ditutup otomatis.","created_at":"2026-07-11T20:51:30.296953+07:00","upd...(truncated)
+[2026-07-16 11:45:49] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":67,"param_key":"AI_TIMEOUT","param_value":"300","description":"Interval Response Time-out AI dalam second (default 120 detik)","created_at":"2026-06-05T06:53:13.945426+07:00","updated_at":"2026-06-05T06:54:...(truncated)
+[2026-07-16 11:49:04] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 119ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-16 12:37:51] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 524ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 12:37:51] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 529ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 12:37:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 12:37:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-16 12:37:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-16 12:37:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}

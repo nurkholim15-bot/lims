@@ -126,8 +126,8 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
 
     // Smart unwrapping for views.Response {status, message, data} vs Raw Array/Object
     if (data && typeof data === 'object' && 'status' in data && 'message' in data && 'data' in data) {
-      if ('metadata' in data) {
-        return data; // Return full object if metadata is present to allow pagination access
+      if ('metadata' in data || 'raw_text' in data) {
+        return data; // Return full object if metadata or raw_text is present
       }
       return data.data || []; // Ensure we return at least empty array if data is null
     }

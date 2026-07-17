@@ -51,7 +51,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const [assetStatuses, setAssetStatuses] = useState([]);
   const [aspectEditing, setAspectEditing] = useState({});
   const [invoice, setInvoice] = useState(null);
-  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState(null);
   const [isWebcamOpen, setIsWebcamOpen] = useState(false);
   const [webcamContext, setWebcamContext] = useState({ aspectCode: null, targetParamCode: null });
   const [aiGenerating, setAiGenerating] = useState(false);
@@ -170,12 +170,53 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     setPhotos({ ...photos, [paramCode]: file });
   };
 
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(file); // Don't compress PDF
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200; // Resize to max 1200px
+          if (width > height && width > maxDim) {
+            height = Math.round((height *= maxDim / width));
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width *= maxDim / height));
+            height = maxDim;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const newFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
+              resolve(newFile);
+            } else {
+              resolve(file);
+            }
+          }, 'image/jpeg', 0.8);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const processScoringOCR = async (file, aspectCode, targetParamCode = null) => {
     if (!file) return;
 
-    setOcrLoading(true);
+    setOcrLoading(targetParamCode || aspectCode || true);
+    const processedFile = await compressImage(file);
     const formData = new FormData();
-    formData.append("document", file);
+    formData.append("document", processedFile);
 
     try {
       const res = await apiRequest("/ocr-extract-results", "POST", formData);
@@ -183,7 +224,25 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         const newData = [...executionData];
         let updatedCount = 0;
 
-        Object.keys(res).forEach((subAspectCode) => {
+        const resultData = res.data || res;
+
+        // Smart Fallback: if scanning a specific parameter, and no data was found, but raw_text exists
+        if (targetParamCode && Object.keys(resultData).length === 0 && res.raw_text) {
+          const rawTextClean = res.raw_text.trim();
+          const rawMatches = rawTextClean.match(/\b\d+(?:[.,]\d+)?\b/g);
+          if (rawMatches && rawMatches.length > 0) {
+            const validMatches = rawMatches.filter(n => !/^(19|20)\d{2}$/.test(n));
+            if (validMatches.length > 0) {
+              resultData[targetParamCode] = validMatches[validMatches.length - 1];
+            } else {
+              resultData[targetParamCode] = rawMatches[rawMatches.length - 1];
+            }
+          } else if (rawTextClean.length > 0 && rawTextClean.length < 20) {
+            resultData[targetParamCode] = rawTextClean;
+          }
+        }
+
+        Object.keys(resultData).forEach((subAspectCode) => {
           if (targetParamCode && subAspectCode !== targetParamCode) {
             return;
           }
@@ -193,10 +252,9 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           );
 
           if (paramIdx !== -1) {
-            if (res[subAspectCode] !== undefined && res[subAspectCode] !== "") {
-              const cleaned = cleanParsedValue(res[subAspectCode]);
+            if (resultData[subAspectCode] !== undefined && resultData[subAspectCode] !== "") {
+              const cleaned = cleanParsedValue(resultData[subAspectCode]);
               newData[paramIdx].actual_value = cleaned;
-              // Also store numeric score for submission
               const numeric = parseFloat(cleaned) || 0;
               newData[paramIdx].score = numeric;
               updatedCount++;
@@ -215,7 +273,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       console.error("Scoring OCR error:", err);
       showToast("Gagal menjalankan OCR hasil uji: " + err.message, 'error');
     } finally {
-      setOcrLoading(false);
+      setOcrLoading(null);
     }
   };
 
@@ -815,12 +873,12 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                         <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
                           <button 
                             type="button"
-                            disabled={ocrLoading}
-                            style={{ border: "1px solid #cbd5e1", background: ocrLoading ? "#f1f5f9" : "white", color: ocrLoading ? "#94a3b8" : "#0284c7", cursor: ocrLoading ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
+                            disabled={(ocrLoading === group.code || ocrLoading === true)}
+                            style={{ border: "1px solid #cbd5e1", background: (ocrLoading === group.code || ocrLoading === true) ? "#f1f5f9" : "white", color: (ocrLoading === group.code || ocrLoading === true) ? "#94a3b8" : "#0284c7", cursor: (ocrLoading === group.code || ocrLoading === true) ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
                           >
-                            <i className={ocrLoading ? "fas fa-spinner fa-spin" : "fas fa-file-upload"}></i> {ocrLoading ? "Sedang proses..." : "Auto-fill OCR (File)"}
+                            <i className={(ocrLoading === group.code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"}></i> {(ocrLoading === group.code || ocrLoading === true) ? "Sedang proses..." : "Auto-fill OCR (File)"}
                           </button>
-                          {!ocrLoading && (
+                          {!(ocrLoading === group.code || ocrLoading === true) && (
                             <input 
                               type="file" 
                               accept="image/*,.pdf"
@@ -832,11 +890,11 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
                         <button 
                           type="button"
-                          disabled={ocrLoading}
+                          disabled={(ocrLoading === group.code || ocrLoading === true)}
                           onClick={() => handleOpenCameraModal(group.code)}
-                          style={{ border: "1px solid #cbd5e1", background: ocrLoading ? "#f1f5f9" : "white", color: ocrLoading ? "#94a3b8" : "#0284c7", cursor: ocrLoading ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
+                          style={{ border: "1px solid #cbd5e1", background: (ocrLoading === group.code || ocrLoading === true) ? "#f1f5f9" : "white", color: (ocrLoading === group.code || ocrLoading === true) ? "#94a3b8" : "#0284c7", cursor: (ocrLoading === group.code || ocrLoading === true) ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
                         >
-                          <i className="fas fa-camera"></i> {ocrLoading ? "Sedang proses..." : "Auto-fill OCR (Kamera)"}
+                          <i className="fas fa-camera"></i> {(ocrLoading === group.code || ocrLoading === true) ? "Sedang proses..." : "Auto-fill OCR (Kamera)"}
                         </button>
                       </div>
                     )}
@@ -968,13 +1026,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                       <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
                                         <button
                                           type="button"
-                                          disabled={ocrLoading}
+                                          disabled={(ocrLoading === p.param_code || ocrLoading === true)}
                                           title="Upload File OCR parameter ini saja"
-                                          style={{ background: ocrLoading ? "#f1f5f9" : "#f0fdf4", color: ocrLoading ? "#94a3b8" : "#166534", border: ocrLoading ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: ocrLoading ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                          style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
                                         >
-                                          <i className={ocrLoading ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                          <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
                                         </button>
-                                        {!ocrLoading && (
+                                        {!(ocrLoading === p.param_code || ocrLoading === true) && (
                                           <input 
                                             type="file" 
                                             accept="image/*,.pdf"
@@ -985,12 +1043,12 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                       </div>
                                       <button
                                         type="button"
-                                        disabled={ocrLoading}
+                                        disabled={(ocrLoading === p.param_code || ocrLoading === true)}
                                         onClick={() => handleOpenCameraModal(group.code, p.param_code)}
                                         title="Ambil Foto OCR parameter ini saja"
-                                        style={{ background: ocrLoading ? "#f1f5f9" : "#f0fdf4", color: ocrLoading ? "#94a3b8" : "#166534", border: ocrLoading ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: ocrLoading ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                        style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
                                       >
-                                        <i className={ocrLoading ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                        <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
                                       </button>
                                     </div>
                                   )}
@@ -1010,13 +1068,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                       <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
                                         <button
                                           type="button"
-                                          disabled={ocrLoading}
+                                          disabled={(ocrLoading === p.param_code || ocrLoading === true)}
                                           title="Upload File OCR parameter ini saja"
-                                          style={{ background: ocrLoading ? "#f1f5f9" : "#f0fdf4", color: ocrLoading ? "#94a3b8" : "#166534", border: ocrLoading ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: ocrLoading ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                          style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
                                         >
-                                          <i className={ocrLoading ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                          <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
                                         </button>
-                                        {!ocrLoading && (
+                                        {!(ocrLoading === p.param_code || ocrLoading === true) && (
                                           <input 
                                             type="file" 
                                             accept="image/*,.pdf"
@@ -1027,12 +1085,12 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                       </div>
                                       <button
                                         type="button"
-                                        disabled={ocrLoading}
+                                        disabled={(ocrLoading === p.param_code || ocrLoading === true)}
                                         onClick={() => handleOpenCameraModal(group.code, p.param_code)}
                                         title="Ambil Foto OCR parameter ini saja"
-                                        style={{ background: ocrLoading ? "#f1f5f9" : "#f0fdf4", color: ocrLoading ? "#94a3b8" : "#166534", border: ocrLoading ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: ocrLoading ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                        style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
                                       >
-                                        <i className={ocrLoading ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                        <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
                                       </button>
                                     </div>
                                   )}

@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202601 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202601 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-01-01 00:00:00+07') TO ('2026-02-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202601 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-01-01 00:00:00+07') TO ('2026-02-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202601 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-01-01 00:00:00+07') TO ('2026-02-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202601 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-01-01 00:00:00+07') TO ('2026-02-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202601 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-01-01 00:00:00+07') TO ('2026-02-01 00:00:00+07');
 
 
 -- ==========================================
@@ -88,6 +90,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202602 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202602 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-02-01 00:00:00+07') TO ('2026-03-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202602 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-02-01 00:00:00+07') TO ('2026-03-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202602 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-02-01 00:00:00+07') TO ('2026-03-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202602 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-02-01 00:00:00+07') TO ('2026-03-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202602 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-02-01 00:00:00+07') TO ('2026-03-01 00:00:00+07');
 
 
 -- ==========================================
@@ -134,6 +138,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202603 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202603 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-03-01 00:00:00+07') TO ('2026-04-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202603 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-03-01 00:00:00+07') TO ('2026-04-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202603 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-03-01 00:00:00+07') TO ('2026-04-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202603 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-03-01 00:00:00+07') TO ('2026-04-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202603 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-03-01 00:00:00+07') TO ('2026-04-01 00:00:00+07');
 
 
 -- ==========================================
@@ -180,6 +186,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202604 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202604 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-04-01 00:00:00+07') TO ('2026-05-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202604 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-04-01 00:00:00+07') TO ('2026-05-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202604 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-04-01 00:00:00+07') TO ('2026-05-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202604 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-04-01 00:00:00+07') TO ('2026-05-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202604 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-04-01 00:00:00+07') TO ('2026-05-01 00:00:00+07');
 
 
 -- ==========================================
@@ -226,6 +234,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202605 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202605 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-05-01 00:00:00+07') TO ('2026-06-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202605 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-05-01 00:00:00+07') TO ('2026-06-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202605 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-05-01 00:00:00+07') TO ('2026-06-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202605 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-05-01 00:00:00+07') TO ('2026-06-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202605 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-05-01 00:00:00+07') TO ('2026-06-01 00:00:00+07');
 
 
 -- ==========================================
@@ -272,6 +282,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202606 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202606 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-06-01 00:00:00+07') TO ('2026-07-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202606 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-06-01 00:00:00+07') TO ('2026-07-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202606 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-06-01 00:00:00+07') TO ('2026-07-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202606 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-06-01 00:00:00+07') TO ('2026-07-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202606 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-06-01 00:00:00+07') TO ('2026-07-01 00:00:00+07');
 
 
 -- ==========================================
@@ -318,6 +330,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202607 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202607 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-07-01 00:00:00+07') TO ('2026-08-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202607 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-07-01 00:00:00+07') TO ('2026-08-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202607 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-07-01 00:00:00+07') TO ('2026-08-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202607 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-07-01 00:00:00+07') TO ('2026-08-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202607 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-07-01 00:00:00+07') TO ('2026-08-01 00:00:00+07');
 
 
 -- ==========================================
@@ -364,6 +378,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202608 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202608 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-08-01 00:00:00+07') TO ('2026-09-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202608 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-08-01 00:00:00+07') TO ('2026-09-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202608 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-08-01 00:00:00+07') TO ('2026-09-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202608 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-08-01 00:00:00+07') TO ('2026-09-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202608 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-08-01 00:00:00+07') TO ('2026-09-01 00:00:00+07');
 
 
 -- ==========================================
@@ -410,6 +426,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202609 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202609 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-09-01 00:00:00+07') TO ('2026-10-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202609 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-09-01 00:00:00+07') TO ('2026-10-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202609 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-09-01 00:00:00+07') TO ('2026-10-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202609 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-09-01 00:00:00+07') TO ('2026-10-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202609 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-09-01 00:00:00+07') TO ('2026-10-01 00:00:00+07');
 
 
 -- ==========================================
@@ -456,6 +474,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202610 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202610 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-10-01 00:00:00+07') TO ('2026-11-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202610 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-10-01 00:00:00+07') TO ('2026-11-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202610 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-10-01 00:00:00+07') TO ('2026-11-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202610 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-10-01 00:00:00+07') TO ('2026-11-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202610 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-10-01 00:00:00+07') TO ('2026-11-01 00:00:00+07');
 
 
 -- ==========================================
@@ -502,6 +522,8 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202611 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202611 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-11-01 00:00:00+07') TO ('2026-12-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202611 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-11-01 00:00:00+07') TO ('2026-12-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202611 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-11-01 00:00:00+07') TO ('2026-12-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202611 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-11-01 00:00:00+07') TO ('2026-12-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202611 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-11-01 00:00:00+07') TO ('2026-12-01 00:00:00+07');
 
 
 -- ==========================================
@@ -548,4 +570,6 @@ CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_202612 PARTITION OF li
 CREATE TABLE IF NOT EXISTS lims.testing_tool_transactions_arc_202612 PARTITION OF lims.testing_tool_transactions_arc FOR VALUES FROM ('2026-12-01 00:00:00+07') TO ('2027-01-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_202612 PARTITION OF lims.travel_requests FOR VALUES FROM ('2026-12-01 00:00:00+07') TO ('2027-01-01 00:00:00+07');
 CREATE TABLE IF NOT EXISTS lims.travel_requests_arc_202612 PARTITION OF lims.travel_requests_arc FOR VALUES FROM ('2026-12-01 00:00:00+07') TO ('2027-01-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_202612 PARTITION OF lims.user_activity_logs FOR VALUES FROM ('2026-12-01 00:00:00+07') TO ('2027-01-01 00:00:00+07');
+CREATE TABLE IF NOT EXISTS lims.user_activity_logs_arc_202612 PARTITION OF lims.user_activity_logs_arc FOR VALUES FROM ('2026-12-01 00:00:00+07') TO ('2027-01-01 00:00:00+07');
 

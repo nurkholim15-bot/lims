@@ -15,6 +15,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -2457,6 +2458,36 @@ func parseKTPToMap(rawText string) map[string]string {
 	}
 }
 
+// getPythonCmd mendeteksi secara otomatis path eksekusi Python terbaik.
+// Ia akan memprioritaskan Virtual Environment lokal (venv_ocr atau venv) jika ada,
+// tanpa memedulikan apakah server sedang berjalan di Windows atau Linux.
+func getPythonCmd() string {
+	// 1. Cek jika dipaksa via .env
+	if envCmd := os.Getenv("PYTHON_CMD"); envCmd != "" {
+		return envCmd
+	}
+
+	// 2. Deteksi otomatis Virtual Environment di direktori saat ini
+	venvPaths := []string{
+		"venv_ocr/bin/python",         // Linux/Mac Venv OCR
+		"venv_ocr/Scripts/python.exe", // Windows Venv OCR
+		"venv/bin/python",             // Linux/Mac Venv umum
+		"venv/Scripts/python.exe",     // Windows Venv umum
+	}
+
+	for _, path := range venvPaths {
+		if _, err := os.Stat(path); err == nil {
+			return path // Menggunakan Venv lokal yang ditemukan
+		}
+	}
+
+	// 3. Fallback ke sistem bawaan jika tidak ada Venv
+	if runtime.GOOS == "windows" {
+		return "python"
+	}
+	return "python3"
+}
+
 // runPaddleOCR runs the local PaddleOCR Python wrapper script to extract structured table-like layouts.
 func runPaddleOCR(imagePath string) (string, error) {
 	codeMin := models.GetGlobalParam("ocr_code_col_min", "0.12")
@@ -2464,7 +2495,9 @@ func runPaddleOCR(imagePath string) (string, error) {
 	skorMin := models.GetGlobalParam("ocr_skor_col_min", "0.70")
 	skorMax := models.GetGlobalParam("ocr_skor_col_max", "0.98")
 
-	cmd := exec.Command("python3", "paddle_ocr.py", imagePath, codeMin, codeMax, skorMin, skorMax)
+	pythonCmd := getPythonCmd()
+
+	cmd := exec.Command(pythonCmd, "paddle_ocr.py", imagePath, codeMin, codeMax, skorMin, skorMax)
 	var stderr strings.Builder
 	cmd.Stderr = &stderr
 	output, err := cmd.Output()

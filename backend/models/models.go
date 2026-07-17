@@ -197,7 +197,6 @@ type User struct {
 	DeletedUser    string         `gorm:"type:varchar(30)" json:"deleted_user"`
 	ForcePwdChange bool           `gorm:"column:force_pwd_change;default:false;not null" json:"force_pwd_change"`
 	IsActive       bool           `gorm:"column:is_active;default:true;not null" json:"is_active"`
-	IdleTimeoutMinutes *int       `gorm:"column:idle_timeout_minutes" json:"idle_timeout_minutes"`
 }
 
 type HistUser struct {
@@ -217,7 +216,6 @@ type HistUser struct {
 	DeletedUser    string    `gorm:"type:varchar(30)" json:"deleted_user"`
 	ForcePwdChange bool      `gorm:"column:force_pwd_change;default:false;not null" json:"force_pwd_change"`
 	IsActive       bool      `gorm:"column:is_active;default:true;not null" json:"is_active"`
-	IdleTimeoutMinutes *int      `gorm:"column:idle_timeout_minutes" json:"idle_timeout_minutes"`
 }
 
 type Role struct {

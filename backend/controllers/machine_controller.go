@@ -14,8 +14,8 @@ import (
 )
 
 type MachineResultInput struct {
-	ApplicationID uint64    `json:"application_id"`
-	SubAspectCode string  `json:"scoring_parameter_code" binding:"required"` // Tetap terima tag lama dari simulator IoT
+	ApplicationID uint64  `json:"application_id"`
+	SubAspectCode string  `json:"scoring_parameter_code" binding:"required"`
 	Score         float64 `json:"score"`
 	MachineID     string  `json:"machine_id"`
 	Notes         string  `json:"notes"`

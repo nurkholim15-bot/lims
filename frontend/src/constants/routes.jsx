@@ -47,7 +47,6 @@ export const getMasterRoutes = (onNavigate) => ({
       { key: "role_id", header: "Role Id" },
       { key: "role_name", header: "Role Name", render: (item) => (item.role ? item.role.name : "-") },
       { key: "is_active", header: "Status", render: (item) => (item.is_active ? "Aktif" : "Non-Aktif") },
-      { key: "idle_timeout_minutes", header: "Idle Timeout (Min)", render: (item) => (item.idle_timeout_minutes ? `${item.idle_timeout_minutes} m` : "Default (30)") },
     ],
   },
   "/menus": {
