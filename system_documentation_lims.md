@@ -2980,6 +2980,16 @@ Hal ini disebabkan karena kunci API (`AI_API_KEY`) yang dikonfigurasi pada berka
     sudo systemctl restart lims-backend-8091.service
     ```
 
+**Cara Membuat Kunci API Groq Baru:**
+Jika Anda belum memiliki kunci Groq atau kunci lama Anda sudah kedaluwarsa, ikuti langkah berikut:
+1. Buka *browser* dan kunjungi **[Groq Cloud Console](https://console.groq.com/keys)**.
+2. *Login* menggunakan akun Google atau GitHub Anda (layanan ini gratis).
+3. Di menu sebelah kiri, pilih **API Keys**.
+4. Klik tombol **Create API Key**.
+5. Beri nama kunci Anda (misalnya: `LIMS_Dev_Laptop`) lalu klik Submit.
+6. Sebuah teks rahasia yang diawali dengan `gsk_` akan muncul. **Segera salin (*copy*)** teks tersebut, karena Groq tidak akan pernah menampilkannya lagi.
+7. *Paste* teks tersebut ke dalam file `.env` Anda pada baris `AI_API_KEY=...`.
+
 #### Panduan Instalasi & Konfigurasi LLM Lokal (Ollama - Qwen 2.5 3B / Llama 3.1 8B) di VPS
 
 Untuk menjalankan AI secara offline dan mandiri pada server VPS Anda:

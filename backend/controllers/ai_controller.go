@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"context"
+	"bufio"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -27,6 +29,15 @@ type ChatCompletionRequest struct {
 	Messages    []ChatCompletionMessage `json:"messages"`
 	Temperature float64                 `json:"temperature"`
 	MaxTokens   int                     `json:"max_tokens,omitempty"`
+	Stream      bool                    `json:"stream,omitempty"`
+}
+
+type ChatCompletionStreamResponse struct {
+	Choices []struct {
+		Delta struct {
+			Content string `json:"content"`
+		} `json:"delta"`
+	} `json:"choices"`
 }
 
 type ChatCompletionResponse struct {
@@ -380,7 +391,7 @@ func GenerateReport(c *gin.Context) {
 		}
 	}
 
-	// Call OpenAI-compatible service
+	// Call OpenAI-compatible service with Stream enabled
 	payload := ChatCompletionRequest{
 		Model:       modelName,
 		Messages:    []ChatCompletionMessage{
@@ -389,6 +400,7 @@ func GenerateReport(c *gin.Context) {
 		},
 		Temperature: 0.2,
 		MaxTokens:   maxTokens,
+		Stream:      true, // Enable streaming
 	}
 
 	jsonBytes, err := json.Marshal(payload)
@@ -408,68 +420,83 @@ func GenerateReport(c *gin.Context) {
 		req.Header.Set("Authorization", "Bearer "+apiKey)
 	}
 
-	// Get timeout from database or fallback to cache/default (120 seconds)
-	timeoutSec := 120
-	var gp models.GlobalParameter
-	if err := database.DB.Where("param_key = ?", "AI_TIMEOUT").First(&gp).Error; err == nil {
-		if val, err := strconv.Atoi(gp.ParamValue); err == nil && val > 0 {
-			timeoutSec = val
-		}
-	} else {
-		cacheVal := models.GetGlobalParam("AI_TIMEOUT", "120")
-		if val, err := strconv.Atoi(cacheVal); err == nil && val > 0 {
-			timeoutSec = val
-		}
-	}
+	// Setup SSE Headers so we can stream immediately
+	c.Writer.Header().Set("Content-Type", "text/event-stream")
+	c.Writer.Header().Set("Cache-Control", "no-cache")
+	c.Writer.Header().Set("Connection", "keep-alive")
+	c.Writer.Header().Set("X-Accel-Buffering", "no") // Mencegah Nginx/Vite dev server melakukan buffering
+	c.Writer.Flush()
 
-	client := &http.Client{Timeout: time.Duration(timeoutSec) * time.Second}
+	// Send Go-generated Section B as a special event to the frontend immediately!
+	c.SSEvent("sectionB", map[string]string{"text": goSectionB})
+	c.Writer.Flush()
+
+	// Disable HTTP client timeout for streaming, let the connection stay open
+	client := &http.Client{Timeout: 0}
+	
+	// Add context with timeout so it doesn't hang forever connecting to Groq/Ollama
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+	req = req.WithContext(ctx)
+
+	fmt.Println("[AI Stream] Menghubungi API AI:", fullURL)
 	resp, err := client.Do(req)
+	fmt.Println("[AI Stream] Respons API diterima. Error:", err)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghubungi AI API: " + err.Error() + ". Pastikan konfigurasi jaringan atau Ollama Anda aktif."})
+		c.SSEvent("error", map[string]string{"text": "Gagal menghubungi AI API: " + err.Error() + ". Pastikan konfigurasi jaringan atau Ollama Anda aktif."})
+		c.SSEvent("done", "STREAM_FINISHED")
+		c.Writer.Flush()
 		return
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membaca respon AI API: " + err.Error()})
-		return
-	}
-
 	if resp.StatusCode != http.StatusOK {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("AI API mengembalikan kode error %d: %s", resp.StatusCode, string(bodyBytes))})
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		c.SSEvent("error", map[string]string{"text": fmt.Sprintf("AI API mengembalikan kode error %d: %s", resp.StatusCode, string(bodyBytes))})
+		c.SSEvent("done", "STREAM_FINISHED")
+		c.Writer.Flush()
 		return
 	}
 
-	var chatResp ChatCompletionResponse
-	if err := json.Unmarshal(bodyBytes, &chatResp); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membaca format JSON respon AI: " + err.Error()})
-		return
-	}
+	// Read stream from LLM
+	scanner := bufio.NewScanner(resp.Body)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == "" {
+			continue
+		}
+		if line == "data: [DONE]" {
+			break
+		}
 
-	if len(chatResp.Choices) == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "AI API tidak memberikan pilihan draf respon."})
-		return
-	}
-
-	reportContent := chatResp.Choices[0].Message.Content
-
-	// Stitch the Go-generated Section B into the report
-	cHeader := "C. Analisis Deviasi Teknis"
-	idx := strings.Index(reportContent, cHeader)
-	if idx != -1 {
-		reportContent = reportContent[:idx] + goSectionB + "\n\n" + reportContent[idx:]
-	} else {
-		// Fallback: If C is not found, check B (in case AI generated a placeholder for B)
-		bHeader := "B. Analisis Kekuatan"
-		idxB := strings.Index(reportContent, bHeader)
-		if idxB != -1 {
-			reportContent = reportContent[:idxB] + goSectionB + "\n\n" + reportContent[idxB:]
-		} else {
-			reportContent = reportContent + "\n\n" + goSectionB
+		if strings.HasPrefix(line, "data: ") {
+			data := strings.TrimPrefix(line, "data: ")
+			var streamResp ChatCompletionStreamResponse
+			if err := json.Unmarshal([]byte(data), &streamResp); err == nil {
+				if len(streamResp.Choices) > 0 {
+					content := streamResp.Choices[0].Delta.Content
+					if content != "" {
+						// Stream the content chunk to the frontend securely via JSON
+						fmt.Print(content) // Cetak ke terminal Go
+						c.SSEvent("message", map[string]string{"text": content})
+						c.Writer.Flush()
+					}
+				}
+			} else {
+				// Fallback log jika gagal parsing (misalnya format Ollama berbeda)
+				fmt.Println("\n[AI Stream Error] Gagal parse chunk:", err, "\nRaw data:", data)
+			}
 		}
 	}
-	c.JSON(http.StatusOK, gin.H{"report": reportContent})
+
+	if err := scanner.Err(); err != nil {
+		c.SSEvent("error", "Terjadi kesalahan saat membaca stream AI: "+err.Error())
+		c.Writer.Flush()
+	}
+
+	c.SSEvent("done", "STREAM_FINISHED")
+	c.Writer.Flush()
 }
 
 // Replicate execution items retrieval query logic for prompt data collection

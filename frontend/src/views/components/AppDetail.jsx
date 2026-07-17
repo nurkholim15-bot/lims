@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { apiRequest, getDownloadUrl } from "@models/api";
+import { apiRequest, getDownloadUrl, API_URL } from "@models/api";
 import { printTechnicalReport, printRegistrationProof, printAssetLabel, printApplicationHandover } from "@utils/print";
 import Modal from "./Modal";
 import WebcamModal from "./WebcamModal";
@@ -296,16 +296,115 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
   const handleGenerateAIReport = async () => {
     setAiGenerating(true);
+    setAiReportText(""); // Kosongkan teks sebelumnya
+    setShowAIModal(true); // Langsung buka modal untuk melihat efek ngetik
+
     try {
-      const res = await apiRequest(`/applications/${localApp.id}/generate-report`, "POST");
-      if (res && res.report) {
-        setAiReportText(res.report);
-        setShowAIModal(true);
-      } else {
-        showToast("Gagal memproses draf laporan. Respon kosong diterima dari AI.", 'error');
+      const token = localStorage.getItem("auth_token");
+      const appVersion = import.meta.env.VITE_APP_VERSION || "1.0";
+      const appPlatform = (typeof window !== "undefined" && window.Capacitor) ? window.Capacitor.getPlatform() : "Web";
+      
+      const headers = { 
+        "Content-Type": "application/json",
+        "X-App-Version": appVersion,
+        "X-App-Platform": appPlatform,
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const response = await fetch(`${API_URL}/applications/${localApp.id}/generate-report`, {
+        method: "POST",
+        headers,
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `API error ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let streamedText = "";
+      let sectionBText = "";
+      let buffer = "";
+      let currentEvent = "message";
+
+      const updateUI = () => {
+          let finalText = streamedText;
+          if (sectionBText) {
+              const cIndex = streamedText.indexOf("C. Analisis Deviasi");
+              if (cIndex !== -1) {
+                  finalText = streamedText.substring(0, cIndex) + "\n" + sectionBText + "\n\n" + streamedText.substring(cIndex);
+              } else {
+                  finalText = streamedText + "\n\n" + sectionBText;
+              }
+          }
+          setAiReportText(finalText);
+      };
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        if (value) {
+          const chunkStr = decoder.decode(value, { stream: true });
+          buffer += chunkStr;
+          const lines = buffer.split("\n");
+          buffer = lines.pop(); // Simpan baris yang belum selesai ke buffer
+
+          for (const line of lines) {
+            if (line.startsWith("event:")) {
+                currentEvent = line.substring(6).trim();
+            } else if (line.startsWith("data:")) {
+              let data = line.substring(5).trim(); // Hapus "data:" (5 karakter) dan spasi
+              if (data.startsWith(" ")) data = data.substring(1);
+              
+              if (data === "STREAM_FINISHED") {
+                done = true;
+                break;
+              }
+              
+              let parsedData = data;
+              try {
+                const parsed = JSON.parse(data);
+                if (parsed && parsed.text !== undefined) {
+                  parsedData = parsed.text;
+                }
+              } catch (e) {
+                console.error("Gagal parse JSON dari SSE:", data, e);
+              }
+
+              if (currentEvent === "sectionB") {
+                  sectionBText += parsedData;
+              } else {
+                  streamedText += parsedData;
+              }
+              
+              updateUI();
+            }
+          }
+        }
+      }
+      
+      // Jika ada sisa data di buffer setelah stream selesai, proses juga
+      if (buffer.startsWith("data:")) {
+          let data = buffer.substring(5).trim();
+          if (data !== "" && data !== "STREAM_FINISHED") {
+              try {
+                  const parsed = JSON.parse(data);
+                  if (parsed && parsed.text !== undefined) data = parsed.text;
+              } catch(e) {}
+              if (currentEvent === "sectionB") {
+                  sectionBText += data;
+              } else {
+                  streamedText += data;
+              }
+              updateUI();
+          }
       }
     } catch (err) {
       showToast("Error generate laporan AI: " + err.message, 'error');
+      setShowAIModal(false);
     } finally {
       setAiGenerating(false);
     }
@@ -1545,16 +1644,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
             </button>
              {isAlreadyCertified ? (
               <>
-                {aiReportEnabled && (
-                  <button 
-                    className="btn btn-outline-info" 
-                    disabled={aiGenerating}
-                    onClick={handleGenerateAIReport} 
-                    style={{ padding: "10px 25px", marginRight: "8px" }}
-                  >
-                    <i className={aiGenerating ? "fas fa-spinner fa-spin" : "fas fa-robot"}></i> Laporan AI
-                  </button>
-                )}
                 <button 
                   className="btn btn-primary" 
                   onClick={() => {
@@ -1571,16 +1660,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               </>
             ) : (
               <>
-                {aiReportEnabled && (
-                  <button 
-                    className="btn btn-outline-info" 
-                    disabled={aiGenerating}
-                    onClick={handleGenerateAIReport} 
-                    style={{ padding: "10px 25px", marginRight: "8px" }}
-                  >
-                    <i className={aiGenerating ? "fas fa-spinner fa-spin" : "fas fa-robot"}></i> Laporan AI
-                  </button>
-                )}
                 <button className="btn btn-outline-success" onClick={() => printTechnicalReport({ ...localApp, testing_report_ai: { report_ai: conclusion } }, executionData, locations, {
                   appConfig: appConfig,
                   headerTitle: appConfig.REPORT_HEADER_TITLE
@@ -1846,6 +1925,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 value={aiReportText}
                 onChange={(e) => setAiReportText(e.target.value)}
               />
+              <p style={{ margin: "6px 0 0 0", fontSize: "0.85rem", color: aiGenerating ? "#3b82f6" : "#10b981", fontWeight: "bold" }}>
+                {aiGenerating ? (
+                  <><i className="fas fa-spinner fa-spin"></i> Sedang Proses Generate Laporan AI...</>
+                ) : (
+                  <><i className="fas fa-check-circle"></i> Proses Generate Laporan AI selesai.</>
+                )}
+              </p>
               <p style={{ margin: "6px 0 0 0", fontSize: "0.75rem", color: "#64748b", fontStyle: "italic" }}>
                 * Anda dapat mengoreksi atau mengedit langsung draf teks di atas sebelum menerapkannya ke catatan.
               </p>
@@ -1864,6 +1950,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                   setNotes(aiReportText);
                   setShowAIModal(false);
                 }}
+                disabled={aiGenerating}
               >
                 <i className="fas fa-comment-alt"></i> Gunakan Sebagai Catatan
               </button>
@@ -1873,6 +1960,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                   setConclusion(aiReportText);
                   setShowAIModal(false);
                 }}
+                disabled={aiGenerating}
               >
                 <i className="fas fa-check"></i> Gunakan Sebagai Kesimpulan
               </button>

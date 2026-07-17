@@ -5259,3 +5259,1551 @@ Content-Type: image/jpeg
 [2026-07-16 12:37:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
       Request: 
       Response: {"status":"OK"}
+[2026-07-17 08:36:13] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 08:36:13] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 274ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 08:36:40] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 08:36:40] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-17 08:36:40] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 08:36:40] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 08:36:40] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-17 08:36:41] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 08:36:41] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-17 08:36:41] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 08:36:41] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-17 08:36:42] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 08:36:42] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 92ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 08:36:42] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 08:36:42] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 08:36:45] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 363ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 08:36:47] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 610ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-17 08:36:48] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 68ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 08:36:48] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-17 08:36:48] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 08:36:53] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 110ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 08:36:56] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 110ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 08:36:56] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 44ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 08:36:56] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 08:37:00] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 462ms
+      Request: 
+      Response: {"error":"AI API mengembalikan kode error 401: {\"error\":{\"message\":\"Invalid API Key\",\"type\":\"invalid_request_error\",\"code\":\"invalid_api_key\"}}\n"}
+[2026-07-17 08:37:21] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 148ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 08:37:23] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 119ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-17 08:37:23] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 38ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 08:37:23] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-17 08:37:24] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 08:37:29] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 21.247s
+      Request: ------WebKitFormBoundaryAKEY7Ozlu6XhU1gK
+Content-Disposition: form-data; name="document"; filename="89.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ     Ó-...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"89","status":200}
+[2026-07-17 08:38:03] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 25.111s
+      Request: ------WebKitFormBoundaryPQ8jkIL1PYi4eNlY
+Content-Disposition: form-data; name="document"; filename="89.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 72588
+/Length1...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"89","status":200}
+[2026-07-17 08:38:38] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 162ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 08:38:42] 127.0.0.1 | GUEST | GET | /api/applications/203 | Status: Success | Latency: 133ms
+      Request: 
+      Response: {"id":203,"reg_number":"2026-00055","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 08:38:42] 127.0.0.1 | GUEST | GET | /api/applications/203/execution | Status: Success | Latency: 40ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 08:38:42] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"data":[{"id":41,"application_id":203,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 08:38:45] 127.0.0.1 | GUEST | POST | /api/applications/203/generate-report | Status: Failed | Latency: 240ms
+      Request: 
+      Response: {"error":"AI API mengembalikan kode error 401: {\"error\":{\"message\":\"Invalid API Key\",\"type\":\"invalid_request_error\",\"code\":\"invalid_api_key\"}}\n"}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 61ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 328ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 337ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 356ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:07:55] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 303ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 09:07:58] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 402ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 09:07:59] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 61ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 09:07:59] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 09:08:01] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 381ms
+      Request: 
+      Response: {"error":"AI API mengembalikan kode error 401: {\"error\":{\"message\":\"Invalid API Key\",\"type\":\"invalid_request_error\",\"code\":\"invalid_api_key\"}}\n"}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 93ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 267ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 271ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:17:58] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 309ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 09:18:00] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 361ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 09:18:00] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 52ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 09:18:01] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 09:18:04] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.061s
+      Request: 
+      Response: {"report":"A. Ringkasan Eksekutif Analis (Executive Summary)\n\nPeralatan Alat Komunikasi dengan brand Secucom dan model Sesucon SC-TRAC860 telah menjalani evaluasi teknis laboratorium. Berdasarkan hasil evaluasi, peralatan ini telah mencapai nilai skor ak...(truncated)
+[2026-07-17 09:22:30] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 879ms
+      Request: 
+      Response: {"report":"A. Ringkasan Eksekutif Analis (Executive Summary)\n\nPeralatan Alat Komunikasi dengan brand Secucom dan model Sesucon SC-TRAC860 telah melalui proses evaluasi teknis. Hasil evaluasi menunjukkan bahwa peralatan ini telah lulus istimewa dengan nil...(truncated)
+[2026-07-17 09:23:24] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 827ms
+      Request: 
+      Response: {"report":"A. Ringkasan Eksekutif Analis (Executive Summary)\n\nPeralatan Alat Komunikasi dengan brand Secucom dan model Sesucon SC-TRAC860 telah mengalami evaluasi teknis laboratorium. Hasil evaluasi menunjukkan bahwa peralatan ini telah lulus istimewa de...(truncated)
+[2026-07-17 09:30:14] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:30:14] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:30:14] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 89ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:30:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:30:14] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 189ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:30:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:30:17] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:30:17] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 09:30:17] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 54ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:30:17] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:30:17] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 330ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 09:30:25] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 257ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 09:30:25] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 50ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 09:30:25] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 09:30:31] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.28s
+      Request: 
+      Response: 
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+[2026-07-17 09:30:46] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 727ms
+      Request: 
+      Response: 
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+data:
+[2026-07-17 09:32:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:32:53] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:32:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 09:32:53] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 09:32:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 119ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:32:54] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:32:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 329ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:32:54] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 09:32:54] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 81ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 09:32:54] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 09:32:54] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 829ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 09:33:00] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 771ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 09:33:00] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 94ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 09:33:01] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 09:33:04] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.285s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 10:40:23] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:40:23] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:40:23] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:40:23] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:40:23] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 775ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:40:23] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 846ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:40:24] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 74ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:40:25] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 770ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:40:25] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 1.242s
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 10:40:26] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 204ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:40:25] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 2.744s
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 81ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 67ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 196ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 219ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:45:26] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 350ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 10:45:30] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 450ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 10:45:31] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 54ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 10:45:32] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 10:45:34] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 848ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 70ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 165ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 172ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:50:37] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 328ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 10:50:47] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 309ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 10:50:48] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 51ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 10:50:48] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 10:50:50] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 937ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 10:57:25] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:57:25] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:57:26] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 10:57:26] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 10:57:25] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 78ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:57:26] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 10:57:25] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 222ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:57:26] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 10:57:26] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 333ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 10:57:30] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:57:32] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 10:57:36] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 451ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 10:57:36] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 75ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 10:57:39] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 10:58:42] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 18ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 31ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 11ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 187ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:02:27] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:02:30] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:02:34] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:02:34] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:02:35] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:02:35] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:02:40] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:02:40] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 137ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 11:02:42] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 11:02:42] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 11:02:48] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 225ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 11:02:48] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 80ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 11:02:50] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 316ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 11:02:50] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 50ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 11:02:50] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 11:02:59] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.002s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 11:04:51] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 29ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 11:05:19] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:05:19] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 87ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:05:20] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:05:20] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 20ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:05:20] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:05:20] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:05:21] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:05:22] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 99ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 11:05:22] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 11:05:22] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 11:05:24] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 104ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 11:05:27] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 127ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 11:05:29] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 115ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 11:05:30] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 42ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 11:05:30] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 11:05:52] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 27ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 47ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 8ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 185ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:09:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:09:23] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:09:23] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:09:23] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:09:23] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 13ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:09:26] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:09:26] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 129ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 11:09:28] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 11:09:28] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 11:09:29] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 227ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 11:09:31] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 94ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 11:09:32] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 323ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 11:09:33] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 55ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 11:09:33] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 11:09:57] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 19ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 12ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:10:24] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:10:25] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:10:25] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:10:25] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:10:25] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 29ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:10:26] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:10:26] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 93ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 11:10:26] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 11:10:26] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 11:10:31] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 135ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 11:10:32] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 126ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 11:10:32] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 43ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 11:10:32] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 11:10:58] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 20ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 68ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 70ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 38ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:13:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 370ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:13:16] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:13:16] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 11ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:13:16] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 11:13:16] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 11:13:17] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 11:13:17] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 113ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 11:13:17] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 11:13:17] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 11:13:19] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 242ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 11:13:24] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 333ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 11:13:24] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 52ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 11:13:24] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 11:13:34] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.109s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 13:26:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:26:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:26:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 265ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-17 13:26:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 356ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:26:08] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:26:22] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 133ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:26:23] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 202ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:26:23] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 43ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:29:50] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:29:50] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:29:50] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:29:50] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 152ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 13:29:50] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:29:50] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 149ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 13:29:51] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 32ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:29:51] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:29:52] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:29:52] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 43ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:29:52] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:29:52] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 20ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:29:53] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 84ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:30:26] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 117ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:30:26] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:30:26] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:30:35] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 268ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 13:30:45] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 397ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-17 13:30:46] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 128ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:30:46] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 65ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-17 13:30:46] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:32:01] 127.0.0.1 | GUEST | GET | /api/applications | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 13:32:06] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:32:06] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 78ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:32:06] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:32:06] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 63ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:32:09] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:32:09] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 181ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:32:09] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:32:09] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:32:15] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 200ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 13:32:20] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 256ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:32:21] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 42ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:32:21] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:32:51] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Failed | Latency: 35ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 13:34:22] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:34:26] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:34:26] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:34:26] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:34:26] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 6ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:34:27] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:34:27] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 120ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:34:27] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:34:27] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:34:30] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 85ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 13:34:31] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 220ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:34:31] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 37ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:34:31] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:34:34] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.186s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 211ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 242ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:38:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:38:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 57ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:38:16] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:38:16] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:39:41] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 32ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-07-17 13:39:42] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:39:44] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:39:44] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 12ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:39:44] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:39:44] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 13:39:47] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:39:56] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 174ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:39:57] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:39:57] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 186ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 206ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 87ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 114ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 63ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:41:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:41:11] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 409ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 13:41:19] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-07-17 13:41:22] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 13:41:31] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 126ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:41:32] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:41:32] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:41:39] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 547ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:41:39] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 74ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:41:39] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:41:55] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.188s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 20ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 253ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 344ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 613ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:46:39] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 583ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:46:43] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 67ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:46:43] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:46:43] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 451ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 13:46:47] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 491ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:46:47] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 119ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:46:47] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:46:56] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 134ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:46:56] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 43ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:46:56] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:47:05] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.18s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 13:47:56] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:47:56] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:47:56] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:47:56] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 83ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 63ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:47:59] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 361ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 13:48:09] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 274ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:48:09] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 61ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:48:09] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:48:20] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 944ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 21ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 156ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 192ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 106ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 13:53:54] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 285ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 13:54:06] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 236ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:54:06] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 73ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:54:07] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:54:21] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 1.051s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 13:55:32] 127.0.0.1 | GUEST | GET | /api/applications/203 | Status: Success | Latency: 128ms
+      Request: 
+      Response: {"id":203,"reg_number":"2026-00055","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 13:55:32] 127.0.0.1 | GUEST | GET | /api/applications/203/execution | Status: Success | Latency: 46ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 13:55:32] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":41,"application_id":203,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 13:55:40] 127.0.0.1 | GUEST | POST | /api/applications/203/generate-report | Status: Success | Latency: 893ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:02:38] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:02:39] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:02:38] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 472ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-17 20:02:39] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 6ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-17 20:02:40] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 66ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-17 20:02:42] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 236ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:02:43] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 72ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 20:02:43] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 71ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:02:45] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 1.228s
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 20:02:49] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 275ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:03:06] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 11.151s
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 20:03:20] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 86ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 20:03:20] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 20:03:24] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 2.863s
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:09:40] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 133ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202607","total":0}
+[2026-07-17 20:09:43] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 127ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-17 20:09:45] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 98ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:09:48] 127.0.0.1 | GUEST | GET | /api/applications/203 | Status: Success | Latency: 213ms
+      Request: 
+      Response: {"id":203,"reg_number":"2026-00055","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 20:09:48] 127.0.0.1 | GUEST | GET | /api/applications/203/execution | Status: Success | Latency: 46ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 20:09:49] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":41,"application_id":203,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 20:09:54] 127.0.0.1 | GUEST | POST | /api/applications/203/generate-report | Status: Success | Latency: 938ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:10:18] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 261ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-07-17 20:10:18] 127.0.0.1 | GUEST | PUT | /api/applications/203/analyze | Status: Success | Latency: 345ms
+      Request: {"status":"Analyzed","final_score":95.59210526315789,"analysis_notes":"","report_ai":"A. Ringkasan Eksekutif Analis (Executive Summary)\n\nPeralatan Alat Komunikasi dengan brand Secucom dan model Sesucon SC-TRAC860 telah menjalani evaluasi teknis laborator...(truncated)
+      Response: {"message":"Analysis completed"}
+[2026-07-17 20:10:18] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 78ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:15:05] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 662ms
+      Request: 
+      Response: {"data":[{"id":203,"reg_number":"2026-00055","status":"Analyzed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:15:08] 127.0.0.1 | GUEST | GET | /api/applications/203 | Status: Success | Latency: 336ms
+      Request: 
+      Response: {"id":203,"reg_number":"2026-00055","status":"Analyzed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 20:15:08] 127.0.0.1 | GUEST | GET | /api/applications/203/execution | Status: Success | Latency: 114ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 20:15:08] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"data":[{"id":41,"application_id":203,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 20:20:36] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 97ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:20:36] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 96ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 20:20:36] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 405ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:20:36] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 482ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:20:39] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 20:20:39] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:20:39] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:20:39] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 80ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:20:39] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 121ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 20:20:39] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 1.184s
+      Request: 
+      Response: {"data":[{"id":203,"reg_number":"2026-00055","status":"Analyzed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 61ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 53ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:20:49] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 387ms
+      Request: 
+      Response: {"data":[{"id":203,"reg_number":"2026-00055","status":"Analyzed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 6ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 104ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 199ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 72ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-17 20:20:51] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:20:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-17 20:20:57] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 115ms
+      Request: 
+      Response: {"data":[{"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:20:58] 127.0.0.1 | GUEST | GET | /api/applications/204 | Status: Success | Latency: 389ms
+      Request: 
+      Response: {"id":204,"reg_number":"2026-00057","status":"Executed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 20:20:59] 127.0.0.1 | GUEST | GET | /api/applications/204/execution | Status: Success | Latency: 64ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 20:20:59] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"data":[{"id":42,"application_id":204,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-17 20:21:02] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 881ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:21:12] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 712ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:21:24] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 974ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:21:30] 127.0.0.1 | GUEST | POST | /api/applications/204/generate-report | Status: Success | Latency: 277ms
+      Request: 
+      Response: {"text":"B. Analisis Kekuatan \u0026 Kelebihan Teknis\n   (Daftar parameter yang MEMENUHI/MELAMPAUI standar secara teknis):\n\n   1. Kemampuan Penerima (KEPEN):\n      1.1. Kemampuan  - Penerima - Daya out put audio (KEDAI) - Skor: 90 (Memenuhi standar, St...(truncated)
+[2026-07-17 20:21:37] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 145ms
+      Request: 
+      Response: {"data":[{"id":203,"reg_number":"2026-00055","status":"Analyzed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-07-17 20:21:38] 127.0.0.1 | GUEST | GET | /api/applications/203 | Status: Success | Latency: 191ms
+      Request: 
+      Response: {"id":203,"reg_number":"2026-00055","status":"Analyzed","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-07-17 20:21:38] 127.0.0.1 | GUEST | GET | /api/applications/203/execution | Status: Success | Latency: 34ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-17 20:21:38] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[{"id":41,"application_id":203,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
