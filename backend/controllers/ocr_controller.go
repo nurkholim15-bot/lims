@@ -90,8 +90,17 @@ func OCRExtract(c *gin.Context) {
 
 		var rawText string
 		useDigitalPDF := false
+		isTextFile := false
 
-		if ext == ".pdf" {
+		if ext == ".txt" || ext == ".csv" || ext == ".log" {
+			isTextFile = true
+			content, err := os.ReadFile(tempInputPath)
+			if err != nil {
+				views.InternalError(c, "Failed to read text file", err.Error())
+				return
+			}
+			rawText = string(content)
+		} else if ext == ".pdf" {
 			// Try pdftotext first
 			cmd := exec.Command("pdftotext", "-layout", tempInputPath, "-")
 			output, err := cmd.CombinedOutput()
@@ -111,7 +120,7 @@ func OCRExtract(c *gin.Context) {
 			}
 		}
 
-		if useDigitalPDF {
+		if isTextFile || useDigitalPDF {
 			pages := strings.Split(rawText, "\f")
 			for _, pageText := range pages {
 				trimmed := strings.TrimSpace(pageText)
@@ -258,7 +267,14 @@ func OCRExtractTestResults(c *gin.Context) {
 	var rawText string
 	var combinedRawText []string
 
-	if ext == ".pdf" {
+	if ext == ".txt" || ext == ".csv" || ext == ".log" {
+		content, err := os.ReadFile(tempInputPath)
+		if err != nil {
+			views.InternalError(c, "Failed to read text file", err.Error())
+			return
+		}
+		rawText = string(content)
+	} else if ext == ".pdf" {
 		pageCount, err := getPDFPageCount(tempInputPath)
 		if err != nil {
 			fmt.Printf("DEBUG: getPDFPageCount failed: %v, falling back to batch pdftoppm\n", err)

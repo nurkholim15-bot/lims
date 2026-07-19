@@ -6807,3 +6807,264 @@ data:
 [2026-07-17 20:21:38] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 15ms
       Request: 
       Response: {"data":[{"id":41,"application_id":203,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 59ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 73ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 53ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 11ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-19 20:26:05] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-19 20:26:06] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-19 20:26:06] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:26:07] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-19 20:26:07] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:26:09] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-19 20:26:11] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 803ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-19 20:26:12] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-19 20:26:12] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 116ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:28:35] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 377ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-19 20:28:37] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 596ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-19 20:28:38] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 47ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-19 20:28:38] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-19 20:28:38] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-19 20:28:52] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 9ms
+      Request: ------WebKitFormBoundaryvDtgaIaz71m87Igt
+Content-Disposition: form-data; name="document"; filename="91.txt"
+Content-Type: text/plain
+
+91
+------WebKitFormBoundaryvDtgaIaz71m87Igt--
+
+      Response: {"status":500,"message":"Failed to run PaddleOCR.","error":"PaddleOCR error: exec: \"/home/lims/venv_ocr/bin/python\": executable file not found in %PATH%, stderr: "}
+[2026-07-19 20:35:57] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:35:57] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:35:57] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-19 20:35:58] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-19 20:35:57] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 97ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:35:57] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 193ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-19 20:35:57] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 200ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-19 20:35:58] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 191ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:35:58] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-19 20:35:58] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:35:58] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 292ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-19 20:36:03] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 413ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-19 20:36:03] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 59ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-19 20:36:03] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-19 20:36:03] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-19 20:36:19] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 121ms
+      Request: ------WebKitFormBoundaryrt1eXLFf1A5r9kfz
+Content-Disposition: form-data; name="document"; filename="91.txt"
+Content-Type: text/plain
+
+91
+------WebKitFormBoundaryrt1eXLFf1A5r9kfz--
+
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"91","status":200}
+[2026-07-19 20:37:07] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 125ms
+      Request: ------WebKitFormBoundaryK20NXsRRsRvlsv2N
+Content-Disposition: form-data; name="document"; filename="89.log"
+Content-Type: application/octet-stream
+
+89
+------WebKitFormBoundaryK20NXsRRsRvlsv2N--
+
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"89","status":200}
+[2026-07-19 20:38:42] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 82ms
+      Request: ------WebKitFormBoundaryAGMABOgZLYs0hG8u
+Content-Disposition: form-data; name="document"; filename="78.csv"
+Content-Type: text/csv
+
+79
+
+------WebKitFormBoundaryAGMABOgZLYs0hG8u--
+
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"79\r\n","status":200}
+[2026-07-19 20:39:58] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 302ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-19 20:39:59] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 57ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-19 20:39:59] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-19 20:39:59] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-19 20:40:26] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 112ms
+      Request: ------WebKitFormBoundary5StDK52tQTEbCP8L
+Content-Disposition: form-data; name="document"; filename="79.csv"
+Content-Type: text/csv
+
+79
+
+------WebKitFormBoundary5StDK52tQTEbCP8L--
+
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"79\r\n","status":200}
+[2026-07-19 20:40:33] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 100ms
+      Request: ------WebKitFormBoundaryuexBfffqDASAE8Bs
+Content-Disposition: form-data; name="document"; filename="89.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ     Ó-...(truncated)
+      Response: {"status":500,"message":"Failed to run PaddleOCR.","error":"PaddleOCR error: fork/exec /home/lims/venv_ocr/bin/python: no such file or directory, stderr: "}
+[2026-07-19 20:40:51] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 60ms
+      Request: ------WebKitFormBoundaryFGd1qQzluo9GABgt
+Content-Disposition: form-data; name="document"; filename="89.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ     Ó-...(truncated)
+      Response: {"status":500,"message":"Failed to run PaddleOCR.","error":"PaddleOCR error: fork/exec /home/lims/venv_ocr/bin/python: no such file or directory, stderr: "}
+[2026-07-19 20:41:06] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 6.986s
+      Request: ------WebKitFormBoundaryj7gdUgQxCrgBKocK
+Content-Disposition: form-data; name="document"; filename="89.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 72588
+/Length1...(truncated)
+      Response: {"status":500,"message":"Failed to run PaddleOCR for page 1.","error":"PaddleOCR error: fork/exec /home/lims/venv_ocr/bin/python: no such file or directory, stderr: "}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 282ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 273ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 279ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:50:49] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 188ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:50:50] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-19 20:50:50] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-19 20:50:50] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 356ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-19 20:50:52] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 375ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-19 20:50:53] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 59ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-19 20:50:53] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-19 20:50:53] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 38ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-19 20:51:07] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 113ms
+      Request: ------WebKitFormBoundary2yqa4dGZ6XdeC8A0
+Content-Disposition: form-data; name="document"; filename="91.txt"
+Content-Type: text/plain
+
+91
+------WebKitFormBoundary2yqa4dGZ6XdeC8A0--
+
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"91","status":200}
+[2026-07-19 20:51:14] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 23.653s
+      Request: ------WebKitFormBoundaryuyDVeHjuBUb4vBUd
+Content-Disposition: form-data; name="document"; filename="89.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ     Ó-...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"89","status":200}

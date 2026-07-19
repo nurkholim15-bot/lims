@@ -2095,7 +2095,12 @@ pip install --upgrade pip
 pip install Pillow numpy paddlepaddle paddleocr
 deactivate
 ```
-> **Info:** Backend LIMS Go telah dilengkapi *Auto-Discovery*. Ia otomatis akan melacak ke dalam folder `venv_ocr/bin/python` tanpa mengharuskan Anda melakukan pengaturan rumit di file konfigurasi `.env`.
+> **Info - Fitur Pencarian Otomatis & Format File (Update Terbaru):**
+> *   **Format File yang Didukung OCR:** Sistem kini mendukung unggahan multi-format. 
+>     *   **Gambar (`.jpg`, `.png`)** dan **`.pdf`**: Akan diproses secara digital (jika layout PDF dipertahankan) atau menggunakan modul ML cerdas (Tesseract/PaddleOCR) untuk membaca karakter visual (memakan waktu ekstra).
+>     *   **Teks Murni (`.txt`, `.csv`, `.log`)**: Sistem akan **mengabaikan** proses *machine learning* dan langsung mengekstrak teksnya secara harfiah. Ini membuat proses 100x lebih cepat (sangat disarankan jika data berasal dari log alat).
+> *   **Auto-Discovery Virtual Environment:** LIMS Go dilengkapi pelacakan otomatis (auto-detect) untuk mencari folder `venv_ocr/bin/python` di dalam aplikasi lokal Anda. Anda **TIDAK PERLU** melakukan pengaturan `PYTHON_CMD` di file konfigurasi `.env`.
+> *   **Penggunaan Parameter `PYTHON_CMD` di `.env` (Override):** Parameter `PYTHON_CMD=/path/to/python` di dalam `.env` merupakan fitur pengecualian (*manual override*). Jika Anda mengaktifkan konfigurasi ini (menghapus tanda `#`), sistem **mematikan** fitur *auto-detect* dan wajib merujuk ke path absolut tersebut. JANGAN MENGGUNAKAN parameter ini kecuali Anda meletakkan folder *venv* jauh di luar instalasi standar LIMS.
 
 **Langkah Verifikasi (Pengecekan):**
 Jika Anda menemui kendala terkait versi Python di kemudian hari, Anda dapat mengecek lokasi *Virtual Environment* dan versi Python yang tertanam di dalamnya menggunakan perintah berikut:

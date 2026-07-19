@@ -106,6 +106,26 @@ git push
 > [!TIP]
 > Jika Anda mengalami *error* saat `git push`, biasanya karena ada perubahan di GitHub yang belum ada di laptop Anda. Cukup jalankan `git pull` terlebih dahulu untuk menyamakan data, lalu ulangi `git push`.
 
+### Mengatasi Error GH013: GitHub Push Protection (Rahasia Bocor)
+Jika saat melakukan `git push` Anda mendapatkan *error* berwarna merah dengan pesan **`GH013: Repository rule violations found`** atau **`Push cannot contain secrets`**, ini berarti fitur keamanan otomatis GitHub memblokir proses unggah Anda karena mendeteksi adanya *file* rahasia (seperti `.env`, API Key, atau password) yang tidak sengaja terbawa di dalam *commit* Anda.
+
+**Cara Memperbaikinya:**
+1. Keluarkan *file* yang terdeteksi dari Git tanpa menghapus *file* aslinya dari komputer Anda:
+   ```bash
+   git rm --cached "path/ke/file/rahasia" 
+   # (Ganti dengan path file yang ditunjukkan pada log error GitHub, contoh: "backend/.env")
+   ```
+2. Perbarui *commit* terakhir Anda agar bersih dari *file* tersebut:
+   ```bash
+   git commit --amend --no-edit
+   ```
+3. Lakukan *push* kembali:
+   ```bash
+   git push
+   ```
+> [!IMPORTANT]
+> Pastikan *file* rahasia tersebut (misalnya `.env`) sudah terdaftar di dalam `.gitignore` agar kejadian ini tidak terulang di masa depan.
+
 ## 6. Mengambil Perubahan dari GitHub ke VPS (Opsional)
 Jika VPS Anda sudah disiapkan dengan Git, Anda tidak perlu lagi menggunakan `rsync` untuk memindahkan *source code*. Cukup masuk ke VPS melalui SSH, arahkan ke folder proyek, dan jalankan:
 ```bash
