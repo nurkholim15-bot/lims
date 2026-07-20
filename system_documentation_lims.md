@@ -153,6 +153,8 @@ Sebelum melakukan deployment LIMS, sistem server harus terpasang perangkat lunak
 | **Basis Data** | PostgreSQL dengan `pgvector` | Postgres 14+ | Penyimpanan utama & AI embedding |
 | **Workflow Engine** | Camunda BPM Community Edition | Platform 7.x | Otomatisasi alur pendaftaran |
 | **Object Storage** | MinIO Server | Latest Stable | Penyimpanan berkas digital |
+| **Utilitas Backup MinIO** | MinIO Client (`mc`) | Latest Stable | Alat untuk backup sinkronisasi file (inkremental) |
+| **Container Engine** | Docker & Docker Compose | v20+ / v2+ | Menjalankan infrastruktur pendukung (Postgres, MinIO, Camunda) |
 | **Web Server** | NGINX | 1.18+ | Reverse proxy & load balancing |
 | **OCR Engine** | Python & PaddleOCR | Python 3.8+ | Pengenal dokumen/hasil uji |
 | **AI LLM Runner** | Ollama | Latest Stable | Runner model AI lokal (jika tidak via Groq Cloud) |
@@ -196,7 +198,22 @@ sudo apt install postgresql-$(pgcode=$(psql --version | egrep -o '[0-9]+' | head
 sudo apt install poppler-utils -y
 ```
 
-##### 6. Pasang Python Virtual Environment & Library AI Retraining
+##### 6. Pasang Docker & Docker Compose (Untuk MinIO & Camunda)
+```bash
+sudo apt install docker.io docker-compose -y
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+```
+
+##### 7. Pasang MinIO Client (mc) (Untuk Sinkronisasi Backup)
+```bash
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+sudo mv mc /usr/local/bin/
+```
+
+##### 8. Pasang Python Virtual Environment & Library AI Retraining
 ```bash
 sudo apt install python3-venv python3-pip -y
 python3 -m venv /home/lims/lims-ai-env
@@ -2099,6 +2116,24 @@ deactivate
 > *   **Format File yang Didukung OCR:** Sistem kini mendukung unggahan multi-format. 
 >     *   **Gambar (`.jpg`, `.png`)** dan **`.pdf`**: Akan diproses secara digital (jika layout PDF dipertahankan) atau menggunakan modul ML cerdas (Tesseract/PaddleOCR) untuk membaca karakter visual (memakan waktu ekstra).
 >     *   **Teks Murni (`.txt`, `.csv`, `.log`)**: Sistem akan **mengabaikan** proses *machine learning* dan langsung mengekstrak teksnya secara harfiah. Ini membuat proses 100x lebih cepat (sangat disarankan jika data berasal dari log alat).
+>
+> **Panduan Penulisan Format Teks (`.txt`, `.csv`, `.log`):**
+> Sistem LIMS dirancang sangat toleran karena menggunakan *parser* yang sama dengan mesin OCR gambar. Syarat utamanya: teks tersebut harus mengandung **Kode Parameter** (kapital) dan **Nilainya** di baris yang sama.
+> - **Contoh Teks Sederhana:** (Gunakan spasi, titik dua, atau sama dengan)
+>   `KONSI 1`
+>   `KOPEN: 2`
+>   `KOKON=3`
+> - **Contoh CSV / Tabel Excel:**
+>   `Parameter, Kode, Hasil`
+>   `Konsistensi Tanah, KONSI, 1`
+>   `Kondisi Fisik, KOKON, 3`
+> - **Contoh Log Alat yang Berantakan:**
+>   `[06:00:00] Memulai alat. Hasil uji KOPEN adalah 2 (Normal).` *(Sistem akan otomatis mengabaikan teks lain dan mengekstrak KOPEN = 2)*
+> 
+> **Peringatan Kamus OCR Global (General OCR Score Mappings):**
+> LIMS memiliki fitur untuk memperbaiki kesalahan baca OCR melalui kamus/mapping OCR (di dalam menu Pengaturan Master Data). Terdapat dua tingkatan *mapping*:
+> 1. **Mapping Global (`ocr_score_mappings`):** Segala aturan yang dimasukkan ke sini akan berlaku **untuk SEMUA parameter uji tanpa terkecuali**. Hindari membuat aturan angka-ke-angka (misal: "91 diubah ke 16") karena jika parameter lain benar-benar mendapat skor "91" (misal KOFAS 91), skor tersebut akan dihancurkan/diganti paksa menjadi 16.
+> 2. **Mapping Konteks (Hardcoded & Parameter-Specific):** Sistem sudah diprogram agar secara pintar mengenali kesalahan (misal 91 jadi 16) **HANYA** jika parameter tersebut memang mengharapkan nilai 16 (misal parameter PEHAN). Jika Anda masih butuh memodifikasi nilai di luar bawaan, gunakan kolom `OCR Keywords` pada parameter (Sub-Aspect) spesifik dengan format `keywords | nilaiAsal:nilaiBaru` agar tidak menimbulkan efek berantai pada parameter uji lainnya.
 > *   **Auto-Discovery Virtual Environment:** LIMS Go dilengkapi pelacakan otomatis (auto-detect) untuk mencari folder `venv_ocr/bin/python` di dalam aplikasi lokal Anda. Anda **TIDAK PERLU** melakukan pengaturan `PYTHON_CMD` di file konfigurasi `.env`.
 > *   **Penggunaan Parameter `PYTHON_CMD` di `.env` (Override):** Parameter `PYTHON_CMD=/path/to/python` di dalam `.env` merupakan fitur pengecualian (*manual override*). Jika Anda mengaktifkan konfigurasi ini (menghapus tanda `#`), sistem **mematikan** fitur *auto-detect* dan wajib merujuk ke path absolut tersebut. JANGAN MENGGUNAKAN parameter ini kecuali Anda meletakkan folder *venv* jauh di luar instalasi standar LIMS.
 
@@ -3269,6 +3304,104 @@ Karena port admin Console `9001` biasanya ditutup demi alasan keamanan pada fire
 3.  **Kredensial Login Default**:
     *   **Access Key (Username)**: `adminmiliter`
     *   **Secret Key (Password)**: `password12345`
+
+##### 7. Backup & Restore MinIO
+Untuk melakukan *backup* (cadangan) dan *restore* (pemulihan) pada MinIO, disarankan menggunakan **Metode MinIO Client (`mc`)** (Logis) agar sistem bisa tetap berjalan tanpa *downtime*, atau **Metode File/Volume Fisik**. Panduan berikut meliputi platform Linux (Docker) dan Windows (Standalone).
+
+###### A. Metode Menggunakan MinIO Client / `mc` (Rekomendasi - Zero Downtime)
+Metode ini paling aman karena berjalan via API MinIO, memastikan tidak ada kerusakan file jika ada proses tulis (*write*) yang berlangsung bersamaan.
+
+**1. Instalasi dan Konfigurasi `mc`**
+*   **Di Linux:**
+    ```bash
+    wget https://dl.min.io/client/mc/release/linux-amd64/mc
+    chmod +x mc
+    sudo mv mc /usr/local/bin/
+    ```
+*   **Di Windows:**
+    Unduh `mc.exe` dari `https://dl.min.io/client/mc/release/windows-amd64/mc.exe`, lalu ubah namanya menjadi `mc.exe`. Buka PowerShell di direktori tempat `mc.exe` tersebut berada.
+
+**2. Menghubungkan `mc` ke Server LIMS Anda:**
+*(Sama untuk Linux maupun Windows, pastikan Anda menggunakan port API yaitu `9000`, BUKAN port Web UI `9001`!)*
+*   **Linux**:
+    ```bash
+    mc alias set myminio http://localhost:9000 adminmiliter password12345
+    ```
+*   **Windows**: (Perhatikan penggunaan `.\` di depan perintah)
+    ```powershell
+    .\mc.exe alias set myminio http://localhost:9000 adminmiliter password12345
+    ```
+
+**3. Melakukan Backup (Mirroring):**
+Menduplikasi isi *bucket* ke folder lokal komputer/server Anda (misal ke direktori `/backup/minio_backup` di Linux, atau `D:\backup\minio_backup` di Windows). 
+> [!NOTE]
+> **Backup Inkremental**: Perintah `mc mirror` secara otomatis bekerja secara **inkremental**. Jika Anda menjalankannya secara berkala (misal tiap hari), ia hanya akan mengunduh file baru atau yang berubah, sehingga tidak membebani server dan selesai dalam hitungan detik.
+
+**Opsi Tambahan yang Berguna:**
+*   `--remove` : Jika file dihapus di server MinIO, maka file tersebut juga akan dihapus di folder backup lokal Anda (membentuk *exact mirror*).
+*   `--watch` atau `-w` : *Backup* berjalan terus menerus secara instan/real-time tanpa perlu dijadwalkan setiap hari.
+*   *Menyimpan Log* : Secara default, log akan tampil di layar. Untuk menyimpannya ke dalam file, tambahkan operator redireksi `>> backup.log 2>&1` (di Linux) atau `Tee-Object` (di PowerShell).
+
+*   **Linux**:
+    ```bash
+    mkdir -p ~/minio_backup
+    
+    # Backup Standar (Simpan Log ke file backup.log)
+    mc mirror myminio/lims-docs ~/minio_backup/lims-docs >> ~/minio_backup/backup.log 2>&1
+    
+    # Backup Real-time dengan Penghapusan (Mirror Identik)
+    mc mirror --watch --remove myminio/lims-docs ~/minio_backup/lims-docs >> ~/minio_backup/backup.log 2>&1
+    ```
+*   **Windows**:
+    ```powershell
+    mkdir D:\backup\minio_backup
+    
+    # Backup Standar (Simpan Log ke file backup.log)
+    .\mc.exe mirror myminio/lims-docs D:\backup\minio_backup\lims-docs | Tee-Object -FilePath D:\backup\minio_backup\backup.log -Append
+    
+    # Backup Real-time dengan Penghapusan (Mirror Identik)
+    .\mc.exe mirror --watch --remove myminio/lims-docs D:\backup\minio_backup\lims-docs | Tee-Object -FilePath D:\backup\minio_backup\backup.log -Append
+    ```
+
+**4. Melakukan Restore:**
+Mengembalikan file dari backup lokal ke dalam MinIO. Balik urutan path mirrornya.
+```bash
+# Buat bucket baru jika belum ada
+# Linux
+mc mb myminio/lims-docs 
+# Windows
+.\mc.exe mb myminio/lims-docs
+
+# Restore (Linux)
+mc mirror ~/minio_backup/lims-docs myminio/lims-docs
+
+# Restore (Windows)
+.\mc.exe mirror D:\backup\minio_backup\lims-docs myminio/lims-docs
+```
+
+###### B. Metode File / Volume Level (Fisik)
+Metode ini adalah *copy-paste* folder/data asli secara langsung dari sistem operasi ke penyimpanan eksternal. **Sangat disarankan untuk mematikan (*stop*) server MinIO terlebih dahulu** selama proses *copy* berlangsung agar file tidak korup.
+
+*   **Di Linux (Jika Menggunakan Docker):**
+    1. Hentikan container: `docker stop lims-minio`
+    2. Cari lokasi volume (biasanya `/var/lib/docker/volumes/minio_data/_data`): `docker volume inspect minio_data`
+    3. Backup (Arsipkan): `sudo tar -czvf /backup/minio_backup_data.tar.gz /var/lib/docker/volumes/minio_data/_data`
+    4. Restore: Ekstrak file arsip (`tar -xzvf`) kembali ke direktori mount point volume tersebut.
+    5. Jalankan kembali: `docker start lims-minio`
+
+*   **Di Windows (Jika Menggunakan `.exe` Standalone):**
+    1. Hentikan (*Stop*) proses `minio.exe` atau service MinIO yang sedang berjalan (bisa melalui *Task Manager* atau dengan menekan `Ctrl+C` di PowerShell tempat aplikasi berjalan).
+    2. Cari direktori tempat data MinIO Anda disimpan (misalnya `D:\Source\minio\minio_data`).
+    3. **Backup**: Jalankan perintah PowerShell berikut untuk mengarsipkan (*zip*) folder data:
+       ```powershell
+       Compress-Archive -Path D:\Source\minio\minio_data -DestinationPath D:\backup\minio_backup_data.zip
+       ```
+    4. **Restore**: Kosongkan/hapus folder data lama yang rusak, lalu jalankan perintah PowerShell berikut untuk mengekstrak file backup ke lokasi asalnya:
+       ```powershell
+       Remove-Item -Recurse -Force D:\Source\minio\minio_data\*
+       Expand-Archive -Path D:\backup\minio_backup_data.zip -DestinationPath D:\Source\minio\ -Force
+       ```
+    5. Jalankan kembali aplikasi `minio.exe`.
 
 ---
 

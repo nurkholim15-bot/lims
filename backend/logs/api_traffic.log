@@ -7068,3 +7068,842 @@ Content-Type: image/jpeg
 
 ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ     Ó-...(truncated)
       Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"89","status":200}
+[2026-07-20 06:00:50] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 06:00:50] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 06:00:50] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 154ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-20 06:00:50] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-20 06:00:54] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 121ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-20 06:00:54] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 515ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 06:00:57] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 06:00:57] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 06:00:57] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 06:00:57] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 06:00:57] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-20 06:00:58] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 06:01:02] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 381ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-20 06:01:04] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 637ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 06:01:05] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 85ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 06:01:05] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 06:01:05] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 180ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 110ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 356ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 06:05:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 455ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 06:05:05] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 267ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-20 06:05:06] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 06:05:05] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 828ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-20 06:06:48] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 499ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 06:06:51] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 87ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 06:06:51] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 06:06:51] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 06:09:43] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 186ms
+      Request: ------WebKitFormBoundaryrb68VSu0M8XC0h6o
+Content-Disposition: form-data; name="document"; filename="multi uji.txt"
+Content-Type: text/plain
+
+KOFAS 91
+KOLOC 92
+KONSI: 93
+KORUS = 94
+------WebKitFormBoundaryrb68VSu0M8XC0h6o--
+
+      Response: {"data":{"KOFAS":"16","KOLOC":"92","KONSI":"93","KORUS":"94"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KORUS","raw_val":"94","final_val":"94","has_dropdown":true,"has_score":true},{"code":"KOFAS","raw_val":"16","final_val":"16...(truncated)
+[2026-07-20 06:11:05] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 183ms
+      Request: ------WebKitFormBoundaryxa4EaFkGFBswGfLA
+Content-Disposition: form-data; name="document"; filename="multi uji.txt"
+Content-Type: text/plain
+
+KOFAS 95
+KOLOC 92
+KONSI: 93
+KORUS = 94
+------WebKitFormBoundaryxa4EaFkGFBswGfLA--
+
+      Response: {"data":{"KOFAS":"95","KOLOC":"92","KONSI":"93","KORUS":"94"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOLOC","raw_val":"92","final_val":"92","has_dropdown":true,"has_score":true},{"code":"KONSI","raw_val":"93","final_val":"93...(truncated)
+[2026-07-20 06:14:08] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 446ms
+      Request: ------WebKitFormBoundaryr7n6hy8EaeynhVmQ
+Content-Disposition: form-data; name="document"; filename="multi.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, SkorKonsistensi Tanah, KONSI, 1Kedalaman Penetrasi, KOLOC, 2Kondisi Fisik, KOFAS, 3
+
+-----...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"Nama Pengujian, Kode, Skor\rKonsistensi Tanah, KONSI, 1\rKedalaman Penetrasi, KOLOC, 2\rKondisi Fisik, KOFAS, 3\r\n","status":200}
+[2026-07-20 06:14:46] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 165ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 06:14:46] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 45ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 06:14:46] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 06:14:46] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 06:14:53] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 102ms
+      Request: ------WebKitFormBoundaryGBBGwCZb7A42sHFY
+Content-Disposition: form-data; name="document"; filename="multi.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, SkorKonsistensi Tanah, KONSI, 81Kedalaman Penetrasi, KOLOC, 82Kondisi Fisik, KOFAS, 83
+
+--...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"Nama Pengujian, Kode, Skor\rKonsistensi Tanah, KONSI, 81\rKedalaman Penetrasi, KOLOC, 82\rKondisi Fisik, KOFAS, 83\r\n","status":200}
+[2026-07-20 06:15:03] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 85ms
+      Request: ------WebKitFormBoundaryAmcAOJd1x1RPqIXa
+Content-Disposition: form-data; name="document"; filename="multi.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, SkorKonsistensi Tanah, KONSI, 81Kedalaman Penetrasi, KOLOC, 82Kondisi Fisik, KOFAS, 83
+
+--...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"Nama Pengujian, Kode, Skor\rKonsistensi Tanah, KONSI, 81\rKedalaman Penetrasi, KOLOC, 82\rKondisi Fisik, KOFAS, 83\r\n","status":200}
+[2026-07-20 09:57:52] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 1.451s
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-20 09:57:58] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 09:57:58] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 26ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-20 09:57:58] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 09:57:59] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 24ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-20 09:58:14] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 496ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-20 09:58:14] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 1.303s
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 65ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 09:58:31] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 109ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 09:58:32] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-20 09:58:32] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 121ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 09:58:32] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 09:58:34] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 335ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-20 09:58:36] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 469ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 09:58:36] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 72ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 09:58:36] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 09:58:36] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 09:58:47] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 277ms
+      Request: ------WebKitFormBoundary51ewAVB4y7qsQA0f
+Content-Disposition: form-data; name="document"; filename="multi.csv"
+Content-Type: text/csv
+
+KONSI, 81KOLOC, 82KOFAS, 83
+
+------WebKitFormBoundary51ewAVB4y7qsQA0f--
+
+      Response: {"data":{"KOLOC":"83"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOLOC","raw_val":"83","final_val":"83","has_dropdown":true,"has_score":true}],"raw_text":"KONSI, 81\rKOLOC, 82\rKOFAS, 83\r\n","status":200}
+[2026-07-20 10:01:27] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 153ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:01:27] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 46ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:01:27] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:01:27] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:01:37] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 92ms
+      Request: ------WebKitFormBoundaryPN4jCmPzwZlAKkKi
+Content-Disposition: form-data; name="document"; filename="multi.csv"
+Content-Type: text/csv
+
+KOFAS, 81KOLOC, 82KONSI, 83
+
+------WebKitFormBoundaryPN4jCmPzwZlAKkKi--
+
+      Response: {"data":{"KOLOC":"83"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOLOC","raw_val":"83","final_val":"83","has_dropdown":true,"has_score":true}],"raw_text":"KOFAS, 81\rKOLOC, 82\rKONSI, 83\r\n","status":200}
+[2026-07-20 10:02:35] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 113ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:02:36] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 43ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:02:36] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:02:36] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:02:43] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 81ms
+      Request: ------WebKitFormBoundary90be5vH0lDE6Y84U
+Content-Disposition: form-data; name="document"; filename="multi.csv"
+Content-Type: text/csv
+
+Kode, SkorKOFAS, 81KOLOC, 82KONSI, 83
+
+------WebKitFormBoundary90be5vH0lDE6Y84U--
+
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"Kode, Skor\rKOFAS, 81\rKOLOC, 82\rKONSI, 83\r\n","status":200}
+[2026-07-20 10:03:53] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 135ms
+      Request: ------WebKitFormBoundaryOyi5UXx1AtpjG1ww
+Content-Disposition: form-data; name="document"; filename="Multi1.csv"
+Content-Type: text/csv
+
+Konsistensi Tanah, KONSI, 1
+Kedalaman Penetrasi, KOPEN, 2
+Kondisi Fisik, KOKON, 3
+
+------WebKitFormBoundaryOyi5U...(truncated)
+      Response: {"data":{"KOKON":"3","KONSI":"1","KOPEN":"2"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOKON","raw_val":"3","final_val":"3","has_dropdown":true,"has_score":true},{"code":"KONSI","raw_val":"1","final_val":"1","has_dropdown":fal...(truncated)
+[2026-07-20 10:04:03] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 138ms
+      Request: ------WebKitFormBoundaryBg7q0IHH2qc8MDAw
+Content-Disposition: form-data; name="document"; filename="multi uji.txt"
+Content-Type: text/plain
+
+KOFAS 95
+KOLOC 92
+KONSI: 93
+KORUS = 94
+------WebKitFormBoundaryBg7q0IHH2qc8MDAw--
+
+      Response: {"data":{"KOFAS":"95","KOLOC":"92","KONSI":"93","KORUS":"94"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KORUS","raw_val":"94","final_val":"94","has_dropdown":true,"has_score":true},{"code":"KOFAS","raw_val":"95","final_val":"95...(truncated)
+[2026-07-20 10:04:59] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 97ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:04:59] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 40ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:05:02] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:05:02] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:05:07] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 114ms
+      Request: ------WebKitFormBoundarymvA7QdphjxhTNFLg
+Content-Disposition: form-data; name="document"; filename="Multi1.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, Skor
+Konsistensi Tanah, KONSI, 1
+Kedalaman Penetrasi, KOPEN, 2
+Kondisi Fisik, KOKON, 3
+
+-...(truncated)
+      Response: {"data":{"KOKON":"3","KONSI":"1","KOPEN":"2"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"1","final_val":"1","has_dropdown":false,"has_score":true},{"code":"KOPEN","raw_val":"2","final_val":"2","has_dropdown":fa...(truncated)
+[2026-07-20 10:16:46] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 539ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:16:46] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 64ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:16:46] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:16:47] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:16:52] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 154ms
+      Request: ------WebKitFormBoundaryI1XAjBCypstEHIHL
+Content-Disposition: form-data; name="document"; filename="Multi1.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, Skor
+Konsistensi Tanah, KONSI, 1
+Kedalaman Penetrasi, KOLOC, 2
+Kondisi Fisik, KOFAS, 3
+
+-...(truncated)
+      Response: {"data":{"KOFAS":"3","KOLOC":"12","KONSI":"1"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"1","final_val":"1","has_dropdown":false,"has_score":true},{"code":"KOLOC","raw_val":"12","final_val":"12","has_dropdown"...(truncated)
+[2026-07-20 10:17:33] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 100ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:17:33] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 39ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:17:33] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:17:33] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:17:38] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 104ms
+      Request: ------WebKitFormBoundaryI9sfgqxubu1dBa1R
+Content-Disposition: form-data; name="document"; filename="Multi1.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, Skor
+Konsistensi Tanah, KONSI, 93
+Kedalaman Penetrasi, KOLOC, 92
+Kondisi Fisik, KOFAS, 91
+...(truncated)
+      Response: {"data":{"KOFAS":"91","KOLOC":"92","KONSI":"93"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"93","final_val":"93","has_dropdown":false,"has_score":true},{"code":"KOLOC","raw_val":"92","final_val":"92","has_dropd...(truncated)
+[2026-07-20 10:18:08] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 104ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:18:08] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 37ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:18:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:18:08] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:18:15] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 119ms
+      Request: ------WebKitFormBoundaryJryYclY17r4M5YcZ
+Content-Disposition: form-data; name="document"; filename="multi uji.txt"
+Content-Type: text/plain
+
+KOFAS 95
+KOLOC 92
+KONSI: 93
+KORUS = 94
+------WebKitFormBoundaryJryYclY17r4M5YcZ--
+
+      Response: {"data":{"KOFAS":"95","KOLOC":"92","KONSI":"93","KORUS":"94"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KORUS","raw_val":"94","final_val":"94","has_dropdown":true,"has_score":true},{"code":"KONSI","raw_val":"93","final_val":"93...(truncated)
+[2026-07-20 10:18:36] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 102ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:18:36] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 37ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:18:36] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:18:36] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:18:42] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 111ms
+      Request: ------WebKitFormBoundaryFWzq2w60N9G2UIMA
+Content-Disposition: form-data; name="document"; filename="multi uji.txt"
+Content-Type: text/plain
+
+KOFAS 91
+KOLOC 92
+KONSI: 93
+KORUS = 94
+------WebKitFormBoundaryFWzq2w60N9G2UIMA--
+
+      Response: {"data":{"KOFAS":"91","KOLOC":"92","KONSI":"93","KORUS":"94"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KORUS","raw_val":"94","final_val":"94","has_dropdown":true,"has_score":true},{"code":"KOFAS","raw_val":"91","final_val":"91...(truncated)
+[2026-07-20 10:21:03] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 114ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:21:03] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 35ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:21:03] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:21:03] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:21:13] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 138ms
+      Request: ------WebKitFormBoundarylNWLVLbYF1P7LDX1
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{"KOFAS":"91.","KOLOC":"Pengecekan"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOLOC","raw_val":"Pengecekan","final_val":"Pengecekan","has_dropdown":true,"has_score":true},{"code":"KOFAS","raw_val":"91.","final_val":"91...(truncated)
+[2026-07-20 10:39:32] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 597ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:39:33] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 60ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:39:33] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:39:33] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:39:38] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 71ms
+      Request: ------WebKitFormBoundarytkMLCyKPblMjO3o8
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026-07-20 06:01:00] Memulai pengujian LDIS...\r\n[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.\r\nNilai untuk KONSI adalah 93.\r\nHasil KOLOC: 92 (Normal).\r\nP...(truncated)
+[2026-07-20 10:39:51] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 101ms
+      Request: ------WebKitFormBoundary4JI2NpAAXnFKclZL
+Content-Disposition: form-data; name="document"; filename="multi uji.txt"
+Content-Type: text/plain
+
+KOFAS 91
+KOLOC 92
+KONSI: 93
+KORUS = 94
+------WebKitFormBoundary4JI2NpAAXnFKclZL--
+
+      Response: {"data":{"KOFAS":"91","KOLOC":"92","KONSI":"93","KORUS":"94"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOFAS","raw_val":"91","final_val":"91","has_dropdown":true,"has_score":true},{"code":"KOLOC","raw_val":"92","final_val":"92...(truncated)
+[2026-07-20 10:40:05] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 73ms
+      Request: ------WebKitFormBoundaryCX1hwLZnUU1iGXEh
+Content-Disposition: form-data; name="document"; filename="Multi.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, Skor
+Konsistensi Tanah, KONSI, 93
+Kedalaman Penetrasi, KOLOC, 92
+Kondisi Fisik, KOFAS, 91
+...(truncated)
+      Response: {"data":{"KOFAS":"91","KOLOC":"92","KONSI":"93"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"93","final_val":"93","has_dropdown":false,"has_score":true},{"code":"KOLOC","raw_val":"92","final_val":"92","has_dropd...(truncated)
+[2026-07-20 10:40:13] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 100ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:40:14] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 37ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:40:14] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:40:14] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:40:18] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 95ms
+      Request: ------WebKitFormBoundaryBfrw1JDBWlKzgwfw
+Content-Disposition: form-data; name="document"; filename="Multi.csv"
+Content-Type: text/csv
+
+Nama Pengujian, Kode, Skor
+Konsistensi Tanah, KONSI, 93
+Kedalaman Penetrasi, KOLOC, 92
+Kondisi Fisik, KOFAS, 91
+...(truncated)
+      Response: {"data":{"KOFAS":"91","KOLOC":"92","KONSI":"93"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"93","final_val":"93","has_dropdown":false,"has_score":true},{"code":"KOLOC","raw_val":"92","final_val":"92","has_dropd...(truncated)
+[2026-07-20 10:40:25] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 107ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 10:40:25] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 39ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 10:40:25] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 10:40:25] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 10:40:33] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 79ms
+      Request: ------WebKitFormBoundaryBYAWByzd49afIXe0
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026-07-20 06:01:00] Memulai pengujian LDIS...\r\n[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.\r\nNilai untuk KONSI adalah 93.\r\nHasil KOLOC: 92 (Normal).\r\nP...(truncated)
+[2026-07-20 10:40:40] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 59ms
+      Request: ------WebKitFormBoundarynu3RAPn6BkCxQbTH
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026-07-20 06:01:00] Memulai pengujian LDIS...\r\n[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.\r\nNilai untuk KONSI adalah 93.\r\nHasil KOLOC: 92 (Normal).\r\nP...(truncated)
+[2026-07-20 10:52:09] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Failed | Latency: 24ms
+      Request: --------------------------mbvolU00dLJKitjErR7PAy
+Content-Disposition: form-data; name="document"; filename="last_raw_text.txt"
+Content-Type: text/plain
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] Sensor mendeteksi kepadatan....(truncated)
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-07-20 11:00:41] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 800ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:00:42] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 84ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:00:42] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:00:42] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:00:53] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 846ms
+      Request: ------WebKitFormBoundaryow2A6YWBqbXwm2Bo
+Content-Disposition: form-data; name="document"; filename="Multi-multi.txt"
+Content-Type: text/plain
+
+KONSI = 1
+KOPEN = 2
+KOKON = 3
+PEENE = 4
+PEGER = 5
+KOTAN = 6
+KODAY = 7
+PEPEM = 8
+KORUS = 9
+KOFAS = 10...(truncated)
+      Response: {"data":{"INANT":"59","INBAT":"60","INFRE":"61","INMAN":"62","INPEM":"63","INPER":"58","KEAAN":"37","KEACA":"55","KEAIR":"56","KEANG":"43","KEANT":"50","KEBAN":"49","KEDAI":"24","KEDAP":"54","KEDRF":"29","KEGET":"52","KEHAN":"51","KEJUM":"39","KEKOM":"46",...(truncated)
+[2026-07-20 11:02:57] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 112ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:02:57] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 42ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:02:57] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:02:57] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:03:03] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 711ms
+      Request: ------WebKitFormBoundary8OhYWJODGSAyKbyF
+Content-Disposition: form-data; name="document"; filename="Multi-MULTI.csv"
+Content-Type: text/csv
+
+Konstruksi-Dimensi, KONSI ,1
+Konstruksi-Penurunan tegangan catu daya, KOPEN ,2
+Konstruksi-Kekokohan perakitan...(truncated)
+      Response: {"data":{"INANT":"59","INBAT":"60","INFRE":"61","INMAN":"62","INPEM":"63","INPER":"58","KEAAN":"37","KEACA":"55","KEAIR":"56","KEANG":"43","KEANT":"50","KEBAN":"49","KEDAI":"24","KEDAP":"54","KEDRF":"29","KEGET":"52","KEHAN":"51","KEJUM":"39","KEKOM":"46",...(truncated)
+[2026-07-20 11:05:10] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 167ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:05:11] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 42ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:05:11] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:05:11] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:05:23] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 86ms
+      Request: ------WebKitFormBoundaryep6cpFFfl2lVE2NS
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"[2026-07-20 06:01:00] Memulai pengujian LDIS...\r\n[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.\r\nNilai untuk KONSI adalah 93.\r\nHasil KOLOC: 92 (Normal).\r\nP...(truncated)
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 101ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 207ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 11:06:18] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 11:06:19] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-20 11:06:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 11:06:19] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 303ms
+      Request: 
+      Response: {"data":[{"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-07-20 11:06:22] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 537ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:06:23] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 76ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:06:23] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:06:23] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:06:30] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 153ms
+      Request: ------WebKitFormBoundaryvi4VNY68VtN2URsH
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{"KOFAS":"91","KOLOC":"170","KONSI":"93"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"93","final_val":"93","has_dropdown":false,"has_score":true},{"code":"KOLOC","raw_val":"170","final_val":"170","has_dr...(truncated)
+[2026-07-20 11:07:02] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 89ms
+      Request: ------WebKitFormBoundary2tmTBajeENBp4Ztb
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{"KOFAS":"91","KOLOC":"170","KONSI":"93"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOFAS","raw_val":"91","final_val":"91","has_dropdown":true,"has_score":true},{"code":"KONSI","raw_val":"93","final_val":"93","has_dropd...(truncated)
+[2026-07-20 11:07:08] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 214ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:07:08] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 112ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:07:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 60ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:07:09] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:08:47] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 1.566s
+      Request: ------WebKitFormBoundaryTjT66EKFOCNYKvE0
+Content-Disposition: form-data; name="document"; filename="sub_aspects_group.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7%âãÏÓ
+11 0 obj<</Linearized 1/L 236930/O 13/E 227724/N 2/T 236625/H [ 480 177]>>endobj...(truncated)
+      Response: {"data":{"INANT":"59","INBAT":"60","INFRE":"61","INMAN":"62","INPEM":"63","INPER":"58","KEAAN":"37","KEACA":"55","KEAIR":"56","KEANG":"43","KEANT":"50","KEBAN":"49","KEDAI":"24","KEDAP":"54","KEDRF":"29","KEGET":"52","KEHAN":"51","KEJUM":"39","KEKOM":"46",...(truncated)
+[2026-07-20 11:09:03] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 99ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:09:03] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 39ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:09:03] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:09:03] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:09:14] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 1.327s
+      Request: ------WebKitFormBoundaryuvLbmE7HgB9BOOc0
+Content-Disposition: form-data; name="document"; filename="sub_aspects_group.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7%âãÏÓ
+11 0 obj<</Linearized 1/L 236930/O 13/E 227724/N 2/T 236625/H [ 480 177]>>endobj...(truncated)
+      Response: {"data":{"INANT":"59","INBAT":"60","INFRE":"61","INMAN":"62","INPEM":"63","INPER":"58","KEAAN":"37","KEACA":"55","KEAIR":"56","KEANG":"43","KEANT":"50","KEBAN":"49","KEDAI":"24","KEDAP":"54","KEDRF":"29","KEGET":"52","KEHAN":"51","KEJUM":"39","KEKOM":"46",...(truncated)
+[2026-07-20 11:17:07] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 900ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:17:08] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 89ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:17:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:17:09] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 73ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:17:17] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 26.862s
+      Request: ------WebKitFormBoundary4KRDo8TBBt8Ui7Gp
+Content-Disposition: form-data; name="document"; filename="Multi-multi.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             ö...(truncated)
+      Response: {"data":{"KEDAI":"24","KEDRF":"29","KELCH":"26","KENAL":"32","KENEL":"30","KEPAN":"31","KERAN":"33","KERJA":"34","KERUS":"27l","KESEL":"23","KESEN":"25","KESUA":"28","KOBEL":"13","KOBNC":"14","KODAY":"7","KODES":"21","KOFAS":"10","KOKON":"3","KOLOC":"12","...(truncated)
+[2026-07-20 11:19:13] 127.0.0.1 | GUEST | GET | /api/applications/205 | Status: Success | Latency: 587ms
+      Request: 
+      Response: {"id":205,"reg_number":"2026-00059","status":"PLANNED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-07-20 11:19:13] 127.0.0.1 | GUEST | GET | /api/applications/205/execution | Status: Success | Latency: 78ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-07-20 11:19:13] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":45,"sub_aspect_code":"KELCH","sub_aspect":{"code":"KELCH","name":"Kemampuan  -  Sensitivitas squelch","aspect_code":"KEPEN","description":"","weight":25,"standard_value":65,"standard_value_max":100,"standard_...(truncated)
+[2026-07-20 11:19:13] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"data":[{"id":43,"application_id":205,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-07-20 11:19:22] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 124ms
+      Request: ------WebKitFormBoundaryPrBga732LVAPAQG6
+Content-Disposition: form-data; name="document"; filename="[2026-07-20 060100] Memulai penguji.log"
+Content-Type: application/octet-stream
+
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] ...(truncated)
+      Response: {"data":{"KOFAS":"91","KOLOC":"170","KONSI":"93"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KONSI","raw_val":"93","final_val":"93","has_dropdown":false,"has_score":true},{"code":"KOLOC","raw_val":"170","final_val":"170","has_dr...(truncated)
+[2026-07-20 16:45:08] 127.0.0.1 | GUEST | GET | /api/applications | Status: Failed | Latency: 52ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-07-20 16:45:08] 127.0.0.1 | GUEST | GET | /api/menus | Status: Failed | Latency: 80ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-20 16:45:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 16:45:10] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 25ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-20 16:45:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-07-20 16:45:10] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-07-20 16:45:11] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-07-20 16:45:11] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 107ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-07-20 16:45:12] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-07-20 16:45:12] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-07-20 16:45:15] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 93ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202607","total":0}
+[2026-07-20 16:45:17] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 110ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-07-20 16:45:17] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 138ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-07-20 16:45:21] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 43ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user"...(truncated)
+[2026-07-20 16:46:25] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 118ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-07-20 16:46:25] 127.0.0.1 | GUEST | POST | /api/applications | Status: Success | Latency: 234ms
+      Request: ------WebKitFormBoundary9bB250hXvKAg2pUB
+Content-Disposition: form-data; name="partner_id"
+
+12
+------WebKitFormBoundary9bB250hXvKAg2pUB
+Content-Disposition: form-data; name="package_id"
+
+4
+------WebKitFormBoundary9bB250hXvKAg2pUB
+Content-Dispositi...(truncated)
+      Response: [{"id":206,"reg_number":"2026-00060","status":"REGISTERED","partner_id":12,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},"...(truncated)
+[2026-07-20 16:46:25] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 148ms
+      Request: 
+      Response: {"data":[{"id":206,"reg_number":"2026-00060","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:...(truncated)
+[2026-07-20 16:47:58] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 71ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-07-20 16:47:58] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 90ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-07-20 16:48:03] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:43:12.789873+07:00","create...(truncated)
+[2026-07-20 16:48:42] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 89ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-07-20 16:48:42] 127.0.0.1 | GUEST | POST | /api/applications | Status: Success | Latency: 109ms
+      Request: ------WebKitFormBoundaryAmrdhcyexiXrTtkY
+Content-Disposition: form-data; name="partner_id"
+
+3
+------WebKitFormBoundaryAmrdhcyexiXrTtkY
+Content-Disposition: form-data; name="package_id"
+
+1
+------WebKitFormBoundaryAmrdhcyexiXrTtkY
+Content-Dispositio...(truncated)
+      Response: [{"id":207,"reg_number":"2026-00061","status":"REGISTERED","partner_id":3,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},"a...(truncated)
+[2026-07-20 16:48:42] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 64ms
+      Request: 
+      Response: {"data":[{"id":207,"reg_number":"2026-00061","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)

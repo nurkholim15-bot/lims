@@ -1,0 +1,21 @@
+=== OCR EXTRACTION LOG ===
+Total parameter diekstrak: 3
+
+KONSI: OCR='93' -> Final='93'
+KOLOC [dropdown]: OCR='170' -> Final='170'
+KOFAS [dropdown]: OCR='91' -> Final='91'
+
+[EXTRACTION PROCESS DETAILS]
+  [Match Technique D] Row 3   | Line 3  : Matched KONSI  (Konstruksi-Dimensi            ) -> RawScore='93' (BestScore=0.58)
+  [Match Technique D] Row 4   | Line 4  : Matched KOLOC  (Konstruksi-Frekuensi lock     ) -> RawScore='170' (BestScore=0.60)
+  [Match Technique D] Row 5   | Line 5  : Matched KOFAS  (Konstruksi-Fasilitas anti Pernika) -> RawScore='91' (BestScore=0.58)
+  [Non-Dropdown Direct] Parameter KONSI : Score='93'
+  [Dropdown Mapping] Parameter KOLOC: RawValue='170' -> FinalValue='170'
+  [Dropdown Mapping] Parameter KOFAS: RawValue='91' -> FinalValue='91'
+
+=== RAW OCR TEXT ===
+[2026-07-20 06:01:00] Memulai pengujian LDIS...
+[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.
+Nilai untuk KONSI adalah 93.
+Hasil KOLOC: 92 (Normal).
+Pengecekan KOFAS selesai dengan skor 91.

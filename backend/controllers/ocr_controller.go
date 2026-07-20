@@ -266,8 +266,10 @@ func OCRExtractTestResults(c *gin.Context) {
 
 	var rawText string
 	var combinedRawText []string
+	isTextFile := false
 
 	if ext == ".txt" || ext == ".csv" || ext == ".log" {
+		isTextFile = true
 		content, err := os.ReadFile(tempInputPath)
 		if err != nil {
 			views.InternalError(c, "Failed to read text file", err.Error())
@@ -513,120 +515,122 @@ func OCRExtractTestResults(c *gin.Context) {
 	// Add robust pattern to capture garbled OCR parameter codes (uppercase words of length 3-6 starting with X, K, P, F, I, A, R)
 	keywords = append(keywords, `(?-i:\b[XKPFIAR][A-Z0-9]{2,5}\b)`)
 	delimitedKeywords := fmt.Sprintf(`(?:\b[a-zA-Z0-9]{1,2}\s*(?:%s)|(?:%s)|$)`, strings.Join(keywords, "|"), strings.Join(keywords, "|"))
-	for _, sa := range subAspects {
-		var val string
-		var rawCaptured string
-		// Prioritize code as search keyword
-		var escapedParts []string
-		escapedParts = append(escapedParts, regexp.QuoteMeta(sa.Code))
+	if !isTextFile {
+		for _, sa := range subAspects {
+			var val string
+			var rawCaptured string
+			// Prioritize code as search keyword
+			var escapedParts []string
+			escapedParts = append(escapedParts, regexp.QuoteMeta(sa.Code))
 
-		if sa.OCRKeywords != "" {
-			kw := sa.OCRKeywords
-			if strings.Contains(kw, "|") {
-				kw = strings.TrimSpace(strings.Split(kw, "|")[0])
-			}
-			if kw != "" {
-				escapedParts = append(escapedParts, regexp.QuoteMeta(kw))
-			}
-		}
-		if sa.OCRKeywords1 != "" {
-			kw := sa.OCRKeywords1
-			if strings.Contains(kw, "|") {
-				kw = strings.TrimSpace(strings.Split(kw, "|")[0])
-			}
-			if kw != "" {
-				escapedParts = append(escapedParts, regexp.QuoteMeta(kw))
-			}
-		}
-		if sa.OCRKeywords2 != "" {
-			kw := sa.OCRKeywords2
-			if strings.Contains(kw, "|") {
-				kw = strings.TrimSpace(strings.Split(kw, "|")[0])
-			}
-			if kw != "" {
-				escapedParts = append(escapedParts, regexp.QuoteMeta(kw))
-			}
-		}
-
-		if len(escapedParts) > 0 {
-			var patternParts []string
-			for _, part := range escapedParts {
-				if part == sa.Code && regexp.MustCompile("^[A-Z0-9]{3,6}$").MatchString(part) {
-					patternParts = append(patternParts, fmt.Sprintf("\\b\\d*%s\\b", part))
-				} else {
-					patternParts = append(patternParts, fmt.Sprintf("(?i)%s", part))
+			if sa.OCRKeywords != "" {
+				kw := sa.OCRKeywords
+				if strings.Contains(kw, "|") {
+					kw = strings.TrimSpace(strings.Split(kw, "|")[0])
+				}
+				if kw != "" {
+					escapedParts = append(escapedParts, regexp.QuoteMeta(kw))
 				}
 			}
-			pattern := fmt.Sprintf(`(?:%s)[:\s\-\=\|\#]+(.*?)(?:%s)`, strings.Join(patternParts, "|"), delimitedKeywords)
-			re := regexp.MustCompile(pattern)
-			
-			if matches := re.FindStringSubmatch(singleLineText); len(matches) > 1 {
-				rawCaptured = matches[1]
-				if strings.Contains(rawCaptured, ":") {
-					parts := strings.Split(rawCaptured, ":")
-					rawCaptured = parts[len(parts)-1]
+			if sa.OCRKeywords1 != "" {
+				kw := sa.OCRKeywords1
+				if strings.Contains(kw, "|") {
+					kw = strings.TrimSpace(strings.Split(kw, "|")[0])
 				}
-				val = cleanParsedScore(rawCaptured)
-				
-				// Discard overall sequence number from captured value in borders-off layout
-				seqNo := expectedScores[sa.Code]
-				valClean := strings.Trim(val, `:-= `)
-				words := strings.Fields(valClean)
-				if len(words) == 1 {
-					val = strings.Trim(words[0], `.*[]!| `)
-				} else if len(words) >= 2 {
-					lastWord := strings.Trim(words[len(words)-1], `.*[]!| `)
-					cand := strings.Trim(words[len(words)-2], `:-= `)
-					if seqNo != "" && (lastWord == seqNo || lastWord == seqNo+"." || levenshtein(lastWord, seqNo) <= 1) && isValidScoreCandidate(cand, sa.Code) {
-						if cand != "" {
-							val = cand
-						} else {
-							val = ""
-						}
+				if kw != "" {
+					escapedParts = append(escapedParts, regexp.QuoteMeta(kw))
+				}
+			}
+			if sa.OCRKeywords2 != "" {
+				kw := sa.OCRKeywords2
+				if strings.Contains(kw, "|") {
+					kw = strings.TrimSpace(strings.Split(kw, "|")[0])
+				}
+				if kw != "" {
+					escapedParts = append(escapedParts, regexp.QuoteMeta(kw))
+				}
+			}
+
+			if len(escapedParts) > 0 {
+				var patternParts []string
+				for _, part := range escapedParts {
+					if part == sa.Code && regexp.MustCompile("^[A-Z0-9]{3,6}$").MatchString(part) {
+						patternParts = append(patternParts, fmt.Sprintf("\\b\\d*%s\\b", part))
 					} else {
-						val = words[len(words)-1]
+						patternParts = append(patternParts, fmt.Sprintf("(?i)%s", part))
+					}
+				}
+				pattern := fmt.Sprintf(`(?:%s)[:\s\-\=\|\#]+(.*?)(?:%s)`, strings.Join(patternParts, "|"), delimitedKeywords)
+				re := regexp.MustCompile(pattern)
+				
+				if matches := re.FindStringSubmatch(singleLineText); len(matches) > 1 {
+					rawCaptured = matches[1]
+					if strings.Contains(rawCaptured, ":") {
+						parts := strings.Split(rawCaptured, ":")
+						rawCaptured = parts[len(parts)-1]
+					}
+					val = cleanParsedScore(rawCaptured)
+					
+					// Discard overall sequence number from captured value in borders-off layout
+					seqNo := expectedScores[sa.Code]
+					valClean := strings.Trim(val, `:-= `)
+					words := strings.Fields(valClean)
+					if len(words) == 1 {
+						val = strings.Trim(words[0], `.*[]!| `)
+					} else if len(words) >= 2 {
+						lastWord := strings.Trim(words[len(words)-1], `.*[]!| `)
+						cand := strings.Trim(words[len(words)-2], `:-= `)
+						if seqNo != "" && (lastWord == seqNo || lastWord == seqNo+"." || levenshtein(lastWord, seqNo) <= 1) && isValidScoreCandidate(cand, sa.Code) {
+							if cand != "" {
+								val = cand
+							} else {
+								val = ""
+							}
+						} else {
+							val = words[len(words)-1]
+						}
 					}
 				}
 			}
-		}
 
-		// Filter extracted values:
-		// - For values longer than 15 chars that contain a digit (likely full-row text), extract only the trailing number.
-		// - For non-dropdown items: must contain at least one digit after cleanup.
-		// - For dropdown items: accept short text (e.g. "Ada", "Tidak") and numeric values.
-		if val != "" {
-			val = cleanScoreWithContext(val, sa.Code)
-			hasDropdown := len(itemsBySubAspect[sa.Code]) > 0
+			// Filter extracted values:
+			// - For values longer than 15 chars that contain a digit (likely full-row text), extract only the trailing number.
+			// - For non-dropdown items: must contain at least one digit after cleanup.
+			// - For dropdown items: accept short text (e.g. "Ada", "Tidak") and numeric values.
+			if val != "" {
+				val = cleanScoreWithContext(val, sa.Code)
+				hasDropdown := len(itemsBySubAspect[sa.Code]) > 0
 
-			// If value contains a space and has a trailing number, extract it (handles table borders read as '1' or 'l')
-			trimmedVal := strings.TrimSpace(val)
-			if strings.Contains(trimmedVal, " ") {
-				trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
-				if m := trailingNumRe.FindStringSubmatch(trimmedVal); len(m) > 1 {
-					val = strings.ReplaceAll(m[1], ",", ".")
+				// If value contains a space and has a trailing number, extract it (handles table borders read as '1' or 'l')
+				trimmedVal := strings.TrimSpace(val)
+				if strings.Contains(trimmedVal, " ") {
+					trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
+					if m := trailingNumRe.FindStringSubmatch(trimmedVal); len(m) > 1 {
+						val = strings.ReplaceAll(m[1], ",", ".")
+					}
+				}
+
+				// If value is a long string (>= 15 chars) but contains a digit,
+				// it's likely a full row text. Try to extract only the trailing number.
+				if len(strings.TrimSpace(val)) >= 15 {
+					trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
+					if m := trailingNumRe.FindStringSubmatch(strings.TrimSpace(val)); len(m) > 1 {
+						val = strings.ReplaceAll(m[1], ",", ".")
+					} else {
+						// No trailing number found — skip this value entirely
+						continue
+					}
+				}
+
+				hasDigit := regexp.MustCompile(`\d`).MatchString(val)
+				// Accept if: contains a digit, OR is a short dropdown text candidate (< 15 chars)
+				if hasDigit || (hasDropdown && len(strings.TrimSpace(val)) > 0 && len(strings.TrimSpace(val)) < 15) {
+					extractedValues[sa.Code] = val
+					traceLines = append(traceLines, fmt.Sprintf("  [Match Technique A] Parameter %-6s (%-30s): RawCapture='%s' -> Cleaned='%s'", sa.Code, sa.Name, rawCaptured, val))
 				}
 			}
 
-			// If value is a long string (>= 15 chars) but contains a digit,
-			// it's likely a full row text. Try to extract only the trailing number.
-			if len(strings.TrimSpace(val)) >= 15 {
-				trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
-				if m := trailingNumRe.FindStringSubmatch(strings.TrimSpace(val)); len(m) > 1 {
-					val = strings.ReplaceAll(m[1], ",", ".")
-				} else {
-					// No trailing number found — skip this value entirely
-					continue
-				}
-			}
-
-			hasDigit := regexp.MustCompile(`\d`).MatchString(val)
-			// Accept if: contains a digit, OR is a short dropdown text candidate (< 15 chars)
-			if hasDigit || (hasDropdown && len(strings.TrimSpace(val)) > 0 && len(strings.TrimSpace(val)) < 15) {
-				extractedValues[sa.Code] = val
-				traceLines = append(traceLines, fmt.Sprintf("  [Match Technique A] Parameter %-6s (%-30s): RawCapture='%s' -> Cleaned='%s'", sa.Code, sa.Name, rawCaptured, val))
-			}
 		}
-
 	}
 
 	// Technique D: Robust sequence-based fuzzy matching fallback
@@ -1747,11 +1751,13 @@ func parseSinglePageRobust(pageText string, subAspects []models.ScoringSubAspect
 	for _, count := range aspectCounts {
 		totalMatches += count
 	}
+	fmt.Printf("DEBUG parseOCRTestResultsRobust: totalMatches=%d\n", totalMatches)
 	if totalMatches < 2 {
 		return extractedValues
 	}
 
 	saList := subAspects
+
 
 	type lineMatch struct {
 		sa    models.ScoringSubAspect
@@ -1773,11 +1779,10 @@ func parseSinglePageRobust(pageText string, subAspects []models.ScoringSubAspect
 
 		// Skip header line
 		lowerLine := strings.ToLower(line)
-		if strings.Contains(lowerLine, "aspect") || strings.Contains(lowerLine, "aryet") ||
-			strings.Contains(lowerLine, "code") || strings.Contains(lowerLine, "name") ||
-			strings.Contains(lowerLine, "skor") || strings.Contains(lowerLine, "score") ||
-			strings.Contains(lowerLine, "nilai") || strings.Contains(lowerLine, "n&*e") ||
-			strings.Contains(lowerLine, "r*or") {
+		isHeader := (strings.Contains(lowerLine, "aspect") && strings.Contains(lowerLine, "code")) ||
+			(strings.Contains(lowerLine, "name") && (strings.Contains(lowerLine, "skor") || strings.Contains(lowerLine, "score") || strings.Contains(lowerLine, "nilai")))
+		
+		if isHeader || strings.Contains(lowerLine, "aryet") || strings.Contains(lowerLine, "n&*e") || strings.Contains(lowerLine, "r*or") {
 			continue
 		}
 
@@ -1906,7 +1911,7 @@ func parseSinglePageRobust(pageText string, subAspects []models.ScoringSubAspect
 					scoreCandClean = lastWord
 				}
 			}
-			if scoreCandClean != "" && len(scoreCandClean) <= 5 {
+			if scoreCandClean != "" && len(scoreCandClean) <= 15 {
 				isCodeWord := false
 				for _, sa := range saList {
 					if strings.Contains(strings.ToLower(scoreCandClean), strings.ToLower(sa.Code)) {
@@ -1925,7 +1930,7 @@ func parseSinglePageRobust(pageText string, subAspects []models.ScoringSubAspect
 				}
 			}
 		} else {
-			if scoreCand != "" && len(scoreCand) <= 5 {
+			if scoreCand != "" && len(scoreCand) <= 15 {
 				cleanedScore = cleanGarbledScore(scoreCand)
 			}
 		}

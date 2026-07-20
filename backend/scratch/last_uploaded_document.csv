@@ -1,0 +1,63 @@
+Konstruksi-Dimensi, KONSI ,1
+Konstruksi-Penurunan tegangan catu daya, KOPEN ,2
+Konstruksi-Kekokohan perakitan, KOKON ,3
+Perlengkapan-Antene, PEENE ,4
+Perlengkapan-Dilengkapi dengan pengisi battery (battery charger), PEGER ,5
+Konstruksi-Sistem perakitan, KOTAN ,6
+Konstruksi-Jenis catu daya, KODAY ,7
+Perlengkapan-Buku petunjuk pemakaian dan pemeliharaan, PEPEM ,8
+Konstruksi-Pengaman arus, KORUS ,9
+Konstruksi-Fasilitas anti Pernika, KOFAS ,10
+Konstruksi-Pemilihan frekuensi/penelaan, KOPEM ,11
+Konstruksi-Frekuensi lock, KOLOC ,12
+Konstruksi-Berat lengkap, KOBEL ,13
+Konstruksi-Dilengkapi terminal BNC, KOBNC ,14
+Konstruksi-Pengaman terhadap polaritas / catu daya terbalik, KOPOL ,15
+Perlengkapan-Dapat menggunakan external loudspeaker dan handset, PEHAN ,16
+Perlengkapan-Menggunakan tas / kantong pembawa, PETAS ,17
+Perlengkapan-Indikator kerja pesawat, PEPES ,18
+Perlengkapan-Tutup pelindung hujan, PETUP ,19
+Perlengkapan-Belt clip, PEBEL ,20
+Konstruksi-Alat untuk mehilangkan desah / squelch, KODES ,21
+Konstruksi-Warna, KOWAR ,22
+Kemampuan Penerima - Selektifitas, KESEL ,23
+Kemampuan Penerima - Daya out put audio, KEDAI ,24
+Kemampuan - Penerima - Sensitifitas, KESEN ,25
+Kemampuan Sensitivitas squelch, KELCH ,26
+Kemampuan - Pemakaian arus penerima, KERUS ,27
+Kemampuan - Kekerasan suara, KESUA ,28
+Kemampuan - Daya keluar RF, KEDRF ,29
+Kemampuan - SWR untuk semua channel, KENEL ,30
+Kemampuan - Pemakaian arus pancar, KEPAN ,31
+Kemampuan - Preset kanal (channel), KENAL ,32
+Kemampuan - Tipe pancaran, KERAN ,33
+Kemampuan - Frekuensi kerja, KERJA ,34
+Kemampuan - Jarak antar kanal (channel), KERAK ,35
+Kemampuan - Pengaman transmiter / frekuensi, KETER ,36
+Kemampuan - Sistem penalaan, KEAAN ,37
+Kemampuan - Sumber tenaga, KENAG ,38
+Kemampuan - Jumlah kanal (channel), KEJUM ,39
+Kemampuan - Ketelitian frekuensi, KETEL ,40
+Kemampuan - Medan tanpa hambatan, KETAN ,41
+Kemampuan - Medan tertutup (hutan/gunung), KETUP ,42
+Kemampuan - Medan pantai Siang, KEANG ,43
+Kemampuan - Medan pantai Malam, KELAM ,44
+Kemampuan - Medan perkotaan Siang, KEKOS ,45
+Kemampuan - Medan perkotaan Malam, KEKOM ,46
+Kemampuan - Medan gunung kapur, KEPUR ,47
+Kemampuan - Medan hutan karet, KERET ,48
+Kemampuan - Memancar tanpa beban, KEBAN ,49
+Kemampuan Antene hubung singkat, KEANT ,50
+Kemampuan Tahan terhadap goncangan, KEHAN ,51
+Kemampuan - Tahan terhadap getaran, KEGET ,52
+Kemampuan Tahan terhadap benturan, KETUR ,53
+Kemampuan Tahan terhadap penjatuhan, KEDAP ,54
+Kemampuan - Tahan terhadap cuaca / suhu, KEACA ,55
+Kemampuan - Kedap air, KEAIR ,56
+Kemampuan - Dioperasikan terus menerus selama 1 x 24 jam, KEOPE ,57
+Aspek Insani - Pemeliharaan dan perakitan, INPER ,58
+Aspek Insani - Memasang dan mengganti antene, INANT ,59
+Aspek Insani - Memasang dan mengganti battery., INBAT ,60
+Aspek Insani - Pemindahan frekuensi, INFRE ,61
+Aspek Insani - Pemrograman, INMAN ,62
+Aspek Insani - Pembawaan (bergerak taktis)., INPEM ,63

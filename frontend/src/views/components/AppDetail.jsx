@@ -980,7 +980,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                           {!(ocrLoading === group.code || ocrLoading === true) && (
                             <input 
                               type="file" 
-                              accept="image/*,.pdf"
+                              accept="image/*,.pdf,.txt,.csv,.log"
                               onChange={(e) => handleScoringOCR(e, group.code)}
                               style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
                             />
@@ -1134,7 +1134,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                         {!(ocrLoading === p.param_code || ocrLoading === true) && (
                                           <input 
                                             type="file" 
-                                            accept="image/*,.pdf"
+                                            accept="image/*,.pdf,.txt,.csv,.log"
                                             onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
                                             style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
                                           />
@@ -1176,7 +1176,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                         {!(ocrLoading === p.param_code || ocrLoading === true) && (
                                           <input 
                                             type="file" 
-                                            accept="image/*,.pdf"
+                                            accept="image/*,.pdf,.txt,.csv,.log"
                                             onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
                                             style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
                                           />
