@@ -4,7 +4,7 @@ import Modal from "@components/Modal";
 import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
-const CashAdvancePage = ({ user }) => {
+const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
   const { showToast } = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,6 +19,7 @@ const CashAdvancePage = ({ user }) => {
   const [showForm, setShowForm] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
+  const [approvalNotes, setApprovalNotes] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -102,12 +103,20 @@ const CashAdvancePage = ({ user }) => {
   };
 
   const handleApprove = async (item, status) => {
-    if (!window.confirm(`Anda yakin ingin merubah status menjadi ${status}?`)) return;
-    try {
-      await apiRequest(`/cash-advances/${item.id}/approve`, "PUT", { status });
-      fetchItems();
-    } catch (err) {
-      showToast('Gagal mengupdate status.', 'error');
+    const doApprove = async () => {
+      try {
+        await apiRequest(`/cash-advances/${item.id}/approve`, "PUT", { status, notes: approvalNotes });
+        showToast(`Berhasil merubah status menjadi ${status}`, 'success');
+        setShowDetail(false);
+        fetchItems();
+      } catch (err) {
+        showToast('Gagal mengupdate status.', 'error');
+      }
+    };
+    if (checkPasswordRequirement) {
+      checkPasswordRequirement(doApprove);
+    } else {
+      doApprove();
     }
   };
 
@@ -219,16 +228,7 @@ const CashAdvancePage = ({ user }) => {
                         </td>
                         <td>
                         <div style={{ display: 'flex', gap: '5px' }}>
-                            <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedDetail(i); setShowDetail(true); }}>Detail</button>
-                            {isSupervisor && i.status === 'PENDING' && activeTab === 'APPROVALS' && (
-                                <>
-                                    <button className="btn btn-success" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => handleApprove(i, 'APPROVED')}>Setujui</button>
-                                    <button className="btn btn-danger" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => handleApprove(i, 'REJECTED')}>Tolak</button>
-                                </>
-                            )}
-                            {isSupervisor && i.status === 'APPROVED' && activeTab === 'APPROVALS' && (
-                                <button className="btn btn-primary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => handleApprove(i, 'TRANSFERRED')}>Tandai Ditransfer</button>
-                            )}
+                            <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedDetail(i); setApprovalNotes(""); setShowDetail(true); }}>Detail</button>
                         </div>
                         </td>
                     </tr>
@@ -398,24 +398,38 @@ const CashAdvancePage = ({ user }) => {
                 </div>
               </div>
             </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '15px', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
               {isSupervisor && selectedDetail.status === 'PENDING' && activeTab === 'APPROVALS' && (
-                <>
-                  <button className="btn" onClick={() => { handleApprove(selectedDetail, 'APPROVED'); setShowDetail(false); }} style={{ backgroundColor: '#10b981', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
-                    <i className="fas fa-check" style={{ marginRight: '5px' }}></i> Setujui
-                  </button>
-                  <button className="btn" onClick={() => { handleApprove(selectedDetail, 'REJECTED'); setShowDetail(false); }} style={{ backgroundColor: '#ef4444', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
-                    <i className="fas fa-times" style={{ marginRight: '5px' }}></i> Tolak
-                  </button>
-                </>
+                <div className="detail-item" style={{ marginBottom: '1rem' }}>
+                  <label style={{ fontSize: '0.85rem', color: '#1e293b', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Catatan Persetujuan (Opsional)</label>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    placeholder="Masukkan catatan jika diperlukan..."
+                    value={approvalNotes}
+                    onChange={(e) => setApprovalNotes(e.target.value)}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
+                  ></textarea>
+                </div>
               )}
-              {isSupervisor && selectedDetail.status === 'APPROVED' && activeTab === 'APPROVALS' && (
-                <button className="btn" onClick={() => { handleApprove(selectedDetail, 'TRANSFERRED'); setShowDetail(false); }} style={{ backgroundColor: '#3b82f6', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
-                  Tandai Ditransfer
-                </button>
-              )}
-              <button className="btn btn-secondary" onClick={() => setShowDetail(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px' }}>Tutup</button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                {isSupervisor && selectedDetail.status === 'PENDING' && activeTab === 'APPROVALS' && (
+                  <>
+                    <button className="btn" onClick={() => handleApprove(selectedDetail, 'APPROVED')} style={{ backgroundColor: '#10b981', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
+                      <i className="fas fa-check" style={{ marginRight: '5px' }}></i> Setujui
+                    </button>
+                    <button className="btn" onClick={() => handleApprove(selectedDetail, 'REJECTED')} style={{ backgroundColor: '#ef4444', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
+                      <i className="fas fa-times" style={{ marginRight: '5px' }}></i> Tolak
+                    </button>
+                  </>
+                )}
+                {isSupervisor && selectedDetail.status === 'APPROVED' && activeTab === 'APPROVALS' && (
+                  <button className="btn" onClick={() => handleApprove(selectedDetail, 'TRANSFERRED')} style={{ backgroundColor: '#3b82f6', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
+                    Tandai Ditransfer
+                  </button>
+                )}
+                <button className="btn btn-secondary" onClick={() => setShowDetail(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px' }}>Tutup</button>
+              </div>
             </div>
           </div>
         )}

@@ -4,7 +4,7 @@ import Modal from "@components/Modal";
 import AppSearchModal from "@components/AppSearchModal";
 import { useToast } from '@context/ToastContext';
 
-const TravelPage = ({ user }) => {
+const TravelPage = ({ user, checkPasswordRequirement }) => {
   const { showToast } = useToast();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,6 +28,7 @@ const TravelPage = ({ user }) => {
     status: "DRAFT",
     notes: ""
   });
+  const [approvalNotes, setApprovalNotes] = useState("");
 
   const isSupervisor = user?.role === "ADMIN" || user?.role === "SUPERVISOR_SPD" || user?.role_name === 'ADMIN' || user?.role_name === 'SUPERVISOR_SPD';
 
@@ -111,21 +112,28 @@ const TravelPage = ({ user }) => {
 
   const handleInquiry = (req) => {
     setSelectedReq(req);
+    setApprovalNotes("");
     setShowDetail(true);
   };
 
   const handleApprove = async (req, status) => {
-    const notes = window.promptAsync ? await window.promptAsync(`Konfirmasi ${status}. Masukkan catatan (opsional):`) : prompt(`Konfirmasi ${status}. Masukkan catatan (opsional):`);
-    if (notes === null) return;
-    try {
-      const result = await apiRequest(`/travel-requests/${req.id}/approve`, "PUT", { status, notes });
-      if (result) {
-        setShowDetail(false);
-        showToast(`Berhasil memproses persetujuan dengan status ${status}`, 'success');
-        fetchRequests();
+    const doApprove = async () => {
+      try {
+        const result = await apiRequest(`/travel-requests/${req.id}/approve`, "PUT", { status, notes: approvalNotes });
+        if (result) {
+          setShowDetail(false);
+          showToast(`Berhasil memproses persetujuan dengan status ${status}`, 'success');
+          fetchRequests();
+        }
+      } catch (err) {
+        showToast('Gagal memproses persetujuan: ' + err.message, 'error');
       }
-    } catch (err) {
-      showToast('Gagal memproses persetujuan: ' + err.message, 'error');
+    };
+
+    if (checkPasswordRequirement) {
+      checkPasswordRequirement(doApprove);
+    } else {
+      doApprove();
     }
   };
 
@@ -460,14 +468,29 @@ const TravelPage = ({ user }) => {
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '5px', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                    <button className="btn btn-secondary" style={{ padding: '6px 15px' }} onClick={() => setShowDetail(false)}>Tutup</button>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '15px', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                     {isSupervisor && selectedReq.status === 'PENDING' && (
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button className="btn btn-danger" style={{ padding: '6px 15px' }} onClick={() => handleApprove(selectedReq, 'CANCELED')}>Reject</button>
-                        <button className="btn btn-success" style={{ padding: '6px 15px' }} onClick={() => handleApprove(selectedReq, 'APPROVED')}>Approve</button>
+                      <div className="detail-item" style={{ marginBottom: '1rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: '#1e293b', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Catatan Persetujuan (Opsional)</label>
+                        <textarea
+                          className="form-control"
+                          rows="3"
+                          placeholder="Masukkan catatan jika diperlukan..."
+                          value={approvalNotes}
+                          onChange={(e) => setApprovalNotes(e.target.value)}
+                          style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
+                        ></textarea>
                       </div>
                     )}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                      <button className="btn btn-secondary" style={{ padding: '6px 15px' }} onClick={() => setShowDetail(false)}>Tutup</button>
+                      {isSupervisor && selectedReq.status === 'PENDING' && (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button className="btn btn-danger" style={{ padding: '6px 15px' }} onClick={() => handleApprove(selectedReq, 'CANCELED')}>Reject</button>
+                          <button className="btn btn-success" style={{ padding: '6px 15px' }} onClick={() => handleApprove(selectedReq, 'APPROVED')}>Approve</button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

@@ -615,9 +615,24 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
 * **Deskripsi**: Modul sentral untuk manajemen kegiatan non-teknis tim penguji yang difokuskan pada penagihan, penganggaran, administrasi finansial lapangan (*cashless & paperless*), serta pencatatan bukti pembayaran. Modul ini terintegrasi erat dengan infrastruktur MinIO untuk penyimpanan bukti struk/nota digital.
 * **Detail Proses Keuangan & Perjalanan**:
   1. **Penagihan & Pembayaran**: Pembuatan invoice otomatis berdasarkan tarif paket yang dipilih pemohon saat registrasi. Sistem mencatat pembayaran invoice dan memvalidasinya.
-  2. **Pengajuan SPD (Surat Perjalanan Dinas)**: Petugas/Tester mengajukan rencana perjalanan terkait suatu pelaksanaan uji lapangan (*Testing Plan*), yang akan divalidasi oleh atasan.
-  3. **Pengajuan Cash Advance (Uang Muka)**: Berdasarkan SPD yang disetujui, petugas mengajukan pencairan uang muka (untuk tiket, akomodasi, biaya operasional). Bagian Keuangan melakukan verifikasi dan transfer pencairan.
-  4. **Klaim Reimbursement**: Pasca perjalanan, petugas melaporkan seluruh pengeluaran riil (*actual expense*) dan wajib mengunggah nota/struk bukti transaksi. Jika total pengeluaran lebih kecil dari uang muka, sistem akan mencatat kewajiban pengembalian selisih dana (*settlement*).
+  2. **Pengajuan SPD (Surat Perjalanan Dinas)**: Petugas/Tester mengajukan rencana perjalanan terkait suatu pelaksanaan uji lapangan (*Testing Plan*), yang akan divalidasi oleh atasan. Berikut adalah urutan status pada pengajuan SPD (**Tabel: `lims.travel_requests`**):
+     - **DRAFT**: Pengajuan baru dibuat oleh pengguna, namun belum disubmit ke sistem (masih bisa diedit secara bebas).
+     - **PENDING**: Pengajuan telah disubmit dan masuk ke antrean, menunggu persetujuan (*approval*) dari supervisor atau admin terkait.
+     - **APPROVED**: Pengajuan telah disetujui oleh supervisor/admin. Status ini mensahkan perjalanan dinas dan memungkinkan untuk dilanjutkan ke proses pencairan dana (*Cash Advance*).
+     - **REJECTED**: Pengajuan ditolak oleh supervisor/admin (umumnya disertai catatan mengenai alasan penolakan).
+     - **CANCELED**: Pengajuan dibatalkan (dapat dilakukan oleh pemohon jika terjadi kesalahan sebelum diproses, atau dibatalkan oleh supervisor/admin).
+  3. **Pengajuan Cash Advance (Uang Muka)**: Berdasarkan SPD yang disetujui, petugas mengajukan pencairan uang muka (untuk tiket, akomodasi, biaya operasional). Bagian Keuangan melakukan verifikasi dan transfer pencairan. Berikut adalah urutan status pada pengajuan Cash Advance (**Tabel: `lims.cash_advances`**):
+     - **PENDING**: Pengajuan disubmit dan menunggu persetujuan (*approval*) dari supervisor/admin.
+     - **APPROVED**: Pengajuan disetujui oleh supervisor/admin, siap untuk diproses pencairannya.
+     - **TRANSFERRED**: Dana uang muka telah ditransfer oleh bagian Keuangan kepada pemohon.
+     - **REJECTED**: Pengajuan ditolak oleh supervisor/admin.
+     - **SETTLED**: Uang muka telah dipertanggungjawabkan atau diselesaikan (biasanya otomatis berstatus *Settled* setelah pengajuan *Reimbursement* terkait telah disetujui/dibayarkan).
+  4. **Klaim Reimbursement**: Pasca perjalanan, petugas melaporkan seluruh pengeluaran riil (*actual expense*) dan wajib mengunggah nota/struk bukti transaksi. Jika total pengeluaran lebih kecil dari uang muka, sistem akan mencatat kewajiban pengembalian selisih dana (*settlement*). Berikut adalah urutan status pada Reimbursement (**Tabel: `lims.reimbursements`**):
+     - **PENDING**: Klaim disubmit dan menunggu persetujuan (*approval*).
+     - **APPROVED**: Klaim disetujui oleh supervisor/admin.
+     - **PAID**: Klaim telah dibayarkan atau ditransfer oleh bagian Keuangan kepada pemohon.
+     - **REJECTED** / **CANCELED**: Klaim ditolak atau dibatalkan.
+     - **CLOSED**: Siklus klaim (termasuk *settlement* jika ada selisih dengan *Cash Advance*) telah ditutup/selesai secara administratif.
 * **API Endpoints**:
   - `GET /api/invoices` - Mengambil daftar tagihan invoice.
   - `POST /api/payments` - Mencatat entri pembayaran baru.

@@ -5,13 +5,14 @@ import Pagination from "@components/Pagination";
 import TravelRequestSearchModal from "@components/TravelRequestSearchModal";
 import { useToast } from '@context/ToastContext';
 
-const ReimbursementPage = ({ user }) => {
+const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
   const { showToast } = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
+  const [approvalNotes, setApprovalNotes] = useState("");
   const [activeTab, setActiveTab] = useState("REQUESTS");
   const [isTravelModalOpen, setIsTravelModalOpen] = useState(false);
   const [selectedTravel, setSelectedTravel] = useState(null);
@@ -142,15 +143,22 @@ const ReimbursementPage = ({ user }) => {
   };
 
   const handleApprove = async (item, status) => {
-      const notes = window.promptAsync ? await window.promptAsync(`Konfirmasi ${status}. Masukkan catatan (opsional):`) : prompt(`Konfirmasi ${status}. Masukkan catatan (opsional):`);
-      if (notes === null) return;
+    const doApprove = async () => {
       try {
-        await apiRequest(`/reimbursements/${item.id}/approve`, "PUT", { status, notes });
+        await apiRequest(`/reimbursements/${item.id}/approve`, "PUT", { status, notes: approvalNotes });
         showToast(`Berhasil memproses persetujuan dengan status ${status}`, 'success');
+        setShowDetail(false);
         fetchItems();
       } catch (err) {
         showToast(err.message, 'error');
       }
+    };
+
+    if (checkPasswordRequirement) {
+      checkPasswordRequirement(doApprove);
+    } else {
+      doApprove();
+    }
   };
 
   const searchTravel = async (query) => {
@@ -401,12 +409,10 @@ const ReimbursementPage = ({ user }) => {
                         <td>
                         {(isSupervisor || user?.role_name === 'ADMIN' || user?.role_name === 'SUPERVISOR_REIMBURSE') && i.status === 'PENDING' && activeTab === 'APPROVALS' ? (
                             <div style={{ display: 'flex', gap: '5px' }}>
-                                <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedDetail(i); setShowDetail(true); }}>Detail</button>
-                                <button className="btn btn-success" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => handleApprove(i, 'PAID')}>Bayarkan</button>
-                                <button className="btn btn-danger" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => handleApprove(i, 'CANCELED')}>Reject</button>
+                                <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedDetail(i); setApprovalNotes(""); setShowDetail(true); }}>Detail</button>
                             </div>
                         ) : (
-                            <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedDetail(i); setShowDetail(true); }}>Detail</button>
+                            <button className="btn btn-secondary" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => { setSelectedDetail(i); setApprovalNotes(""); setShowDetail(true); }}>Detail</button>
                         )}
                         </td>
                     </tr>
@@ -707,28 +713,41 @@ const ReimbursementPage = ({ user }) => {
                   )}
 
                   {(isSupervisor || user?.role_name === 'ADMIN' || user?.role_name === 'SUPERVISOR_REIMBURSE') && selectedDetail.status === 'PENDING' && (
-                      <div style={{ display: 'flex', gap: '10px', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', justifyContent: 'flex-end' }}>
-                          <button 
-                              className="btn" 
-                              style={{ backgroundColor: 'black', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
-                              onClick={() => { setShowDetail(false); handleApprove(selectedDetail, 'APPROVED'); }}
-                          >
-                              Setuju
-                          </button>
-                          <button 
-                              className="btn" 
-                              style={{ backgroundColor: '#ef4444', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
-                              onClick={() => { setShowDetail(false); handleApprove(selectedDetail, 'REJECTED'); }}
-                          >
-                              Tolak
-                          </button>
-                          <button 
-                              className="btn" 
-                              style={{ backgroundColor: '#eab308', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
-                              onClick={() => { setShowDetail(false); handleApprove(selectedDetail, 'CLOSED'); }}
-                          >
-                              Closed
-                          </button>
+                      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '15px', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                          <div className="detail-item" style={{ marginBottom: '1rem' }}>
+                              <label style={{ fontSize: '0.85rem', color: '#1e293b', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Catatan Persetujuan (Opsional)</label>
+                              <textarea
+                                  className="form-control"
+                                  rows="3"
+                                  placeholder="Masukkan catatan jika diperlukan..."
+                                  value={approvalNotes}
+                                  onChange={(e) => setApprovalNotes(e.target.value)}
+                                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
+                              ></textarea>
+                          </div>
+                          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                              <button 
+                                  className="btn" 
+                                  style={{ backgroundColor: 'black', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
+                                  onClick={() => handleApprove(selectedDetail, 'APPROVED')}
+                              >
+                                  Setuju
+                              </button>
+                              <button 
+                                  className="btn" 
+                                  style={{ backgroundColor: '#ef4444', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
+                                  onClick={() => handleApprove(selectedDetail, 'REJECTED')}
+                              >
+                                  Tolak
+                              </button>
+                              <button 
+                                  className="btn" 
+                                  style={{ backgroundColor: '#eab308', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
+                                  onClick={() => handleApprove(selectedDetail, 'CLOSED')}
+                              >
+                                  Closed
+                              </button>
+                          </div>
                       </div>
                   )}
               </div>
