@@ -30,6 +30,7 @@ const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
   
   const isSupervisor = user?.role === 'ADMIN' || user?.role === 'SUPERVISOR_REIMBURSE';
   const [activeTab, setActiveTab] = useState("REQUESTS");
+  const [sourceTable, setSourceTable] = useState("cash_advances");
 
   // For Travel Request Lookup
   const [travelSearch, setTravelSearch] = useState("");
@@ -41,12 +42,20 @@ const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
     try {
       setLoading(true);
       const res = await apiRequest(`/cash-advances?page=${page}&limit=${limit}&search=${encodeURIComponent(search || "%")}&type=${activeTab === 'REQUESTS' ? 'mine' : 'all'}&year=${filterYear}&month=${filterMonth}`);
-      if (res && res.data) {
-        setItems(res.data || []);
-        if (res.metadata) setTotal(res.metadata.total);
+      if (res) {
+        setSourceTable(res.source_table || "cash_advances");
+        if (res.data) {
+          setItems(res.data || []);
+          if (res.metadata) setTotal(res.metadata.total);
+        } else {
+          setItems(res || []);
+        }
       }
     } catch (err) {
       console.error(err);
+      setItems([]);
+      setTotal(0);
+      setSourceTable("ERROR / NOT FOUND");
     } finally {
       setLoading(false);
     }
@@ -132,6 +141,9 @@ const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
           <div>
             <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Kasbon / Cash Advance</h2>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>Kelola pengajuan uang muka</p>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', fontWeight: 'normal', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                <i className="fas fa-database"></i> Querying on: <code style={{ color: '#3b82f6', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px', border: '1px solid #bfdbfe' }}>{sourceTable}</code>
+            </p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
             {isSupervisor && (

@@ -14,6 +14,7 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [approvalNotes, setApprovalNotes] = useState("");
   const [activeTab, setActiveTab] = useState("REQUESTS");
+  const [sourceTable, setSourceTable] = useState("reimbursements");
   const [isTravelModalOpen, setIsTravelModalOpen] = useState(false);
   const [selectedTravel, setSelectedTravel] = useState(null);
   const [travelResults, setTravelResults] = useState([]);
@@ -80,6 +81,7 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
 
       const response = await apiRequest(url);
       if (response) {
+        setSourceTable(response.source_table || "reimbursements");
         if (response.data) {
           setItems(response.data);
           setTotal(response.metadata?.total || 0);
@@ -91,6 +93,9 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
       }
     } catch (err) {
       console.error("Fetch reimbursements failed:", err);
+      setItems([]);
+      setTotal(0);
+      setSourceTable("ERROR / NOT FOUND");
     } finally {
       setLoading(false);
     }
@@ -226,6 +231,9 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
           <div>
             <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Reimbursement / Penggantian Biaya</h2>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>Kelola riwayat pengajuan biaya operasional</p>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', fontWeight: 'normal', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                <i className="fas fa-database"></i> Querying on: <code style={{ color: '#3b82f6', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px', border: '1px solid #bfdbfe' }}>{sourceTable}</code>
+            </p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
             {isSupervisor && (

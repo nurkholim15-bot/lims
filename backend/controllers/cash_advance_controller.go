@@ -6,6 +6,7 @@ import (
 	"lim-system/models"
 	"lim-system/database"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -42,12 +43,50 @@ func GetCashAdvances(c *gin.Context) {
 		fmt.Sscanf(filterMonth, "%d", &m)
 		if y > 0 && m >= 1 && m <= 12 {
 			suffix := fmt.Sprintf("%d%02d", y, m)
-			partitionTable := fmt.Sprintf("cash_advances_%s", suffix)
+			
+			// Check threshold
+			thresholdStr := database.GetGlobalParam("DATA_ARCHIVE_THRESHOLD_MONTHS", "3")
+			threshold, _ := strconv.Atoi(thresholdStr)
+			now := time.Now()
+			currentMonthSerial := now.Year()*12 + int(now.Month())
+			targetMonthSerial := y*12 + m
 
-			var exists bool
-			database.DB.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = ?)", partitionTable).Scan(&exists)
-			if exists {
-				sourceTable = partitionTable
+			if (currentMonthSerial - targetMonthSerial) >= threshold {
+				arcPartitionTable := fmt.Sprintf("cash_advances_arc_%s", suffix)
+				var exists bool
+				database.DB.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = ?)", arcPartitionTable).Scan(&exists)
+				if exists {
+					sourceTable = arcPartitionTable
+				} else {
+					c.JSON(http.StatusOK, gin.H{
+						"data":         []models.CashAdvance{},
+						"source_table": arcPartitionTable,
+						"metadata": gin.H{
+							"total": 0,
+							"page":  page,
+							"limit": limit,
+						},
+					})
+					return
+				}
+			} else {
+				partitionTable := fmt.Sprintf("cash_advances_%s", suffix)
+				var exists bool
+				database.DB.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = ?)", partitionTable).Scan(&exists)
+				if exists {
+					sourceTable = partitionTable
+				} else {
+					c.JSON(http.StatusOK, gin.H{
+						"data":         []models.CashAdvance{},
+						"source_table": partitionTable,
+						"metadata": gin.H{
+							"total": 0,
+							"page":  page,
+							"limit": limit,
+						},
+					})
+					return
+				}
 			}
 		}
 	}
@@ -89,6 +128,7 @@ func GetCashAdvances(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"data": advances,
+		"source_table": sourceTable,
 		"metadata": gin.H{
 			"total": total,
 			"page":  page,

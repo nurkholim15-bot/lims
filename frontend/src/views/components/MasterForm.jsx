@@ -505,7 +505,7 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
           if (key === "pic_name" || key === "pic_email" || key === "pic_phone") {
             const labels = { pic_name: "Nama PIC", pic_email: "Email PIC", pic_phone: "No. Telp PIC" };
             return renderField(key, labels[key], (
-              <input type={key === "pic_email" ? "email" : "text"} name={key} value={formData[key] || ""} onChange={handleChange} style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
+              <input type={key === "pic_email" ? "email" : "text"} name={key} value={formData[key] || ""} onChange={handleChange} style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} pattern={key === "pic_email" ? "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" : undefined} title={key === "pic_email" ? "Must be a valid email address with a domain (e.g., test@gmail.com)" : undefined} />
             ), required, isFullWidth);
           }
           if (key === "ocr_keywords") {

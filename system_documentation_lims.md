@@ -53,6 +53,7 @@ Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alu
   - [N. Ringkasan Perintah Manajemen Modul LIMS (Start, Stop, Status)](#n-ringkasan-perintah-manajemen-modul-lims-start-stop-status)
   - [O. Strategi Manajemen Versi Aplikasi Android LIMS](#o-strategi-manajemen-versi-aplikasi-android-lims)
   - [P. Panduan Pembuatan APK Android (Berbagai Skema Jaringan & Target)](#p-panduan-pembuatan-apk-android-berbagai-skema-jaringan-amp-target)
+  - [Q. Monitoring Infrastruktur LIMS (Grafana & Prometheus)](#q-monitoring-infrastruktur-lims-grafana--prometheus)
 
 ---
 
@@ -415,13 +416,15 @@ Berikut adalah detail teknis dari masing-masing modul utama yang digunakan di LI
 
 Untuk mencegah penyalahgunaan sesi dan mengamankan LIMS dari ancaman luar (seperti token sharing, hijack via Postman, atau brute-force tebak password), sistem mengimplementasikan mekanisme berikut:
 
-1. **Secure HttpOnly Cookie & Anti-XSS**:
-   * Token JWT tidak disimpan di `localStorage` frontend untuk menghindari pencurian via serangan Cross-Site Scripting (XSS).
-   * Token disimpan dalam cookie browser dengan atribut `HttpOnly`, `Secure` (untuk produksi), dan `SameSite=Lax`. Hal ini memastikan script Javascript di sisi client tidak memiliki akses baca langsung ke token.
+1. **Secure HttpOnly Cookie, Otentikasi Otomatis, & Anti-XSS**:
+   * **Penyimpanan Ganda (Hybrid Storage):** Secara arsitektural, API backend secara otomatis mengatur Cookie browser dengan flag `HttpOnly`, `Secure` (untuk HTTPS), dan `SameSite=Lax` sebagai lapis perlindungan utama agar token terisolasi dari peretasan XSS. **Namun demikian**, pada antarmuka web LIMS, token juga secara eksplisit disalin oleh React ke dalam `localStorage` (sebagai `auth_token`). Keputusan desain ini (`API-First`) sengaja diambil untuk memastikan **Kompatibilitas Multi-Platform**: Kode web LIMS siap dikompilasi menjadi aplikasi *Mobile* (Capacitor) atau *Desktop* (Electron) yang kerap memiliki keterbatasan sistem *Cookie*. Frontend bisa dengan fleksibel membaca token dari `localStorage` dan menyisipkannya ke *HTTP Header* standar (`Authorization: Bearer <TOKEN>`), sekaligus memudahkan manajemen *state* status pengguna (seperti mendeteksi `is_logged_in` tanpa perlu selalu bertanya ke backend).
+   * **Otentikasi Otomatis (Akses Web):** Browser memiliki mekanisme internal untuk selalu menyertakan (*attach*) cookie `HttpOnly` ini secara otomatis setiap kali antarmuka web LIMS (yang dikonfigurasi dengan `credentials: 'include'`) mengirimkan request ke backend API. Oleh karena itu, pengguna tetap masuk (*logged in*) dan tidak perlu menginputkan username dan password berulang kali selama sesi token belum kedaluwarsa.
+   * **Integrasi Pihak Ketiga (M2M / Mobile):** Meskipun pengguna web dilindungi penuh oleh cookie, backend LIMS tetap menerapkan arsitektur otentikasi *hybrid*. Saat login berhasil, backend juga memberikan string token di dalam struktur *response payload JSON*. Sistem pihak ketiga (seperti aplikasi Android/iOS, integrasi ERP eksternal, atau Postman) dapat membaca token tersebut, menyimpannya pada memori internal mereka (seperti Android *Keystore*), dan mengakses API selanjutnya dengan menyisipkan token pada *HTTP Header* standar, yaitu `Authorization: Bearer <TOKEN>`. Backend didesain untuk memprioritaskan pengecekan token dari *header Authorization* terlebih dahulu, sebelum *fallback* memeriksa Cookie.
 
 2. **Sidik Jari Klien (Client Fingerprinting - IP & User-Agent Binding)**:
    * Setiap kali user membuat sesi baru, database mencatat `ip_address` dan `user_agent` perangkat.
-   * Pada middleware otentikasi, setiap request akan diverifikasi ulang kesesuaian IP & User-Agent-nya. Jika terdeteksi ketidakcocokan (misalnya token disalin ke Postman atau perangkat berbeda), middleware otomatis **menghapus sesi tersebut** dan mengembalikan status **401 Unauthorized** (pesan: `"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."`).
+   * Pada middleware otentikasi, setiap request akan diverifikasi ulang kesesuaian IP & User-Agent-nya. Jika terdeteksi ketidakcocokan (misalnya token *di-copy-paste* ke Postman di komputer lain atau perangkat berbeda), middleware otomatis **menghapus sesi tersebut secara permanen dari database** dan mengembalikan status **401 Unauthorized** (pesan: `"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."`). 
+   * **Catatan Penting:** Proteksi ini bersifat mutlak dan tidak bergantung pada konfigurasi `SINGLE_SESSION_MODE`. Meskipun `SINGLE_SESSION_MODE` bernilai `false`, upaya pencurian/penggunaan token di lingkungan yang berbeda akan tetap ditolak dan sesi korban akan otomatis diputuskan demi keamanan.
 
 3. **Batas Waktu Idle Dinamis (Dynamic Idle Timeout)**:
    * Sesi akan kedaluwarsa secara otomatis jika pengguna tidak aktif (tidak ada aktivitas terdeteksi) selama kurun waktu tertentu.
@@ -439,8 +442,9 @@ Untuk mencegah penyalahgunaan sesi dan mengamankan LIMS dari ancaman luar (seper
    * Jika kriteria ini tidak terpenuhi saat pembuatan atau penggantian sandi, sistem akan menolak permintaan tersebut secara langsung.
 
 6. **Kendali Single Session & Takeover dengan OTP**:
-   * LIMS mendukung pembatasan login tunggal per akun via parameter `SINGLE_SESSION_MODE` (true/false).
-   * Jika bernilai `true` dan pengguna mencoba login ketika sesi sebelumnya di perangkat lain masih aktif, sistem akan mengembalikan status `409 Conflict` (pesan: `"Session Anda masih aktif"`).
+   * LIMS mendukung pembatasan login tunggal per akun via parameter global `SINGLE_SESSION_MODE` (true/false).
+   * Parameter ini khusus mengatur apakah pengguna diizinkan melakukan **login resmi berulang** untuk menghasilkan sesi-sesi baru yang berbeda (misal: login di HP dan Laptop secara sah bersamaan).
+   * Jika bernilai `true` dan pengguna mencoba login baru ketika sesi sebelumnya di perangkat lain masih aktif, sistem akan menolak login tersebut dengan status `409 Conflict` (pesan: `"Session Anda masih aktif"`).
    * Pengguna diberikan opsi untuk melakukan pengambilalihan sesi (**Session Takeover**). Jika dipilih, sistem akan mengirimkan kode OTP 6-digit ke WhatsApp/Telegram terdaftar dan menyimpan data sementara ke tabel `lims.otp_codes`. Pengguna wajib melakukan verifikasi OTP di endpoint `/api/verify-otp` untuk menghancurkan sesi lama dan mengaktifkan sesi baru.
 
 7. **Skrip Migrasi Basis Data (Database Migration SQL)**:
@@ -997,9 +1001,7 @@ Jika Anda mengakses LIMS menggunakan alamat IP (seperti `212.85.24.33`), buatlah
 
 ####### **Opsi B: Menggunakan Domain Resmi (Sertifikat SSL Tepercaya / CA-Signed)**
 
-Jika Anda menggunakan domain resmi (seperti `lims.perusahaan.com`) dengan SSL tepercaya (seperti Let's Encrypt), Anda cukup mengarahkan port 443 atau 8443 langsung dan mendaftarkannya tanpa perlu mengunggah file sertifikat mentah:
-
-1.  Daftarkan Webhook URL menggunakan domain resmi Anda (tanpa melampirkan file `-F "certificate=@..."`):
+Jika Anda menggunakan domain resmi (seperti `lims.perusahaan.com`) dengan SSL tepercaya (seperti Let's Encrypt), Anda cukup mendaftarkan Webhook URL menggunakan domain resmi Anda (tanpa melampirkan file `-F "certificate=@..."`):
     ```bash
     curl -F "url=https://lims.perusahaan.com/api/webhook/telegram" \
          https://api.telegram.org/bot<TOKEN_BOT_ANDA>/setWebhook
@@ -1008,18 +1010,47 @@ Jika Anda menggunakan domain resmi (seperti `lims.perusahaan.com`) dengan SSL te
 ---
 
 ##### 2. Cara Menghubungkan Akun Telegram Pengguna (Binding Chat ID)
-Agar bot mengenali siapa Anda di sistem LIMS:
-1. Cari bot Telegram Anda berdasarkan username yang dibuat di BotFather, lalu klik **Start** (atau kirim pesan bebas).
-2. Bot akan mendeteksi bahwa akun Anda belum terhubung dan otomatis membalas:
-   > *"Halo! Akun Telegram Anda belum terhubung ke sistem LIMS. Chat ID Anda adalah: **XXXXXXXXX**..."*
-3. Salin angka **Chat ID** tersebut.
-4. Masuk ke Aplikasi Web LIMS, buka halaman **Profil Pengguna** (atau menu **User Management** jika Anda Admin).
-5. Masukkan angka tersebut pada kolom **Telegram Chat ID** lalu klik simpan.
-6. Sekarang akun Telegram Anda sudah terhubung secara dinamis!
+
+Agar staf/pengguna dapat menerima notifikasi dan membalas pesan Helpdesk via Telegram, akun LIMS mereka harus dihubungkan dengan *Chat ID* Telegram milik mereka. Berikut adalah 2 cara mendapatkan Chat ID:
+
+**Cara A: Melalui Bot LIMS (Otomatis)**
+1. Buka aplikasi Telegram, cari Bot LIMS Anda lalu klik **Start** (atau kirim pesan bebas seperti "Halo").
+2. Jika server backend LIMS berjalan normal, bot akan otomatis merespons:
+   > *"Halo! Akun Telegram Anda belum terhubung ke sistem LIMS. Chat ID Anda adalah: **123456789**..."*
+3. Catat angka Chat ID (`123456789`) tersebut.
+
+**Cara B: Menggunakan Bot Pengecek ID (Alternatif Jika Server Mati)**
+1. Buka Telegram dan cari bot resmi **`@userinfobot`** atau **`@getidsbot`**.
+2. Klik **Start**.
+3. Bot akan membalas dengan profil Anda beserta deretan angka ID. Catat angka tersebut.
+
+**Langkah Terakhir: Memasukkan Chat ID ke Sistem LIMS**
+1. Login ke aplikasi web LIMS menggunakan akun staf yang bersangkutan.
+2. Buka halaman **Profil (My Profile)** atau menu **User Management**.
+3. Masukkan angka Chat ID yang sudah didapatkan ke dalam kolom **Telegram Chat ID**.
+4. Klik **Simpan**. Sekarang akun Telegram Anda sudah terhubung secara dinamis dan siap menerima/mengirim pesan!
 
 ---
 
-##### 3. Fungsionalitas Dual-Mode (AI Chatbot vs Chat Operator)
+##### 3. Cara Menugaskan Staf Sebagai Operator Helpdesk (Penerima Chat)
+
+Sistem LIMS dirancang agar pesan keluhan/bantuan dari pengguna biasa (via Telegram) akan secara otomatis diteruskan (*forwarded*) ke seluruh staf yang bertugas sebagai layanan bantuan (Helpdesk). 
+
+Agar seorang staf dapat mulai menerima dan membalas pesan dari pengguna lain, staf tersebut harus diberikan peran (Role) khusus oleh Administrator.
+
+**Langkah-langkah Assign Helpdesk:**
+1. Login ke web LIMS menggunakan akun **Administrator**.
+2. Masuk ke menu **System Admin** > **User Management**.
+3. Cari akun staf yang ingin ditugaskan sebagai Helpdesk, lalu klik **Edit**.
+4. Pada kolom **Role** (Peran), ubah peran mereka menjadi **`HELPDESK`** (atau biarkan sebagai `ADMIN` karena Admin juga secara otomatis menerima pesan).
+5. Klik **Simpan**.
+6. **Sangat Penting:** Pastikan staf tersebut juga telah mendaftarkan *Telegram Chat ID* mereka ke sistem (menggunakan panduan Binding di atas). Jika Chat ID mereka kosong, sistem tidak akan tahu ke nomor mana pesan harus diteruskan!
+
+Begitu peran diubah dan Chat ID terdaftar, staf tersebut akan langsung menerima notifikasi instan di Telegram mereka setiap kali ada pengguna yang bertanya atau meminta bantuan.
+
+---
+
+##### 4. Fungsionalitas Dual-Mode (AI Chatbot vs Chat Operator)
 Setelah terhubung, bot akan menyaring pesan masuk secara otomatis berdasarkan format pesan:
 
 ###### Mode A: Tanya AI Chatbot (`/ai <pertanyaan>`)
@@ -2516,6 +2547,32 @@ Jika ekosistem LIMS Anda berkembang ke arsitektur **multi-VM** (misalnya 2 VM de
 
 Rotasi log otomatis setiap hari dengan nama berakhiran `_YYYYMMDD.log` untuk menghemat ruang penyimpanan.
 
+#### Mengecek Instalasi Logrotate
+Sebelum mengatur rotasi log, pastikan `logrotate` sudah terinstall di sistem Linux/Ubuntu VPS Anda (secara umum aplikasi ini sudah terpasang bawaan). Anda dapat mengeceknya dengan menjalankan perintah di terminal server:
+```bash
+logrotate --version
+# atau cek di APT (Debian/Ubuntu)
+dpkg -l | grep logrotate
+```
+*Jika versi berhasil ditampilkan (misalnya `logrotate 3.14.0`), berarti aplikasi siap digunakan. Anda dapat melanjutkan ke langkah-langkah konfigurasi berikut.*
+
+#### Metode Rotasi yang Digunakan (Tanpa Downtime)
+Sistem LIMS dikonfigurasi menggunakan **dua pendekatan rotasi berbeda** untuk memastikan log dapat diputar tanpa mematikan aplikasi (*Zero Downtime*):
+1. **Metode `postrotate` & Sinyal `USR1` (Khusus Nginx)**:
+   Logrotate akan memindahkan (*rename*) file log aktif, membuat file log kosong baru, lalu mengeksekusi blok kode `postrotate` yang mengirimkan sinyal kontrol `USR1` ke proses Nginx. Sinyal ini menginstruksikan Nginx secara elegan untuk melepaskan pengikat file log lama dan mulai menulis ke file log baru, menjamin tidak ada satupun *request* yang hilang (presisi tingkat tinggi).
+2. **Metode `copytruncate` (Untuk Backend Go & Frontend PM2)**:
+   Proses aplikasi internal (seperti *binary* Golang dan *daemon* Node.js PM2) berjalan dengan menahan *file descriptor* secara persisten. Jika file log sekadar diganti namanya, proses-proses ini akan terus menulis ke file lama yang telah direname tersebut tanpa sadar. Oleh karena itu, kita menggunakan arahan `copytruncate`. Logrotate akan **menyalin (copy)** semua isi log aktif ke file arsip, lalu secara paksa **mengosongkan (truncate)** file log aktif kembali menjadi ukuran 0 *bytes*. Dengan demikian, aplikasi dapat terus menulis log secara kontinu tanpa menyadari intervensi tersebut dan tanpa perlu di-*restart* sama sekali.
+
+#### Opsi Alternatif: Rotasi Berdasarkan Ukuran File (Size-Based)
+Secara bawaan, konfigurasi di bawah ini menggunakan interval waktu harian (`daily`). Namun, LIMS juga bisa diatur untuk merotasi log secara otomatis saat file log membesar dan menyentuh batasan ukuran tertentu (misalnya 100MB). Anda bisa memodifikasi konfigurasi di bawah dengan menambahkan arahan berikut (menggantikan atau menemani `daily`):
+* **`size 100M`**: Memutar file log **hanya** jika ukurannya telah melebihi 100 Megabytes (mengabaikan interval hari).
+* **`maxsize 100M`**: Kombinasi hibrida. File log akan diputar jika sudah berganti hari (`daily`), **ATAU** jika ukurannya telah melebihi 100MB (mana yang tercapai lebih dulu). Sangat disarankan untuk skenario server sibuk.
+
+> [!WARNING]
+> **Catatan Penting Presisi Waktu Eksekusi:**
+> `logrotate` bukanlah program yang memonitor ukuran file secara *real-time* 24 jam penuh. Ia **hanya** akan mengecek ukuran file pada saat jadwal tugas *cron*-nya tereksekusi. Jika Anda mengatur *cron* logrotate untuk jalan 1x sehari di jam 01:00 dini hari (seperti panduan di bawah), ia baru akan tahu file sudah menyentuh 100MB pada jam tersebut (file bisa saja sudah membengkak jadi 500MB di siang hari).
+> Jika Anda ingin sistem secara ketat memutar log tepat saat di kisaran 100MB, Anda harus mengubah jadwal eksekusi *cron* logrotate menjadi **setiap jam** (memindahkannya ke `/etc/cron.hourly/` atau mengubah parameter cron menjadi `0 * * * *`).
+
 #### Rotasi Log Nginx (`/etc/logrotate.d/nginx`)
 Edit berkas `/etc/logrotate.d/nginx`:
 ```nginx
@@ -2638,6 +2695,13 @@ Frontend LIMS dijalankan sebagai HTTP server statis menggunakan PM2, yang mencat
     sudo logrotate -fv /etc/logrotate.d/lims-backend
     sudo logrotate -fv /etc/logrotate.d/lims-frontend
     ```
+*   **Mengecek Status Bawaan Logrotate (Status File)**:
+    Logrotate secara otomatis mencatat kapan terakhir kali ia berhasil memutar sebuah file log. Anda bisa mengecek catatan sistem (history) tersebut menggunakan perintah:
+    ```bash
+    cat /var/lib/logrotate/status | grep lims
+    # Atau jika di sistem lain: cat /var/lib/logrotate.status | grep lims
+    ```
+    *Jika logrotate berhasil berjalan secara rutin, outputnya akan menunjukkan daftar file log LIMS beserta tanggal dan waktu terakhir ia dirotasi.*
 
 #### Konfigurasi Penjadwalan Otomatis Pukul 01:00 Dini Hari (Cron)
 Secara bawaan, tugas cron harian system logrotate berjalan tidak menentu. Untuk memaksakan pemutaran berkas log dilakukan tepat pada **pukul 01:00 dini hari**, buatlah berkas cron khusus di `/etc/cron.d/logrotate-lims`:
@@ -3251,6 +3315,98 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
    
    -- Mengaktifkan generator UUID
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
+   ```
+
+##### 7. Backup & Restore Database (pg_dump & pg_restore)
+LIMS secara bawaan menyediakan fitur *Backup & Restore* melalui UI halaman Maintenance. Namun, administrator sistem direkomendasikan untuk melakukan backup terjadwal secara mandiri menggunakan utilitas bawaan PostgreSQL.
+
+###### A. Menyiapkan File Kredensial Otomatis (`.pgpass`)
+Agar *cron job* dapat melakukan backup tanpa jeda menunggu *prompt password*, siapkan file kredensial rahasia di folder user Linux (misal: user `lims`):
+1. Buat file: `nano ~/.pgpass`
+2. Isi dengan format: `hostname:port:database:username:password`
+   Jika Anda memiliki **satu** database:
+   `localhost:5432:lims_prod_db:admin_lims:PasswordSangatKuat123`
+   Jika Anda memiliki **lebih dari satu** database dengan user yang sama (menggunakan *wildcard* `*`):
+   `localhost:5432:*:admin_lims:PasswordSangatKuat123`
+3. Amankan hak aksesnya (WAJIB): `chmod 0600 ~/.pgpass`
+*(Catatan: Jika hak akses bukan `0600`, PostgreSQL akan mengabaikan file ini dan proses backup terjadwal akan gagal/hang).*
+
+###### B. Melakukan Backup (Dump)
+Jalankan perintah berikut. Anda disarankan menempelkan atribut tanggal (*timestamp*) menggunakan `$(date +%Y%m%d)` pada nama file agar backup harian tidak saling menimpa.
+```bash
+# Backup Single Database
+pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$(date +%Y%m%d).dump
+
+# Backup Multi-Database (Dijalankan berurutan dengan &&)
+pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$(date +%Y%m%d).dump && pg_dump -h localhost -p 5432 -U admin_lims chatbot_db -F c > /home/lims/backup/chatbot_backup_$(date +%Y%m%d).dump
+```
+*(Parameter `-F c` berarti file disimpan dalam format kompresi biner kustom PostgreSQL, bukan plain text SQL. Ini jauh lebih ringan dan aman).*
+
+###### C. Melakukan Restore (Pemulihan Data)
+**Opsi 1: Restore via Terminal (CLI)**
+Jika terjadi insiden dan Anda perlu memulihkan data dari file `.dump` melalui terminal server:
+```bash
+# === Restore Database Pertama (LIMS) ===
+# 1. Hapus dan buat ulang database kosong (opsional, disarankan agar bersih)
+dropdb -h localhost -U admin_lims lims_prod_db
+createdb -h localhost -U admin_lims lims_prod_db
+
+# 2. Lakukan Restore LIMS
+pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db -1 /home/lims/backup/lims_backup_20260722.dump
+
+# === Restore Database Kedua (Chatbot) ===
+# 1. Hapus dan buat ulang database kosong
+dropdb -h localhost -U admin_lims chatbot_db
+createdb -h localhost -U admin_lims chatbot_db
+
+# 2. Lakukan Restore Chatbot
+pg_restore -h localhost -p 5432 -U admin_lims -d chatbot_db -1 /home/lims/backup/chatbot_backup_20260722.dump
+```
+
+**Opsi 2: Restore via pgAdmin 4 (Visual/UI)**
+Bagi Administrator yang lebih nyaman menggunakan *Graphical User Interface* (GUI):
+1. **Download Backup**: Pastikan file hasil `.dump` dari VPS sudah Anda pindahkan (*download* via `scp` atau SFTP) ke komputer lokal Anda.
+2. **Siapkan Database Kosong**: Di pgAdmin, buat atau pastikan Anda memiliki database kosong sebagai target *restore* (misal: `lims_prod_db`).
+3. **Mulai Restore**: Klik kanan pada nama database target tersebut $\rightarrow$ Pilih **Restore...**
+4. Pada tab **General**:
+   * Kolom **Format**: Pilih **Custom or tar** (karena kita mem-backup menggunakan parameter `-F c`).
+   * Kolom **Filename**: Klik ikon Folder 📁. *Catatan Khusus:* Jika Anda menggunakan pgAdmin versi Web, Anda harus mengunggah filenya terlebih dahulu menggunakan ikon Upload (panah atas) di jendela *Storage Manager*. Jika menggunakan versi Desktop, cukup cari file di komputer Anda. Klik file tersebut lalu klik Select.
+   * Kolom **Role name**: Pilih user pemilik (misal `admin_lims`).
+5. Pada tab **Data Options / Options**:
+   * Centang **Clean before restore** (hanya jika database tujuan sudah ada isinya dan Anda ingin menimpanya dari awal).
+6. Terakhir, klik **Restore** dan tunggu hingga muncul notifikasi sukses berwarna hijau. Klik kanan database lalu pilih **Refresh** untuk melihat tabel yang berhasil dipulihkan.
+
+###### D. Penjadwalan Otomatis dengan Crontab
+Untuk menghindari risiko kelupaan, sangat disarankan untuk menjadwalkan proses backup (`pg_dump`) di atas agar berjalan otomatis setiap hari.
+**Opsi 1: Satu Baris di Crontab (Cocok untuk 1-2 Database)**
+1. Buka editor cron untuk user aplikasi Anda (misal `lims`):
+   ```bash
+   crontab -e
+   ```
+2. Tambahkan baris berikut di paling bawah untuk melakukan backup otomatis setiap jam **02:00 dini hari**:
+   ```bash
+   0 2 * * * pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$(date +\%Y\%m\%d).dump 2>> /home/lims/backup/backup_error.log
+   ```
+*(Catatan Teknis: Karakter `%` pada sintaks `date` di dalam `crontab` wajib didahului dengan backslash `\` atau di-escape agar tidak dibaca sebagai perintah baris baru).*
+
+**Opsi 2: Menggunakan Bash Script (Sangat Disarankan untuk Multi-Database)**
+Jika Anda memiliki banyak database, menaruhnya di crontab akan sangat panjang dan rentan *typo*. Lebih baik gunakan skrip.
+1. Buat file eksekusi: `nano /home/lims/backup_semua_db.sh`
+2. Isi file tersebut dengan skrip berikut:
+   ```bash
+   #!/bin/bash
+   TANGGAL=$(date +%Y%m%d)
+
+   # Backup LIMS
+   pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$TANGGAL.dump
+   
+   # Backup Chatbot
+   pg_dump -h localhost -p 5432 -U admin_lims chatbot_db -F c > /home/lims/backup/chatbot_backup_$TANGGAL.dump
+   ```
+3. Beri hak akses eksekusi: `chmod +x /home/lims/backup_semua_db.sh`
+4. Panggil skrip tersebut di dalam **Crontab** (`crontab -e`):
+   ```bash
+   0 2 * * * /home/lims/backup_semua_db.sh 2>> /home/lims/backup/error.log
    ```
 
 ---
@@ -3875,6 +4031,13 @@ Untuk memblokir pengguna yang menggunakan versi aplikasi Android di bawah batas 
      "message": "Versi aplikasi LIMS Android Anda sudah tidak didukung. Harap perbarui ke versi terbaru."
    }
    ```
+5. **Mode Debug vs Release (Cara Bypass saat Development)**:
+   Backend LIMS tidak membedakan apakah request datang dari APK mode *Release* ataupun APK mode *Debug*. Backend hanya membaca angka yang dikirimkan pada header `X-App-Version`. Akibatnya, APK mode *Debug* Anda akan ikut terblokir jika versinya lebih rendah dari `MIN_ANDROID_VERSION`.
+   Untuk **menghindari pemblokiran** saat proses pengetesan (testing/development) secara lokal:
+   * Buat file **`.env.development`** di folder `frontend`.
+   * Isi dengan nilai versi raksasa, contoh: `VITE_APP_VERSION=99.9`.
+   * Saat Anda menjalankan mode debug (`npm run dev`), Vite otomatis memprioritaskan membaca file `.env.development` ini, sehingga *build* lokal Anda dikenali sebagai versi `99.9` dan terhindar dari layar *Force Upgrade*.
+   * Saat di-build untuk rilis resmi (`npm run build`), sistem otomatis mengabaikan file ini dan kembali menggunakan versi asli (misal `1.4`) dari file `.env` atau `.env.production`.
 
 ### P. Panduan Pembuatan APK Android (Berbagai Skema Jaringan & Target)
 
@@ -4774,3 +4937,375 @@ VALUES (
     NOW(), NOW(), 'SYSTEM', 'SYSTEM'
 ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
 ```
+
+---
+
+### Q. Monitoring Infrastruktur LIMS (Grafana & Prometheus)
+
+Monitoring LIMS menggunakan *stack* Prometheus dan Grafana adalah standar industri untuk memantau performa dan ketersediaan layanan secara *real-time*.
+
+#### 1. Arsitektur Monitoring & Penjelasan Fungsi
+Monitoring LIMS dirancang dengan memisahkan tugas pengumpulan data (Prometheus) dan visualisasi (Grafana):
+- **Fungsi Prometheus**: Bertindak sebagai *Time-Series Database* (TSDB) sekaligus mesin penarik (*scraper*). Prometheus tidak menunggu data dikirim kepadanya, melainkan secara aktif mengambil (pull) data berupa angka-angka (*metrics*) dari berbagai titik aplikasi (*exporter*) secara berkala.
+- **Fungsi Grafana**: Bertindak sebagai "wajah" (UI) dari sistem monitoring. Grafana tidak menyimpan data, melainkan membaca data dari Prometheus lalu menerjemahkannya ke dalam bentuk grafik, diagram, dan *dashboard* yang interaktif. Grafana juga berfungsi mengirimkan *Alert* (peringatan via Telegram/Email) jika ada parameter yang melebihi batas (misal: CPU > 90%).
+- **Node Exporter**: Agen yang membaca beban CPU, RAM, Disk I/O, dan Network dari sistem operasi server host.
+- **Postgres Exporter**: Mengekspos status *connection*, transaksi, dan lambatnya *query* dari database LIMS.
+- **NGINX Exporter**: Membaca metrik trafik web (*stub_status*) NGINX.
+
+**Mengapa Menggunakan Docker untuk Instalasi?**
+Pendekatan menggunakan Docker sangat disarankan karena:
+1. **Isolasi (Sandboxing)**: Ekosistem monitoring (Prometheus + Grafana + Exporter) tidak akan mengotori OS Linux server Anda dengan *library* atau dependensi yang aneh-aneh. Semuanya terbungkus rapi di dalam *container*.
+2. **Keamanan Port**: Anda dapat menghubungkan Prometheus ke *exporter* menggunakan jaringan internal Docker tanpa harus mengekspos port-port tersebut ke dunia luar (Internet).
+3. **Kemudahan Manajemen**: Cukup satu perintah `docker-compose up` untuk menyalakan seluruh sistem monitoring, dan `docker-compose down` untuk mematikannya tanpa meninggalkan sampah sistem.
+
+#### 2. Persiapan File Konfigurasi (Prometheus)
+Buat folder khusus untuk menyimpan konfigurasi monitoring:
+```bash
+mkdir -p /home/lims/monitoring/prometheus
+nano /home/lims/monitoring/prometheus/prometheus.yml
+```
+Isi file `prometheus.yml`:
+*(Catatan: Anda bebas mengubah `scrape_interval` dari `15s` (15 detik) menjadi `1m` (1 menit) jika Anda ingin menghemat penyimpanan data atau jika trafik tidak terlalu padat).*
+```yaml
+global:
+  scrape_interval: 1m  # Interval waktu Prometheus menarik data (bisa diatur 15s, 30s, atau 1m)
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'postgres_exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  - job_name: 'nginx_exporter'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+
+  - job_name: 'pm2_exporter'
+    fallback_scrape_protocol: PrometheusText0.0.4
+    static_configs:
+      - targets: ['host.docker.internal:9209']
+```
+
+#### 3. Instalasi via Docker Compose
+**Prasyarat: Instalasi Docker (Jika Belum Ada)**
+Jika server VPS Anda belum ter-install Docker dan plugin Compose, jalankan perintah berikut, lalu masukkan user `lims` ke dalam grup `docker`:
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose-plugin -y
+sudo usermod -aG docker lims
+newgrp docker
+```
+
+Buat file `docker-compose.yml` di folder monitoring:
+```bash
+nano /home/lims/monitoring/docker-compose.yml
+```
+Isi dengan skrip berikut:
+```yaml
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:9090:9090" # HANYA bisa diakses lokal demi keamanan
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=PasswordGrafanaKuat123
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3010:3000" # Diekspos di port 3010 untuk menghindari konflik dengan Frontend
+    restart: always
+    depends_on:
+      - prometheus
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: always
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - "DATA_SOURCE_NAME=postgresql://lims_grafana@host.docker.internal:5432/lims_prod_db?sslmode=disable"
+      - "PGPASSFILE=/root/.pgpass"
+    volumes:
+      - ./.pgpass:/root/.pgpass:ro
+    restart: always
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx_exporter
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command:
+      - "--nginx.scrape-uri=http://host.docker.internal:8084/stub_status"
+    restart: always
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "127.0.0.1:3100:3100"
+    restart: always
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/log/nginx:/var/log/nginx:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    restart: always
+
+volumes:
+  prometheus_data:
+  grafana_data:
+```
+
+#### 4. Konfigurasi Hak Akses Monitoring di PostgreSQL
+Agar *PostgreSQL Exporter* bisa membaca statistik beban dan aktivitas *database*, user yang dipakai (`lims_grafana`) wajib diberi peran khusus bernama `pg_monitor`.
+Jalankan perintah berikut di terminal server:
+```bash
+sudo -u postgres psql
+```
+Lalu eksekusi kueri SQL ini:
+```sql
+GRANT pg_monitor TO lims_grafana;
+\q
+```
+*(Catatan: Jika user `lims_grafana` belum ada, buat terlebih dahulu dengan `CREATE USER lims_grafana WITH PASSWORD 'password_rahasia';` lalu sesuaikan isi file `.pgpass`).*
+
+#### 5. Menjalankan Monitoring Stack
+Pindah ke direktori tersebut dan jalankan *container* di latar belakang:
+```bash
+cd /home/lims/monitoring
+docker compose up -d
+```
+*(Catatan: Jika server Anda menggunakan versi Docker lama, gunakan perintah `docker-compose up -d` (menggunakan tanda hubung/strip).*
+
+#### 6. Ekspos Grafana via NGINX (Reverse Proxy)
+Agar Grafana bisa diakses dengan aman melalui internet, Anda perlu menambahkan blok server ke konfigurasi NGINX VPS Anda. 
+
+Buat file konfigurasi Nginx baru di dalam folder `conf.d` (contoh menggunakan nama domain `lims-d4551821.nip.io`):
+```bash
+sudo nano /etc/nginx/conf.d/monitoring.conf
+```
+
+Isi file tersebut dengan blok berikut (menggunakan SSL/HTTPS):
+```nginx
+# Endpoint Khusus Nginx Exporter (Port 8084)
+server {
+    listen 8084;
+    listen [::]:8084;
+    server_name _; # Menangkap semua hostname
+
+    location /stub_status {
+        stub_status on;
+        allow all; 
+    }
+}
+
+# Konfigurasi HTTPS (Grafana di Port 8083)
+server {
+    listen 8083 ssl;
+    listen [::]:8083 ssl;
+    http2 on;
+    server_name lims-d4551821.nip.io;
+
+    # Ganti path ini sesuai dengan lokasi sertifikat SSL Anda (misal dari Certbot)
+    ssl_certificate /etc/letsencrypt/live/lims-d4551821.nip.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/lims-d4551821.nip.io/privkey.pem;
+
+    # Halaman Dashboard Grafana
+    location / {
+        proxy_pass http://127.0.0.1:3010;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Aktifkan konfigurasi tersebut dengan melakukan verifikasi sintaks lalu *reload* Nginx:
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+*(Pastikan Anda melengkapi blok di atas dengan Sertifikat SSL/HTTPS Let's Encrypt menggunakan `certbot`).*
+
+#### 7. Konfigurasi Awal di Dashboard Grafana
+1. Buka browser dan akses Grafana Anda. 
+   - **Jika via Nginx (Internet)**: Buka `https://lims-d4551821.nip.io:8083` (Pastikan port 8083 terbuka di Firewall).
+   - **Jika via SSH Tunnel (Lokal)**: Buka `http://localhost:3010`.
+2. Halaman Login Grafana akan muncul. Masukkan kredensial berikut (sesuai yang kita atur di `docker-compose.yml`):
+   - **Username**: `admin`
+   - **Password**: `PasswordGrafanaKuat123`
+3. Di Menu **Connections** $\rightarrow$ **Data Sources**, tambahkan **Prometheus**.
+4. Masukkan URL: `http://prometheus:9090` lalu klik **Save & Test**.
+5. **Mengimpor Dashboard**: Di menu sebelah kiri, buka **Dashboards** $\rightarrow$ klik tombol **New** (di pojok kanan atas) $\rightarrow$ pilih **Import**. Masukkan ID Template berikut lalu klik **Load**:
+   * **1860**: Node Exporter Full (Metrik Server OS).
+   * **9628**: PostgreSQL Database.
+   * **12708**: NGINX Exporter.
+   *(Catatan: Saat Anda mengklik Load, Anda akan diminta mengisi dropdown **DS_PROMETHEUS**. Silakan klik dan pilih **Prometheus**. Jika pilihannya kosong, artinya Anda belum melakukan Langkah 3 & 4 di atas!)*
+6. **Manajemen Pengguna (Ganti Password & User Baru)**:
+   * **Ganti Password Sendiri**: Klik ikon Profil Anda (pojok kiri bawah) $\rightarrow$ **Profile** $\rightarrow$ **Change Password**.
+   * **Buat User Baru**: Buka menu **Administration** $\rightarrow$ **Users and access** $\rightarrow$ **Users** $\rightarrow$ klik tombol **New user**.
+
+#### 8. Monitoring Frontend (Node.js/React) via PM2
+Untuk melihat detail pemakaian CPU dan RAM dari masing-masing aplikasi yang berjalan di PM2, kita menggunakan modul resmi `pm2-prometheus-exporter`.
+
+1. **Instalasi Exporter di Server**:
+   Jalankan perintah ini di terminal server Anda (tanpa sudo jika PM2 berjalan di user Anda):
+   ```bash
+   pm2 install pm2-prometheus-exporter
+   ```
+   *Modul ini akan membuka port `9209` secara otomatis.*
+
+2. **Konfigurasi Prometheus**:
+   Pastikan Anda sudah menambahkan blok `pm2_exporter` ke dalam `prometheus.yml` Anda (seperti yang ditunjukkan di Langkah 2). Penting untuk menggunakan `fallback_scrape_protocol: PrometheusText0.0.4` untuk menghindari error `blank Content-Type`.
+   Pastikan juga Anda sudah merestart Prometheus: `sudo docker restart prometheus`.
+
+3. **Impor Dasbor PM2 di Grafana**:
+   Di menu Grafana, buka **Dashboards** $\rightarrow$ **New** $\rightarrow$ **Import**. 
+   Masukkan ID Dasbor: **`12745`** (Dasbor PM2 resmi).
+
+4. **Penyesuaian Dasbor (Jika "No Data")**:
+   Terkadang dasbor ID 12745 memfilter data menggunakan variabel bawaan yang tidak cocok dengan Docker. Jika grafik kosong:
+   * Buka panel CPU, klik titik tiga $\rightarrow$ **Edit**.
+   * Ubah Query rumit di bawah menjadi murni `pm2_cpu`.
+   * Lakukan hal yang sama untuk panel Memory, ubah menjadi `pm2_memory`.
+   * Simpan Dasbor. Grafik Anda akan langsung muncul menampilkan setiap proses aplikasi yang dikelola PM2!
+
+#### 9. Monitoring Trafik Frontend & NGINX Access Logs (Loki + Promtail)
+Untuk melihat statistik pengunjung yang nyata (jumlah akses, rute/URL yang paling sering diakses, serta mendeteksi *error* 404/500), kita menggunakan Grafana Loki dan Promtail untuk membaca file `access.log` Nginx secara real-time.
+
+1. **Membuat File Konfigurasi Promtail**
+   Buat file `promtail-config.yml` di folder monitoring Anda:
+   ```bash
+   nano /home/lims/monitoring/promtail-config.yml
+   ```
+   Isi dengan skrip berikut:
+   ```yaml
+   server:
+     http_listen_port: 9080
+     grpc_listen_port: 0
+
+   positions:
+     filename: /tmp/positions.yaml
+
+   clients:
+     - url: http://loki:3100/loki/api/v1/push
+
+   scrape_configs:
+     - job_name: nginx
+       static_configs:
+         - targets:
+             - localhost
+           labels:
+             job: nginx
+             host: server-lims
+             __path__: /var/log/nginx/json_access.log
+   ```
+
+2. **Konfigurasi Format Log JSON di NGINX (Wajib untuk Dasbor!)**
+   Dasbor Loki membutuhkan log dalam bentuk tabel/JSON agar bisa membuat grafik. Format bawaan Nginx (teks biasa) tidak akan terbaca.
+   Buka file konfigurasi utama Nginx:
+   ```bash
+   sudo nano /etc/nginx/nginx.conf
+   ```
+   Cari blok `http {` dan tambahkan format JSON ini di dalamnya (tepat di bawah baris `include /etc/nginx/mime.types;`):
+   ```nginx
+   log_format json_analytics escape=json '{'
+     '"msec": "$msec", '
+     '"remote_addr": "$remote_addr", '
+     '"request_uri": "$request_uri", '
+     '"status": "$status", '
+     '"body_bytes_sent": "$body_bytes_sent", '
+     '"request_time": "$request_time", '
+     '"http_referer": "$http_referer", '
+     '"http_user_agent": "$http_user_agent"'
+   '}';
+   ```
+   Lalu, terapkan format tersebut dengan mengubah/menambahkan baris `access_log` menjadi seperti ini:
+   ```nginx
+   access_log /var/log/nginx/json_access.log json_analytics;
+   ```
+   Simpan file, lalu *reload* Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+3. **Memastikan Izin File Log**
+   Karena Promtail berjalan di Docker, kita harus memastikan ia memiliki izin membaca log Nginx:
+   ```bash
+   sudo chmod 644 /var/log/nginx/json_access.log
+   ```
+
+4. **Menerapkan Perubahan Docker Compose**
+   Pastikan Anda sudah menambahkan blok *service* `loki` dan `promtail` ke dalam file `docker-compose.yml` Anda. Tambahkan blok berikut ini tepat di atas baris `volumes:` paling bawah:
+   ```yaml
+     loki:
+       image: grafana/loki:latest
+       container_name: loki
+       ports:
+         - "127.0.0.1:3100:3100"
+       restart: always
+   
+     promtail:
+       image: grafana/promtail:latest
+       container_name: promtail
+       volumes:
+         - /var/log/nginx:/var/log/nginx:ro
+         - ./promtail-config.yml:/etc/promtail/config.yml
+       command: -config.file=/etc/promtail/config.yml
+       restart: always
+   ```
+   *(Catatan: Anda juga bisa melihat bentuk dokumen `docker-compose.yml` yang utuh dan lengkap di panduan **Langkah 3** di atas).*
+   
+   Setelah ditambahkan, jalankan ulang:
+   ```bash
+   cd /home/lims/monitoring
+   sudo docker compose up -d
+   ```
+
+5. **Integrasi ke Grafana**
+   * Di Dasbor Grafana, buka **Connections** $\rightarrow$ **Data Sources** $\rightarrow$ **Add data source**.
+   * Pilih **Loki**.
+   * Di kolom URL, masukkan: `http://loki:3100`.
+   * Klik **Save & test** (pastikan muncul tulisan hijau "Data source connected and labels found").
+
+6. **Mengimpor Dasbor Log Nginx**
+   Buka **Dashboards** $\rightarrow$ **New** $\rightarrow$ **Import**.
+   Masukkan ID Dasbor: **`13740`** atau **`24306`**. 
+   Di bagian opsi datasource bawah, pastikan memilih Loki. Setelah diklik *Import*, Anda kini bisa melihat secara detail trafik HTTP pengunjung Frontend Anda!

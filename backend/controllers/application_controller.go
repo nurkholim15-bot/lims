@@ -508,8 +508,22 @@ func GetApplications(c *gin.Context) {
 	targetMonthSerial := sTime.Year()*12 + int(sTime.Month())
 
 	if (currentMonthSerial - targetMonthSerial) >= threshold {
-		sourceTable = fmt.Sprintf("testing_applications_arc_%s", suffix)
-		targetEqTable = fmt.Sprintf("testing_equipments_arc_%s", suffix)
+		arcPartitionTable := fmt.Sprintf("testing_applications_arc_%s", suffix)
+		var exists bool
+		database.DB.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = ?)", arcPartitionTable).Scan(&exists)
+		if exists {
+			sourceTable = arcPartitionTable
+			targetEqTable = fmt.Sprintf("testing_equipments_arc_%s", suffix)
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"data":         []models.TestingApplication{},
+				"source_table": arcPartitionTable,
+				"total":        0,
+				"page":         1,
+				"limit":        10,
+			})
+			return
+		}
 	} else {
 		// Check if partition exists before routing to it
 		schema := os.Getenv("DB_SCHEMA")
@@ -526,10 +540,13 @@ func GetApplications(c *gin.Context) {
 			targetEqTable = fmt.Sprintf("testing_equipments_%s", suffix)
 			fmt.Printf("[DIRECT] Routing to specific partition: %s\n", sourceTable)
 		} else {
-			// If partition missing, we still don't want to hit parent if it's potentially huge
-			// But for safety during transitions, we can either error or use parent.
-			// The user said "LIMS hanya mengijinkan data dalam 1 partisi", so let's enforce it.
-			c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Data partition for %s not found.", suffix)})
+			c.JSON(http.StatusOK, gin.H{
+				"data":         []models.TestingApplication{},
+				"source_table": potentialTable,
+				"total":        0,
+				"page":         1,
+				"limit":        10,
+			})
 			return
 		}
 	}
@@ -1054,6 +1071,39 @@ func PlanApplication(c *gin.Context) {
 
 	username, _ := c.Get("username")
 	fmt.Printf("PlanApplication req: %+v\n", req)
+
+	// --- 0. Pre-validate Tool Bookings to prevent partial updates ---
+	if len(req.TestingTools) > 0 {
+		for _, tReq := range req.TestingTools {
+			var tool models.TestingTool
+			if err := database.DB.Where("code = ?", tReq.ToolCode).First(&tool).Error; err != nil {
+				continue
+			}
+
+			if tool.Type == "STOCK" {
+				if tool.CurrentStock-tReq.Quantity < 0 {
+					c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Stok alat %s tidak mencukupi (Sisa: %d)", tool.Name, tool.CurrentStock)})
+					return
+				}
+			}
+
+			if tool.Type == "USAGE" {
+				date, _ := time.Parse("2006-01-02", tReq.Date)
+				avTableName := "testing_tool_availabilities_" + date.Format("200601")
+				for h := tReq.StartHour; h < tReq.EndHour; h++ {
+					var existing models.TestingToolAvailability
+					var err error
+					if err = database.DB.Table(avTableName).Where("tool_code = ? AND date = ? AND hour = ?", tReq.ToolCode, date, h).First(&existing).Error; err != nil {
+						err = database.DB.Where("tool_code = ? AND date = ? AND hour = ?", tReq.ToolCode, date, h).First(&existing).Error
+					}
+					if err == nil {
+						c.JSON(http.StatusConflict, gin.H{"error": fmt.Sprintf("Alat %s sudah di-book pada jam %02d:00.", tool.Name, h)})
+						return
+					}
+				}
+			}
+		}
+	}
 
 	// --- 1. Update fields di testing_applications ---
 	updates := map[string]interface{}{

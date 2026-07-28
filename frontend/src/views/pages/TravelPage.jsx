@@ -17,6 +17,7 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
   const [selectedApp, setSelectedApp] = useState(null);
   const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
   const [filterYear, setFilterYear] = useState(new Date().getFullYear());
+  const [filterArchive, setFilterArchive] = useState(false);
   const [sourceTable, setSourceTable] = useState("travel_requests");
   const [formData, setFormData] = useState({
     reg_number: "",
@@ -38,6 +39,7 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
       let endpoint = "/travel-requests?page=1&limit=100";
       if (filterYear) endpoint += `&year=${filterYear}`;
       if (filterMonth) endpoint += `&month=${filterMonth}`;
+      if (filterArchive) endpoint += `&archive=true`;
       
       if (isSupervisor) {
         if (activeTab === "REQUESTS") {
@@ -54,6 +56,8 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
       }
     } catch (err) {
       console.error("Fetch requests failed:", err);
+      setRequests([]);
+      setSourceTable("ERROR / NOT FOUND");
     } finally {
       setLoading(false);
     }
@@ -70,7 +74,7 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
 
   useEffect(() => {
     fetchRequests();
-  }, [activeTab, filterMonth, filterYear]);
+  }, [activeTab, filterMonth, filterYear, filterArchive]);
 
   useEffect(() => {
     fetchLocations();
@@ -170,6 +174,10 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
 
             {/* Partition Date Filters */}
             <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', cursor: 'pointer', background: 'white', padding: '8px 12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontWeight: 600, color: '#334155', height: '38px', boxSizing: 'border-box' }}>
+                    <input type="checkbox" checked={filterArchive} onChange={(e) => setFilterArchive(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', margin: 0 }} />
+                    Data Archive
+                </label>
                 <select 
                     value={filterMonth} 
                     onChange={(e) => setFilterMonth(parseInt(e.target.value) || "")} 

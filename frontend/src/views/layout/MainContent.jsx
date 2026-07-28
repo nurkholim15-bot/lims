@@ -182,6 +182,7 @@ const MainContent = ({
             filterConfig={route.filterConfig}
             forceFilter={route.forceFilter}
             hideActions={route.hideActions}
+            checkPasswordRequirement={checkPasswordRequirement}
           />
         );
     }

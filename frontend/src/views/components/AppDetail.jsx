@@ -1945,16 +1945,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 Batal
               </button>
               <button 
-                className="btn btn-success btn-sm"
-                onClick={() => {
-                  setNotes(aiReportText);
-                  setShowAIModal(false);
-                }}
-                disabled={aiGenerating}
-              >
-                <i className="fas fa-comment-alt"></i> Gunakan Sebagai Catatan
-              </button>
-              <button 
                 className="btn btn-primary btn-sm"
                 onClick={() => {
                   setConclusion(aiReportText);

@@ -137,6 +137,7 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
           await apiRequest(`${deletePath}/${id}`, "DELETE");
         }
         fetchData();
+        showToast('Berhasil menghapus data', 'success');
       } catch (err) {
         showToast(err.message || 'Gagal menghapus data', 'error');
       }

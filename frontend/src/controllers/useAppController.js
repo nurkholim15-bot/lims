@@ -98,7 +98,7 @@ export const useAppController = () => {
     } catch (err) {
       console.error("Fetch apps failed:", err);
       setLoading(false);
-      return { data: [], error: err };
+      return { data: [], error: err, source_table: "ERROR / NOT FOUND" };
     }
   };
 

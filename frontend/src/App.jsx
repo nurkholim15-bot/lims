@@ -377,11 +377,25 @@ function App() {
   const getMenuByPath = (path) => {
     if (!path) return null;
     const p = path.startsWith("/") ? path : `/${path}`;
-    return menus.find((m) => {
-      if (!m.path) return false;
-      const mp = m.path.startsWith("/") ? m.path : `/${m.path}`;
-      return mp === p;
-    });
+    let result = null;
+    const searchMenu = (menuList) => {
+      for (const m of menuList) {
+        if (m.path) {
+          const mp = m.path.startsWith("/") ? m.path : `/${m.path}`;
+          if (mp === p) {
+            result = m;
+            return;
+          }
+        }
+        if (m.children && m.children.length > 0) {
+          searchMenu(m.children);
+        }
+      }
+    };
+    if (menus && menus.length > 0) {
+      searchMenu(menus);
+    }
+    return result;
   };
 
   const checkPasswordRequirement = async (callback, targetPath = null) => {
@@ -663,3 +677,4 @@ function App() {
 }
 
 export default App;
+
