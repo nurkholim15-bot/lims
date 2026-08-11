@@ -167,6 +167,26 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   };
 
   const handleFileChange = (paramCode, file) => {
+    if (!file) return;
+
+    // 1. Extension Validation (Security Item #11)
+    const allowedExtsParam = appConfig?.ALLOWED_UPLOAD_EXTENSIONS || ".pdf,.jpg,.jpeg,.png";
+    const fileExt = "." + file.name.split('.').pop().toLowerCase();
+    const allowedList = allowedExtsParam.split(',').map(ext => ext.trim().toLowerCase());
+    
+    const isAllowed = allowedList.some(ext => ext === fileExt || "." + ext === fileExt);
+    if (!isAllowed) {
+      alert(`Ekstensi file "${file.name}" tidak diizinkan. Hanya file (${allowedExtsParam}) yang diperbolehkan.`);
+      return;
+    }
+
+    // 2. Size Validation
+    const maxSizeKB = parseInt(appConfig?.MAX_UPLOAD_SIZE) || 2048;
+    if (file.size / 1024 > maxSizeKB) {
+      alert(`Ukuran file "${file.name}" melebihi batas ${(maxSizeKB / 1024).toFixed(1)} MB (${maxSizeKB} KB).`);
+      return;
+    }
+
     setPhotos({ ...photos, [paramCode]: file });
   };
 
@@ -300,7 +320,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     setShowAIModal(true); // Langsung buka modal untuk melihat efek ngetik
 
     try {
-      const token = localStorage.getItem("auth_token");
       const appVersion = import.meta.env.VITE_APP_VERSION || "1.0";
       const appPlatform = (typeof window !== "undefined" && window.Capacitor) ? window.Capacitor.getPlatform() : "Web";
       
@@ -309,7 +328,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         "X-App-Version": appVersion,
         "X-App-Platform": appPlatform,
       };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
 
       const response = await fetch(`${API_URL}/applications/${localApp.id}/generate-report`, {
         method: "POST",

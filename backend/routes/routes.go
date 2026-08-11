@@ -19,6 +19,9 @@ func SetupRoutes(r *gin.Engine) {
 	// CORS — hanya izinkan origin yang terdaftar di ALLOWED_ORIGINS (.env)
 	r.Use(middleware.CORSWithWhitelist())
 
+	// Gzip Compression — otomatis kompresi response payload untuk penghematan bandwidth
+	r.Use(middleware.GzipMiddleware())
+
 	r.Use(middleware.TransactionLogger())
 
 

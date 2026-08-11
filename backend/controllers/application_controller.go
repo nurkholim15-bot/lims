@@ -32,14 +32,9 @@ func uploadDoc(c *gin.Context, fieldName string) (string, error) {
 	}
 	defer file.Close()
 
-	// 1. Size Restriction
-	maxSizeStr := os.Getenv("MAX_UPLOAD_SIZE")
-	if maxSizeStr == "" {
-		maxSizeStr = "2048" // Default 2MB
-	}
-	maxSizeKB, _ := strconv.ParseInt(maxSizeStr, 10, 64)
-	if header.Size > maxSizeKB*1024 {
-		return "", fmt.Errorf("file too large (max %s KB)", maxSizeStr)
+	// 1. Size & Extension Validation (Security Item #11)
+	if err := validateFileUpload(header.Filename, header.Size); err != nil {
+		return "", err
 	}
 
 	// 2. Unique Filename (OriginalName_HHMMSSSSS.ext)
@@ -57,11 +52,59 @@ func uploadDoc(c *gin.Context, fieldName string) (string, error) {
 	return services.Minio.UploadGenericFile(c.Request.Context(), uniqueName, file, header.Size, contentType)
 }
 
+func validateFileUpload(filename string, size int64) error {
+	// 1. Extension Validation (Security Item #11)
+	ext := strings.ToLower(filepath.Ext(filename))
+	
+	// Block dangerous executable & script extensions
+	blockedExts := map[string]bool{
+		".php": true, ".exe": true, ".sh": true, ".bat": true, ".cmd": true, 
+		".js": true, ".py": true, ".vbs": true, ".pl": true, ".cgi": true,
+		".jsp": true, ".asp": true, ".aspx": true, ".jar": true,
+	}
+	if blockedExts[ext] {
+		return fmt.Errorf("ekstensi file '%s' dilarang demi keamanan sistem", ext)
+	}
+
+	allowedExtsParam := models.GetGlobalParam("ALLOWED_UPLOAD_EXTENSIONS", ".pdf,.jpg,.jpeg,.png")
+	if allowedExtsParam != "" {
+		allowedList := strings.Split(allowedExtsParam, ",")
+		isAllowed := false
+		for _, a := range allowedList {
+			aClean := strings.ToLower(strings.TrimSpace(a))
+			if aClean != "" && (aClean == ext || "."+aClean == ext) {
+				isAllowed = true
+				break
+			}
+		}
+		if !isAllowed {
+			return fmt.Errorf("ekstensi file '%s' tidak diizinkan (diizinkan: %s)", ext, allowedExtsParam)
+		}
+	}
+
+	// 2. Dynamic Size Restriction from global_parameters Database Table (Unit: KB)
+	maxSizeStr := models.GetGlobalParam("MAX_UPLOAD_SIZE", "2048")
+	maxSizeKB, _ := strconv.ParseInt(maxSizeStr, 10, 64)
+	if size > maxSizeKB*1024 {
+		return fmt.Errorf("ukuran file melebihi batas maksimum (%s KB / %.2f MB)", maxSizeStr, float64(maxSizeKB)/1024.0)
+	}
+
+	return nil
+}
+
 
 func DownloadDocument(c *gin.Context) {
 	objectPath := c.Query("path")
 	if objectPath == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Path is required"})
+		return
+	}
+
+	// Security Enforcement (Item #18): Prevent Directory Traversal Attack
+	cleanPath := filepath.Clean(objectPath)
+	if strings.Contains(objectPath, "..") || strings.Contains(cleanPath, "..") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Akses ditolak: Deteksi manipulasi direktori (Directory Traversal Attack)"})
+		c.Abort()
 		return
 	}
 
@@ -1734,16 +1777,11 @@ func ExecuteApplication(c *gin.Context) {
 						contentType = "application/octet-stream"
 					}
 
-					// 1. Size Restriction
-					maxSizeStr := os.Getenv("MAX_UPLOAD_SIZE")
-					if maxSizeStr == "" {
-						maxSizeStr = "2048"
-					}
-					maxSizeKB, _ := strconv.ParseInt(maxSizeStr, 10, 64)
-					if file.Size > maxSizeKB*1024 {
-						fmt.Printf("File too large: %s (%d bytes)\n", file.Filename, file.Size)
+					// 1. Size & Extension Validation
+					if err := validateFileUpload(file.Filename, file.Size); err != nil {
+						fmt.Printf("File validation failed: %s - %v\n", file.Filename, err)
 						f.Close()
-						continue // Skip this too large file or handle accordingly
+						continue
 					}
 
 					// 2. Unique Filename
@@ -2407,11 +2445,8 @@ func SaveAspectResults(c *gin.Context) {
 						contentType = "application/octet-stream"
 					}
 					
-					// Size Restriction
-					maxSizeStr := os.Getenv("MAX_UPLOAD_SIZE")
-					if maxSizeStr == "" { maxSizeStr = "2048" }
-					maxSizeKB, _ := strconv.ParseInt(maxSizeStr, 10, 64)
-					if file.Size <= maxSizeKB*1024 {
+					// Size & Extension Restriction
+					if err := validateFileUpload(file.Filename, file.Size); err == nil {
 						ext := filepath.Ext(file.Filename)
 						baseName := strings.TrimSuffix(file.Filename, ext)
 						timestamp := time.Now().Format("150405.000")

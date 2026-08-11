@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"gorm.io/datatypes"
@@ -20,14 +21,15 @@ func RefreshParamCache(db *gorm.DB) {
 
 	newCache := make(map[string]string)
 	for _, p := range params {
-		newCache[p.ParamKey] = p.ParamValue
+		newCache[strings.TrimSpace(p.ParamKey)] = p.ParamValue
 	}
 	globalParamCache = newCache
 }
 
 // GetGlobalParam retrieves a parameter value from the cache or returns a default
 func GetGlobalParam(key string, defaultValue string) string {
-	if val, ok := globalParamCache[key]; ok {
+	cleanKey := strings.TrimSpace(key)
+	if val, ok := globalParamCache[cleanKey]; ok && val != "" {
 		return val
 	}
 	return defaultValue

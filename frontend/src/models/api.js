@@ -54,12 +54,7 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
     "X-App-Platform": appPlatform,
   };
 
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-  }
+  // Token is stored in Secure HttpOnly Cookie (Item #3), browser sends cookie automatically via credentials: 'include'
 
   if (!(body instanceof FormData)) {
     headers["Content-Type"] = "application/json";

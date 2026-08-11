@@ -86,21 +86,22 @@ func RateLimiter(paramKey string, defaultLimit int) gin.HandlerFunc {
 		}
 
 		ip := c.ClientIP()
+		clientKey := ip + ":" + paramKey
 		mu.Lock()
 		
-		if _, found := clients[ip]; !found {
-			clients[ip] = &client{lastSeen: time.Now(), count: 0}
+		if _, found := clients[clientKey]; !found {
+			clients[clientKey] = &client{lastSeen: time.Now(), count: 0}
 		}
 
 		// Reset count if last seen was more than a minute ago
-		if time.Since(clients[ip].lastSeen) > time.Minute {
-			clients[ip].count = 0
+		if time.Since(clients[clientKey].lastSeen) > time.Minute {
+			clients[clientKey].count = 0
 		}
 
-		clients[ip].lastSeen = time.Now()
-		clients[ip].count++
+		clients[clientKey].lastSeen = time.Now()
+		clients[clientKey].count++
 		
-		currentCount := clients[ip].count
+		currentCount := clients[clientKey].count
 		mu.Unlock()
 
 		if currentCount > limit {

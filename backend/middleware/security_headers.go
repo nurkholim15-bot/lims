@@ -58,19 +58,6 @@ func SecurityHeaders() gin.HandlerFunc {
 // dari environment variable ALLOWED_ORIGINS (format: koma-separated, tanpa spasi).
 // Contoh: ALLOWED_ORIGINS=http://lims.local:3000,http://lims.local:8082,https://lims.local
 func CORSWithWhitelist() gin.HandlerFunc {
-	// Baca whitelist dari env saat startup — tidak perlu restart jika env sudah di-load ulang
-	rawOrigins := os.Getenv("ALLOWED_ORIGINS")
-
-	allowedOrigins := make(map[string]bool)
-	if rawOrigins != "" {
-		for _, o := range strings.Split(rawOrigins, ",") {
-			trimmed := strings.TrimSpace(o)
-			if trimmed != "" {
-				allowedOrigins[trimmed] = true
-			}
-		}
-	}
-
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
 
@@ -78,6 +65,19 @@ func CORSWithWhitelist() gin.HandlerFunc {
 		if origin == "" {
 			c.Next()
 			return
+		}
+
+		rawOrigins := os.Getenv("ALLOWED_ORIGINS")
+		if rawOrigins == "" {
+			rawOrigins = "https://lims.local:3000,http://lims.local:3000,https://lims.local:8082,http://lims.local:8088,http://localhost:3000,https://lims.local,https://lims-d4551821.nip.io:8082"
+		}
+
+		allowedOrigins := make(map[string]bool)
+		for _, o := range strings.Split(rawOrigins, ",") {
+			trimmed := strings.TrimSpace(o)
+			if trimmed != "" {
+				allowedOrigins[trimmed] = true
+			}
 		}
 
 		// Periksa apakah origin ada di whitelist
@@ -88,7 +88,6 @@ func CORSWithWhitelist() gin.HandlerFunc {
 			c.Writer.Header().Set("Access-Control-Allow-Headers",
 				"Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, "+
 					"X-Simulator-Key, ngrok-skip-browser-warning, X-App-Version, X-App-Platform")
-			// Expose header agar frontend bisa membaca Authorization dari response
 			c.Writer.Header().Set("Access-Control-Expose-Headers", "Authorization")
 		}
 		// Origin tidak di whitelist: tidak set CORS header → browser akan blokir sendiri

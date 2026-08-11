@@ -161,9 +161,23 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
     const { name, files: selectedFiles } = e.target;
     if (selectedFiles && selectedFiles[0]) {
       const file = selectedFiles[0];
+      
+      // 1. Validate File Extension (Security Item #11)
+      const allowedExtsParam = appConfig.ALLOWED_UPLOAD_EXTENSIONS || ".pdf,.jpg,.jpeg,.png";
+      const fileExt = "." + file.name.split('.').pop().toLowerCase();
+      const allowedList = allowedExtsParam.split(',').map(ext => ext.trim().toLowerCase());
+      
+      const isAllowed = allowedList.some(ext => ext === fileExt || "." + ext === fileExt);
+      if (!isAllowed) {
+        showToast(`Ekstensi file "${file.name}" tidak diizinkan. Hanya file (${allowedExtsParam}) yang diperbolehkan.`, "error");
+        e.target.value = "";
+        return;
+      }
+
+      // 2. Validate File Size
       const maxSizeKB = parseInt(appConfig.MAX_UPLOAD_SIZE) || 2048;
       if (file.size / 1024 > maxSizeKB) {
-        showToast(`Ukuran file "${file.name}" melebihi batas ${(maxSizeKB / 1024).toFixed(1)} MB.`, "error");
+        showToast(`Ukuran file "${file.name}" melebihi batas ${(maxSizeKB / 1024).toFixed(1)} MB (${maxSizeKB} KB).`, "error");
         e.target.value = "";
         return;
       }
@@ -435,7 +449,7 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
 
             <div className="form-group full-width">
               <label>Surat Permohonan (PDF) {editingApp && <span style={{ fontSize: "0.7rem" }}>(Opsional)</span>} <span className="text-danger">*</span></label>
-              <input type="file" name="request_letter" accept=".pdf" onChange={(e) => handleFileChange(null, e)} required={!editingApp} />
+              <input type="file" name="request_letter" accept={appConfig.ALLOWED_UPLOAD_EXTENSIONS || ".pdf,.jpg,.jpeg,.png"} onChange={(e) => handleFileChange(null, e)} required={!editingApp} />
             </div>
 
             <div className="form-group full-width" style={{ marginTop: "1rem", padding: "1rem", background: "#f5f3ff", borderRadius: "12px", border: "1px solid #ddd6fe" }}>
@@ -604,11 +618,11 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
                 </div>
                 <div className="form-group">
                   <label>Dokumen Teknis (PDF)</label>
-                  <input type="file" name="factory_spec" accept=".pdf" onChange={(e) => handleFileChange(idx, e)} required={!editingApp} />
+                  <input type="file" name="factory_spec" accept={appConfig.ALLOWED_UPLOAD_EXTENSIONS || ".pdf,.jpg,.jpeg,.png"} onChange={(e) => handleFileChange(idx, e)} required={!editingApp} />
                 </div>
                 <div className="form-group">
                   <label>Kepemilikan (PDF)</label>
-                  <input type="file" name="quality_doc" accept=".pdf" onChange={(e) => handleFileChange(idx, e)} required={!editingApp} />
+                  <input type="file" name="quality_doc" accept={appConfig.ALLOWED_UPLOAD_EXTENSIONS || ".pdf,.jpg,.jpeg,.png"} onChange={(e) => handleFileChange(idx, e)} required={!editingApp} />
                 </div>
               </div>
             </div>

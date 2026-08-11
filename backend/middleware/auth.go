@@ -34,9 +34,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			}
 		}
 
-		// Fallback to Query Parameter if header and cookie are missing
-		if tokenString == "" {
-			tokenString = c.Query("token")
+		// Security Enforcement (Item #2): Block token transmission via URL query parameters
+		if c.Query("token") != "" {
+			views.Unauthorized(c, "Pengiriman token via URL Query Parameter dilarang untuk keamanan log")
+			c.Abort()
+			return
 		}
 
 		if tokenString == "" {

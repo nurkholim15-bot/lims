@@ -454,9 +454,7 @@ function App() {
         onLoginComplete={(tokenVal, userVal) => {
           localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(userVal));
-          if (tokenVal) {
-            localStorage.setItem("auth_token", tokenVal);
-          }
+          localStorage.removeItem("auth_token"); // Clean any legacy token in local storage for Item #3 security
           setToken("ACTIVE");
           setUser(userVal);
         }}
