@@ -1,0 +1,240 @@
+# =========================================================================
+# FILE CONFIGURATION: /etc/nginx/conf.d/lims.conf
+# =========================================================================
+
+# --- CLUSTER LOAD BALANCER BACKEND ---
+# Mendistribusikan request API ke dua instance Go backend (Port 8081 & 8091)
+upstream lims_backend_cluster {
+    server 127.0.0.1:8081 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8091 max_fails=3 fail_timeout=10s;
+}
+
+# --- CLUSTER LOAD BALANCER FRONTEND ---
+# Mendistribusikan request Frontend ke dua instance PM2 (Port 3000 & 3001)
+upstream lims_frontend_cluster {
+    server 127.0.0.1:3000 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:3001 max_fails=3 fail_timeout=10s;
+}
+
+# =========================================================================
+# BLOK SERVER 1: PORT 8082 (HTTPS - WEB CLIENT & SECURE ACCESS)
+# =========================================================================
+server {
+    listen 8082 ssl;
+    server_name lims-d4551821.nip.io;
+
+    # --- PENGATURAN TIMEOUT UNTUK OCR ---
+    proxy_read_timeout 300s;
+    proxy_connect_timeout 300s;
+    proxy_send_timeout 300s;
+    # ------------------------------------
+
+    # Path ke file sertifikat baru Anda
+    ssl_certificate /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+#    listen 8082 ssl;
+#    server_name lims.local localhost;
+
+    # --- SERTIFIKAT SSL ---
+#    ssl_certificate /etc/nginx/ssl/lims.local+2.pem;
+#    ssl_certificate_key /etc/nginx/ssl/lims.local+2-key.pem;
+#    ssl_protocols TLSv1.2 TLSv1.3;
+#    ssl_prefer_server_ciphers on;
+#    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # --- PENANGANAN REAL IP ---
+    set_real_ip_from 127.0.0.1;
+    real_ip_header X-Forwarded-For;
+    real_ip_recursive on;
+
+    # Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval';" always;
+
+    client_max_body_size 50M;
+
+    root /home/lims/lims1/frontend/dist;
+    index index.html;
+
+    # 1. Routing Frontend Web (Proxy ke Cluster PM2)
+    location / {
+        proxy_pass http://lims_frontend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # =========================================================================
+    # 2. Halaman Laporan GoAccess (Dilindungi Autentikasi Dinamis Backend via auth_request)
+    # =========================================================================
+    location = /report.html {
+        # Mengirim sub-request ke endpoint backend untuk memeriksa JWT Session & Role (nur / ADMIN)
+        auth_request /api/auth/check-report-access;
+        # Jika backend mengembalikan HTTP 200 OK, sajikan file dari alias berikut:
+        alias /home/lims/shared_reports/report.html; # <--- PASTIKAN MENUNJUK LANGSUNG KE FILE
+    }
+    # =========================================================================
+    # 2b. Redirect /report.html/ ke /report.html (Mengatasi isu trailing slash dari link)
+    # =========================================================================
+    location = /report.html/ {
+        return 301 $scheme://$http_host/report.html$is_args$args;
+    }
+
+
+    # 3. Lokasi Proxy Internal untuk Autentikasi Keamanan report.html
+    location = /api/auth/check-report-access {
+        internal; # Hanya bisa diakses secara internal oleh Nginx
+        proxy_pass http://lims_backend_cluster;
+        
+        # Optimasi performa: Jangan kirim body request ke backend
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        
+        # Meneruskan header otentikasi dari klien
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # 4. Proxy WebSocket untuk GoAccess Real-Time
+    location /ws {
+        proxy_pass http://127.0.0.1:7890;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+#
+    # 5. Proxy API ke Go Backend Cluster (Dukungan SSE Streaming AI Real-Time)
+    location /api {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # --- KONFIGURASI STREAMING AI & LONG-RUNNING REQUESTS ---
+        gzip off;                        # Matikan gzip kompresi Nginx khusus API agar stream SSE tidak tertahan
+        proxy_buffering off;             # Nonaktifkan buffering Nginx agar stream token AI terkirim real-time
+        proxy_cache off;                 # Nonaktifkan caching respons API
+        chunked_transfer_encoding on;    # Aktifkan chunked transfer encoding untuk SSE
+        proxy_connect_timeout 600s;      # Timeout koneksi hingga 10 menit
+        proxy_send_timeout 600s;         # Timeout pengiriman hingga 10 menit
+        proxy_read_timeout 600s;         # Timeout membaca stream AI hingga 10 menit
+    }
+
+    # 5b. Proxy Halaman Simulator ke Go Backend Cluster
+    location /simulator {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # 6. Penyajian Berkas Unggahan (Direct Alias)
+    location /uploads/ {
+        alias /home/lims/shared_uploads/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+#
+    # 7. Penyajian Folder Unduhan APK LIMS (Direct Alias)
+    location /downloads/ {
+        alias /home/lims/shared_downloads/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    access_log /var/log/nginx/lims_access.log upstream_monitoring;
+    error_log /var/log/nginx/lims_error.log;
+}
+
+# =========================================================================
+# BLOK SERVER 2: PORT 8087 (HTTP - WI-FI LOKAL MOBILE APP CLIENT)
+# Bebas dari kendala sertifikat SSL self-signed pada HP Android
+# =========================================================================
+server {
+    listen 8087;
+    server_name localhost 192.168.0.103 212.85.24.33; # Sesuaikan IP ini dengan IP Laptop Anda saat tersambung Wi-Fi
+
+    client_max_body_size 50M;
+
+    # 1. Proxy API ke Go Backend Cluster (Load Balancer ke Port 8081 & 8091 - Dukungan SSE Streaming AI)
+    location /api {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # --- KONFIGURASI STREAMING AI & LONG-RUNNING REQUESTS ---
+        gzip off;                        # Matikan gzip kompresi Nginx khusus API agar stream SSE tidak tertahan
+        proxy_buffering off;             # Nonaktifkan buffering Nginx agar stream token AI terkirim real-time
+        proxy_cache off;                 # Nonaktifkan caching respons API
+        chunked_transfer_encoding on;    # Aktifkan chunked transfer encoding untuk SSE
+        proxy_connect_timeout 600s;      # Timeout koneksi hingga 10 menit
+        proxy_send_timeout 600s;         # Timeout pengiriman hingga 10 menit
+        proxy_read_timeout 600s;         # Timeout membaca stream AI hingga 10 menit
+    }
+
+    # 2. Penyajian Berkas Unggahan (Direct Alias)
+    location /uploads/ {
+        alias /home/lims/shared_uploads/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # 3. Penyajian Folder Unduhan APK LIMS (Direct Alias)
+    location /downloads/ {
+        alias /home/lims/shared_downloads/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    access_log /var/log/nginx/lims_access.log upstream_monitoring;
+    error_log /var/log/nginx/lims_error.log;
+}
+
+# =========================================================================
+# BLOK SERVER TELEGRAM WEBHOOK: PORT 8443 (MENGGUNAKAN SERTIFIKAT KHUSUS IP)
+# =========================================================================
+server {
+    listen 8443 ssl;
+    server_name 212.85.24.33;
+
+    # Menggunakan sertifikat khusus IP
+    ssl_certificate /etc/nginx/ssl/telegram.crt;
+    ssl_certificate_key /etc/nginx/ssl/telegram.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # Teruskan request API ke backend cluster LIMS
+    location /api {
+        proxy_pass http://lims_backend_cluster;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+

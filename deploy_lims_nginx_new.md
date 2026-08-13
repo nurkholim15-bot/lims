@@ -547,10 +547,13 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        # Timeout settings
-        proxy_connect_timeout 90s;
-        proxy_send_timeout 90s;
-        proxy_read_timeout 90s;
+        # --- KONFIGURASI STREAMING AI & LONG-RUNNING REQUESTS ---
+        proxy_buffering off;             # Nonaktifkan buffering Nginx agar stream token AI terkirim real-time
+        proxy_cache off;                 # Nonaktifkan caching respons API
+        chunked_transfer_encoding on;    # Aktifkan chunked transfer encoding untuk SSE
+        proxy_connect_timeout 600s;      # Timeout koneksi hingga 10 menit
+        proxy_send_timeout 600s;         # Timeout pengiriman hingga 10 menit
+        proxy_read_timeout 600s;         # Timeout membaca stream AI hingga 10 menit
     }
 
     # 5b. Proxy Halaman Simulator ke Go Backend Cluster

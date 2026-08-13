@@ -320,6 +320,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     setShowAIModal(true); // Langsung buka modal untuk melihat efek ngetik
 
     try {
+      const token = localStorage.getItem("auth_token");
       const appVersion = import.meta.env.VITE_APP_VERSION || "1.0";
       const appPlatform = (typeof window !== "undefined" && window.Capacitor) ? window.Capacitor.getPlatform() : "Web";
       
@@ -328,6 +329,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         "X-App-Version": appVersion,
         "X-App-Platform": appPlatform,
       };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
 
       const response = await fetch(`${API_URL}/applications/${localApp.id}/generate-report`, {
         method: "POST",
@@ -351,11 +353,12 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       const updateUI = () => {
           let finalText = streamedText;
           if (sectionBText) {
-              const cIndex = streamedText.indexOf("C. Analisis Deviasi");
-              if (cIndex !== -1) {
-                  finalText = streamedText.substring(0, cIndex) + "\n" + sectionBText + "\n\n" + streamedText.substring(cIndex);
+              const match = streamedText.match(/C\.\s*Analisis\s+Deviasi/i);
+              if (match) {
+                  const cIndex = match.index;
+                  finalText = streamedText.substring(0, cIndex).trimEnd() + "\n\n" + sectionBText.trim() + "\n\n" + streamedText.substring(cIndex).trimStart();
               } else {
-                  finalText = streamedText + "\n\n" + sectionBText;
+                  finalText = streamedText ? (streamedText.trimEnd() + "\n\n" + sectionBText.trim()) : sectionBText.trim();
               }
           }
           setAiReportText(finalText);
@@ -371,9 +374,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           buffer = lines.pop(); // Simpan baris yang belum selesai ke buffer
 
           for (const line of lines) {
-            if (line.startsWith("event:")) {
-                currentEvent = line.substring(6).trim();
-            } else if (line.startsWith("data:")) {
+            const trimmedLine = line.trim();
+            if (trimmedLine.startsWith(":") || trimmedLine === "") {
+                continue;
+            }
+            if (trimmedLine.startsWith("event:")) {
+                currentEvent = trimmedLine.substring(6).trim();
+            } else if (trimmedLine.startsWith("data:")) {
               let data = line.substring(5).trim(); // Hapus "data:" (5 karakter) dan spasi
               if (data.startsWith(" ")) data = data.substring(1);
               
@@ -399,6 +406,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               }
               
               updateUI();
+              // Yield thread ke DOM paint engine agar efek mengetik live terlihat real-time di layar
+              await new Promise(resolve => setTimeout(resolve, 10));
             }
           }
         }

@@ -288,9 +288,15 @@ function App() {
       try {
         if (isWorkflow || isDashboard) {
            if (isQuery) {
-               // Special case for query: clear data to wait for manual search
+               // Special case for query: clear data to wait for manual search and reset status filter to 'All'
                setApplications([]);
                setApplicationsTotal(0);
+               setSearchFilters({ 
+                 query: "", 
+                 status: "All", 
+                 month: new Date().getMonth() + 1, 
+                 year: new Date().getFullYear() 
+               });
                setFetchHistory(prev => ({ ...prev, [activePath]: now }));
             } else if (isDashboard) {
                // Dashboard handles its own stats, don't fetch applications list

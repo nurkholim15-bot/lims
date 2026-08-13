@@ -2441,10 +2441,14 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        # Timeout settings
-        proxy_connect_timeout 90s;
-        proxy_send_timeout 90s;
-        proxy_read_timeout 90s;
+        # --- KONFIGURASI STREAMING AI & LONG-RUNNING REQUESTS ---
+        gzip off;                        # Matikan gzip kompresi Nginx khusus API agar stream SSE tidak tertahan
+        proxy_buffering off;             # Nonaktifkan buffering Nginx agar stream token AI terkirim real-time
+        proxy_cache off;                 # Nonaktifkan caching respons API
+        chunked_transfer_encoding on;    # Aktifkan chunked transfer encoding untuk SSE
+        proxy_connect_timeout 600s;      # Timeout koneksi hingga 10 menit
+        proxy_send_timeout 600s;         # Timeout pengiriman hingga 10 menit
+        proxy_read_timeout 600s;         # Timeout membaca stream AI hingga 10 menit
     }
 
     # 5b. Proxy Halaman Simulator ke Go Backend Cluster
@@ -3111,8 +3115,10 @@ Jika Anda belum memiliki kunci Groq atau kunci lama Anda sudah kedaluwarsa, ikut
 
 #### Panduan Instalasi & Konfigurasi LLM Lokal (Ollama - Qwen 2.5 3B / Llama 3.1 8B) di VPS
 
-Untuk menjalankan AI secara offline dan mandiri pada server VPS Anda:
-*   **Jika VPS Anda menggunakan CPU-only (RAM terbatas)**: Sangat direkomendasikan menggunakan model **Qwen 2.5 (3B)** karena sangat cepat dijalankan di CPU, ramah RAM, dan memiliki pemahaman Bahasa Indonesia yang luar biasa untuk ukurannya. Ini mencegah kendala *timeout*.
+##### Prinsip Kerahasiaan & Keamanan Data (100% On-Premises Local AI)
+Untuk menjamin **kerahasiaan data pengujian laboratorium (Zero External Data Leakage)**, sistem LIMS mendukung penggunaan **LLM Lokal On-Premises via Ollama**. Seluruh proses pengolahan data teknis, skor kelayakan, dan rekomendasi laporan diolah 100% secara lokal di dalam server VPS milik instansi tanpa pernah mengirimkan paket data ke pihak ketiga atau server cloud luar.
+
+*   **Jika VPS Anda menggunakan CPU-only (RAM terbatas)**: Sangat direkomendasikan menggunakan model **Qwen 2.5 (3B)** karena sangat cepat dijalankan di CPU, ramah RAM (~1.9 GB), dan memiliki pemahaman Bahasa Indonesia yang luar biasa untuk ukurannya. Ini mencegah kendala *timeout*.
 *   **Jika VPS Anda memiliki GPU/vRAM Besar (8GB+ VRAM)**: Model **Llama 3.1 (8B)** adalah pilihan terbaik untuk akurasi dan kompleksitas laporan tingkat tinggi.
 
 ##### Rekomendasi Pilihan Model LLM Lokal (Offline)
@@ -3121,7 +3127,7 @@ Tergantung pada kapasitas vRAM GPU atau memori VPS Anda, berikut adalah beberapa
 
 | Model | Ukuran Parameter | Kebutuhan vRAM | Kelebihan | Perintah Unduh |
 | :--- | :--- | :--- | :--- | :--- |
-| **Qwen 2.5 (3B)** *(Rekomendasi CPU)* | 3 Miliar | **~4 GB (RAM/vRAM)** | Sangat ringan, cepat di CPU biasa, dan pemahaman Bahasa Indonesia sangat baik. | `ollama pull qwen2.5:3b` |
+| **Qwen 2.5 (3B)** *(Rekomendasi Utama CPU)* | 3 Miliar | **~4 GB (RAM/vRAM)** | Sangat ringan (~1.9GB), cepat di CPU biasa, dan pemahaman Bahasa Indonesia sangat baik. | `ollama pull qwen2.5:3b` |
 | **Llama 3.2 (3B)** | 3 Miliar | **~4 GB (RAM/vRAM)** | Ringan, cepat, dan robust untuk resource menengah. | `ollama pull llama3.2` |
 | **Qwen 2.5 (7B)** | 7 Miliar | **~8 GB vRAM** | Sangat cerdas dalam memahami Bahasa Indonesia dan struktur format JSON. | `ollama pull qwen2.5:7b` |
 | **Llama 3.1 (8B)** *(Rekomendasi GPU)* | 8 Miliar | **~8 GB vRAM** | Model standar industri, sangat cerdas, kreatif, dan robust untuk penyusunan laporan. | `ollama pull llama3.1` |
@@ -3145,19 +3151,72 @@ ollama pull qwen2.5:3b
 ollama pull nomic-embed-text
 ```
 
-##### 3. Konfigurasi Berkas `.env` LIMS di VPS
-Sesuaikan berkas konfigurasi agar menembak ke port lokal Ollama (`11434`):
+##### 2b. Optimasi Kecepatan, RAM Keep-Alive (`OLLAMA_KEEP_ALIVE=-1`) & Alokasi Resource CPU
+Secara *default*, Ollama menghapus model dari memory RAM jika tidak ada aktivitas selama 5 menit (*idle*). Hal ini menyebabkan permintaan berikutnya harus membaca ulang berkas model 1.9GB dari disk ke RAM (memakan waktu ~35–45 detik).
+
+**A. Mengunci Model di RAM VPS (`OLLAMA_KEEP_ALIVE=-1`) & Prioritas CPU (`Nice=10`):**
+1. Buka berkas konfigurasi service Ollama di VPS:
+   ```bash
+   sudo nano /etc/systemd/system/ollama.service
+   ```
+2. Tambahkan variabel `OLLAMA_KEEP_ALIVE=-1`, `OMP_NUM_THREADS=6` (isolasi 2 cores untuk LIMS), dan `Nice=10` di bawah blok `[Service]`:
+   ```ini
+   [Service]
+   Environment="OLLAMA_KEEP_ALIVE=-1"
+   Environment="OLLAMA_NUM_PARALLEL=1"
+   Environment="OMP_NUM_THREADS=6"
+   Nice=10
+   ```
+3. Simpan berkas, lalu *reload* dan *restart* service:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart ollama
+   ```
+
+##### 2c. Arsitektur Produksi: Dedicated VM Khusus Ollama (Best Practice Production)
+Untuk lingkungan produksi (*Production Environment*), sangat direkomendasikan membuat **VM Terpisah (Dedicated VM)** khusus untuk Ollama AI Engine.
+
+**Keuntungan Dedicated VM:**
+- **Zero Degradation**: Beban pemrosesan AI 100% terisolasi di VM terpisah, sehingga performa LIMS App Server dan Database PostgreSQL tidak akan terpengaruh sama sekali.
+- **Respons Super Cepat (1-3 Detik)**: Dedicated VM dapat mengalokasikan 100% CPU/GPU tanpa perlu berbagi dengan proses lain, sehingga stream AI langsung keluar dalam **1 s/d 3 detik**.
+
+**Konfigurasi Dedicated VM Ollama:**
+1. Di Dedicated VM Ollama, izinkan listener IP jaringan privat dengan menambahkan `OLLAMA_HOST=0.0.0.0` pada `/etc/systemd/system/ollama.service`:
+   ```ini
+   [Service]
+   Environment="OLLAMA_HOST=0.0.0.0"
+   Environment="OLLAMA_KEEP_ALIVE=-1"
+   Environment="OMP_NUM_THREADS=8"
+   ```
+2. Di LIMS Application Server, arahkan berkas `.env` ke IP Dedicated VM Ollama:
+   ```env
+   # --- KOORDINAT MODEL AI LOKAL (DEDICATED OLLAMA VM) ---
+   AI_API_URL=http://192.168.10.50:11434/v1   # (Ganti dengan IP Dedicated VM Anda)
+   AI_API_KEY=none
+   AI_MODEL=qwen2.5:1.5b                       # (Atau qwen2.5:3b)
+   AI_NUM_THREAD=8
+   AI_NUM_CTX=512
+
+   # --- KOORDINAT EMBEDDING LOKAL (DEDICATED OLLAMA VM) ---
+   AI_EMBEDDING_API_URL=http://192.168.10.50:11434
+   AI_EMBEDDING_MODEL=nomic-embed-text
+   ```
+
+##### 3. Konfigurasi Berkas `.env` LIMS di VPS (Single Server)
+Jika menggunakan satu server VPS yang sama, sesuaikan berkas konfigurasi `.env`:
 1.  Buka berkas konfigurasi `.env` instansi Anda:
     ```bash
     sudo nano /home/lims/lims1/backend/.env
     sudo nano /home/lims/lims2/backend/.env
     ```
-2.  Ubah bagian **AI Integration** menjadi konfigurasi lokal berikut (sesuaikan model dengan yang di-pull):
+2.  Ubah bagian **AI Integration** menjadi konfigurasi lokal berikut:
     ```env
-    # --- KOORDINAT MODEL AI LOKAL (OLLAMA) ---
+    # --- KOORDINAT MODEL AI LOKAL (OLLAMA SINGLE SERVER) ---
     AI_API_URL=http://127.0.0.1:11434/v1
     AI_API_KEY=none
-    AI_MODEL=qwen2.5:3b   # (Ganti ke llama3.1 jika menggunakan Llama 3.1)
+    AI_MODEL=qwen2.5:1.5b   # (Atau qwen2.5:3b)
+    AI_NUM_THREAD=6
+    AI_NUM_CTX=512
 
     # --- KOORDINAT EMBEDDING LOKAL (OLLAMA) ---
     AI_EMBEDDING_API_URL=http://127.0.0.1:11434
@@ -3168,6 +3227,47 @@ Sesuaikan berkas konfigurasi agar menembak ke port lokal Ollama (`11434`):
     sudo systemctl restart lims-backend-8081.service
     sudo systemctl restart lims-backend-8091.service
     ```
+
+##### 4. Konfigurasi Nginx Reverse Proxy untuk Real-Time SSE Streaming (`/etc/nginx/conf.d/lims.conf`)
+Agar aliran token AI terkirim secara *live* tanpa tertahan buffer Nginx:
+```nginx
+location /api {
+    proxy_pass http://lims_backend_cluster;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # --- KONFIGURASI STREAMING AI & LONG-RUNNING REQUESTS ---
+    gzip off;                        # Matikan gzip kompresi Nginx khusus API agar stream SSE tidak tertahan
+    proxy_buffering off;             # Nonaktifkan buffering Nginx agar stream token AI terkirim real-time
+    proxy_cache off;                 # Nonaktifkan caching respons API
+    chunked_transfer_encoding on;    # Aktifkan chunked transfer encoding untuk SSE
+    proxy_connect_timeout 600s;      # Timeout koneksi hingga 10 menit
+    proxy_send_timeout 600s;         # Timeout pengiriman hingga 10 menit
+    proxy_read_timeout 600s;         # Timeout membaca stream AI hingga 10 menit
+}
+```
+
+##### 5. Panduan Investigasi & Tracing SSE Streaming (Debugging End-to-End)
+Jika terjadi kendala alur streaming (misalnya teks muncul sekaligus di akhir atau terjadi time-out), ikuti alur investigasi berjenjang berikut:
+
+1. **Investigasi Lapisan 1: Chrome / Browser DevTools (F12)**:
+   - Buka **DevTools (F12)** $\rightarrow$ tab **Network** $\rightarrow$ klik permintaan `generate-report` $\rightarrow$ buka tab **EventStream**.
+   - **Hasil A**: Jika event `message` muncul berkala satu demi satu di DevTools tetapi UI tidak bergerak $\rightarrow$ Kendala ada di lapisan React UI (`AppDetail.jsx`).
+   - **Hasil B**: Jika tab EventStream kosong selama 45 detik lalu semua data keluar bersamaan $\rightarrow$ Kendala ada di Nginx buffering atau Ollama cold-start loading.
+
+2. **Investigasi Lapisan 2: Tracing `curl` Unbuffered di Terminal VPS**:
+   - Jalankan perintah berikut di terminal VPS untuk melihat *raw byte stream* tanpa buffer:
+     ```bash
+     curl -N -v -H "Authorization: Bearer <TOKEN_ANDA>" -X POST https://lims-d4551821.nip.io:8082/api/applications/1/generate-report
+     ```
+   - Opsi `-N` (`--no-buffer`) memaksa `curl` menampilkan setiap baris token begitu diterima dari Nginx.
+   - Jika `curl` langsung ke port Go (`http://127.0.0.1:8081/api/...`) berjalan lancar namun via domain Nginx tertahan $\rightarrow$ Pastikan `gzip off;` dan `proxy_buffering off;` sudah aktif di `/etc/nginx/conf.d/lims.conf` lalu jalankan `sudo systemctl reload nginx`.
 
 ---
 

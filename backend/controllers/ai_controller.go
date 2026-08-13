@@ -17,11 +17,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"runtime"
 )
 
 type ChatCompletionMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
+}
+
+type OllamaOptions struct {
+	NumCtx     int `json:"num_ctx,omitempty"`
+	NumThread  int `json:"num_thread,omitempty"`
+	NumPredict int `json:"num_predict,omitempty"`
 }
 
 type ChatCompletionRequest struct {
@@ -30,14 +37,62 @@ type ChatCompletionRequest struct {
 	Temperature float64                 `json:"temperature"`
 	MaxTokens   int                     `json:"max_tokens,omitempty"`
 	Stream      bool                    `json:"stream,omitempty"`
+	Options     *OllamaOptions          `json:"options,omitempty"`
 }
 
-type ChatCompletionStreamResponse struct {
+type GenericStreamResponse struct {
 	Choices []struct {
 		Delta struct {
-			Content string `json:"content"`
+			Content          string `json:"content"`
+			ReasoningContent string `json:"reasoning_content"`
 		} `json:"delta"`
+		Message struct {
+			Content string `json:"content"`
+		} `json:"message"`
+		Text string `json:"text"`
 	} `json:"choices"`
+	Response string `json:"response"`
+	Message  struct {
+		Content string `json:"content"`
+	} `json:"message"`
+	Candidates []struct {
+		Content struct {
+			Parts []struct {
+				Text string `json:"text"`
+			} `json:"parts"`
+		} `json:"content"`
+	} `json:"candidates"`
+}
+
+func extractContentFromStreamChunk(data string) string {
+	var resp GenericStreamResponse
+	if err := json.Unmarshal([]byte(data), &resp); err != nil {
+		return ""
+	}
+	if len(resp.Choices) > 0 {
+		if resp.Choices[0].Delta.Content != "" {
+			return resp.Choices[0].Delta.Content
+		}
+		if resp.Choices[0].Delta.ReasoningContent != "" {
+			return resp.Choices[0].Delta.ReasoningContent
+		}
+		if resp.Choices[0].Message.Content != "" {
+			return resp.Choices[0].Message.Content
+		}
+		if resp.Choices[0].Text != "" {
+			return resp.Choices[0].Text
+		}
+	}
+	if resp.Response != "" {
+		return resp.Response
+	}
+	if resp.Message.Content != "" {
+		return resp.Message.Content
+	}
+	if len(resp.Candidates) > 0 && len(resp.Candidates[0].Content.Parts) > 0 {
+		return resp.Candidates[0].Content.Parts[0].Text
+	}
+	return ""
 }
 
 type ChatCompletionResponse struct {
@@ -310,32 +365,19 @@ func GenerateReport(c *gin.Context) {
 		failedAspectsText = "- Tidak ada (Semua aspek memenuhi threshold)\n"
 	}
 
-	// Build Prompts
-	systemPrompt := "Anda adalah asisten kecerdasan buatan penulisan laporan evaluasi teknis laboratorium (Technical Analyst) untuk laboratorium pengujian peralatan.\n" +
-		"Tugas Anda adalah membuat draf laporan evaluasi kelayakan teknis yang mendalam (Analyst Executive Summary & Technical Recommendations) berdasarkan data hasil uji peralatan yang diberikan.\n" +
-		"Sebagai analis teknis, Anda harus memberikan ulasan profesional dalam Bahasa Indonesia yang baku dan formal.\n\n" +
-		"Aturan Format Penulisan Laporan (Wajib Diikuti Ketat):\n" +
-		"1. DILARANG keras menggunakan format tabel Markdown (seperti menggunakan karakter '|' atau garis '---'). Gunakan bentuk teks paragraf naratif dan daftar poin bernomor.\n" +
-		"2. SELURUH isi laporan wajib menggunakan Bahasa Indonesia yang formal dan baku. Dilarang keras menghasilkan tindakan perbaikan, dampak lapangan, atau analisis dalam bahasa Inggris (misalnya: dilarang menulis 'Upgrade equipment', wajib menggunakan 'Tingkatkan kualitas peralatan').\n" +
-		"3. Ganti penomoran judul utama (heading) dengan huruf kapital A., C., D. (DILARANG membuat Bagian B karena Bagian B akan dibuat otomatis oleh sistem):\n" +
+	// Build Prompts (Streamlined to minimize CPU prefill latency while maintaining strict formatting)
+	systemPrompt := "Anda adalah Technical Analyst laboratorium pengujian peralatan. Tulis draf laporan evaluasi teknis dalam Bahasa Indonesia yang formal dan baku.\n\n" +
+		"Aturan Format (Wajib Diikuti):\n" +
+		"1. DILARANG keras menggunakan format tabel Markdown. Gunakan teks paragraf naratif dan daftar poin bernomor.\n" +
+		"2. DILARANG membuat Bagian B (Bagian B dibuat otomatis oleh sistem).\n" +
+		"3. Gunakan penomoran judul utama (heading) berikut:\n" +
 		"   A. Ringkasan Eksekutif Analis (Executive Summary)\n" +
 		"   C. Analisis Deviasi Teknis & Dampak Operasional\n" +
 		"   D. Saran Perbaikan & Tindak Lanjut Spesifik\n" +
-		"4. Di bawah judul C dan D, gunakan pengelompokan aspek dengan angka (1., 2., 3., dst.), dan rincian parameter menggunakan desimal berjenjang (1.1., 1.2., 2.1., dst.). Jangan menggunakan simbol list seperti '*' atau '+'.\n" +
-		"5. Tuliskan laporan secara ringkas, padat, dan langsung pada intinya. DILARANG KERAS mengulang-ulang daftar saran atau kalimat rekomendasi perbaikan.\n" +
-		"6. Jangan menyamakan atau menukar antara 'Skor' dengan 'Hasil' (persentase hasil pengukuran). Gunakan Nilai Skor (seperti 50) sebagai nilai skor parameter. Cek threshold kelulusan dinamis masing-masing aspek yang diberikan di data transaksi (misalnya threshold untuk aspek KONPE adalah 60.00, jika skor aspek KONPE adalah 59.96 maka KONPE di bawah threshold dan merupakan penyebab utama status TIDAK LULUS). Jangan asumsikan threshold 65 untuk seluruh aspek.\n\n" +
-		"Pedoman Konten Analisis (Wajib Diikuti Ketat):\n" +
-		"1. Bagian A (Ringkasan Eksekutif):\n" +
-		"   - Paparkan apakah peralatan layak secara keseluruhan.\n" +
-		"   - Sebutkan total nilai akhir, status kelulusan, dan jika statusnya TIDAK LULUS, sebutkan secara spesifik HANYA aspek yang terdaftar di bagian [ASPEK YANG BENAR-BENAR GAGAL / DI BAWAH THRESHOLD] sebagai alasan ketidaklulusan. DILARANG KERAS menyatakan aspek lain yang tidak ada di daftar tersebut sebagai tidak memenuhi standar (contoh: KEPEN dengan skor 79.23 dan threshold 60.00 adalah LULUS/MEMENUHI standar secara aspek, dilarang menyebut KEPEN tidak memenuhi standar meskipun parameter KELCH di dalamnya gagal. Kegagalan parameter KELCH hanya dibahas di Bagian C/D, bukan sebagai penyebab kegagalan aspek KEPEN di Bagian A).\n" +
-		"2. Bagian C (Analisis Deviasi Teknis & Dampak Operasional):\n" +
-		"   - HANYA cantumkan aspek dan parameter yang berstatus TIDAK MEMENUHI standar (yang ada di dalam data yang diberikan).\n" +
-		"   - Jelaskan dampak operasional/taktis di lapangan secara detail jika deviasi tersebut tidak diperbaiki.\n" +
-		"3. Bagian D (Saran Perbaikan):\n" +
-		"   - HANYA cantumkan saran perbaikan untuk parameter yang TIDAK MEMENUHI standar.\n" +
-		"   - Gunakan format terstruktur: '[AspekNumber].[ParamNumber]. Perbaiki [Nama Parameter] ([Kode Parameter]) dengan [tindakan perbaikan spesifik dalam Bahasa Indonesia].'\n" +
-		"   - Contoh: '1.1. Perbaiki Konstruksi-Fasilitas Perlindungan (KOFAS) dengan memperkuat engsel pintu pelindung.'\n\n" +
-		"Gunakan bahasa Indonesia yang formal, teknis, lugas, obyektif, dan berwibawa. Jangan mengarang informasi di luar data hasil uji yang disediakan."
+		"4. Untuk Bagian C & D, gunakan pengelompokan aspek dengan angka (1., 2.) dan rincian parameter dengan desimal (1.1., 1.2.).\n" +
+		"5. Tulis secara ringkas dan padat. HANYA analisis parameter yang berstatus TIDAK MEMENUHI standar pada data.\n" +
+		"6. Di Bagian A, sebutkan nilai akhir, status kelulusan, dan HANYA sebutkan aspek yang terdaftar di [ASPEK YANG BENAR-BENAR GAGAL].\n" +
+		"7. Gunakan Bahasa Indonesia yang formal (dilarang bahasa Inggris)."
 
 	var userPrompt strings.Builder
 	userPrompt.WriteString("[INFORMASI TRANSAKSI]\n")
@@ -361,21 +403,10 @@ func GenerateReport(c *gin.Context) {
 	userPrompt.WriteString(failedAspectsText)
 	userPrompt.WriteString("\n")
 
-	userPrompt.WriteString("[DATA TRANSAKSI DETAIL PARAMETER HASIL UJI YANG GAGAL / DEVIASE (HANYA INI YANG DIANALSIS)]\n")
+	userPrompt.WriteString("[DATA TRANSAKSI DETAIL PARAMETER HASIL UJI YANG GAGAL / DEVIASE]\n")
 	userPrompt.WriteString(resultsText.String())
 
-	userPrompt.WriteString("[FORMAT OUTPUT YANG WAJIB DIIKUTI]\n")
-	userPrompt.WriteString("Tulis laporan persis dengan struktur berikut (dilarang menggunakan tabel Markdown, '#' atau '##', dan DILARANG menuliskan Bagian B):\n\n")
-	userPrompt.WriteString("A. Ringkasan Eksekutif Analis (Executive Summary)\n")
-	userPrompt.WriteString("   (Tulis ulasan ringkasan eksekutif kelayakan secara naratif dalam Bahasa Indonesia, sebutkan status kelulusan, nilai gabungan, dan jelaskan detail aspek mana saja yang berada di bawah threshold sehingga menyebabkan status tidak lulus).\n\n")
-	userPrompt.WriteString("C. Analisis Deviasi Teknis & Dampak Operasional\n")
-	userPrompt.WriteString("   (Daftar parameter yang TIDAK MEMENUHI standar saja, kelompokkan per aspek dengan format):\n")
-	userPrompt.WriteString("   1. [Nama Aspek] ([Kode Aspek]):\n")
-	userPrompt.WriteString("      1.1. [Nama Parameter] ([Kode Parameter]) - Skor: [Skor] (Tidak Memenuhi standar) - Dampak: [Dampak operasional lapangan jika tidak diperbaiki]\n\n")
-	userPrompt.WriteString("D. Saran Perbaikan & Tindak Lanjut Spesifik\n")
-	userPrompt.WriteString("   (Daftar saran perbaikan untuk parameter yang TIDAK MEMENUHI standar saja, dengan format):\n")
-	userPrompt.WriteString("   1. [Nama Aspek] ([Kode Aspek]):\n")
-	userPrompt.WriteString("      1.1. Perbaiki [Nama Parameter] ([Kode Parameter]) dengan [tindakan perbaikan spesifik dalam Bahasa Indonesia].\n")
+	userPrompt.WriteString("\nTulis laporan persis dengan struktur A, C, dan D secara ringkas dalam Bahasa Indonesia.\n")
 
 	// Get max tokens from database or fallback to cache/default (1000)
 	maxTokens := 1000
@@ -391,7 +422,21 @@ func GenerateReport(c *gin.Context) {
 		}
 	}
 
-	// Call OpenAI-compatible service with Stream enabled
+	numCtx := 512
+	if val := os.Getenv("AI_NUM_CTX"); val != "" {
+		if c, err := strconv.Atoi(val); err == nil && c > 0 {
+			numCtx = c
+		}
+	}
+
+	numThread := runtime.NumCPU()
+	if val := os.Getenv("AI_NUM_THREAD"); val != "" {
+		if t, err := strconv.Atoi(val); err == nil && t > 0 {
+			numThread = t
+		}
+	}
+
+	// Call OpenAI-compatible service with Stream enabled & Ollama CPU options
 	payload := ChatCompletionRequest{
 		Model:       modelName,
 		Messages:    []ChatCompletionMessage{
@@ -401,6 +446,11 @@ func GenerateReport(c *gin.Context) {
 		Temperature: 0.2,
 		MaxTokens:   maxTokens,
 		Stream:      true, // Enable streaming
+		Options: &OllamaOptions{
+			NumCtx:     numCtx,
+			NumThread:  numThread,
+			NumPredict: maxTokens,
+		},
 	}
 
 	jsonBytes, err := json.Marshal(payload)
@@ -427,6 +477,10 @@ func GenerateReport(c *gin.Context) {
 	c.Writer.Header().Set("X-Accel-Buffering", "no") // Mencegah Nginx/Vite dev server melakukan buffering
 	c.Writer.Flush()
 
+	// Send 2KB initial whitespace comment padding to force Nginx & proxies to immediately flush HTTP headers to browser client
+	c.Writer.Write([]byte(": " + strings.Repeat(" ", 2048) + "\n\n"))
+	c.Writer.Flush()
+
 	// Send Go-generated Section B as a special event to the frontend immediately!
 	c.SSEvent("sectionB", map[string]string{"text": goSectionB})
 	c.Writer.Flush()
@@ -434,13 +488,33 @@ func GenerateReport(c *gin.Context) {
 	// Disable HTTP client timeout for streaming, let the connection stay open
 	client := &http.Client{Timeout: 0}
 	
-	// Add context with timeout so it doesn't hang forever connecting to Groq/Ollama
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	// Add context with timeout (5 mins) tied to request context so it cancels if client disconnects
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 300*time.Second)
 	defer cancel()
 	req = req.WithContext(ctx)
 
+	// Heartbeat ticker to keep Nginx & browser connection alive during model cold-start / loading
+	stopHeartbeat := make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(3 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				// Send SSE comment ping to prevent proxy/Nginx timeout while waiting for LLM response
+				c.Writer.Write([]byte(": ping\n\n"))
+				c.Writer.Flush()
+			case <-stopHeartbeat:
+				return
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
 	fmt.Println("[AI Stream] Menghubungi API AI:", fullURL)
 	resp, err := client.Do(req)
+	close(stopHeartbeat) // Stop heartbeat once response headers are received from LLM
 	fmt.Println("[AI Stream] Respons API diterima. Error:", err)
 
 	if err != nil {
@@ -459,34 +533,27 @@ func GenerateReport(c *gin.Context) {
 		return
 	}
 
-	// Read stream from LLM
+	// Read stream from LLM (supports OpenAI, Groq, Ollama, Gemini, Reasoning models)
 	scanner := bufio.NewScanner(resp.Body)
 	for scanner.Scan() {
-		line := scanner.Text()
-		if line == "" {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || line == "data: [DONE]" {
+			if line == "data: [DONE]" {
+				break
+			}
 			continue
 		}
-		if line == "data: [DONE]" {
-			break
+
+		rawJSON := line
+		if strings.HasPrefix(line, "data: ") {
+			rawJSON = strings.TrimPrefix(line, "data: ")
 		}
 
-		if strings.HasPrefix(line, "data: ") {
-			data := strings.TrimPrefix(line, "data: ")
-			var streamResp ChatCompletionStreamResponse
-			if err := json.Unmarshal([]byte(data), &streamResp); err == nil {
-				if len(streamResp.Choices) > 0 {
-					content := streamResp.Choices[0].Delta.Content
-					if content != "" {
-						// Stream the content chunk to the frontend securely via JSON
-						fmt.Print(content) // Cetak ke terminal Go
-						c.SSEvent("message", map[string]string{"text": content})
-						c.Writer.Flush()
-					}
-				}
-			} else {
-				// Fallback log jika gagal parsing (misalnya format Ollama berbeda)
-				fmt.Println("\n[AI Stream Error] Gagal parse chunk:", err, "\nRaw data:", data)
-			}
+		content := extractContentFromStreamChunk(rawJSON)
+		if content != "" {
+			fmt.Print(content) // Cetak ke terminal Go
+			c.SSEvent("message", map[string]string{"text": content})
+			c.Writer.Flush()
 		}
 	}
 

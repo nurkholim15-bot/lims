@@ -30,7 +30,7 @@ const WorkflowPage = ({ appConfig, apps = [], setApps, fetchApplications, stage,
 
   const [filters, setFilters] = useState({ 
     query: "", 
-    status: targetStatus || "All", 
+    status: isGlobalSearch && stage === "query" ? "All" : (targetStatus || "All"), 
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
     isGlobal: isGlobalSearch
@@ -38,7 +38,9 @@ const WorkflowPage = ({ appConfig, apps = [], setApps, fetchApplications, stage,
 
   // Sync internal filters with targetStatus when stage changes
   useEffect(() => {
-    if (isFixedStage && targetStatus) {
+    if (stage === "query") {
+      setFilters(prev => ({ ...prev, status: "All" }));
+    } else if (isFixedStage && targetStatus) {
       setFilters(prev => ({ ...prev, status: targetStatus }));
     }
   }, [stage, targetStatus, isFixedStage]);
