@@ -3417,97 +3417,204 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
    ```
 
-##### 7. Backup & Restore Database (pg_dump & pg_restore)
-LIMS secara bawaan menyediakan fitur *Backup & Restore* melalui UI halaman Maintenance. Namun, administrator sistem direkomendasikan untuk melakukan backup terjadwal secara mandiri menggunakan utilitas bawaan PostgreSQL.
+##### 7. Backup & Restore Database PostgreSQL (Web UI, CLI, & Windows/Linux)
+LIMS menyediakan dua metode pencadangan (*backup*) dan pemulihan (*restore*) data: secara native melalui Web UI Admin (halaman *Database Maintenance*) serta secara langsung menggunakan utilitas bawaan PostgreSQL (`pg_dump`, `pg_restore`, dan `psql`) di lingkungan **Linux** maupun **Windows**.
+
+###### Format File Backup yang Didukung
+1. **Custom Binary Archive (`.dump` / `-F c`) [Sangat Direkomendasikan]**:
+   - File dikompresi secara biner oleh PostgreSQL.
+   - Ukuran file jauh lebih kecil dan aman.
+   - Mendukung fitur pemulihan parsial, penyusunan ulang tabel, serta eksekusi *restore* paralel (`pg_restore -j`).
+   - Mendukung opsi penimpaan otomatis (`--clean --if-exists`) serta pengabaian pemilik lama (`-O -x`).
+2. **Plain Text SQL (`.sql` / `-F p`)**:
+   - Skrip teks SQL standar yang dapat dibaca manusia (*human-readable*).
+   - Dipulihkan menggunakan utilitas `psql -f`.
+
+---
+
+###### Opsi 1: Backup & Restore via Web UI Application (Admin Dashboard)
+Fitur ini dapat diakses oleh pengguna bertipe **ADMIN** pada menu **Database Management** (`/welcome` $\rightarrow$ Database Management $\rightarrow$ Tab BACKUP / RESTORE).
+
+1. **Mekanisme Backup via Web UI (`GET /api/management/db/backup`)**:
+   - Pengguna memilih format yang diinginkan: **Custom Binary (.dump)** atau **Plain Text (.sql)**.
+   - Backend Golang (`controllers/database_controller.go`) mendeteksi path `pg_dump` pada sistem (PATH / Program Files Windows / `/usr/lib/postgresql`) dan mengeksekusi proses dump secara *real-time*.
+   - File hasil backup otomatis tersimpan di folder `public/uploads/` server dan langsung diunduh melalui browser pengguna.
+
+2. **Mekanisme Restore via Web UI & Pemilihan File Server (`GET /api/management/db/backups` & `POST /api/management/db/restore`)**:
+   - **Daftar File Backup Server**: Pada tab **RESTORE**, sistem secara otomatis menampilkan tabel seluruh file cadangan yang ada di folder server (`public/uploads/`), contohnya `lims_backup_20260831.dump` atau `full_backup_lims_prod_db_20260831_103000.dump`. Pengguna dapat:
+     - Mengklik tombol **Restore** pada file tertentu untuk langsung memulihkan database dari file server tersebut tanpa perlu mengunggah ulang file.
+     - Mengklik tombol **Hapus** untuk membersihkan file backup lama di server.
+   - **Upload File Lokal Baru**: Pengguna juga tetap dapat memilih/mengunggah file backup dari komputer lokal mereka (`.dump` atau `.sql`).
+   - **Autodeteksi Format**: Backend membaca 5 byte pertama dari file (*magic header* `PGDMP`).
+     - Jika file berformat biner (`PGDMP` atau ekstensi `.dump`/`.fc`), backend secara otomatis memanggil **`pg_restore`** dengan parameter `--clean --if-exists --no-owner --no-privileges`.
+     - Jika file berupa teks biasa (`.sql`), backend memanggil **`psql -f`**.
+   - **Pembersihan & Sinkronisasi Cache**: Setelah proses pemulihan data selesai, backend secara otomatis menyegarkan cache parameter global (`models.RefreshParamCache`) dan cache menu hak akses (`models.RefreshRoleMenuCache`) agar perubahan database langsung aktif tanpa perlu *restart* server backend.
+
+---
+
+###### Opsi 2: Backup & Restore di Lingkungan Windows (Command Prompt & PowerShell)
+
+Pada sistem operasi Windows, utilitas PostgreSQL (`pg_dump.exe`, `pg_restore.exe`, `psql.exe`) secara default terpasang di direktori `C:\Program Files\PostgreSQL\<versi>\bin\`.
+
+###### A. Menjalankan via Command Prompt (`cmd.exe`)
+Buka Command Prompt sebagai Administrator:
+
+```cmd
+:: 1. Atur Password PostgreSQL melalui Environment Variable
+set PGPASSWORD=PasswordSangatKuat123
+
+:: 2. Jalankan Backup (Format Custom Binary .dump) - Port default 5432 / VPS 5433
+"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -h 127.0.0.1 -p 5432 -U admin_lims -F c -b -v -f "D:\Backup\LIMS\lims_backup_%date:~10,4%%date:~4,2%%date:~7,2%.dump" lims_prod_db
+
+:: 3. Jalankan Backup (Format Plain SQL .sql)
+"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -h 127.0.0.1 -p 5432 -U admin_lims -F p -v -f "D:\Backup\LIMS\lims_backup_%date:~10,4%%date:~4,2%%date:~7,2%.sql" lims_prod_db
+
+:: 4. Restore dari File Custom Binary (.dump)
+"C:\Program Files\PostgreSQL\16\bin\pg_restore.exe" -h 127.0.0.1 -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists -O -x -v "D:\Backup\LIMS\lims_backup_20260831.dump"
+
+:: 5. Restore dari File Plain Text SQL (.sql)
+"C:\Program Files\PostgreSQL\16\bin\psql.exe" -h 127.0.0.1 -p 5432 -U admin_lims -d lims_prod_db -f "D:\Backup\LIMS\lims_backup_20260831.sql"
+```
+
+###### B. Menjalankan via Windows PowerShell
+Buka PowerShell:
+
+```powershell
+# 1. Set Password Environment Variable di Session PowerShell
+$env:PGPASSWORD="PasswordSangatKuat123"
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$backupPath = "D:\Backup\LIMS\lims_backup_$timestamp.dump"
+
+# 2. Eksekusi Backup (.dump)
+& "C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -h 127.0.0.1 -p 5432 -U admin_lims -F c -b -v -f $backupPath lims_prod_db
+
+# 3. Eksekusi Restore (.dump)
+& "C:\Program Files\PostgreSQL\16\bin\pg_restore.exe" -h 127.0.0.1 -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists -O -x -v "D:\Backup\LIMS\lims_backup_20260831.dump"
+```
+
+###### C. Otomatisasi Backup Terjadwal di Windows (Task Scheduler)
+Untuk menjadwalkan pencadangan harian otomatis di Windows:
+1. Buat berkas Batch Script `C:\Scripts\backup_lims.bat`:
+   ```cmd
+   @echo off
+   set PGPASSWORD=PasswordSangatKuat123
+   set TIMESTAMP=%date:~10,4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%
+   set TIMESTAMP=%TIMESTAMP: =0%
+   set BACKUP_DIR=D:\Backup\LIMS
+   if not exist "%BACKUP_DIR%" mkdir "%BACKUP_DIR%"
+
+   "C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -h 127.0.0.1 -p 5432 -U admin_lims -F c -b -f "%BACKUP_DIR%\lims_backup_%TIMESTAMP%.dump" lims_prod_db
+   "C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -h 127.0.0.1 -p 5432 -U admin_lims -F c -b -f "%BACKUP_DIR%\chatbot_backup_%TIMESTAMP%.dump" chatbot_db
+
+   :: Hapus backup lama berusia lebih dari 30 hari di Windows
+   forfiles /p "%BACKUP_DIR%" /s /m *.dump /d -30 /c "cmd /c del @file"
+   ```
+2. Buka **Task Scheduler** Windows (`taskschd.msc`).
+3. Pilih **Create Basic Task...** $\rightarrow$ Nama: `LIMS PostgreSQL Daily Backup`.
+4. Trigger: **Daily** pukul `02:00 AM`.
+5. Action: **Start a program** $\rightarrow$ Program/script: `C:\Scripts\backup_lims.bat`.
+6. Simpan task.
+
+---
+
+###### Opsi 3: Backup & Restore via Terminal Linux Server (CLI)
 
 ###### A. Menyiapkan File Kredensial Otomatis (`.pgpass`)
-Agar *cron job* dapat melakukan backup tanpa jeda menunggu *prompt password*, siapkan file kredensial rahasia di folder user Linux (misal: user `lims`):
+Agar *cron job* atau skrip CLI dapat berjalan tanpa terhenti menunggu masukan kata sandi (*prompt password*), buat berkas rahasia `.pgpass` di direktori *home* pengguna Linux:
 1. Buat file: `nano ~/.pgpass`
 2. Isi dengan format: `hostname:port:database:username:password`
-   Jika Anda memiliki **satu** database:
-   `localhost:5432:lims_prod_db:admin_lims:PasswordSangatKuat123`
-   Jika Anda memiliki **lebih dari satu** database dengan user yang sama (menggunakan *wildcard* `*`):
-   `localhost:5432:*:admin_lims:PasswordSangatKuat123`
-3. Amankan hak aksesnya (WAJIB): `chmod 0600 ~/.pgpass`
-*(Catatan: Jika hak akses bukan `0600`, PostgreSQL akan mengabaikan file ini dan proses backup terjadwal akan gagal/hang).*
+   - *Single Database*: `localhost:5432:lims_prod_db:admin_lims:PasswordSangatKuat123`
+   - *Multi-Database*: `localhost:5432:*:admin_lims:PasswordSangatKuat123`
+3. Amankan hak akses berkas (WAJIB):
+   ```bash
+   chmod 0600 ~/.pgpass
+   ```
+   *(Catatan: Jika hak akses bukan `0600`, PostgreSQL akan mengabaikan berkas ini demi alasan keamanan).*
 
-###### B. Melakukan Backup (Dump)
-Jalankan perintah berikut. Anda disarankan menempelkan atribut tanggal (*timestamp*) menggunakan `$(date +%Y%m%d)` pada nama file agar backup harian tidak saling menimpa.
+###### B. Perintah Backup Linux (pg_dump)
 ```bash
-# Backup Single Database
-pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$(date +%Y%m%d).dump
+# 1. Backup Format Custom Binary (.dump) - REKOMENDASI
+pg_dump -h localhost -p 5432 -U admin_lims -F c -b -v -f /home/lims/backup/lims_backup_$(date +%Y%m%d).dump lims_prod_db
 
-# Backup Multi-Database (Dijalankan berurutan dengan &&)
-pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$(date +%Y%m%d).dump && pg_dump -h localhost -p 5432 -U admin_lims chatbot_db -F c > /home/lims/backup/chatbot_backup_$(date +%Y%m%d).dump
-```
-*(Parameter `-F c` berarti file disimpan dalam format kompresi biner kustom PostgreSQL, bukan plain text SQL. Ini jauh lebih ringan dan aman).*
+# 2. Backup Format Plain Text SQL (.sql)
+pg_dump -h localhost -p 5432 -U admin_lims -F p -v -f /home/lims/backup/lims_backup_$(date +%Y%m%d).sql lims_prod_db
 
-###### C. Melakukan Restore (Pemulihan Data)
-**Opsi 1: Restore via Terminal (CLI)**
-Jika terjadi insiden dan Anda perlu memulihkan data dari file `.dump` melalui terminal server:
-```bash
-# === Restore Database Pertama (LIMS) ===
-# 1. Hapus dan buat ulang database kosong (opsional, disarankan agar bersih)
-dropdb -h localhost -U admin_lims lims_prod_db
-createdb -h localhost -U admin_lims lims_prod_db
-
-# 2. Lakukan Restore LIMS
-pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db -1 /home/lims/backup/lims_backup_20260722.dump
-
-# === Restore Database Kedua (Chatbot) ===
-# 1. Hapus dan buat ulang database kosong
-dropdb -h localhost -U admin_lims chatbot_db
-createdb -h localhost -U admin_lims chatbot_db
-
-# 2. Lakukan Restore Chatbot
-pg_restore -h localhost -p 5432 -U admin_lims -d chatbot_db -1 /home/lims/backup/chatbot_backup_20260722.dump
+# 3. Backup Multi-Database (LIMS & Chatbot RAG)
+pg_dump -h localhost -p 5432 -U admin_lims -F c -b -f /home/lims/backup/lims_backup_$(date +%Y%m%d).dump lims_prod_db && \
+pg_dump -h localhost -p 5432 -U admin_lims -F c -b -f /home/lims/backup/chatbot_backup_$(date +%Y%m%d).dump chatbot_db
 ```
 
-**Opsi 2: Restore via pgAdmin 4 (Visual/UI)**
-Bagi Administrator yang lebih nyaman menggunakan *Graphical User Interface* (GUI):
-1. **Download Backup**: Pastikan file hasil `.dump` dari VPS sudah Anda pindahkan (*download* via `scp` atau SFTP) ke komputer lokal Anda.
-2. **Siapkan Database Kosong**: Di pgAdmin, buat atau pastikan Anda memiliki database kosong sebagai target *restore* (misal: `lims_prod_db`).
-3. **Mulai Restore**: Klik kanan pada nama database target tersebut $\rightarrow$ Pilih **Restore...**
-4. Pada tab **General**:
-   * Kolom **Format**: Pilih **Custom or tar** (karena kita mem-backup menggunakan parameter `-F c`).
-   * Kolom **Filename**: Klik ikon Folder 📁. *Catatan Khusus:* Jika Anda menggunakan pgAdmin versi Web, Anda harus mengunggah filenya terlebih dahulu menggunakan ikon Upload (panah atas) di jendela *Storage Manager*. Jika menggunakan versi Desktop, cukup cari file di komputer Anda. Klik file tersebut lalu klik Select.
-   * Kolom **Role name**: Pilih user pemilik (misal `admin_lims`).
-5. Pada tab **Data Options / Options**:
-   * Centang **Clean before restore** (hanya jika database tujuan sudah ada isinya dan Anda ingin menimpanya dari awal).
-6. Terakhir, klik **Restore** dan tunggu hingga muncul notifikasi sukses berwarna hijau. Klik kanan database lalu pilih **Refresh** untuk melihat tabel yang berhasil dipulihkan.
-
-###### D. Penjadwalan Otomatis dengan Crontab
-Untuk menghindari risiko kelupaan, sangat disarankan untuk menjadwalkan proses backup (`pg_dump`) di atas agar berjalan otomatis setiap hari.
-**Opsi 1: Satu Baris di Crontab (Cocok untuk 1-2 Database)**
-1. Buka editor cron untuk user aplikasi Anda (misal `lims`):
+###### C. Perintah Restore Linux (pg_restore / psql)
+1. **Restore dari File Custom Binary (`.dump`)**:
    ```bash
-   crontab -e
-   ```
-2. Tambahkan baris berikut di paling bawah untuk melakukan backup otomatis setiap jam **02:00 dini hari**:
-   ```bash
-   0 2 * * * pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$(date +\%Y\%m\%d).dump 2>> /home/lims/backup/backup_error.log
-   ```
-*(Catatan Teknis: Karakter `%` pada sintaks `date` di dalam `crontab` wajib didahului dengan backslash `\` atau di-escape agar tidak dibaca sebagai perintah baris baru).*
+   # Restore ke database yang sudah ada (menimpa tabel & objek lama secara bersih)
+   pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists -O -x -v /home/lims/backup/lims_backup_20260831.dump
 
-**Opsi 2: Menggunakan Bash Script (Sangat Disarankan untuk Multi-Database)**
-Jika Anda memiliki banyak database, menaruhnya di crontab akan sangat panjang dan rentan *typo*. Lebih baik gunakan skrip.
-1. Buat file eksekusi: `nano /home/lims/backup_semua_db.sh`
-2. Isi file tersebut dengan skrip berikut:
+   # Restore Chatbot DB
+   pg_restore -h localhost -p 5432 -U admin_lims -d chatbot_db --clean --if-exists -O -x -v /home/lims/backup/chatbot_backup_20260831.dump
+   ```
+
+2. **Restore dari File Plain Text SQL (`.sql`)**:
+   ```bash
+   psql -h localhost -p 5432 -U admin_lims -d lims_prod_db -f /home/lims/backup/lims_backup_20260831.sql
+   ```
+
+---
+
+###### Opsi 4: Restore via pgAdmin 4 (Visual/GUI)
+Bagi Administrator yang menggunakan aplikasi GUI pgAdmin 4:
+1. **Download Backup**: Salin file `.dump` dari server VPS ke komputer lokal Anda via SFTP / SCP.
+2. **Koneksi & Pilih Target**: Buka pgAdmin 4, klik kanan pada database target (`lims_prod_db`) $\rightarrow$ Pilih **Restore...**
+3. **Tab General**:
+   - **Format**: Pilih **Custom or tar**.
+   - **Filename**: Pilih lokasi berkas `.dump` di komputer lokal Anda.
+   - **Role name**: Pilih user `admin_lims`.
+4. **Tab Restore Options / Data Options**:
+   - Centang **Clean before restore** dan **Do not save Owner**.
+5. Klik tombol **Restore**. Setelah selesai, klik kanan pada database $\rightarrow$ **Refresh**.
+
+---
+
+###### Opsi 5: Otomatisasi Backup Terjadwal di Linux (Crontab & Bash Script)
+Untuk menjadwalkan pencadangan otomatis setiap hari pukul 02:00 dini hari di Linux:
+
+1. **Buat Bash Script Backup (`/home/lims/backup_semua_db.sh`)**:
    ```bash
    #!/bin/bash
-   TANGGAL=$(date +%Y%m%d)
+   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   BACKUP_DIR="/home/lims/backup"
+   TANGGAL=$(date +%Y%m%d_%H%M%S)
 
-   # Backup LIMS
-   pg_dump -h localhost -p 5432 -U admin_lims lims_prod_db -F c > /home/lims/backup/lims_backup_$TANGGAL.dump
-   
-   # Backup Chatbot
-   pg_dump -h localhost -p 5432 -U admin_lims chatbot_db -F c > /home/lims/backup/chatbot_backup_$TANGGAL.dump
+   mkdir -p $BACKUP_DIR
+
+   # Backup Database LIMS
+   pg_dump -h localhost -p 5432 -U admin_lims -F c -b -f $BACKUP_DIR/lims_backup_$TANGGAL.dump lims_prod_db
+
+   # Backup Database Chatbot RAG
+   pg_dump -h localhost -p 5432 -U admin_lims -F c -b -f $BACKUP_DIR/chatbot_backup_$TANGGAL.dump chatbot_db
+
+   # Hapus backup yang berusia lebih dari 30 hari (Rotasi Otomatis)
+   find $BACKUP_DIR -name "*.dump" -mtime +30 -exec rm -f {} \;
    ```
-3. Beri hak akses eksekusi: `chmod +x /home/lims/backup_semua_db.sh`
-4. Panggil skrip tersebut di dalam **Crontab** (`crontab -e`):
+2. **Beri Izin Eksekusi**:
    ```bash
-   0 2 * * * /home/lims/backup_semua_db.sh 2>> /home/lims/backup/error.log
+   chmod +x /home/lims/backup_semua_db.sh
    ```
+3. **Tambahkan ke Crontab (`crontab -e`)**:
+   ```bash
+   0 2 * * * /home/lims/backup_semua_db.sh >> /home/lims/backup/backup_cron.log 2>&1
+   ```
+
+---
+
+###### Troubleshooting & Best Practices Backup/Restore PostgreSQL
+1. **Eror: `pg_dump: command not found`**:
+   - **Linux**: Pastikan `postgresql-client` terpasang (`sudo apt install postgresql-client`).
+   - **Windows**: Tambahkan `C:\Program Files\PostgreSQL\<versi>\bin` ke Environment Variable System `PATH`.
+2. **Eror: `permission denied for schema / table` saat Restore**:
+   - Selalu gunakan parameter `-O` (`--no-owner`) dan `-x` (`--no-privileges`) saat memulihkan file dump ke database atau server yang berbeda.
+3. **Koneksi Terputus saat Dump/Restore Besar**:
+   - Gunakan sesi `tmux` atau `screen` saat memulihkan database berukuran gigabyte di VPS Linux agar proses tidak terputus jika jaringan SSH terganggu.
 
 ---
 
@@ -4228,39 +4335,56 @@ npm run cap:sync
 ```
 *(Perintah di atas akan menjalankan `npm run build` -> `npx cap copy` -> `npx cap sync` secara otomatis).*
 
-#### Panduan Pembuatan APK Android
+#### Panduan Pembuatan APK Android (Windows PowerShell & WSL/Linux)
 
-Masuk ke folder proyek native Android Anda:
+##### 1. Pembuatan APK via Windows PowerShell (Sangat Direkomendasikan)
+Menjalankan build Android langsung di **Windows PowerShell** menggunakan memori fisik sistem secara langsung tanpa batasan alokasi memori kontainer WSL2, sehingga terhindar dari error OOM Daemon.
+
+Masuk ke folder `android` di PowerShell:
 ```powershell
 cd D:\Data_NK\Project5\AI\LIM_System_Linux_OK\frontend\android
 ```
 
-##### 1. Membuat APK Versi Debug (Development / Pengujian Cepat)
-APK Debug digunakan untuk pengembangan harian dan proses instalasi cepat tanpa perlu verifikasi tanda tangan digital rilis resmi.
-* **Via Terminal CLI**:
+- **Build APK Debug (Pengujian Cepat)**:
   ```powershell
-  # Langsung jalankan build (cepat karena menggunakan cache)
-  ./gradlew assembleDebug
+  .\gradlew.bat assembleDebug
   ```
-  *(Catatan: Jika Anda baru saja menambahkan plugin baru atau mengalami error cache, jalankan `./gradlew clean` terlebih dahulu sebelum `./gradlew assembleDebug`).*
-  File output berada di: `frontend/android/app/build/outputs/apk/debug/app-debug.apk`
-* **Via Android Studio (Rekomendasi untuk Live Debugging)**:
-  1. Buka folder `frontend/android` menggunakan Android Studio.
-  2. Sambungkan HP Android Anda via kabel USB (aktifkan USB Debugging di HP).
-  3. Klik tombol **Run 'app'** (ikon Play hijau) atau jalankan `npx cap run android` di terminal. Aplikasi akan otomatis terkompilasi, terpasang, dan langsung berjalan di HP Anda.
+  File output: `frontend\android\app\build\outputs\apk\debug\app-debug.apk`
 
-##### 2. Membuat APK Versi Release (Produksi / Siap Distribusi)
-APK Release digunakan untuk pengetesan resmi, distribusi internal, atau unggahan ke toko aplikasi. Versi ini sudah ditandatangani secara resmi menggunakan kunci rilis LIMS.
-* **Perintah Build**:
+- **Build APK Release (Produksi / Distribusi)**:
   ```powershell
+  .\gradlew.bat clean
+  .\gradlew.bat assembleRelease
+  ```
+  File output: `frontend\android\app\build\outputs\apk\release\app-release.apk`
+
+---
+
+##### 2. Pembuatan APK via WSL2 / Terminal Linux
+Jika Anda menjalankan perintah dari lingkungan **WSL2 Linux** (`/mnt/d/...`), alokasi RAM dibatasi oleh Linux cgroups. Gunakan parameter `--no-daemon --max-workers=2` agar tidak terkena error *Gradle build daemon disappeared unexpectedly* (OOM Killer):
+
+Masuk ke folder `android` di WSL2:
+```bash
+cd /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/android
+```
+
+- **Build APK Debug (WSL2)**:
+  ```bash
+  ./gradlew assembleDebug --no-daemon --max-workers=2
+  ```
+
+- **Build APK Release (WSL2)**:
+  ```bash
   ./gradlew clean
+  ./gradlew assembleRelease --no-daemon --max-workers=2
   ```
-  ```powershell
-  ./gradlew assembleRelease
-  ```
-  File output berada di: `frontend/android/app/build/outputs/apk/release/app-release.apk`
-  
-  *(Berkas ini ditandatangani menggunakan berkas `lims-release-key.jks` dengan password `Nkl@130200` sesuai dengan konfigurasi `signingConfigs` di build.gradle).*
+
+---
+
+##### 3. Pembuatan APK via Android Studio (GUI & Live Debugging)
+1. Buka folder `frontend/android` menggunakan Android Studio di Windows.
+2. Sambungkan HP Android Anda via kabel USB (aktifkan USB Debugging di HP).
+3. Klik tombol **Run 'app'** (ikon Play hijau) atau jalankan `npx cap run android` di terminal. Aplikasi akan otomatis terkompilasi, terpasang, dan langsung berjalan di HP Anda.
 
 > [!IMPORTANT]
 > **Penting untuk Versi Rilis:**

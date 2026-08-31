@@ -324,6 +324,8 @@ func SetupRoutes(r *gin.Engine) {
 				mgmt.POST("/db/archive", controllers.ArchiveData)
 				mgmt.POST("/db/unarchive", controllers.UnarchiveData)
 				mgmt.GET("/db/backup", controllers.BackupDatabase)
+				mgmt.GET("/db/backups", controllers.GetBackupFiles)
+				mgmt.DELETE("/db/backups/:filename", controllers.DeleteBackupFile)
 				mgmt.POST("/db/restore", controllers.RestoreDatabase)
 				mgmt.GET("/db/analyze", controllers.AnalyzeDatabaseSchema)
 				mgmt.POST("/db/sync", controllers.SyncDatabaseSchema)

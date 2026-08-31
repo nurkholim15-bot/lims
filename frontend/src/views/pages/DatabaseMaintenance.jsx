@@ -88,7 +88,10 @@ const DatabaseMaintenance = ({ user }) => {
   const handleBackup = async () => {
     setLoading(true);
     try {
-      window.open(`${import.meta.env.VITE_API_BASE_URL || ""}/api/management/db/backup`, "_blank");
+      window.open(`${import.meta.env.VITE_API_BASE_URL || ""}/api/management/db/backup?format=${backupFormat}`, "_blank");
+      setTimeout(() => {
+        fetchServerBackups();
+      }, 2000);
     } catch (err) {
       showToast('Download Backup Gagal', 'error');
     } finally {
@@ -97,21 +100,43 @@ const DatabaseMaintenance = ({ user }) => {
   };
 
   const handleRestore = async () => {
-    if (!restoreFile) return;
+    if (!restoreFile && !selectedServerFile) return;
     setLoading(true);
-    const formData = new FormData();
-    formData.append("backup_file", restoreFile);
     try {
-      const result = await apiRequest("/management/db/restore", "POST", formData, true); 
+      let result;
+      if (selectedServerFile) {
+        result = await apiRequest("/management/db/restore", "POST", { server_file_name: selectedServerFile });
+      } else {
+        const formData = new FormData();
+        formData.append("backup_file", restoreFile);
+        result = await apiRequest("/management/db/restore", "POST", formData, true);
+      }
       if (result) {
-        showToast('Restore Database Berhasil!', 'success');
+        showToast('Restore Database Berhasil! Cache sistem telah diperbarui.', 'success');
         setRestoreFile(null);
+        setSelectedServerFile("");
       }
     } catch (err) {
       showToast('Restore Gagal: ' + err.message, 'error');
     } finally {
       setLoading(false);
       setShowConfirm(null);
+    }
+  };
+
+  const handleDeleteServerBackup = async (fileName) => {
+    if (!window.confirm(`Hapus file backup ${fileName} dari server?`)) return;
+    setLoading(true);
+    try {
+      const res = await apiRequest(`/management/db/backups/${fileName}`, "DELETE");
+      if (res) {
+        showToast(`File ${fileName} berhasil dihapus`, 'success');
+        fetchServerBackups();
+      }
+    } catch (err) {
+      showToast('Gagal menghapus file: ' + err.message, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -261,11 +286,23 @@ const DatabaseMaintenance = ({ user }) => {
         <div style={{ textAlign: "center" }}>
           <i className="fas fa-database" style={{ fontSize: "5rem", color: "#065f46", marginBottom: "1.5rem", opacity: 0.2 }}></i>
           <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Full Database Backup</h3>
-          <p style={{ color: "#64748b", marginBottom: "2rem" }}>Unduh cadangan melalui browser, atau gunakan perintah CLI untuk direktori lokal.</p>
+          <p style={{ color: "#64748b", marginBottom: "2rem" }}>Unduh cadangan melalui browser (Format Custom Binary .dump atau Plain SQL .sql), atau gunakan perintah CLI.</p>
         </div>
-        
+
         <div style={{ background: "#f8fafc", padding: "1.5rem", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "2rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, fontSize: "0.9rem", color: "#475569" }}>Direktori Backup Manual (Opsional):</label>
+          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, fontSize: "0.9rem", color: "#475569" }}>Pilih Format Backup Download:</label>
+          <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1.5rem" }}>
+            <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <input type="radio" name="format" value="dump" checked={backupFormat === "dump"} onChange={() => setBackupFormat("dump")} />
+              <strong>Custom Binary (.dump)</strong> - Compressed, Direkomendasikan
+            </label>
+            <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <input type="radio" name="format" value="sql" checked={backupFormat === "sql"} onChange={() => setBackupFormat("sql")} />
+              <strong>Plain Text (.sql)</strong> - Standard SQL Script
+            </label>
+          </div>
+
+          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, fontSize: "0.9rem", color: "#475569" }}>Direktori Backup Manual CLI (Opsional):</label>
           <input 
             type="text" 
             className="form-control" 
@@ -278,14 +315,19 @@ const DatabaseMaintenance = ({ user }) => {
             <div style={{ background: "#1e293b", color: "#38bdf8", padding: "1rem", borderRadius: "8px", position: "relative", overflowX: "auto" }}>
               <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "0.5rem" }}>Jalankan perintah ini di Terminal/Command Prompt:</div>
               <code style={{ fontFamily: "monospace", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
-                pg_dump -U lims_app -d lims_prod_db -h 127.0.0.1 -p 5433 -F d -v -f "{backupFolder.replace(/\\/g, '\\\\')}"
+                {backupFormat === "dump"
+                  ? `pg_dump -U lims_app -d lims_prod_db -h 127.0.0.1 -p 5433 -F c -b -v -f "${backupFolder.replace(/\\/g, '\\\\')}\\lims_backup.dump"`
+                  : `pg_dump -U lims_app -d lims_prod_db -h 127.0.0.1 -p 5433 -F p -v -f "${backupFolder.replace(/\\/g, '\\\\')}\\lims_backup.sql"`
+                }
               </code>
             </div>
           )}
         </div>
         
         <div style={{ textAlign: "center" }}>
-          <button className="btn btn-primary" style={{ padding: "15px 40px", background: "#065f46" }} onClick={handleBackup} disabled={loading}>Download via Browser</button>
+          <button className="btn btn-primary" style={{ padding: "15px 40px", background: "#065f46" }} onClick={handleBackup} disabled={loading}>
+            Download Backup ({backupFormat === "dump" ? ".dump" : ".sql"})
+          </button>
         </div>
       </div>
     </div>
@@ -293,42 +335,142 @@ const DatabaseMaintenance = ({ user }) => {
 
   const renderRestoreTab = () => (
     <div className="tab-content fade-in" style={{ padding: "1rem 0" }}>
-      <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "850px", margin: "0 auto" }}>
         <div className="alert-warning" style={{ background: "#fff7ed", border: "2px solid #fdba74", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem", textAlign: "center" }}>
-          <h4 style={{ marginTop: 0 }}>PERHATIAN: RESTORE SISTEM</h4>
-          <p style={{ margin: 0 }}>Tindakan ini akan menimpa seluruh database!</p>
+          <h4 style={{ marginTop: 0, color: "#9a3412" }}>PERHATIAN: RESTORE SISTEM</h4>
+          <p style={{ margin: 0, color: "#c2410c" }}>Tindakan ini akan <strong>MENIMPA SELURUH DATABASE LIMS</strong>! Sistem mendukung file backup berformat <strong>.dump</strong> (pg_restore) dan <strong>.sql</strong> (psql).</p>
         </div>
         
+        {/* Section 1: Server Backup Files List */}
         <div style={{ background: "#f8fafc", padding: "1.5rem", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "2rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, fontSize: "0.9rem", color: "#475569" }}>Lokasi Folder Restore Manual (Directory Format):</label>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+            <h4 style={{ margin: 0, color: "#1e293b", fontSize: "1.1rem" }}>
+              <i className="fas fa-server" style={{ marginRight: "0.5rem", color: "#065f46" }}></i>
+              Pilih File Backup di Server:
+            </h4>
+            <button className="btn btn-secondary" style={{ fontSize: "0.8rem", padding: "4px 10px" }} onClick={fetchServerBackups}>
+              <i className="fas fa-sync-alt"></i> Refresh List
+            </button>
+          </div>
+
+          {serverBackups.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "2rem", color: "#94a3b8", fontSize: "0.9rem" }}>
+              Belum ada file backup di direktori server (<code>public/uploads/</code>).<br/>
+              Silakan unduh/buat backup baru di tab BACKUP atau unggah file dari komputer Anda di bawah.
+            </div>
+          ) : (
+            <div style={{ overflowX: "auto", maxHeight: "250px", overflowY: "auto", border: "1px solid #cbd5e1", borderRadius: "8px" }}>
+              <table style={{ width: "100%", fontSize: "0.85rem", borderCollapse: "collapse" }}>
+                <thead style={{ background: "#f1f5f9", position: "sticky", top: 0 }}>
+                  <tr style={{ borderBottom: "1px solid #cbd5e1", textTransform: "uppercase", fontSize: "0.75rem", color: "#475569" }}>
+                    <th style={{ padding: "10px", textAlign: "left" }}>Nama File Backup</th>
+                    <th style={{ padding: "10px", textAlign: "center" }}>Format</th>
+                    <th style={{ padding: "10px", textAlign: "right" }}>Ukuran</th>
+                    <th style={{ padding: "10px", textAlign: "center" }}>Tanggal</th>
+                    <th style={{ padding: "10px", textAlign: "center" }}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {serverBackups.map((f, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #e2e8f0", background: selectedServerFile === f.file_name ? "#f0fdf4" : "white" }}>
+                      <td style={{ padding: "10px", fontFamily: "monospace", fontWeight: 600, color: "#0f172a" }}>
+                        <i className={f.format.includes("dump") ? "fas fa-file-archive" : "fas fa-file-code"} style={{ marginRight: "6px", color: "#065f46" }}></i>
+                        {f.file_name}
+                      </td>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
+                        <span style={{ padding: "2px 8px", borderRadius: "12px", background: f.format.includes("dump") ? "#dcfce7" : "#e0f2fe", color: f.format.includes("dump") ? "#15803d" : "#0369a1", fontSize: "0.75rem", fontWeight: 600 }}>
+                          {f.format.includes("dump") ? ".dump (Binary)" : ".sql (Text)"}
+                        </span>
+                      </td>
+                      <td style={{ padding: "10px", textAlign: "right" }}>{f.size_formatted}</td>
+                      <td style={{ padding: "10px", textAlign: "center", color: "#64748b", fontSize: "0.8rem" }}>{f.mod_time}</td>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
+                        <div style={{ display: "flex", gap: "6px", justifyContent: "center" }}>
+                          <button 
+                            className="btn btn-primary" 
+                            style={{ padding: "4px 10px", fontSize: "0.75rem", background: "#065f46" }}
+                            onClick={() => {
+                              setSelectedServerFile(f.file_name);
+                              setRestoreFile(null);
+                              setShowConfirm("restore");
+                            }}
+                          >
+                            <i className="fas fa-play"></i> Restore
+                          </button>
+                          <button 
+                            className="btn" 
+                            style={{ padding: "4px 8px", fontSize: "0.75rem", background: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5" }}
+                            onClick={() => handleDeleteServerBackup(f.file_name)}
+                          >
+                            <i className="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Section 2: Upload File Backup Baru dari Komputer */}
+        <div style={{ background: "#f8fafc", padding: "1.5rem", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "2rem" }}>
+          <h4 style={{ margin: "0 0 1rem", color: "#1e293b", fontSize: "1.1rem" }}>
+            <i className="fas fa-upload" style={{ marginRight: "0.5rem", color: "#065f46" }}></i>
+            Atau Unggah File Backup dari Komputer Lokal:
+          </h4>
+
+          <div style={{ border: "2px dashed #cbd5e1", borderRadius: "12px", padding: "2rem", textAlign: "center", position: "relative", background: "white" }}>
+            {!restoreFile ? (
+              <>
+                <input 
+                  type="file" 
+                  style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }} 
+                  onChange={(e) => {
+                    if (e.target.files[0]) {
+                      setRestoreFile(e.target.files[0]);
+                      setSelectedServerFile("");
+                    }
+                  }} 
+                  accept=".sql,.dump,.fc,.tar" 
+                />
+                <button className="btn btn-secondary"><i className="fas fa-folder-open"></i> Pilih File (.dump / .sql)</button>
+              </>
+            ) : (
+              <div style={{ color: "#065f46" }}>
+                <p style={{ fontWeight: 700, margin: "0 0 1rem" }}>File Terpilih: {restoreFile.name} ({(restoreFile.size / (1024 * 1024)).toFixed(2)} MB)</p>
+                <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+                  <button className="btn btn-secondary" onClick={() => setRestoreFile(null)}>Batal</button>
+                  <button className="btn btn-primary" style={{ background: "#dc2626" }} onClick={() => setShowConfirm("restore")}>
+                    <i className="fas fa-exclamation-triangle"></i> Mulai Restore File Ini
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Section 3: Perintah CLI Manual */}
+        <div style={{ background: "#f8fafc", padding: "1.5rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, fontSize: "0.9rem", color: "#475569" }}>Petunjuk Command Line Interface (CLI Manual):</label>
           <input 
             type="text" 
             className="form-control" 
-            placeholder="Contoh: D:\Backup\LIMS\20260701" 
+            placeholder="Contoh: D:\Backup\LIMS\lims_backup_20260831.dump" 
             value={restoreFilePath} 
             onChange={(e) => setRestoreFilePath(e.target.value)} 
             style={{ width: "100%", padding: "10px", marginBottom: "1rem" }}
           />
           {restoreFilePath && (
             <div style={{ background: "#1e293b", color: "#38bdf8", padding: "1rem", borderRadius: "8px", position: "relative", overflowX: "auto" }}>
-              <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "0.5rem" }}>Jalankan perintah ini di Terminal/Command Prompt:</div>
+              <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginBottom: "0.5rem" }}>Jalankan perintah ini di Terminal (Linux) / Command Prompt (Windows):</div>
               <code style={{ fontFamily: "monospace", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
-                pg_restore -U lims_app -d lims_prod_db -h 127.0.0.1 -p 5433 -F d -j 4 --clean --if-exists --verbose "{restoreFilePath.replace(/\\/g, '\\\\')}"
+                {restoreFilePath.endsWith(".sql")
+                  ? `psql -U lims_app -d lims_prod_db -h 127.0.0.1 -p 5433 -f "${restoreFilePath.replace(/\\/g, '\\\\')}"`
+                  : `pg_restore -U lims_app -d lims_prod_db -h 127.0.0.1 -p 5433 --clean --if-exists -O -x --verbose "${restoreFilePath.replace(/\\/g, '\\\\')}"`
+                }
               </code>
-            </div>
-          )}
-        </div>
-
-        <div style={{ border: "2px dashed #cbd5e1", borderRadius: "12px", padding: "3rem 2rem", textAlign: "center", position: "relative" }}>
-          {!restoreFile ? (
-            <>
-              <input type="file" style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }} onChange={(e) => setRestoreFile(e.target.files[0])} accept=".sql,.dump" />
-              <button className="btn btn-secondary">Pilih File Backup</button>
-            </>
-          ) : (
-            <div style={{ color: "#065f46" }}>
-              <p style={{ fontWeight: 700 }}>{restoreFile.name}</p>
-              <button className="btn btn-primary" style={{ background: "#dc2626" }} onClick={() => setShowConfirm("restore")}>Mulai Restore</button>
             </div>
           )}
         </div>

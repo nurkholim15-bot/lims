@@ -65,10 +65,11 @@ function App() {
           localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(res.user));
           setUser(res.user);
-          setToken("ACTIVE");
+          setToken(localStorage.getItem("token") || localStorage.getItem("auth_token") || "ACTIVE");
         } else {
           localStorage.removeItem("is_logged_in");
           localStorage.removeItem("user");
+          localStorage.removeItem("token");
           localStorage.removeItem("auth_token");
           setToken(null);
           setUser(null);
@@ -76,6 +77,7 @@ function App() {
       } catch (err) {
         localStorage.removeItem("is_logged_in");
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         localStorage.removeItem("auth_token");
         setToken(null);
         setUser(null);
@@ -460,8 +462,11 @@ function App() {
         onLoginComplete={(tokenVal, userVal) => {
           localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(userVal));
-          localStorage.removeItem("auth_token"); // Clean any legacy token in local storage for Item #3 security
-          setToken("ACTIVE");
+          if (tokenVal) {
+            localStorage.setItem("token", tokenVal);
+            localStorage.setItem("auth_token", tokenVal);
+          }
+          setToken(tokenVal || "ACTIVE");
           setUser(userVal);
         }}
       />

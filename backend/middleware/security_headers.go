@@ -69,32 +69,43 @@ func CORSWithWhitelist() gin.HandlerFunc {
 
 		rawOrigins := os.Getenv("ALLOWED_ORIGINS")
 		if rawOrigins == "" {
-			rawOrigins = "https://lims.local:3000,http://lims.local:3000,https://lims.local:8082,http://lims.local:8088,http://localhost:3000,https://lims.local,https://lims-d4551821.nip.io:8082"
+			rawOrigins = "https://lims.local:3000,http://lims.local:3000,https://lims.local:8082,http://lims.local:8088,http://localhost:3000,https://lims.local,https://lims-d4551821.nip.io:8082,*"
 		}
 
-		allowedOrigins := make(map[string]bool)
-		for _, o := range strings.Split(rawOrigins, ",") {
-			trimmed := strings.TrimSpace(o)
-			if trimmed != "" {
-				allowedOrigins[trimmed] = true
+		isAllowed := false
+		// Izinkan origin mobile app local (Capacitor/WebView), IP LAN (192.168.x.x, 10.x.x.x), ngrok, dan localhost
+		if origin == "http://localhost" || origin == "https://localhost" ||
+			strings.HasPrefix(origin, "capacitor://") ||
+			strings.HasPrefix(origin, "http://localhost:") ||
+			strings.HasPrefix(origin, "http://127.0.0.1:") ||
+			strings.HasPrefix(origin, "http://192.168.") ||
+			strings.HasPrefix(origin, "http://10.") ||
+			strings.HasSuffix(origin, ".ngrok-free.dev") ||
+			strings.HasSuffix(origin, ".ngrok.io") {
+			isAllowed = true
+		} else {
+			for _, o := range strings.Split(rawOrigins, ",") {
+				trimmed := strings.TrimSpace(o)
+				if trimmed == "*" || trimmed == origin {
+					isAllowed = true
+					break
+				}
 			}
 		}
 
-		// Periksa apakah origin ada di whitelist
-		if allowedOrigins[origin] {
+		if isAllowed {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 			c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 			c.Writer.Header().Set("Access-Control-Allow-Headers",
 				"Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, "+
-					"X-Simulator-Key, ngrok-skip-browser-warning, X-App-Version, X-App-Platform")
-			c.Writer.Header().Set("Access-Control-Expose-Headers", "Authorization")
+					"X-Access-Token, X-Auth-Token, X-Simulator-Key, ngrok-skip-browser-warning, X-App-Version, X-App-Platform")
+			c.Writer.Header().Set("Access-Control-Expose-Headers", "Authorization, X-Access-Token")
 		}
-		// Origin tidak di whitelist: tidak set CORS header → browser akan blokir sendiri
 
 		// Tangani preflight OPTIONS request
 		if c.Request.Method == "OPTIONS" {
-			if allowedOrigins[origin] {
+			if isAllowed {
 				c.AbortWithStatus(http.StatusNoContent) // 204
 			} else {
 				c.AbortWithStatus(http.StatusForbidden) // 403 untuk origin tidak dikenal

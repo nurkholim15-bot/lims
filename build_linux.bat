@@ -2,7 +2,7 @@
 echo ========================================================
 echo Building LIMS Go Backend for Ubuntu (Linux) via WSL
 echo ========================================================
-wsl sh -c "cd /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend && ~/go-install/go/bin/go clean -cache && ~/go-install/go/bin/go build -o main main.go"
+wsl sh -c "cd /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend && ~/go-install/go/bin/go clean -cache && ~/go-install/go/bin/go build -o main ."
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Build failed! Please check WSL environment and Go installation.
     pause

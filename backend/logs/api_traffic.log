@@ -15405,3 +15405,687 @@ Content-Disposition: form-data; name="results"
 [2026-08-13 05:59:37] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 6ms
       Request: 
       Response: {"error":"Session not found or revoked"}
+[2026-08-19 20:17:34] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-19 20:17:34] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-19 20:17:34] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-19 20:17:34] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-19 20:17:40] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 38ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-19 20:17:40] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 203ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-19 20:17:41] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-19 20:17:41] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-19 20:18:16] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-08-19 20:18:16] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-08-19 20:18:21] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":90,"param_key":"LOGIN_LOCKOUT_MINUTES","param_value":"15","description":"Durasi waktu (dalam menit) akun dikunci akibat salah password berturut-turut.","created_at":"2026-07-11T20:51:30.296953+07:00","updat...(truncated)
+[2026-08-19 20:19:26] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:20:11] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:20:40] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:20:49] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:21:08] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:21:23] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:21:28] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:21:40] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:21:51] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":75,"param_key":"PWD_EXPIRED_DAYS","param_value":"3","description":"Notification modal di UI Login akan expired dalam x days, default 7 days","created_at":"2026-06-14T20:29:04.787096+07:00","updated_at":"202...(truncated)
+[2026-08-19 20:22:21] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-08-19 20:26:16] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":87,"param_key":"ALLOW_SESSION_TAKEOVER","param_value":"true","description":"Mengizinkan user mengambil alih sesi aktif lainnya saat login kembali jika bernilai true.","created_at":"2026-07-11T20:51:30.29695...(truncated)
+[2026-08-19 20:35:32] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 93ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-08-19 20:35:34] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 11:21:06] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 71ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 11:21:06] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 98ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 11:21:07] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 6ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 11:21:07] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 11:21:11] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 226ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 11:21:14] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 148ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 11:21:14] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 55ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 11:21:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 11:36:20] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 933ms
+      Request: 
+      Response: {"data":[{"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:0...(truncated)
+[2026-08-31 11:36:35] 127.0.0.1 | GUEST | GET | /api/applications/210 | Status: Success | Latency: 967ms
+      Request: 
+      Response: {"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","c...(truncated)
+[2026-08-31 11:36:36] 127.0.0.1 | GUEST | GET | /api/applications/210/execution | Status: Success | Latency: 97ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-08-31 11:36:36] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 53ms
+      Request: 
+      Response: {"data":[{"id":48,"application_id":210,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-08-31 11:36:42] 127.0.0.1 | GUEST | GET | /api/partner-types | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"INST","name":"Instansi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"TNI","name":"Mabes TNI-E","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-08-31 11:36:42] 127.0.0.1 | GUEST | GET | /api/partner-types | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"INST","name":"Instansi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"TNI","name":"Mabes TNI-E","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-08-31 11:36:42] 127.0.0.1 | GUEST | GET | /api/cities | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"city_code":"C001","city_name":"Bandung","province_code":"P001","province":{"province_code":"P001","province_name":"Jawa Barat","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-08-31 11:36:42] 127.0.0.1 | GUEST | GET | /api/cities | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"city_code":"C001","city_name":"Bandung","province_code":"P001","province":{"province_code":"P001","province_name":"Jawa Barat","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-08-31 11:36:45] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 112ms
+      Request: 
+      Response: {"data":[{"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-08-31 11:36:50] 127.0.0.1 | GUEST | GET | /api/applications/209/audit-history | Status: Success | Latency: 37.147s
+      Request: 
+      Response: [{"id":490,"application_id":209,"reg_number":"2026-00063","application_date":"2026-08-11T07:15:44.951108Z","status":"REGISTERED","ip_address":"127.0.0.1","user_agent":"Google Chrome","created_user":"nur","created_at":"2026-08-11T07:15:44.979213Z","created_...(truncated)
+[2026-08-31 11:37:28] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 250ms
+      Request: 
+      Response: {"data":[{"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-08-31 17:26:15] 103.78.115.200 | GUEST | GET | /api/check-version | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 17:26:20] 103.78.115.200 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:26:21] 103.78.115.200 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:26:29] 103.78.115.200 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 166ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:26:35] 103.78.115.200 | GUEST | POST | /api/login | Status: Failed | Latency: 89ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-08-31 17:26:46] 103.78.115.200 | GUEST | POST | /api/login | Status: Success | Latency: 127ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:26:47] 103.78.115.200 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:26:50] 103.78.115.200 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:26:50] 103.78.115.200 | GUEST | GET | /api/check-version | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:27:46] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 18ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-08-31 17:27:46] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:27:46] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-08-31 17:27:46] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 131ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:27:46] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 314ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-08-31 17:27:46] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 337ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-08-31 17:27:47] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 8ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-08-31 17:27:47] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 14ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-08-31 17:27:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:27:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-08-31 17:27:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 50ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:27:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 29ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-08-31 17:27:50] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:27:58] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 102ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:27:59] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 41ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 17:27:59] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 17:28:05] 103.78.115.200 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:28:20] 103.78.115.200 | GUEST | POST | /api/login | Status: Success | Latency: 88ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:28:21] 103.78.115.200 | GUEST | GET | /api/menus | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:28:23] 103.78.115.200 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:28:23] 103.78.115.200 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:29:26] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 17:29:28] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:29:28] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:29:32] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:29:39] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 101ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:29:39] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:29:39] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:29:39] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:30:05] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:30:18] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 95ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:30:19] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:30:19] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:30:19] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:30:38] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-08-31 17:30:39] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:30:52] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:31:03] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 93ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:31:03] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:31:03] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:31:03] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:31:43] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:31:43] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:33:44] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:33:45] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 104ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:33:45] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 17:33:45] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 17:33:54] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1252,"user_id":8,"token":"***","expires_at":"2026-09-01T17:33:45.155697+07:00","ip_address":"127.0.0.1","created_at":"2026-08-31T17:33:45.156716+07:00","created_user":"","updated_at":"2026-08-31T17...(truncated)
+[2026-08-31 17:33:54] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1252,"user_id":8,"token":"***","expires_at":"2026-09-01T17:33:45.155697+07:00","ip_address":"127.0.0.1","created_at":"2026-08-31T17:33:45.156716+07:00","created_user":"","updated_at":"2026-08-31T17...(truncated)
+[2026-08-31 17:34:00] 127.0.0.1 | GUEST | POST | /api/management/user-sessions/cleanup/expired | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"cleanup_hours":2,"deleted_count":0,"message":"Session cleanup completed"}
+[2026-08-31 17:34:00] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1252,"user_id":8,"token":"***","expires_at":"2026-09-01T17:33:45.155697+07:00","ip_address":"127.0.0.1","created_at":"2026-08-31T17:33:45.156716+07:00","created_user":"","updated_at":"2026-08-31T17...(truncated)
+[2026-08-31 17:34:09] 127.0.0.1 | GUEST | DELETE | /api/management/user-sessions/1246 | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Session deleted"}
+[2026-08-31 17:34:12] 127.0.0.1 | GUEST | DELETE | /api/management/user-sessions/1248 | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Session deleted"}
+[2026-08-31 17:34:14] 127.0.0.1 | GUEST | DELETE | /api/management/user-sessions/1249 | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Session deleted"}
+[2026-08-31 17:34:16] 127.0.0.1 | GUEST | DELETE | /api/management/user-sessions/1250 | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Session deleted"}
+[2026-08-31 17:34:17] 127.0.0.1 | GUEST | DELETE | /api/management/user-sessions/1251 | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Session deleted"}
+[2026-08-31 17:34:21] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-08-31 17:34:22] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:34:22] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 102ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:34:22] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 17:34:22] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 17:34:28] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1253,"user_id":8,"token":"***","expires_at":"2026-09-01T17:34:22.564014+07:00","ip_address":"127.0.0.1","created_at":"2026-08-31T17:34:22.564994+07:00","created_user":"","updated_at":"2026-08-31T17...(truncated)
+[2026-08-31 17:34:28] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1253,"user_id":8,"token":"***","expires_at":"2026-09-01T17:34:22.564014+07:00","ip_address":"127.0.0.1","created_at":"2026-08-31T17:34:22.564994+07:00","created_user":"","updated_at":"2026-08-31T17...(truncated)
+[2026-08-31 17:35:12] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 17:35:17] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:35:17] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:35:21] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 17:35:28] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 86ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 17:35:29] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:35:29] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 17:35:29] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 17:36:33] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 18:32:46] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 18:32:47] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:32:47] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:32:53] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 182ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:33:00] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 118ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:33:01] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:33:01] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:33:01] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:33:43] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:33:45] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 18:33:47] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:33:47] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:33:52] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:34:03] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 105ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:34:04] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:34:04] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:34:04] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:44:34] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 18:44:38] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:44:38] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:44:44] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 94ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:44:53] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 126ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:44:54] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:44:54] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:44:54] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:50:13] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 18:50:15] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:50:15] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:50:20] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:50:27] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 101ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:50:27] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:50:27] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:50:27] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:51:38] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:51:48] 192.168.0.102 | GUEST | POST | /api/login | Status: Failed | Latency: 75ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-08-31 18:52:52] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 88ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:52:52] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:52:53] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:52:53] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:55:38] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:55:46] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 99ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:55:46] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:55:46] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:55:46] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:57:53] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 18:58:02] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 89ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 18:58:02] 192.168.0.102 | GUEST | GET | /api/menus | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 18:58:02] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 18:58:02] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 19:02:13] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 19:02:15] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 19:02:15] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 19:02:26] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 19:02:36] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 104ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 19:02:37] 192.168.0.102 | GUEST | GET | /api/menus | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 19:02:37] 192.168.0.102 | GUEST | GET | /api/config | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 19:02:46] 192.168.0.102 | GUEST | GET | /api/applications | Status: Success | Latency: 374ms
+      Request: 
+      Response: {"data":[{"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-08-31 19:02:59] 192.168.0.102 | GUEST | GET | /api/applications | Status: Success | Latency: 90ms
+      Request: 
+      Response: {"data":[{"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:0...(truncated)
+[2026-08-31 19:03:01] 192.168.0.102 | GUEST | GET | /api/applications/210 | Status: Success | Latency: 628ms
+      Request: 
+      Response: {"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","c...(truncated)
+[2026-08-31 19:03:02] 192.168.0.102 | GUEST | GET | /api/applications/210/execution | Status: Success | Latency: 69ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-08-31 19:03:02] 192.168.0.102 | GUEST | GET | /api/invoices | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"data":[{"id":48,"application_id":210,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-08-31 19:03:15] 192.168.0.102 | GUEST | POST | /api/logout | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-08-31 19:04:23] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-08-31 19:04:24] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 19:04:24] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-08-31 19:04:32] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 19:04:39] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 87ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 19:04:39] 192.168.0.102 | GUEST | GET | /api/menus | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 19:04:40] 192.168.0.102 | GUEST | GET | /api/config | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 19:04:44] 192.168.0.102 | GUEST | GET | /api/applications | Status: Success | Latency: 61ms
+      Request: 
+      Response: {"data":[{"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-08-31 19:04:47] 192.168.0.102 | GUEST | GET | /api/applications/209 | Status: Success | Latency: 83ms
+      Request: 
+      Response: {"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-08-31 19:04:47] 192.168.0.102 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":47,"application_id":209,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 177ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1263,"user_id":8,"token":"***","expires_at":"2026-09-01T19:04:39.696858+07:00","ip_address":"192.168.0.102","created_at":"2026-08-31T19:04:39.6979+07:00","created_user":"","updated_at":"2026-08-31T...(truncated)
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/user-sessions | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Sessions retrieved","data":[{"id":1263,"user_id":8,"token":"***","expires_at":"2026-09-01T19:04:39.696858+07:00","ip_address":"192.168.0.102","created_at":"2026-08-31T19:04:39.6979+07:00","created_user":"","updated_at":"2026-08-31T...(truncated)
+[2026-08-31 19:05:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 19:05:07] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-08-31 19:05:09] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-08-31 19:05:11] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 88ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 19:05:11] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 19:05:11] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 19:05:16] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 75ms
+      Request: 
+      Response: {"data":[{"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:0...(truncated)
+[2026-08-31 19:05:18] 127.0.0.1 | GUEST | GET | /api/applications/210 | Status: Success | Latency: 108ms
+      Request: 
+      Response: {"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","c...(truncated)
+[2026-08-31 19:05:18] 127.0.0.1 | GUEST | GET | /api/applications/210/execution | Status: Success | Latency: 44ms
+      Request: 
+      Response: [{"parameter_name":"Kemampuan  - Penerima - Daya out put audio","param_code":"KEDAI","aspect_name":"Kemampuan Penerima","aspect_code":"KEPEN","aspect_weight":130,"method_name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","unit":"","weight":20,"act...(truncated)
+[2026-08-31 19:05:18] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":48,"application_id":210,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-08-31 20:21:22] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 655ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-08-31 20:21:22] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 675ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 20:21:23] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 54ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-08-31 20:21:23] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 48ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-08-31 20:21:22] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 1.025s
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 20:21:22] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 1.126s
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 20:21:23] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 135ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-08-31 20:21:23] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 112ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 20:21:23] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 99ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-08-31 20:21:23] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 144ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-08-31 20:35:59] 192.168.0.102 | GUEST | POST | /api/logout | Status: Success | Latency: 167ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}

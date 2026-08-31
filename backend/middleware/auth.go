@@ -22,12 +22,22 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		if authHeader != "" {
 			parts := strings.Split(authHeader, " ")
-			if len(parts) == 2 && parts[0] == "Bearer" {
+			if len(parts) == 2 && (strings.EqualFold(parts[0], "Bearer")) {
 				tokenString = parts[1]
+			} else if len(parts) == 1 {
+				tokenString = parts[0]
 			}
 		}
 
-		// Fallback to Cookie if header is missing
+		// Fallback to X-Access-Token / X-Auth-Token header if Authorization header was stripped by webview/proxy
+		if tokenString == "" {
+			tokenString = c.GetHeader("X-Access-Token")
+			if tokenString == "" {
+				tokenString = c.GetHeader("X-Auth-Token")
+			}
+		}
+
+		// Fallback to Cookie if headers are missing
 		if tokenString == "" {
 			if cookie, err := c.Cookie("auth_token"); err == nil {
 				tokenString = cookie
@@ -42,6 +52,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if tokenString == "" {
+			fmt.Printf("[DEBUG AUTH] Path: %s | Headers: %+v\n", c.Request.URL.Path, c.Request.Header)
 			views.Unauthorized(c, "Authorization header is required")
 			c.Abort()
 			return

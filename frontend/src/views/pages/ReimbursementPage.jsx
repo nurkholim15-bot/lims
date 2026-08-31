@@ -720,7 +720,7 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
                       </div>
                   )}
 
-                  {(isSupervisor || user?.role_name === 'ADMIN' || user?.role_name === 'SUPERVISOR_REIMBURSE') && selectedDetail.status === 'PENDING' && (
+                  {(isSupervisor || user?.role_name === 'ADMIN' || user?.role_name === 'SUPERVISOR_REIMBURSE') && selectedDetail.status === 'PENDING' ? (
                       <div style={{ display: 'flex', flexDirection: 'column', marginTop: '15px', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                           <div className="detail-item" style={{ marginBottom: '1rem' }}>
                               <label style={{ fontSize: '0.85rem', color: '#1e293b', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>Catatan Persetujuan (Opsional)</label>
@@ -751,11 +751,21 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
                               <button 
                                   className="btn" 
                                   style={{ backgroundColor: '#eab308', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
-                                  onClick={() => handleApprove(selectedDetail, 'CLOSED')}
+                                  onClick={() => setShowDetail(false)}
                               >
                                   Closed
                               </button>
                           </div>
+                      </div>
+                  ) : (
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '15px', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                          <button 
+                              className="btn" 
+                              style={{ backgroundColor: '#eab308', color: 'white', fontWeight: 600, padding: '8px 16px', border: 'none', borderRadius: '6px' }} 
+                              onClick={() => setShowDetail(false)}
+                          >
+                              Closed
+                          </button>
                       </div>
                   )}
               </div>

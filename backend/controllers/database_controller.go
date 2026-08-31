@@ -416,19 +416,58 @@ func getPsqlPath() string {
 	return "psql"
 }
 
+func getPgRestorePath() string {
+	if path, err := exec.LookPath("pg_restore"); err == nil {
+		return path
+	}
+	matches, _ := filepath.Glob("C:\\Program Files\\PostgreSQL\\*\\bin\\pg_restore.exe")
+	if len(matches) > 0 {
+		return matches[len(matches)-1]
+	}
+	matchesLin, _ := filepath.Glob("/usr/lib/postgresql/*/bin/pg_restore")
+	if len(matchesLin) > 0 {
+		return matchesLin[len(matchesLin)-1]
+	}
+	return "pg_restore"
+}
+
 func BackupDatabase(c *gin.Context) {
 	dbName := os.Getenv("DB_NAME")
 	dbUser := os.Getenv("DB_USER")
 	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
 	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "5432"
+	}
 	dbPass := database.DBPassword
+	if dbPass == "" {
+		dbPass = os.Getenv("DB_PASSWORD")
+	}
 
-	fileName := fmt.Sprintf("full_backup_%s_%s.sql", dbName, time.Now().Format("20060102_150405"))
-	filePath := filepath.Join("public", "uploads", fileName)
+	format := strings.ToLower(c.DefaultQuery("format", "dump"))
+	timestamp := time.Now().Format("20060102_150405")
 
 	os.MkdirAll(filepath.Join("public", "uploads"), os.ModePerm)
 
-	cmd := exec.Command(getPgDumpPath(), "-h", dbHost, "-p", dbPort, "-U", dbUser, "-f", filePath, dbName)
+	var fileName string
+	var args []string
+
+	if format == "sql" || format == "plain" {
+		fileName = fmt.Sprintf("full_backup_%s_%s.sql", dbName, timestamp)
+		filePath := filepath.Join("public", "uploads", fileName)
+		args = []string{"-h", dbHost, "-p", dbPort, "-U", dbUser, "-F", "p", "-f", filePath, dbName}
+	} else {
+		fileName = fmt.Sprintf("full_backup_%s_%s.dump", dbName, timestamp)
+		filePath := filepath.Join("public", "uploads", fileName)
+		args = []string{"-h", dbHost, "-p", dbPort, "-U", dbUser, "-F", "c", "-b", "-v", "-f", filePath, dbName}
+	}
+
+	filePath := filepath.Join("public", "uploads", fileName)
+
+	cmd := exec.Command(getPgDumpPath(), args...)
 	cmd.Env = append(os.Environ(), "PGPASSWORD="+dbPass)
 
 	if output, err := cmd.CombinedOutput(); err != nil {
@@ -444,35 +483,189 @@ func BackupDatabase(c *gin.Context) {
 	c.FileAttachment(filePath, fileName)
 }
 
-func RestoreDatabase(c *gin.Context) {
-	file, err := c.FormFile("backup_file")
+func GetBackupFiles(c *gin.Context) {
+	uploadsDir := filepath.Join("public", "uploads")
+	entries, err := os.ReadDir(uploadsDir)
 	if err != nil {
-		views.BadRequest(c, "No backup file provided", "")
+		views.Success(c, []gin.H{}, "No backup files found")
 		return
 	}
 
-	tempPath := filepath.Join("public", "uploads", "restore_temp.sql")
-	if err := c.SaveUploadedFile(file, tempPath); err != nil {
-		views.InternalError(c, "Failed to save upload", err.Error())
+	type BackupFileInfo struct {
+		FileName      string `json:"file_name"`
+		SizeBytes     int64  `json:"size_bytes"`
+		SizeFormatted string `json:"size_formatted"`
+		ModTime       string `json:"mod_time"`
+		Format        string `json:"format"`
+	}
+
+	var files []BackupFileInfo
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		ext := strings.ToLower(filepath.Ext(name))
+		if !(ext == ".dump" || ext == ".sql" || ext == ".fc" || ext == ".tar") {
+			continue
+		}
+
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+
+		size := info.Size()
+		var sizeFormatted string
+		if size >= 1024*1024 {
+			sizeFormatted = fmt.Sprintf("%.2f MB", float64(size)/(1024*1024))
+		} else {
+			sizeFormatted = fmt.Sprintf("%.2f KB", float64(size)/1024)
+		}
+
+		format := "Custom Binary (.dump)"
+		if ext == ".sql" {
+			format = "Plain Text (.sql)"
+		}
+
+		files = append(files, BackupFileInfo{
+			FileName:      name,
+			SizeBytes:     size,
+			SizeFormatted: sizeFormatted,
+			ModTime:       info.ModTime().Format("2006-01-02 15:04:05"),
+			Format:        format,
+		})
+	}
+
+	// Sort files newest first
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].ModTime > files[j].ModTime
+	})
+
+	views.Success(c, files, "Backup files retrieved successfully")
+}
+
+func DeleteBackupFile(c *gin.Context) {
+	filename := c.Param("filename")
+	if filename == "" {
+		views.BadRequest(c, "Filename is required", "")
 		return
 	}
-	defer os.Remove(tempPath)
+
+	cleanName := filepath.Base(filename)
+	filePath := filepath.Join("public", "uploads", cleanName)
+
+	if err := os.Remove(filePath); err != nil {
+		views.InternalError(c, "Failed to delete backup file", err.Error())
+		return
+	}
+
+	views.Success(c, nil, "Backup file deleted successfully")
+}
+
+func RestoreDatabase(c *gin.Context) {
+	var targetPath string
+	var isTempFile bool
+	var ext string
+	var targetFileName string
+
+	serverFileName := c.PostForm("server_file_name")
+	if serverFileName == "" {
+		var reqBody struct {
+			ServerFileName string `json:"server_file_name"`
+		}
+		c.ShouldBindJSON(&reqBody)
+		serverFileName = reqBody.ServerFileName
+	}
+
+	if serverFileName != "" {
+		cleanName := filepath.Base(serverFileName)
+		targetPath = filepath.Join("public", "uploads", cleanName)
+		targetFileName = cleanName
+		if stat, err := os.Stat(targetPath); err != nil || stat.IsDir() {
+			views.BadRequest(c, "File backup server tidak ditemukan", "")
+			return
+		}
+		ext = strings.ToLower(filepath.Ext(cleanName))
+	} else {
+		file, err := c.FormFile("backup_file")
+		if err != nil {
+			views.BadRequest(c, "Tidak ada file backup yang dipilih/diunggah", "")
+			return
+		}
+
+		ext = strings.ToLower(filepath.Ext(file.Filename))
+		tempName := fmt.Sprintf("restore_temp_%d%s", time.Now().UnixNano(), ext)
+		targetPath = filepath.Join("public", "uploads", tempName)
+		targetFileName = file.Filename
+		isTempFile = true
+
+		if err := c.SaveUploadedFile(file, targetPath); err != nil {
+			views.InternalError(c, "Gagal menyimpan file unggahan", err.Error())
+			return
+		}
+	}
+
+	if isTempFile {
+		defer os.Remove(targetPath)
+	}
 
 	dbName := os.Getenv("DB_NAME")
 	dbUser := os.Getenv("DB_USER")
 	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
 	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "5432"
+	}
 	dbPass := database.DBPassword
+	if dbPass == "" {
+		dbPass = os.Getenv("DB_PASSWORD")
+	}
 
-	cmd := exec.Command(getPsqlPath(), "-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", dbName, "-f", tempPath)
+	// Read magic bytes to determine if it's PostgreSQL Custom Format (PGDMP)
+	f, err := os.Open(targetPath)
+	isCustomFormat := false
+	if err == nil {
+		header := make([]byte, 5)
+		n, _ := f.Read(header)
+		f.Close()
+		if n == 5 && string(header) == "PGDMP" {
+			isCustomFormat = true
+		}
+	}
+
+	if ext == ".dump" || ext == ".fc" || ext == ".tar" {
+		isCustomFormat = true
+	}
+
+	var cmd *exec.Cmd
+	if isCustomFormat {
+		cmd = exec.Command(getPgRestorePath(), "-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", dbName, "--clean", "--if-exists", "--no-owner", "--no-privileges", targetPath)
+	} else {
+		cmd = exec.Command(getPsqlPath(), "-h", dbHost, "-p", dbPort, "-U", dbUser, "-d", dbName, "-f", targetPath)
+	}
+
 	cmd.Env = append(os.Environ(), "PGPASSWORD="+dbPass)
 
 	if output, err := cmd.CombinedOutput(); err != nil {
-		views.InternalError(c, "Restore failed", fmt.Sprintf("%v: %s", err, string(output)))
-		return
+		outputStr := string(output)
+		fmt.Printf("[RESTORE] Command output for %s: %s\n", targetFileName, outputStr)
+		if isCustomFormat && strings.Contains(outputStr, "RESTORE SUCCESS") {
+			// Non-fatal warning ignore if restored
+		} else if strings.Contains(outputStr, "error") || strings.Contains(outputStr, "FATAL") {
+			views.InternalError(c, "Restore failed", fmt.Sprintf("%v: %s", err, outputStr))
+			return
+		}
 	}
 
-	views.Success(c, nil, "Database restore completed successfully")
+	models.RefreshParamCache(database.DB)
+	models.RefreshRoleMenuCache(database.DB)
+
+	views.Success(c, gin.H{"file_name": targetFileName}, "Database restore completed successfully")
 }
 
 func SyncDatabaseSchema(c *gin.Context) {
