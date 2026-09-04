@@ -64,6 +64,17 @@ func UploadSOP(c *gin.Context) {
 		return
 	}
 
+	// Validate file size limit
+	maxSizeMBStr := models.GetGlobalParam("MAX_SOP_UPLOAD_MB", "50")
+	maxSizeMB, _ := strconv.Atoi(maxSizeMBStr)
+	if maxSizeMB <= 0 {
+		maxSizeMB = 50
+	}
+	if file.Size > int64(maxSizeMB)*1024*1024 {
+		views.BadRequest(c, fmt.Sprintf("Ukuran file PDF (%d MB) melebihi batas maksimum %d MB", file.Size/(1024*1024), maxSizeMB), "")
+		return
+	}
+
 	// 2. Ensure upload folder exists
 	uploadDir := "./public/uploads/sop"
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {

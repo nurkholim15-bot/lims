@@ -16089,3 +16089,1385 @@ Content-Disposition: form-data; name="results"
 [2026-08-31 20:35:59] 192.168.0.102 | GUEST | POST | /api/logout | Status: Success | Latency: 167ms
       Request: 
       Response: {"status":200,"message":"Successfully logged out"}
+[2026-09-01 06:01:11] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"download_url":"https://police-sacred-pound.ngrok-free.dev/downloads/lims-v1.3.apk","message":"Versi aplikasi Anda (1.0) sudah tidak didukung. Harap perbarui ke versi 1.2 atau yang lebih baru untuk melanjutkan.","minimum_version":"1.2","status":"FORCE_UPG...(truncated)
+[2026-09-01 06:01:12] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 06:01:12] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 14ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-01 06:01:17] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 315ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-01 06:02:21] 192.168.0.102 | GUEST | POST | /api/login | Status: Failed | Latency: 97ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-01 06:02:31] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 173ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 06:02:31] 192.168.0.102 | GUEST | GET | /api/menus | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 06:02:31] 192.168.0.102 | GUEST | GET | /api/config | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 06:02:45] 192.168.0.102 | GUEST | GET | /api/sop | Status: Success | Latency: 230ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":3,"file_name":"Modul_Assets_LIMS.pdf","file_path":"public/uploads/sop/1780911669603527502_Modul_Assets_LIMS.pdf","file_size":1441873,"uploaded_at":"2026-06-08T16:41:09.643903+07:...(truncated)
+[2026-09-01 06:02:59] 192.168.0.102 | GUEST | POST | /api/chat | Status: Failed | Latency: 5.077s
+      Request: {"message":"Pagi"}
+      Response: {"status":500,"message":"Failed to process chat query","error":"LLM returned non-200 status code: 404, body: {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_request_error\",\"c...(truncated)
+[2026-09-01 06:03:47] 127.0.0.1 | GUEST | GET | /api/menus | Status: Failed | Latency: 23ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-01 06:03:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 06:03:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 15ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-01 06:03:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 06:03:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 11ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-01 06:03:50] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-01 06:03:51] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 99ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 06:03:51] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 06:03:52] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 205ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 06:04:01] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":3,"file_name":"Modul_Assets_LIMS.pdf","file_path":"public/uploads/sop/1780911669603527502_Modul_Assets_LIMS.pdf","file_size":1441873,"uploaded_at":"2026-06-08T16:41:09.643903+07:...(truncated)
+[2026-09-01 06:04:01] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":3,"file_name":"Modul_Assets_LIMS.pdf","file_path":"public/uploads/sop/1780911669603527502_Modul_Assets_LIMS.pdf","file_size":1441873,"uploaded_at":"2026-06-08T16:41:09.643903+07:...(truncated)
+[2026-09-01 06:06:13] 127.0.0.1 | GUEST | POST | /api/chat | Status: Failed | Latency: 431ms
+      Request: {"message":"halo"}
+      Response: {"status":500,"message":"Failed to process chat query","error":"LLM returned non-200 status code: 404, body: {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_request_error\",\"c...(truncated)
+[2026-09-01 06:14:15] 127.0.0.1 | GUEST | POST | /api/chat | Status: Failed | Latency: 2.023s
+      Request: {"message":"halo"}
+      Response: {"status":500,"message":"Failed to process chat query","error":"LLM returned non-200 status code: 404, body: {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_request_error\",\"c...(truncated)
+[2026-09-01 06:25:41] 127.0.0.1 | GUEST | POST | /api/chat | Status: Failed | Latency: 2.252s
+      Request: {"message":"ai/halo"}
+      Response: {"status":500,"message":"Failed to process chat query","error":"LLM returned non-200 status code: 404, body: {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_request_error\",\"c...(truncated)
+[2026-09-01 06:31:43] 127.0.0.1 | GUEST | POST | /api/chat | Status: Failed | Latency: 1.8s
+      Request: {"message":"ai/pagi"}
+      Response: {"status":500,"message":"Failed to process chat query","error":"LLM returned non-200 status code: 404, body: {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invalid_request_error\",...(truncated)
+[2026-09-01 06:35:20] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.89s
+      Request: {"message":"ai/pagi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Selamat pagi!  \nAda yang bisa saya bantu terkait LIMS atau prosedur pengujian hari ini? ðŸš€","sources":[{"file_name":"Dokumentasi_LIMS.pdf","page_number":2},{"file_name":"Modul_A...(truncated)
+[2026-09-01 06:35:42] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.44s
+      Request: {"message":"ai/tolong jelaskan LIMS asset"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"**Penjelasan Modul Asset LIMS (Laboratory Information Management System)**  \n\nModul **Asset LIMS** adalah komponen inti dalam sistem LIMS yang bertugas mengelola seluruh siklus h...(truncated)
+[2026-09-01 06:41:41] 192.168.0.102 | GUEST | POST | /api/chat | Status: Success | Latency: 2.13s
+      Request: {"message":"Pagi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Selamat pagi!  \nAda yang bisa saya bantu terkait LIMS atau proses pengujian peralatan militer hari ini? Silakan beri tahu saya pertanyaan atau kebutuhan Anda.","sources":[{"file_n...(truncated)
+[2026-09-01 08:48:38] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 2.072s
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-01 09:10:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 359ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-01 09:10:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 13ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-01 09:10:32] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 71ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-01 09:10:33] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 166ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 09:10:33] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 09:10:35] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:10:40] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 123ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":3,"file_name":"Modul_Assets_LIMS.pdf","file_path":"public/uploads/sop/1780911669603527502_Modul_Assets_LIMS.pdf","file_size":1441873,"uploaded_at":"2026-06-08T16:41:09.643903+07:...(truncated)
+[2026-09-01 09:10:41] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":3,"file_name":"Modul_Assets_LIMS.pdf","file_path":"public/uploads/sop/1780911669603527502_Modul_Assets_LIMS.pdf","file_size":1441873,"uploaded_at":"2026-06-08T16:41:09.643903+07:...(truncated)
+[2026-09-01 09:11:06] 127.0.0.1 | GUEST | POST | /api/sop/upload | Status: Success | Latency: 552ms
+      Request: ------WebKitFormBoundaryt65f1AwNdgUkYUqK
+Content-Disposition: form-data; name="document"; filename="System Documentation Lims.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode...(truncated)
+      Response: {"status":201,"message":"SOP document uploaded successfully. Ingestion process started in the background.","data":{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_s...(truncated)
+[2026-09-01 09:11:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:12] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:16] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:20] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:24] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:28] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:33] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:38] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 67ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:45] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:49] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:54] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:11:59] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:12:03] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:12:08] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:12:13] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:12:20] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:20:58] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 154ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:20:58] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:21:50] 127.0.0.1 | GUEST | POST | /api/management/global-parameters | Status: Success | Latency: 177ms
+      Request: {"param_key":"MAX_SOP_UPLOAD_MB","param_value":"50","description":"Maksimum file size untuk file SOP yang diupload ke Chatbot dengan default 50MB"}
+      Response: {"status":201,"message":"Created","data":{"id":98,"param_key":"MAX_SOP_UPLOAD_MB","param_value":"50","description":"Maksimum file size untuk file SOP yang diupload ke Chatbot dengan default 50MB","created_at":"2026-09-01T09:21:50.180248265+07:00","updated_...(truncated)
+[2026-09-01 09:21:50] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:21:55] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 41ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":70,"param_key":"AI_SEARCH_LIMIT","param_value":"4","description":" Jumlah potongan teks (chunks) SOP teratas yang dikirim ke LLM sebagai konteks. Default 4","created_at":"2026-06-06T12:49:11.422238+07:00","...(truncated)
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 80ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 38ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 149ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 185ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:28:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:29:02] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:02] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":5,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788228666422600038_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:05] 127.0.0.1 | GUEST | DELETE | /api/sop/5 | Status: Success | Latency: 54ms
+      Request: 
+      Response: {"status":200,"message":"SOP document and associated vector chunks deleted successfully."}
+[2026-09-01 09:29:16] 127.0.0.1 | GUEST | POST | /api/sop/upload | Status: Success | Latency: 335ms
+      Request: ------WebKitFormBoundaryU4agB8OwliBtxe64
+Content-Disposition: form-data; name="document"; filename="System Documentation Lims.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode...(truncated)
+      Response: {"status":201,"message":"SOP document uploaded successfully. Ingestion process started in the background.","data":{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_s...(truncated)
+[2026-09-01 09:29:17] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:21] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:24] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:28] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:32] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:38] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:42] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:46] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:49] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:53] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:29:57] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:01] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:05] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:11] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:14] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:18] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:22] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:30:57] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 60ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:30:57] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:31:00] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":68,"param_key":"AI_MAX_TOKENS","param_value":"1000","description":"Batas maksimum token output AI (Ollama). Default 1000, utk groq max 1.000","created_at":"2026-06-05T13:39:14.197253+07:00","updated_at":"20...(truncated)
+[2026-09-01 09:31:11] 127.0.0.1 | GUEST | GET | /api/hist-global-parameters | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-01 09:36:12] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 09:36:12] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 09:36:12] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 09:36:13] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 09:36:12] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 98ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 09:36:12] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 176ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 09:36:12] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 195ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:36:13] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 164ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:36:13] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:36:13] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 09:36:13] 127.0.0.1 | GUEST | GET | /api/global-parameters | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"id":73,"param_key":"AI_CHUNK_OVERLAP","param_value":"200","description":"Overlap Chunk file PDF, default 200","created_at":"2026-06-09T07:16:02.822134+07:00","updated_at":"2026-06-09T07:16:02.822134+07:00","cre...(truncated)
+[2026-09-01 09:36:13] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 09:36:18] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:18] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":6,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788229757062199232_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:21] 127.0.0.1 | GUEST | DELETE | /api/sop/6 | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"status":200,"message":"SOP document and associated vector chunks deleted successfully."}
+[2026-09-01 09:36:25] 127.0.0.1 | GUEST | POST | /api/sop/upload | Status: Success | Latency: 350ms
+      Request: ------WebKitFormBoundaryNNGZpQJTEddBJFHX
+Content-Disposition: form-data; name="document"; filename="System Documentation Lims.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode...(truncated)
+      Response: {"status":201,"message":"SOP document uploaded successfully. Ingestion process started in the background.","data":{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_s...(truncated)
+[2026-09-01 09:36:25] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:32] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:35] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:39] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:43] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:47] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:50] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:54] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:36:58] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:02] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 5.007s
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:12] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:18] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:22] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:26] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:29] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:33] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:37] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:43] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:47] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:51] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:55] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:37:58] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:02] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:10] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:16] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:20] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:23] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:27] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:31] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:35] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:39] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:42] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:46] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:52] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:38:56] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:00] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:04] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:08] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:11] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:15] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:19] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:25] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:29] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:33] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:36] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:40] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:44] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:48] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:52] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:39:56] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:02] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:09] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:13] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:17] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:21] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:24] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:28] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:34] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:38] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:42] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:46] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:50] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:53] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:40:57] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:01] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:05] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:11] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:15] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:18] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:22] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:26] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:30] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:34] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:37] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:44] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:47] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:51] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:55] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:41:59] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:03] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:10] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:14] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:21] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:26] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:31] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:35] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:40] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:45] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:49] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:42:56] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:01] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:10] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:15] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:19] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:24] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:31] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:36] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:41] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:45] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:50] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:55] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:43:59] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:11] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:16] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:20] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:25] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:29] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:34] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:41] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:46] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:50] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:44:55] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:00] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:04] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:08] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:15] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:18] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:22] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:26] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:30] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:33] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:37] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:41] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:47] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:51] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:55] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:45:59] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:02] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:06] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:10] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:13] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:17] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:24] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:28] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:31] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 09:46:34] 127.0.0.1 | GUEST | GET | /api/hist-package-active-aspects | Status: Success | Latency: 145ms
+      Request: 
+      Response: {"status":200,"message":"Package aspects history retrieved","data":[{"id":18,"package_id":8,"aspect_code":"KONPE","action_type":"INSERT","created_at":"2026-06-30T06:21:31.619047Z","created_user":"nur"},{"id":17,"package_id":8,"aspect_code":"ASMAN","action_...(truncated)
+[2026-09-01 09:46:34] 127.0.0.1 | GUEST | GET | /api/hist-package-active-aspects | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Package aspects history retrieved","data":[{"id":18,"package_id":8,"aspect_code":"KONPE","action_type":"INSERT","created_at":"2026-06-30T06:21:31.619047Z","created_user":"nur"},{"id":17,"package_id":8,"aspect_code":"ASMAN","action_...(truncated)
+[2026-09-01 09:46:39] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 269ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-01 09:46:47] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 64ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 73ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 85ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 41ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 63ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-01 09:46:48] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 79ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 09:56:12] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 394ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-01 09:56:13] 127.0.0.1 | GUEST | PUT | /api/management/testing-packages/3 | Status: Success | Latency: 280ms
+      Request: {"package_code":"ALKSIMPLE","name":"ALKOM-SIMPLE-NAME","description":"ALKOM-SIMPLE-DESC","base_price":100000,"is_active":true,"methodology_codes":["MANAG","AKLAP","ALKOM"],"active_aspect_codes":["KEPEN","ASMAN","KONPE"],"active_sub_aspect_codes":["KEDAI","...(truncated)
+      Response: {"status":200,"message":"Paket berhasil diperbarui","data":{"id":3,"package_code":"ALKSIMPLE","name":"ALKOM-SIMPLE-NAME","description":"ALKOM-SIMPLE-DESC","base_price":100000,"is_active":true,"methodologies":[{"code":"MANAG","name":"Umum","test_type_code":...(truncated)
+[2026-09-01 09:56:13] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 53ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 99ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 123ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-01 09:56:24] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-01 09:56:35] 127.0.0.1 | GUEST | GET | /api/partner-types | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"INST","name":"Instansi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"TNI","name":"Mabes TNI-E","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-01 09:56:35] 127.0.0.1 | GUEST | GET | /api/partner-types | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"INST","name":"Instansi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"TNI","name":"Mabes TNI-E","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-01 09:56:35] 127.0.0.1 | GUEST | GET | /api/cities | Status: Success | Latency: 72ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"city_code":"C001","city_name":"Bandung","province_code":"P001","province":{"province_code":"P001","province_name":"Jawa Barat","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 09:56:35] 127.0.0.1 | GUEST | GET | /api/cities | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"city_code":"C001","city_name":"Bandung","province_code":"P001","province":{"province_code":"P001","province_name":"Jawa Barat","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 09:57:00] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 86ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-01 09:57:03] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 71ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-01 09:57:03] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 92ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-09-01 09:57:07] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user"...(truncated)
+[2026-09-01 09:58:24] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 99ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-01 09:58:24] 127.0.0.1 | GUEST | POST | /api/applications | Status: Success | Latency: 240ms
+      Request: ------WebKitFormBoundary2fkR1IKAL5RF5EhC
+Content-Disposition: form-data; name="partner_id"
+
+12
+------WebKitFormBoundary2fkR1IKAL5RF5EhC
+Content-Disposition: form-data; name="package_id"
+
+3
+------WebKitFormBoundary2fkR1IKAL5RF5EhC
+Content-Dispositi...(truncated)
+      Response: [{"id":211,"reg_number":"2026-00065","status":"REGISTERED","partner_id":12,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},"...(truncated)
+[2026-09-01 09:58:24] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 114ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:...(truncated)
+[2026-09-01 09:58:27] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 105ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:...(truncated)
+[2026-09-01 09:58:30] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 383ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","...(truncated)
+[2026-09-01 09:58:31] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 09:58:39] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 142ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-01 09:58:39] 127.0.0.1 | GUEST | PUT | /api/applications/211/verify | Status: Success | Latency: 59ms
+      Request: {"status":"Verified","is_docs_complete":true,"verification_notes":""}
+      Response: {"message":"Verification completed"}
+[2026-09-01 09:58:40] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 29ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-01 09:58:42] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 89ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Verified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-09-01 09:58:43] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 133ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Verified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-09-01 09:58:44] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 09:58:53] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 90ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-01 09:58:53] 127.0.0.1 | GUEST | PUT | /api/applications/211/approve | Status: Success | Latency: 37ms
+      Request: {"status":"Approved","is_docs_complete":true,"approval_notes":""}
+      Response: {"message":"Persetujuan pimpinan berhasil disimpan"}
+[2026-09-01 09:58:53] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-01 10:00:59] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 103ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Approved","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-09-01 10:01:02] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-01 10:01:02] 127.0.0.1 | GUEST | GET | /api/tester-masters | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"Data tim penguji retrieved","data":[{"tester_id":"103  ","name":"Kapten Lazaro","position":"Kepala Tim Lab","methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code"...(truncated)
+[2026-09-01 10:01:02] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 58ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BTJUM","name":"Batan Pasar Jum;at","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-01 10:01:02] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 161ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:01:02] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:01:12] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-01 10:01:18] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 33ms
+      Request: 
+      Response: [{"code":"Oscillosc","name":"Oscilloscope","type":"USAGE","min_stock":0,"initial_stock":0,"current_stock":0,"location_code":"LDIS","location":{"code":"LDIS","name":"Lab Dislitbangad","test_type_code":"LAB","test_type":{"code":"","name":"","created_at":"000...(truncated)
+[2026-09-01 10:01:39] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-01 10:01:41] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 30ms
+      Request: 
+      Response: []
+[2026-09-01 10:01:48] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ASMAN","name":"Aspek Manusia","description":"","weight":150,"threshold":60,"methodology_code":"MANAG","methodology":{"code":"MANAG","name":"Umum","test_type_code":"MANAG","test_type":{"code":"","name":""...(truncated)
+[2026-09-01 10:01:50] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 11ms
+      Request: 
+      Response: []
+[2026-09-01 10:02:04] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 96ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-01 10:02:04] 127.0.0.1 | GUEST | PUT | /api/applications/211/plan | Status: Success | Latency: 406ms
+      Request: {"status":"Planned","lab_methodology_code":"ALKOM","field_methodology_code":"AKLAP","methodology_code":"MANAG","relational_plans":[{"type":"LAB","aspect_code":"KONPE","aspect_name":"Uji konstruksi dan perlengkapan","location_code":"LDIS","scheduled_date":"...(truncated)
+      Response: {"message":"Planning completed"}
+[2026-09-01 10:02:05] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-01 10:02:07] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 158ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-01 10:02:09] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 253ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:02:09] 127.0.0.1 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 45ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:02:09] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:02:09] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:02:35] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 95ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 10:02:35] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 10:02:51] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 3.313s
+      Request: {"message":"jelaskan tentang LIMS"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"","sources":[{"file_name":"Dokumentasi_LIMS.pdf","page_number":1},{"file_name":"System Documentation Lims.pdf","page_number":1},{"file_name":"System Documentation Lims.pdf","page_n...(truncated)
+[2026-09-01 10:03:18] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.151s
+      Request: {"message":"apa itu LIMS?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"**Laboratory Information Management System (LIMS)**  \nLIMS adalah sistem manajemen informasi laboratorium yang dirancang untuk mengotomatisasi seluruh siklus hidup pengujian peral...(truncated)
+[2026-09-01 10:19:30] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 59ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:19:30] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 59ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:19:30] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:19:30] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:19:30] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 637ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:19:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:19:30] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 876ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:19:31] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 93ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:19:31] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 169ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 10:19:31] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 74ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:19:31] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 344ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 10:19:32] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-01 10:19:35] 192.168.0.102 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:19:35] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:19:35] 192.168.0.102 | GUEST | GET | /api/config | Status: Failed | Latency: 27ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-01 10:19:35] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 37ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-01 10:19:35] 192.168.0.102 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:19:35] 192.168.0.102 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-01 10:19:43] 192.168.0.102 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-01 10:19:50] 192.168.0.102 | GUEST | POST | /api/login | Status: Failed | Latency: 96ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-01 10:19:58] 192.168.0.102 | GUEST | POST | /api/login | Status: Success | Latency: 118ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:20:01] 192.168.0.102 | GUEST | GET | /api/menus | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 10:20:01] 192.168.0.102 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:21:18] 192.168.0.102 | GUEST | GET | /api/applications | Status: Success | Latency: 255ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-01 10:21:25] 192.168.0.102 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 323ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:21:26] 192.168.0.102 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 57ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:21:26] 192.168.0.102 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:21:26] 192.168.0.102 | GUEST | GET | /api/invoices | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:22:30] 192.168.0.102 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 16.238s
+      Request: ------WebKitFormBoundary3DeJMw4SHED7ta8x
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{"KODAY":"daya","KOFAS":"Pernika","KOKON":"perakitan","KONSI":"17","KOPEN":"daya","KORUS":"arus","KOTAN":"perakitan","PEENE":"17","PEGER":"battery","PEPEM":"9{"},"message":"OCR test results extraction successful","ocr_log":[{"code":"PEGER","raw_val...(truncated)
+[2026-09-01 10:23:45] 192.168.0.102 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 8.729s
+      Request: ------WebKitFormBoundaryyXEHoHDvi5aUHp7N
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{"KODAY":"daya","KOFAS":"Pernil","KOKON":"11","KORUS":"101","KOTAN":"dar","KOTEG":"daya","PEENE":"batt","PEGER":"6","PEPEM":"dar"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KODAY","raw_val":"daya","final_val":"daya","ha...(truncated)
+[2026-09-01 10:26:02] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 96ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-01 10:26:04] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 130ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:26:04] 127.0.0.1 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 43ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:26:05] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:26:05] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:30:17] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 19.651s
+      Request: ------WebKitFormBoundaryU9yawuARAkilL5mb
+Content-Disposition: form-data; name="document"; filename="tes-ocr-10.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ...(truncated)
+      Response: {"data":{"KODES":"0","KOFAS":"171","KOPEN":"daya","KOTAN":"perakitan","PEGER":"battery","PEPEM":"pemeliharaan"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOFAS","raw_val":"171","final_val":"171","has_dropdown":true,"has_score":...(truncated)
+[2026-09-01 10:31:03] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 2.594s
+      Request: ------WebKitFormBoundaryKiUMNAJkRHDYqEUR
+Content-Disposition: form-data; name="document"; filename="test-ocr-10.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 20422...(truncated)
+      Response: {"data":{"KODAY":"daya","KOFAS":"Pernika","KOKON":"perakitan","KONSI":"1","KOPEN":"daya","KORUS":"arus","KOTAN":"perakitan","PEENE":"Antene","PEGER":"battery","PEPEM":"pemeliharaan"},"message":"OCR test results extraction successful","ocr_log":[{"code":"PE...(truncated)
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 129ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 202ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 201ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:38:13] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 178ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:38:14] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 10:38:14] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:38:14] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 340ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-01 10:38:16] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 427ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:38:17] 127.0.0.1 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 57ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:38:17] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:38:17] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:38:23] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 523ms
+      Request: ------WebKitFormBoundarylWarQtsXqwM06TBi
+Content-Disposition: form-data; name="document"; filename="test-ocr-10.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 20422...(truncated)
+      Response: {"data":{"KODAY":"daya","KOFAS":"Pernika","KOKON":"perakitan","KONSI":"1","KOPEN":"daya","KORUS":"arus","KOTAN":"perakitan","PEENE":"Antene","PEGER":"battery","PEPEM":"pemeliharaan"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KO...(truncated)
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 16ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 94ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 200ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 234ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:43:05] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 271ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:43:06] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 10:43:06] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 23ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:43:06] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 327ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-01 10:43:08] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 333ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:43:08] 127.0.0.1 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 59ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:43:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:43:08] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:43:15] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 473ms
+      Request: ------WebKitFormBoundaryhlIIwf63zhBtRHRH
+Content-Disposition: form-data; name="document"; filename="test-ocr-10.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 20422...(truncated)
+      Response: {"data":{"KODAY":"daya","KOFAS":"171","KOKON":"11","KONSI":"1","KOPEN":"daya","KORUS":"5","KOTAN":"11","PEENE":"171","PEGER":"6","PEPEM":"118"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOPEN","raw_val":"daya","final_val":"daya...(truncated)
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 148ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 170ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-01 10:47:27] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 257ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-01 10:47:29] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 325ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:47:30] 127.0.0.1 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 55ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:47:30] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:47:30] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:47:38] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 464ms
+      Request: ------WebKitFormBoundaryi97t1FfJ4AHA3xhu
+Content-Disposition: form-data; name="document"; filename="test-ocr-10.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 20422...(truncated)
+      Response: {"data":{"KODAY":"7","KOFAS":"10","KOKON":"3","KONSI":"1","KOPEN":"2","KORUS":"9","KOTAN":"6","PEENE":"4","PEGER":"5","PEPEM":"8"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOFAS","raw_val":"10","final_val":"10","has_dropdown":...(truncated)
+[2026-09-01 10:48:24] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 24.227s
+      Request: ------WebKitFormBoundaryhH84jlxKGUL1flAT
+Content-Disposition: form-data; name="document"; filename="tes-ocr-10.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ...(truncated)
+      Response: {"data":{"KODES":"0","KOFAS":"171","KOPEN":"2","KOTAN":"6","PEGER":"5","PEPEM":"8"},"message":"OCR test results extraction successful","ocr_log":[{"code":"PEPEM","raw_val":"8","final_val":"8","has_dropdown":true,"has_score":true},{"code":"PEGER","raw_val":...(truncated)
+[2026-09-01 10:49:00] 127.0.0.1 | GUEST | GET | /api/applications/211 | Status: Success | Latency: 153ms
+      Request: 
+      Response: {"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-01 10:49:01] 127.0.0.1 | GUEST | GET | /api/applications/211/execution | Status: Success | Latency: 45ms
+      Request: 
+      Response: [{"parameter_name":"Aspek Insani - Pemeliharaan dan perakitan","param_code":"INPER","aspect_name":"Aspek Manusia","aspect_code":"ASMAN","aspect_weight":150,"method_name":"Umum","test_type_code":"MANAG","unit":"","weight":30,"actual_value":"","notes":"","ph...(truncated)
+[2026-09-01 10:49:01] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":83,"sub_aspect_code":"INPER","sub_aspect":{"code":"INPER","name":"Aspek Insani - Pemeliharaan dan perakitan","aspect_code":"ASMAN","description":"","weight":30,"standard_value":65,"standard_value_max":100,"st...(truncated)
+[2026-09-01 10:49:01] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 38ms
+      Request: 
+      Response: {"data":[{"id":49,"application_id":211,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-01 10:49:15] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 18.346s
+      Request: ------WebKitFormBoundary2tehWviqPGS069i1
+Content-Disposition: form-data; name="document"; filename="tes-ocr-10.png"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                             öÖ...(truncated)
+      Response: {"data":{"KODES":"0","KOFAS":"171","KOPEN":"2","KOTAN":"6","PEGER":"5","PEPEM":"8"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KODES","raw_val":"0","final_val":"0","has_dropdown":true,"has_score":true},{"code":"KOPEN","raw_val":...(truncated)
+[2026-09-01 13:20:25] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 606ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-01 13:20:31] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 13:20:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 34ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-01 13:20:31] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 90ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-01 13:20:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 49ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}

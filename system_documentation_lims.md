@@ -3432,6 +3432,68 @@ LIMS menyediakan dua metode pencadangan (*backup*) dan pemulihan (*restore*) dat
 
 ---
 
+###### Panduan Khusus: Backup & Restore Mengabaikan Owner & Role (Mencegah Error "role mecs_app does not exist")
+
+Saat memindahkan atau memulihkan database ke lingkungan/server baru, sering kali terjadi error seperti `ERROR: role "mecs_app" does not exist` atau `ERROR: role "postgres" does not exist`. Hal ini terjadi karena file dump membawa hak akses (`GRANT`/`REVOKE`) dan pernyataan kepemilikan (`ALTER OWNER TO`) dari user lama.
+
+Berikut adalah standar prosedur LIMS untuk mengabaikan owner & role non-database owner:
+
+1. **Backup Bersih (Tanpa Perintah Owner & ACL Role Luar)**:
+   Gunakan flag `--no-owner` (`-O`) dan `--no-acl` / `--no-privileges` (`-x`) saat melakukan dump:
+   ```bash
+   # Format Custom Binary (.dump) - Contoh Utama
+   pg_dump -h localhost -p 5432 -U admin_lims -d lims_prod_db -F c --no-owner --no-acl -f lims_clean.dump
+
+   # Format Plain Text SQL (.sql)
+   pg_dump -h localhost -p 5432 -U admin_lims -d lims_prod_db -F p --no-owner --no-acl -f lims_clean.sql
+   ```
+
+2. **Restore Bersih (Mengabaikan Owner & Hak Akses Lama ke Database Tujuan / Backup DB)**:
+   Saat memulihkan file `.dump`, sertakan parameter `--no-owner` dan `--no-privileges`:
+   ```bash
+   # Contoh Restore ke Database Cadangan (lims_bck_db) atau Database Produksi (lims_prod_db)
+   pg_restore -h localhost -p 5432 -U admin_lims -d lims_bck_db --no-owner --no-privileges lims_clean.dump
+
+   # Opsi tambahan menimpa tabel lama jika sudah ada (--clean --if-exists)
+   pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists --no-owner --no-privileges -v lims_clean.dump
+   ```
+
+3. **Penanganan Terpisah: Trik Dummy Role (Jika Dump Lama Memuat Role `mecs_app`)**:
+   Jika Anda harus merestore file dump lama yang memicu error `role "mecs_app" does not exist`:
+   ```sql
+   -- Langkah A: Buat dummy role sementara di PostgreSQL
+   CREATE ROLE mecs_app NOLOGIN;
+
+   -- Langkah B: Jalankan pg_restore / psql seperti biasa
+
+   -- Langkah C: Alihkan seluruh objek mecs_app ke admin_lims dan hapus dummy role
+   REASSIGN OWNED BY mecs_app TO admin_lims;
+   DROP OWNED BY mecs_app;
+   DROP ROLE mecs_app;
+   ```
+
+4. **Script Otomatis Mengubah Seluruh Owner Objek ke `admin_lims` (Pasca-Restore)**:
+   Jalankan blok SQL ini di PostgreSQL untuk memastikan 100% tabel, view, sequence, dan schema dimiliki oleh `admin_lims`:
+   ```sql
+   DO $$ 
+   DECLARE r RECORD;
+   BEGIN 
+       FOR r IN (SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema IN ('lims', 'chat_sch', 'public') AND table_type = 'BASE TABLE') LOOP 
+           EXECUTE format('ALTER TABLE %I.%I OWNER TO admin_lims;', r.table_schema, r.table_name); 
+       END LOOP;
+       FOR r IN (SELECT sequence_schema, sequence_name FROM information_schema.sequences WHERE sequence_schema IN ('lims', 'chat_sch', 'public')) LOOP 
+           EXECUTE format('ALTER SEQUENCE %I.%I OWNER TO admin_lims;', r.sequence_schema, r.sequence_name); 
+       END LOOP;
+       FOR r IN (SELECT table_schema, table_name FROM information_schema.views WHERE table_schema IN ('lims', 'chat_sch', 'public')) LOOP 
+           EXECUTE format('ALTER VIEW %I.%I OWNER TO admin_lims;', r.table_schema, r.table_name); 
+       END LOOP;
+       EXECUTE 'ALTER SCHEMA lims OWNER TO admin_lims;';
+       EXECUTE 'ALTER SCHEMA chat_sch OWNER TO admin_lims;';
+   END $$;
+   ```
+
+---
+
 ###### Opsi 1: Backup & Restore via Web UI Application (Admin Dashboard)
 Fitur ini dapat diakses oleh pengguna bertipe **ADMIN** pada menu **Database Management** (`/welcome` $\rightarrow$ Database Management $\rightarrow$ Tab BACKUP / RESTORE).
 
@@ -3547,17 +3609,20 @@ pg_dump -h localhost -p 5432 -U admin_lims -F c -b -f /home/lims/backup/chatbot_
 ###### C. Perintah Restore Linux (pg_restore / psql)
 1. **Restore dari File Custom Binary (`.dump`)**:
    ```bash
-   # Restore ke database yang sudah ada (menimpa tabel & objek lama secara bersih)
-   pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists -O -x -v /home/lims/backup/lims_backup_20260831.dump
+   # Restore ke database yang sudah ada (menimpa tabel & objek lama secara bersih tanpa error role mecs_app)
+   pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists --no-owner --no-privileges -v /home/lims/backup/lims_backup_20260831.dump
 
    # Restore Chatbot DB
-   pg_restore -h localhost -p 5432 -U admin_lims -d chatbot_db --clean --if-exists -O -x -v /home/lims/backup/chatbot_backup_20260831.dump
+   pg_restore -h localhost -p 5432 -U admin_lims -d chatbot_db --clean --if-exists --no-owner --no-privileges -v /home/lims/backup/chatbot_backup_20260831.dump
    ```
 
-2. **Restore dari File Plain Text SQL (`.sql`)**:
+2. **Restore dari File Plain Text SQL (`.sql`) & Penanganan Error Role (`mecs_app`)**:
    ```bash
    psql -h localhost -p 5432 -U admin_lims -d lims_prod_db -f /home/lims/backup/lims_backup_20260831.sql
    ```
+   *Catatan Penanganan Error Role Tidak Ditemukan (`ERROR: role "mecs_app" does not exist`):*
+   - **Opsi A (Dummy Role)**: Sebelum restore, buat `CREATE ROLE mecs_app NOLOGIN;`. Setelah restore, jalankan `REASSIGN OWNED BY mecs_app TO admin_lims; DROP OWNED BY mecs_app; DROP ROLE mecs_app;`.
+   - **Opsi B (Pembersihan SQL)**: Bersihkan file dump SQL dari perintah GRANT/OWNER: `grep -vE 'mecs_app|OWNER TO' backup.sql > backup_clean.sql`.
 
 ---
 

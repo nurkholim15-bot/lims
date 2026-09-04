@@ -327,7 +327,7 @@ func OCRExtractTestResults(c *gin.Context) {
 					defer os.Remove(imgPath)
 
 					var originalPath = imgPath // Keep raw image path
-					if preprocessedPath, errPrep := preprocessImage(imgPath, false, false); errPrep == nil {
+					if preprocessedPath, errPrep := preprocessImage(imgPath, false, true); errPrep == nil {
 						imgPath = preprocessedPath
 						defer os.Remove(preprocessedPath)
 					}
@@ -601,35 +601,57 @@ func OCRExtractTestResults(c *gin.Context) {
 				val = cleanScoreWithContext(val, sa.Code)
 				hasDropdown := len(itemsBySubAspect[sa.Code]) > 0
 
-				// If value contains a space and has a trailing number, extract it (handles table borders read as '1' or 'l')
+				// Always extract trailing number if available (e.g. 'catu daya 1' -> '1')
 				trimmedVal := strings.TrimSpace(val)
-				if strings.Contains(trimmedVal, " ") {
-					trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
-					if m := trailingNumRe.FindStringSubmatch(trimmedVal); len(m) > 1 {
-						val = strings.ReplaceAll(m[1], ",", ".")
-					}
-				}
-
-				// If value is a long string (>= 15 chars) but contains a digit,
-				// it's likely a full row text. Try to extract only the trailing number.
-				if len(strings.TrimSpace(val)) >= 15 {
-					trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
-					if m := trailingNumRe.FindStringSubmatch(strings.TrimSpace(val)); len(m) > 1 {
-						val = strings.ReplaceAll(m[1], ",", ".")
-					} else {
-						// No trailing number found — skip this value entirely
-						continue
-					}
+				trailingNumRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\s*$`)
+				if m := trailingNumRe.FindStringSubmatch(trimmedVal); len(m) > 1 {
+					val = strings.ReplaceAll(m[1], ",", ".")
+				} else if len(trimmedVal) >= 15 {
+					// Long string without trailing number — skip
+					continue
 				}
 
 				hasDigit := regexp.MustCompile(`\d`).MatchString(val)
-				// Accept if: contains a digit, OR is a short dropdown text candidate (< 15 chars)
-				if hasDigit || (hasDropdown && len(strings.TrimSpace(val)) > 0 && len(strings.TrimSpace(val)) < 15) {
+				isDropdownMatch := false
+				if hasDropdown {
+					normVal := strings.ToUpper(strings.TrimSpace(val))
+					for _, item := range itemsBySubAspect[sa.Code] {
+						if strings.ToUpper(strings.TrimSpace(item.Name)) == normVal {
+							isDropdownMatch = true
+							break
+						}
+					}
+				}
+
+				// Accept if: contains a digit OR matches an actual dropdown option item value
+				if hasDigit || isDropdownMatch {
 					extractedValues[sa.Code] = val
 					traceLines = append(traceLines, fmt.Sprintf("  [Match Technique A] Parameter %-6s (%-30s): RawCapture='%s' -> Cleaned='%s'", sa.Code, sa.Name, rawCaptured, val))
 				}
 			}
 
+		}
+	}
+
+	// Technique 0: Direct Line-by-Line Table Matcher ([SeqNo] CODE : SKOR NAME)
+	lines := strings.Split(rawText, "\n")
+	scoreAfterColonRe := regexp.MustCompile(`\b(\d+(?:[.,]\d+)?)\b`)
+	for _, sa := range subAspects {
+		codeUpper := strings.ToUpper(sa.Code)
+		for _, line := range lines {
+			lineUpper := strings.ToUpper(line)
+			if strings.Contains(lineUpper, codeUpper) {
+				idx := strings.Index(lineUpper, codeUpper)
+				afterCode := line[idx+len(codeUpper):]
+				if colonIdx := strings.Index(afterCode, ":"); colonIdx != -1 {
+					afterCode = afterCode[colonIdx+1:]
+				}
+				if m := scoreAfterColonRe.FindString(afterCode); m != "" {
+					extractedValues[sa.Code] = strings.ReplaceAll(m, ",", ".")
+					traceLines = append(traceLines, fmt.Sprintf("  [Table Line Matcher] Parameter %-6s: Score='%s' from line: %s", sa.Code, m, strings.TrimSpace(line)))
+					break
+				}
+			}
 		}
 	}
 
@@ -678,8 +700,7 @@ func OCRExtractTestResults(c *gin.Context) {
 		}
 	}
 
-	// 4. Map values to dropdown options if applicable using preloaded items
-	// Build ocr_log to record what was extracted per code for user debugging
+	// 4. Record ocr_log directly using extracted score values (bypassing dropdown label overrides for numeric scores)
 	type ocrLogEntry struct {
 		Code        string `json:"code"`
 		RawVal      string `json:"raw_val"`
@@ -691,16 +712,24 @@ func OCRExtractTestResults(c *gin.Context) {
 
 	for code, val := range extractedValues {
 		rawVal := val
-		if items, exists := itemsBySubAspect[code]; exists && len(items) > 0 {
+		hasDigit := regexp.MustCompile(`\d`).MatchString(val)
+		items, exists := itemsBySubAspect[code]
+		hasDropdown := exists && len(items) > 0
+
+		// If score is numeric or dropdown is ignored, keep numeric score directly
+		if hasDigit || !hasDropdown {
+			extractedValues[code] = val
+			ocrLog = append(ocrLog, ocrLogEntry{Code: code, RawVal: rawVal, FinalVal: val, HasDropdown: hasDropdown, HasScore: val != ""})
+			traceLines = append(traceLines, fmt.Sprintf("  [Direct Score] Parameter %s : Score='%s'", code, val))
+		} else {
 			mapped := mapOCRValueToDropdown(val, items)
+			if mapped == "" {
+				mapped = val
+			}
 			extractedValues[code] = mapped
 			hasScore := mapped != ""
 			ocrLog = append(ocrLog, ocrLogEntry{Code: code, RawVal: rawVal, FinalVal: mapped, HasDropdown: true, HasScore: hasScore})
 			traceLines = append(traceLines, fmt.Sprintf("  [Dropdown Mapping] Parameter %s: RawValue='%s' -> FinalValue='%s'", code, rawVal, mapped))
-		} else {
-			hasScore := val != ""
-			ocrLog = append(ocrLog, ocrLogEntry{Code: code, RawVal: rawVal, FinalVal: val, HasDropdown: false, HasScore: hasScore})
-			traceLines = append(traceLines, fmt.Sprintf("  [Non-Dropdown Direct] Parameter %s : Score='%s'", code, val))
 		}
 	}
 

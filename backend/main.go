@@ -44,6 +44,7 @@ func main() {
 	services.InitCamunda()
 
 	r := gin.Default()
+	r.MaxMultipartMemory = 50 << 20 // 50 MiB max multipart memory for upload
 
 	// Configure Trusted Proxies dynamically
 	trustedProxiesEnv := os.Getenv("TRUSTED_PROXIES")

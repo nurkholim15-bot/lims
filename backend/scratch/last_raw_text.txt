@@ -1,5 +1,11 @@
-[2026-07-20 06:01:00] Memulai pengujian LDIS...
-[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.
-Nilai untuk KONSI adalah 93.
-Hasil KOLOC: 92 (Normal).
-Pengecekan KOFAS selesai dengan skor 91.
+No code
+1 KONSI
+2 KOPEN : 2 Penurunan tegangan catu daya
+3 KOKON :
+4 PEENE
+5 PEGER 5 Dilengkapi dengan pengisi battery
+6 KOTAN : 6 Konstruksi-Sistem perakitan
+7 KODAY :
+8 PEPEM : 8 8uku petunjuk pemakaian dan pemeliharaan
+9 KORUS :
+10 K0FAS : 10 Konstruksi-Fasilitas anti Pernika

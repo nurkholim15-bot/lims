@@ -202,7 +202,15 @@ const AsistenLab = ({ user = {}, appConfig = {} }) => {
   const handleFileUpload = async (file) => {
     if (!file) return;
     if (file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
-      alert("Hanya file PDF yang didukung untuk SOP.");
+      showToast("Hanya file PDF yang didukung untuk SOP.", "error");
+      return;
+    }
+
+    const maxSopMb = parseInt(appConfig?.MAX_SOP_UPLOAD_MB || appConfig?.MAX_UPLOAD_SIZE) || 50;
+    const maxSizeBytes = maxSopMb * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      const fileSizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      showToast(`Ukuran file PDF (${fileSizeMb} MB) melebihi batas maksimum ${maxSopMb} MB.`, "error");
       return;
     }
 
@@ -365,7 +373,7 @@ const AsistenLab = ({ user = {}, appConfig = {} }) => {
           <div>
             <i className="fas fa-cloud-upload-alt" style={{ fontSize: "1.8rem", color: "#94a3b8", marginBottom: "0.5rem" }}></i>
             <p style={{ fontSize: "0.85rem", fontWeight: "600", color: "#475569", marginBottom: "2px" }}>Pilih atau Tarik File PDF</p>
-            <p style={{ fontSize: "0.7rem", color: "#94a3b8" }}>Maksimal 10MB (PDF saja)</p>
+            <p style={{ fontSize: "0.7rem", color: "#94a3b8" }}>Maksimal {parseInt(appConfig?.MAX_SOP_UPLOAD_MB || appConfig?.MAX_UPLOAD_SIZE) || 50}MB (PDF saja)</p>
           </div>
         )}
       </div>

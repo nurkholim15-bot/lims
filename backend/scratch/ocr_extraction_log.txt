@@ -1,21 +1,45 @@
 === OCR EXTRACTION LOG ===
-Total parameter diekstrak: 3
+Total parameter diekstrak: 6
 
-KONSI: OCR='93' -> Final='93'
-KOLOC [dropdown]: OCR='170' -> Final='170'
-KOFAS [dropdown]: OCR='91' -> Final='91'
+KODES [dropdown]: OCR='0' -> Final='0'
+KOPEN: OCR='2' -> Final='2'
+KOTAN [dropdown]: OCR='6' -> Final='6'
+PEPEM [dropdown]: OCR='8' -> Final='8'
+PEGER [dropdown]: OCR='5' -> Final='5'
+KOFAS [dropdown]: OCR='171' -> Final='171'
 
 [EXTRACTION PROCESS DETAILS]
-  [Match Technique D] Row 3   | Line 3  : Matched KONSI  (Konstruksi-Dimensi            ) -> RawScore='93' (BestScore=0.58)
-  [Match Technique D] Row 4   | Line 4  : Matched KOLOC  (Konstruksi-Frekuensi lock     ) -> RawScore='170' (BestScore=0.60)
-  [Match Technique D] Row 5   | Line 5  : Matched KOFAS  (Konstruksi-Fasilitas anti Pernika) -> RawScore='91' (BestScore=0.58)
-  [Non-Dropdown Direct] Parameter KONSI : Score='93'
-  [Dropdown Mapping] Parameter KOLOC: RawValue='170' -> FinalValue='170'
-  [Dropdown Mapping] Parameter KOFAS: RawValue='91' -> FinalValue='91'
+  [Table Line Matcher] Parameter KOPEN : Score='2' from line: 2 KOPEN : 2 Penurunan tegangan catu daya
+  [Table Line Matcher] Parameter KOTAN : Score='6' from line: 6 KOTAN : 6 Konstruksi-Sistem perakitan
+  [Table Line Matcher] Parameter PEPEM : Score='8' from line: 8 PEPEM : 8 8uku petunjuk pemakaian dan pemeliharaan
+  [Table Line Matcher] Parameter PEGER : Score='5' from line: 5 PEGER 5 Dilengkapi dengan pengisi battery
+  [Match Technique D] Row 1   | Line 1  : Matched KODES  (Konstruksi-Alat untuk mehilangkan desah / squelch) -> RawScore='0' (BestScore=0.31)
+  [Match Technique D] Row 2   | Line 2  : Matched KONSI  (Konstruksi-Dimensi            ) -> RawScore='' (BestScore=0.63)
+  [Match Technique D] Row 3   | Line 3  : Matched KOPEN  (Konstruksi-Penurunan tegangan catu daya) -> RawScore='daya' (BestScore=0.55)
+  [Match Technique D] Row 4   | Line 4  : Matched KOKON  (Konstruksi-Kekokohan perakitan) -> RawScore='' (BestScore=0.56)
+  [Match Technique D] Row 5   | Line 5  : Matched PEENE  (Perlengkapan-Antene           ) -> RawScore='' (BestScore=0.59)
+  [Match Technique D] Row 6   | Line 6  : Matched PEGER  (Perlengkapan-Dilengkapi dengan pengisi battery (battery charger)) -> RawScore='6' (BestScore=0.83)
+  [Match Technique D] Row 7   | Line 7  : Matched KOTAN  (Konstruksi-Sistem perakitan   ) -> RawScore='11' (BestScore=0.57)
+  [Match Technique D] Row 8   | Line 8  : Matched KODAY  (Konstruksi-Jenis catu daya    ) -> RawScore='' (BestScore=0.56)
+  [Match Technique D] Row 9   | Line 9  : Matched PEPEM  (Perlengkapan-Buku petunjuk pemakaian dan pemeliharaan) -> RawScore='118' (BestScore=0.53)
+  [Match Technique D] Row 10  | Line 10 : Matched KORUS  (Konstruksi-Pengaman arus      ) -> RawScore='' (BestScore=0.57)
+  [Match Technique D] Row 11  | Line 11 : Matched KOFAS  (Konstruksi-Fasilitas anti Pernika) -> RawScore='171' (BestScore=0.53)
+  [Direct Score] Parameter KODES : Score='0'
+  [Direct Score] Parameter KOPEN : Score='2'
+  [Direct Score] Parameter KOTAN : Score='6'
+  [Direct Score] Parameter PEPEM : Score='8'
+  [Direct Score] Parameter PEGER : Score='5'
+  [Direct Score] Parameter KOFAS : Score='171'
 
 === RAW OCR TEXT ===
-[2026-07-20 06:01:00] Memulai pengujian LDIS...
-[2026-07-20 06:01:05] Sensor mendeteksi kepadatan.
-Nilai untuk KONSI adalah 93.
-Hasil KOLOC: 92 (Normal).
-Pengecekan KOFAS selesai dengan skor 91.
+No code
+1 KONSI
+2 KOPEN : 2 Penurunan tegangan catu daya
+3 KOKON :
+4 PEENE
+5 PEGER 5 Dilengkapi dengan pengisi battery
+6 KOTAN : 6 Konstruksi-Sistem perakitan
+7 KODAY :
+8 PEPEM : 8 8uku petunjuk pemakaian dan pemeliharaan
+9 KORUS :
+10 K0FAS : 10 Konstruksi-Fasilitas anti Pernika

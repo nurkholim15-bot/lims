@@ -45,20 +45,6 @@ type ChatResponse struct {
 // ProcessRAGQuery handles user questions by searching pgvector for relevant SOP chunks,
 // parsing real-time database details, constructing prompts, calling the LLM, and returning the answer and sources.
 func ProcessRAGQuery(message string, username string) (string, []SourceCitation, error) {
-	// 1. Generate embedding for user query
-	queryVector, err := services.GetEmbedding(message)
-	if err != nil {
-		return "", nil, fmt.Errorf("failed to generate embedding: %w", err)
-	}
-
-	// Convert query vector to PostgreSQL pgvector string format
-	var strVals []string
-	for _, val := range queryVector {
-		strVals = append(strVals, fmt.Sprintf("%f", val))
-	}
-	vectorStr := "[" + strings.Join(strVals, ",") + "]"
-
-	// Load RAG parameters dynamically from database
 	thresholdStr := models.GetGlobalParam("AI_SIMILARITY_THRESHOLD", "0.65")
 	similarityThreshold, errParse := strconv.ParseFloat(thresholdStr, 64)
 	if errParse != nil || similarityThreshold <= 0 {
@@ -71,18 +57,27 @@ func ProcessRAGQuery(message string, username string) (string, []SourceCitation,
 		searchLimit = 4
 	}
 
-	// 2. Perform Cosine Similarity search in pgvector
+	// 1. Generate embedding for user query (graceful fallback if local Ollama embedding is offline)
 	var results []ChatSearchResult
-	errSearch := database.ChatBotDB.Raw(`
-		SELECT c.id, c.document_id, c.page_number, c.content, (c.embedding <=> ?::vector) as distance, d.file_name
-		FROM chat_sch.document_chunks c
-		JOIN chat_sch.documents d ON c.document_id = d.id
-		ORDER BY distance ASC
-		LIMIT ?
-	`, vectorStr, searchLimit).Scan(&results).Error
+	queryVector, err := services.GetEmbedding(message)
+	if err != nil {
+		fmt.Printf("[RAG Warning] Embedding API error (Ollama offline/unreachable): %v. Skipping SOP vector search.\n", err)
+	} else if len(queryVector) > 0 {
+		// Convert query vector to PostgreSQL pgvector string format
+		var strVals []string
+		for _, val := range queryVector {
+			strVals = append(strVals, fmt.Sprintf("%f", val))
+		}
+		vectorStr := "[" + strings.Join(strVals, ",") + "]"
 
-	if errSearch != nil {
-		return "", nil, fmt.Errorf("database similarity search failed: %w", errSearch)
+		// Perform Cosine Similarity search in pgvector
+		_ = database.ChatBotDB.Raw(`
+			SELECT c.id, c.document_id, c.page_number, c.content, (c.embedding <=> ?::vector) as distance, d.file_name
+			FROM chat_sch.document_chunks c
+			JOIN chat_sch.documents d ON c.document_id = d.id
+			ORDER BY distance ASC
+			LIMIT ?
+		`, vectorStr, searchLimit).Scan(&results).Error
 	}
 
 	// 3. Detect intents and fetch real-time database context

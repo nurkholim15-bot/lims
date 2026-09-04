@@ -203,21 +203,23 @@ Untuk menjaga integritas data LIMS Anda, berikut adalah prosedur melakukan penca
 
 ---
 
-### Langkah Backup Database (pg_dump)
-Untuk mencadangkan database `lims_prod_db` ke sebuah berkas terkompresi (format custom tar/binary):
+### Langkah Backup Database Bersih (pg_dump Tanpa Owner & Privilege Role Lain)
+Untuk mencadangkan database `lims_prod_db` ke berkas terkompresi tanpa menyertakan perintah role/owner luar:
 ```bash
-# Menjalankan backup menggunakan user admin_lims
-pg_dump -h localhost -p 5432 -U admin_lims -F c -b -v -f /home/lims/backup_lims_$(date +%F).dump lims_prod_db
+# Menjalankan backup bersih menggunakan user admin_lims
+pg_dump -h localhost -p 5432 -U admin_lims -F c --no-owner --no-acl -b -v -f /home/lims/backup_lims_$(date +%F).dump lims_prod_db
 ```
 *Keterangan parameter:*
 *   `-F c`: Menggunakan format binary custom (terkompresi secara efisien dan mendukung pemulihan parsial).
+*   `--no-owner` (`-O`): **TIDAK menuliskan** perintah `ALTER OWNER TO` ke file dump.
+*   `--no-acl` / `--no-privileges` (`-x`): **TIDAK menuliskan** perintah `GRANT` dan `REVOKE` milik role luar.
 *   `-b`: Ikut mencadangkan berkas Large Objects (LOBs).
 *   `-v`: Menampilkan log proses backup (*verbose mode*).
 *   `-f`: Nama berkas output backup.
 
 ---
 
-### Langkah Restore Database (pg_restore)
+### Langkah Restore Database & Penanganan Error Role (`pg_restore`)
 Jika Anda ingin memulihkan (*restore*) berkas cadangan `.dump` tadi ke database:
 
 1.  **Buat database tujuan baru (jika belum ada)**:
@@ -225,16 +227,46 @@ Jika Anda ingin memulihkan (*restore*) berkas cadangan `.dump` tadi ke database:
     # Masuk ke psql sebagai superuser untuk membuat db kosong baru
     sudo -u postgres psql -c "CREATE DATABASE lims_prod_db OWNER admin_lims TABLESPACE ts_data_lims;"
     ```
-2.  **Lakukan restore berkas dump**:
+2.  **Lakukan restore berkas dump dengan mengabaikan owner/role lama**:
     ```bash
     # Memulihkan data menggunakan user admin_lims ke database tujuan
-    # Disarankan menambahkan -O (no-owner) dan -x (no-privileges) untuk menghindari eror kecocokan role (seperti mecs_app)
-    pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db -O -x -v /home/lims/backup_lims_tanggal.dump
+    pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db --no-owner --no-privileges -v /home/lims/backup_lims_tanggal.dump
     ```
-    *Catatan:*
+    *Catatan Tambahan:*
     *   `-O` (`--no-owner`): Mengabaikan kepemilikan objek asli dari file dump dan menetapkan user saat ini (`admin_lims`) sebagai owner baru.
-    *   `-x` (`--no-privileges`): Mengabaikan restore tabel hak akses asli (ACL/Grants). Sangat penting jika file dump memiliki grant lama ke user yang tidak ada di VPS (seperti `mecs_app`). Anda akan memberikan hak akses baru secara terkontrol untuk `lims_app` di **Langkah 5**.
-    *   Sebelum melakukan restore, pastikan folder fisik tablespace (`ts_data_lims` dan `ts_index_lims`) di VPS sudah dipersiapkan terlebih dahulu (Langkah 1 & 2).
+    *   `-x` (`--no-privileges`): Mengabaikan restore tabel hak akses asli (ACL/Grants). Sangat penting jika file dump memiliki grant lama ke user yang tidak ada di server baru (seperti `ERROR: role "mecs_app" does not exist`).
+
+3.  **Penanganan Error Role Lama (`mecs_app`) Menggunakan Dummy Role (Trik Alternatif)**:
+    Jika file dump lama terus memicu error role `mecs_app` saat restore, Anda dapat membuat dummy role sementara sebelum restore:
+    ```sql
+    -- 1. Buat dummy role sementara di PostgreSQL
+    CREATE ROLE mecs_app NOLOGIN;
+
+    -- 2. Jalankan restore seperti biasa
+    -- 3. Alihkan semua objek milik mecs_app ke admin_lims & hapus dummy role
+    REASSIGN OWNED BY mecs_app TO admin_lims;
+    DROP OWNED BY mecs_app;
+    DROP ROLE mecs_app;
+    ```
+
+4.  **Script Otomatis Mengubah Seluruh Owner Objek ke `admin_lims` (Pasca Restore)**:
+    ```sql
+    DO $$ 
+    DECLARE r RECORD;
+    BEGIN 
+        FOR r IN (SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema IN ('lims', 'chat_sch', 'public') AND table_type = 'BASE TABLE') LOOP 
+            EXECUTE format('ALTER TABLE %I.%I OWNER TO admin_lims;', r.table_schema, r.table_name); 
+        END LOOP;
+        FOR r IN (SELECT sequence_schema, sequence_name FROM information_schema.sequences WHERE sequence_schema IN ('lims', 'chat_sch', 'public')) LOOP 
+            EXECUTE format('ALTER SEQUENCE %I.%I OWNER TO admin_lims;', r.sequence_schema, r.sequence_name); 
+        END LOOP;
+        FOR r IN (SELECT table_schema, table_name FROM information_schema.views WHERE table_schema IN ('lims', 'chat_sch', 'public')) LOOP 
+            EXECUTE format('ALTER VIEW %I.%I OWNER TO admin_lims;', r.table_schema, r.table_name); 
+        END LOOP;
+        EXECUTE 'ALTER SCHEMA lims OWNER TO admin_lims;';
+        EXECUTE 'ALTER SCHEMA chat_sch OWNER TO admin_lims;';
+    END $$;
+    ```
 
 ---
 

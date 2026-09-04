@@ -273,9 +273,8 @@ func IngestPDF(filePath string, docID uint) {
 			// Generate vector embedding
 			embedding, err := GetEmbedding(chunk)
 			if err != nil {
-				log.Printf("[RAG-Ingest] Error generating embedding for chunk in page %d: %v. Aborting document.", page, err)
-				updateDocStatus(docID, "failed")
-				return
+				log.Printf("[RAG-Ingest] Warning: error generating embedding for chunk in page %d: %v. Skipping chunk.", page, err)
+				continue
 			}
 
 			// Convert float32 array to pgvector string format: [val1,val2,...]
@@ -291,16 +290,19 @@ func IngestPDF(filePath string, docID uint) {
 				docID, page, chunk, vectorStr,
 			).Error
 			if errInsert != nil {
-				log.Printf("[RAG-Ingest] Error saving chunk to DB: %v. Aborting document.", errInsert)
-				updateDocStatus(docID, "failed")
-				return
+				log.Printf("[RAG-Ingest] Warning: error saving chunk to DB: %v. Skipping chunk.", errInsert)
+				continue
 			}
 			totalChunks++
 		}
 	}
 
 	log.Printf("[RAG-Ingest] Completed ingestion for document ID %d. Processed %d total chunks.", docID, totalChunks)
-	updateDocStatus(docID, "completed")
+	if totalChunks > 0 {
+		updateDocStatus(docID, "completed")
+	} else {
+		updateDocStatus(docID, "failed")
+	}
 }
 
 func getPDFPageCount(pdfPath string) (int, error) {
