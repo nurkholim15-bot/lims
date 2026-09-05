@@ -1,6 +1,8 @@
 # LIMS System Documentation (Laboratory Information Management System)
 
 Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alur akses pengguna, struktur direktori, mekanisme partisi data, pemetaan modul dengan API serta basis data, konfigurasi paket dinamis, sistem penilaian (*scoring*) LIMS, dan panduan deployment produksi Nginx terlengkap.
+- [16. Standarisasi Penampil Dokumen PDF (PDF Viewer) & Header Keamanan (CSP)](#16-standarisasi-penampil-dokumen-pdf-pdf-viewer--header-keamanan-csp)
+- [17. Konfigurasi HTTPS / SSL Lingkungan Pengembangan (Local Development)](#17-konfigurasi-https--ssl-lingkungan-pengembangan-local-development)
 
 ---
 
@@ -11,7 +13,9 @@ Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alu
 - [Stakeholders & User Roles](#stakeholders--user-roles)
 - [Non-Functional Requirements](#non-functional-requirements)
 - [Ringkasan Modul & Sub-Modul LIMS](#ringkasan-modul--sub-modul-lims)
-- [1. Prasyarat Perangkat Lunak (Software Prerequisites)](#1-prasyarat-perangkat-lunak-software-prerequisites)
+- [1. Prasyarat Sistem & Perangkat Lunak (System & Software Prerequisites)](#1-prasyarat-sistem--perangkat-lunak-system--software-prerequisites)
+  - [1.1 Prasyarat Perangkat Lunak Sisi Server (Server-Side Prerequisites)](#11-prasyarat-perangkat-lunak-sisi-server-server-side-prerequisites)
+  - [1.2 Prasyarat Peramban Klien (Client Web Browser Prerequisites)](#12-prasyarat-peramban-klien-client-web-browser-prerequisites)
 - [2. Arsitektur Sistem & Alur Akses Pengguna (System Architecture & Access Flow)](#2-arsitektur-sistem--alur-akses-pengguna-system-architecture--access-flow)
   - [Diagram Arsitektur Sistem & Alur Akses](#diagram-arsitektur-sistem--alur-akses)
   - [Alur Akses Detil Pengguna](#alur-akses-detil-pengguna)
@@ -142,7 +146,9 @@ Berikut adalah ringkasan (*summary table*) dari seluruh modul dan sub-modul yang
 ---
 
 
-## 1. Prasyarat Perangkat Lunak (Software Prerequisites)
+## 1. Prasyarat Sistem & Perangkat Lunak (System & Software Prerequisites)
+
+### 1.1 Prasyarat Perangkat Lunak Sisi Server (Server-Side Prerequisites)
 
 Sebelum melakukan deployment LIMS, sistem server harus terpasang perangkat lunak berikut:
 
@@ -243,6 +249,108 @@ sudo apt install goaccess -y
 sudo apt install mosquitto mosquitto-clients -y
 sudo npm install -g --unsafe-perm node-red
 ```
+
+##### 10. Pasang Ollama AI Engine Lokal di Ubuntu (Embedding & LLM)
+```bash
+# 1. Pasang Ollama secara native di Ubuntu (Laptop WSL2 atau VPS)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 2. Unduh model embedding teks (Wajib untuk RAG / pgvector 768 dimensi)
+ollama pull nomic-embed-text
+
+# 3. Unduh model LLM lokal untuk Chatbot & Analisis (Qwen 2.5 3B / CPU-Friendly)
+ollama pull qwen2.5:3b
+
+# (Opsional) Unduh model Llama 3.1 8B jika laptop/server memiliki GPU diskrit
+# ollama pull llama3.1
+
+# 4. Verifikasi instalasi dan model yang aktif
+ollama list
+curl -s http://127.0.0.1:11434/api/tags
+```
+
+
+### 1.2 Prasyarat Peramban Klien (Client Web Browser Prerequisites)
+
+LIMS dibangun menggunakan arsitektur modern Single Page Application (SPA) berbasis **React 18** dan **Vite**, yang membutuhkan fitur peramban (*web browser*) modern agar seluruh fungsi sistem dapat beroperasi secara optimal, aman, dan tanpa kendala visual.
+
+#### A. Peramban yang Didukung (Supported Browsers)
+
+| Peramban (Browser) | Mesin Render (Engine) | Versi Minimal | Versi Rekomendasi | Status Dukungan |
+| :--- | :--- | :---: | :---: | :--- |
+| **Google Chrome** | Blink / V8 | Versi 90+ | Versi 115+ / Terbaru | Didukung Penuh (Rekomendasi Utama) |
+| **Microsoft Edge** | Blink / V8 | Versi 90+ | Versi 115+ / Terbaru | Didukung Penuh |
+| **Mozilla Firefox** | Gecko / SpiderMonkey | Versi 90+ | Versi 115+ ESR / Terbaru | Didukung Penuh |
+| **Apple Safari** | WebKit / JavaScriptCore | Versi 15.0+ | Versi 16+ / Terbaru | Didukung Penuh (macOS & iOS) |
+| **Opera / Brave** | Blink / V8 | Versi 80+ | Versi Terbaru | Didukung Penuh |
+| **Internet Explorer** | Trident | Semua Versi | Tidak Ada | **TIDAK DIDUKUNG** *(Deprecated)* |
+
+> [!IMPORTANT]
+> **Internet Explorer (IE 11)** dan peramban warisan non-Chromium Edge **tidak didukung sama sekali**. LIMS memanfaatkan fitur standar modern seperti CSS Custom Properties (Variables), modul ES2020+, Fetch API, AbortController, WebAssembly, dan native Blob streaming yang tidak tersedia pada browser warisan.
+
+#### B. Fitur & Kapabilitas Peramban yang Wajib Diaktifkan
+
+Untuk menjamin kelancaran alur kerja dari pendaftaran hingga verifikasi dan sertifikasi, pastikan pengaturan browser memenuhi persyaratan berikut:
+
+1. **Eksekusi JavaScript (Wajib Aktif)**:
+   * Seluruh antarmuka LIMS dirender secara dinamis di sisi klien (*Client-Side Rendering*).
+   * Fitur JavaScript pada peramban harus dalam status **Aktif / Enabled** (pengaturan *Disable JavaScript* akan menyebabkan halaman blank putih).
+
+2. **Penampil Dokumen PDF Bawaan (Native PDF Viewer / Chromium PDFium)**:
+   * Modul Verifikasi dan Pengujian LIMS menampilkan pratinjau dokumen (Surat Permohonan, Dokumen Teknis, Dokumen Mutu, Kuitansi, dan Draft SHP) secara *in-app* melalui elemen frame responsif.
+   * **Pengaturan PDF di Chrome & Edge**:
+     * Buka URL: `chrome://settings/content/pdfDocuments` (atau `edge://settings/content/pdfDocuments`).
+     * Pastikan opsi yang dipilih adalah **"Buka PDF di Chrome"** (*Open PDFs in Chrome*), **BUKAN** "Unduh PDF secara otomatis" (*Download PDFs*). Jika disetel ke unduh otomatis, modal pratinjau tidak akan dapat menampilkan visual dokumen secara langsung.
+   * **Ekstensi Pengunduh Berkas Pihak Ketiga (IDM, FDM, EagleGet, dll.)**:
+     * Ekstensi seperti *Internet Download Manager (IDM)* dapat mencegat koneksi *progressive byte-range streaming* dari endpoint `/api/download`, sehingga modal pratinjau LIMS tampil *blank* atau membeku di tengah pemuatan.
+     * **Solusi**: Tambahkan domain atau IP aplikasi LIMS (`lims.local`, `localhost`, atau IP server produksi) ke dalam daftar pengecualian (*Exception / Whitelist*) ekstensi pengunduh berkas tersebut.
+
+3. **Penyimpanan Lokal (Web Storage: LocalStorage & SessionStorage)**:
+   * Digunakan oleh LIMS untuk menyimpan token sesi otentikasi JWT (`token`, `auth_token`), status sesi login (`is_logged_in`), profil pengguna aktif, dan riwayat preferensi filter antarmuka.
+   * Peramban tidak boleh memblokir penyimpanan lokal domain LIMS (pengaturan *"Block all cookies & site data"* atau mode penyamaran/incognito ekstrem yang menghapus *Web Storage* seketika dapat menyebabkan pengguna terlempar keluar dari sesi login).
+
+4. **Pengelolaan Cookie & Kredensial (Cookie Policy)**:
+   * Cookie pihak pertama (*First-Party Cookies*) wajib diizinkan.
+   * Token sesi disinkronkan ke cookie `auth_token` dengan flag keamanan `SameSite=Lax` dan `Secure` (saat HTTPS aktif) untuk mengotorisasi pemanggilan dokumen biner antar-frame secara aman.
+
+5. **Akses Kamera & Konteks Aman (Hardware Access & Secure Context)**:
+   * **Pemindai QR Code & Barcode**: Modul Manajemen Aset Peralatan menggunakan pustaka `html5-qrcode` untuk memindai kode aset secara *real-time* via kamera laptop/HP.
+   * **Aturan Secure Context (HTTPS)**: Berdasarkan standar keamanan W3C MediaDevices API, peramban membatasi akses kamera hanya pada **Secure Context** (protokol `https://` atau alamat pengembangan lokal `localhost` / `127.0.0.1`). Jika LIMS diakses via HTTP non-secure pada IP jaringan lokal (misal `http://192.168.x.x`), browser akan memblokir kamera secara permanen.
+   * **Izin Kamera**: Pengguna wajib mengklik tombol **"Allow" / "Izinkan"** saat peramban menampilkan dialog izin akses perangkat kamera.
+
+6. **Dukungan Blob URL & Object URL (`URL.createObjectURL`)**:
+   * Digunakan untuk isolasi data dokumen PDF terenkripsi dan berkas media di memori browser (`blob:https://...`), menghindari paparan path berkas mentah server pada URL publik.
+
+7. **Izin Pembukaan Tab Baru / Jendela Pop-up**:
+   * Tombol **"Buka Tab Baru"** pada modal dokumen dan fitur cetak lembar SHP/sertifikasi (`utils/print.js`) membuka tab atau dialog pratinjau browser baru.
+   * Pastikan peramban tidak memblokir pop-up untuk alamat LIMS (*Allow pop-ups and redirects*).
+
+#### C. Matriks Kebutuhan Peramban per Modul LIMS
+
+| Modul LIMS | Fitur Terkait | Kapabilitas Browser yang Dibutuhkan |
+| :--- | :--- | :--- |
+| **Otentikasi & Akun** | Login, Session Guard, Timeout Idle | `localStorage`, Cookie `auth_token`, JavaScript ES2020 |
+| **Verifikasi & Registrasi** | Pratinjau Surat Permohonan & Dokumen Mutu | Native PDF Viewer, Blob URL (`blob:`), Byte-Range Streaming |
+| **Pelaksanaan Uji** | Input Hasil Pengujian & Scoring PQC AI | WebSockets (monitoring log), Form Validation API |
+| **Manajemen Aset** | Pemindaian Barcode & QR Code Aset Klien | Camera / MediaDevices API, Secure Context (HTTPS) |
+| **Pelaporan (Reporting)** | Cetak Sertifikat Hasil Uji (SHP) & Invoice | CSS Print Styles (`@media print`), Pop-up Tab Baru |
+| **Chatbot RAG & Asisten Lab** | Chatbot AI Interaktif & Streaming Teks | Fetch Streaming, ReadableStream API |
+
+#### D. Panduan Cepat Pemecahan Masalah Peramban (Troubleshooting Checklist)
+
+* **Kendala 1: Pratinjau PDF Blank / Gelap atau Berhenti di 50%**:
+  * Periksa apakah ekstensi IDM aktif. Buka opsi IDM $\rightarrow$ *File Types* $\rightarrow$ hapus ekstensi `PDF` atau masukkan domain LIMS ke *Exceptions*.
+  * Buka `chrome://settings/content/pdfDocuments`, pastikan terpilih opsi *"Open PDFs in Chrome"*.
+* **Kendala 2: Muncul Peringatan "Not Secure" / `NET::ERR_CERT_AUTHORITY_INVALID`**:
+  * Pada Chrome/Edge di lingkungan pengembangan lokal, buka `chrome://flags/#allow-insecure-localhost`, ubah menjadi **Enabled**, lalu klik **Relaunch**.
+  * Atau pasang sertifikat Root CA lokal menggunakan utilitas `mkcert` (lihat panduan Bagian 17).
+* **Kendala 3: Kamera Pemindai QR Code Tidak Aktif / Error `NotAllowedError`**:
+  * Klik ikon gembok / setelan situs di sebelah kiri *address bar* peramban.
+  * Pastikan izin **Kamera (Camera)** disetel ke **Allow / Izinkan**, kemudian lakukan refresh halaman (`F5`).
+* **Kendala 4: Tampilan Tidak Berubah Setelah Update Sistem (*Stale Cache*)**:
+  * Lakukan *Hard Refresh* menggunakan tombol pintas:
+    * **Windows / Linux**: `Ctrl + F5` atau `Ctrl + Shift + R`.
+    * **macOS**: `Cmd + Shift + R`.
 
 ---
 
@@ -3113,7 +3221,7 @@ Jika Anda belum memiliki kunci Groq atau kunci lama Anda sudah kedaluwarsa, ikut
 6. Sebuah teks rahasia yang diawali dengan `gsk_` akan muncul. **Segera salin (*copy*)** teks tersebut, karena Groq tidak akan pernah menampilkannya lagi.
 7. *Paste* teks tersebut ke dalam file `.env` Anda pada baris `AI_API_KEY=...`.
 
-#### Panduan Instalasi & Konfigurasi LLM Lokal (Ollama - Qwen 2.5 3B / Llama 3.1 8B) di VPS
+#### Panduan Instalasi & Konfigurasi Ollama AI Lokal (Ubuntu / WSL2 Laptop & VPS)
 
 ##### Prinsip Kerahasiaan & Keamanan Data (100% On-Premises Local AI)
 Untuk menjamin **kerahasiaan data pengujian laboratorium (Zero External Data Leakage)**, sistem LIMS mendukung penggunaan **LLM Lokal On-Premises via Ollama**. Seluruh proses pengolahan data teknis, skor kelayakan, dan rekomendasi laporan diolah 100% secara lokal di dalam server VPS milik instansi tanpa pernah mengirimkan paket data ke pihak ketiga atau server cloud luar.
@@ -3202,19 +3310,20 @@ Untuk lingkungan produksi (*Production Environment*), sangat direkomendasikan me
    AI_EMBEDDING_MODEL=nomic-embed-text
    ```
 
-##### 3. Konfigurasi Berkas `.env` LIMS di VPS (Single Server)
-Jika menggunakan satu server VPS yang sama, sesuaikan berkas konfigurasi `.env`:
-1.  Buka berkas konfigurasi `.env` instansi Anda:
+##### 3. Konfigurasi Berkas `.env` LIMS (Ubuntu Lokal / WSL2 / VPS Single Server)
+Sesuaikan berkas konfigurasi `backend/.env` Anda agar terhubung ke Ollama lokal di Ubuntu:
+1.  Buka berkas konfigurasi `.env`:
     ```bash
-    sudo nano /home/lims/lims1/backend/.env
-    sudo nano /home/lims/lims2/backend/.env
+    nano backend/.env
     ```
-2.  Ubah bagian **AI Integration** menjadi konfigurasi lokal berikut:
-    ```env
-    # --- KOORDINAT MODEL AI LOKAL (OLLAMA SINGLE SERVER) ---
+2.  Ubah bagian **AI Integration** menjadi konfigurasi lokal Ubuntu berikut:
+    ```ini
+    # ==========================================
+    # AI Integration Settings (Ollama Lokal Ubuntu / WSL2)
+    # ==========================================
     AI_API_URL=http://127.0.0.1:11434/v1
     AI_API_KEY=none
-    AI_MODEL=qwen2.5:1.5b   # (Atau qwen2.5:3b)
+    AI_MODEL=qwen2.5:3b
     AI_NUM_THREAD=6
     AI_NUM_CTX=512
 
@@ -3222,6 +3331,31 @@ Jika menggunakan satu server VPS yang sama, sesuaikan berkas konfigurasi `.env`:
     AI_EMBEDDING_API_URL=http://127.0.0.1:11434
     AI_EMBEDDING_MODEL=nomic-embed-text
     ```
+    > [!IMPORTANT]
+    > **Kenapa `nomic-embed-text` Wajib?**
+    > Skema basis data `chatbot_db` (tabel `chat_sch.document_chunks`) menggunakan kolom `embedding vector(768)`. Model `nomic-embed-text` secara presisi menghasilkan vektor berukuran **768 dimensi**, yang cocok 100% dengan `pgvector` LIMS. Model embedding lain (seperti `all-minilm` 384 dimensi atau OpenAI 1536 dimensi) akan menyebabkan galat *vector dimension mismatch*.
+
+##### 3b. Verifikasi & Uji Coba Cepat (Quick Test) via cURL di Terminal Ubuntu
+Setelah Ollama aktif dan model selesai diunduh, Anda dapat memverifikasi koneksi langsung di terminal:
+1. **Uji Coba Endpoint Embedding (`/api/embeddings`)**:
+   ```bash
+   curl http://127.0.0.1:11434/api/embeddings -d '{
+     "model": "nomic-embed-text",
+     "prompt": "Uji coba embedding dokumen LIMS"
+   }'
+   ```
+   *Jika berhasil, terminal akan merespons dengan deretan 768 angka desimal vektor.*
+
+2. **Uji Coba Endpoint Chatbot LLM (`/v1/chat/completions`)**:
+   ```bash
+   curl http://127.0.0.1:11434/v1/chat/completions \
+     -H "Content-Type: application/json" \
+     -d '{
+       "model": "qwen2.5:3b",
+       "messages": [{"role": "user", "content": "Halo LIMS!"}]
+     }'
+   ```
+   *Jika berhasil, model Qwen 2.5 akan membalas dengan teks pesan salam.*
 3.  Simpan berkas, lalu restart layanan backend LIMS:
     ```bash
     sudo systemctl restart lims-backend-8081.service
@@ -3624,6 +3758,21 @@ pg_dump -h localhost -p 5432 -U admin_lims -F c -b -f /home/lims/backup/chatbot_
    - **Opsi A (Dummy Role)**: Sebelum restore, buat `CREATE ROLE mecs_app NOLOGIN;`. Setelah restore, jalankan `REASSIGN OWNED BY mecs_app TO admin_lims; DROP OWNED BY mecs_app; DROP ROLE mecs_app;`.
    - **Opsi B (Pembersihan SQL)**: Bersihkan file dump SQL dari perintah GRANT/OWNER: `grep -vE 'mecs_app|OWNER TO' backup.sql > backup_clean.sql`.
 
+3. **Langkah Wajib Pasca-Restore: Pemberian Hak Akses Penuh ke User Aplikasi (`lims_app`)**:
+   Setelah proses restore selesai, seluruh tabel dan skema biasanya dimiliki oleh administrator database (`admin_lims` atau `postgres`). Pengguna aplikasi backend Go (`lims_app`) **wajib** diberikan hak akses penuh ke skema `lims`, seluruh tabel, sequence, dan fungsi agar tidak terjadi error `permission denied for schema lims`:
+   ```bash
+   psql -p 5432 -U <super_user> -d lims_prod_db -c "
+   GRANT ALL ON SCHEMA lims TO lims_app;
+   GRANT ALL ON ALL TABLES IN SCHEMA lims TO lims_app;
+   GRANT ALL ON ALL SEQUENCES IN SCHEMA lims TO lims_app;
+   GRANT ALL ON ALL FUNCTIONS IN SCHEMA lims TO lims_app;
+   ALTER DEFAULT PRIVILEGES IN SCHEMA lims GRANT ALL ON TABLES TO lims_app;
+   ALTER DEFAULT PRIVILEGES IN SCHEMA lims GRANT ALL ON SEQUENCES TO lims_app;
+   ALTER DEFAULT PRIVILEGES IN SCHEMA lims GRANT ALL ON FUNCTIONS TO lims_app;
+   "
+   ```
+   *(Catatan: Ganti `<super_user>` dengan `postgres`, `admin_lims`, atau akun superuser lokal Anda seperti `nurk`).*
+
 ---
 
 ###### Opsi 4: Restore via pgAdmin 4 (Visual/GUI)
@@ -3680,6 +3829,27 @@ Untuk menjadwalkan pencadangan otomatis setiap hari pukul 02:00 dini hari di Lin
    - Selalu gunakan parameter `-O` (`--no-owner`) dan `-x` (`--no-privileges`) saat memulihkan file dump ke database atau server yang berbeda.
 3. **Koneksi Terputus saat Dump/Restore Besar**:
    - Gunakan sesi `tmux` atau `screen` saat memulihkan database berukuran gigabyte di VPS Linux agar proses tidak terputus jika jaringan SSH terganggu.
+4. **Eror: `permission denied for schema lims` saat Backend Go Dijalankan**:
+   - **Penyebab**: Setelah me-restore database dari berkas dump, hak kepemilikan skema dan tabel biasanya beralih ke superuser/admin pembuat dump, sementara backend Go terhubung menggunakan user aplikasi `lims_app` (sesuai file konfigurasi `.env`).
+   - **Solusi**: Berikan hak akses penuh kepada `lims_app` menggunakan perintah psql:
+     ```bash
+     psql -p 5432 -U <super_user> -d lims_prod_db -c "
+     GRANT ALL ON SCHEMA lims TO lims_app;
+     GRANT ALL ON ALL TABLES IN SCHEMA lims TO lims_app;
+     GRANT ALL ON ALL SEQUENCES IN SCHEMA lims TO lims_app;
+     GRANT ALL ON ALL FUNCTIONS IN SCHEMA lims TO lims_app;
+     ALTER DEFAULT PRIVILEGES IN SCHEMA lims GRANT ALL ON TABLES TO lims_app;
+     ALTER DEFAULT PRIVILEGES IN SCHEMA lims GRANT ALL ON SEQUENCES TO lims_app;
+     ALTER DEFAULT PRIVILEGES IN SCHEMA lims GRANT ALL ON FUNCTIONS TO lims_app;
+     "
+     ```
+5. **Eror: `could not create unique index ... Key is duplicated` & `errors ignored on restore: 1722`**:
+   - **Penyebab**: Menjalankan `pg_restore` ke database yang sudah terisi data tanpa membersihkannya terlebih dahulu. Akibatnya, perintah `COPY` menduplikasi seluruh baris data 2x lipat, sehingga pembuatan *Primary Key* dan *Unique Constraint* ditolak PostgreSQL. Hal ini memicu penolakan seluruh relasi *Foreign Key* terkait (*cascading failure*).
+   - **Solusi**: Bersihkan skema terlebih dahulu sebelum restore:
+     ```bash
+     psql -p 5432 -U <super_user> -d lims_prod_db -c "DROP SCHEMA IF EXISTS lims CASCADE; CREATE SCHEMA lims AUTHORIZATION admin_lims;"
+     ```
+     Atau sertakan opsi `--clean --if-exists` pada perintah `pg_restore`.
 
 ---
 
@@ -5598,3 +5768,111 @@ Untuk melihat statistik pengunjung yang nyata (jumlah akses, rute/URL yang palin
    Buka **Dashboards** $\rightarrow$ **New** $\rightarrow$ **Import**.
    Masukkan ID Dasbor: **`13740`** atau **`24306`**. 
    Di bagian opsi datasource bawah, pastikan memilih Loki. Setelah diklik *Import*, Anda kini bisa melihat secara detail trafik HTTP pengunjung Frontend Anda!
+
+
+---
+
+## 16. Standarisasi Penampil Dokumen PDF (PDF Viewer) & Header Keamanan (CSP)
+
+### 16.1 Gejala Isu (Blank PDF Viewer)
+Saat pengguna membuka dokumen registrasi (misalnya **Surat Permohonan**, **Dokumen Teknis**, atau **Dokumen Mutu**) pada halaman Verifikasi Aplikasi LIMS, browser membuka modal pratinjau atau tab baru ke alamat `/api/download?path=...`, namun tampilan dokumen tetap kosong/layar abu-abu gelap (*blank*) dengan indikator pemuatan (*progress bar*) yang membeku di tengah jalan (~50%).
+
+### 16.2 Akar Masalah
+1. **Kebijakan Content Security Policy (`default-src 'self'`)**:
+   Chromium (Google Chrome/Edge) merender berkas PDF menggunakan ekstensi internal PDF viewer (`chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/`) yang menjalankan web worker dan engine PDFium. Jika respons HTTP untuk berkas `application/pdf` menyertakan header `Content-Security-Policy: default-src 'self' ...`, browser memberlakukan CSP tersebut ke dalam konteks viewer. Ekstensi internal Chromium diblokir dari mengeksekusi worker-nya karena tidak berasal dari origin `'self'`, sehingga proses rendering terhenti di 50% dan kanvas menjadi abu-abu kosong.
+   * **Aturan Kritis**: Header CSP tingkat HTTP response pada berkas biner (`application/pdf`) **tidak boleh** dikirimkan oleh server.
+2. **Header `X-Frame-Options: DENY`**:
+   Membatasi pemuatan dokumen pada frame internal browser saat penampil PDF dievaluasi.
+3. **Dukungan HTTP Byte-Range Streaming**:
+   Chromium PDFium membutuhkan dukungan HTTP Range request (`Accept-Ranges: bytes`, `206 Partial Content`) untuk membaca metadata dan tabel `xref` di ujung berkas PDF secara bertahap tanpa perlu menunggu seluruh berkas diunduh.
+
+### 16.3 Solusi & Implementasi
+1. **Penyesuaian Header CSP & Frame Options**:
+   * **Vite (`frontend/vite.config.js`)**:
+     * `X-Frame-Options`: Diubah menjadi `SAMEORIGIN`.
+     * `object-src`: Diubah dari `'none'` menjadi `'self' blob:;`.
+     * `frame-src`: Diperbarui menjadi `'self' blob: data:;`.
+   * **Backend Middleware (`backend/middleware/security_headers.go`)**:
+     * Endpoint `/api/download` **TIDAK** dipasangi header `Content-Security-Policy`.
+     * Hanya mengirimkan header `X-Frame-Options: SAMEORIGIN` dan `X-Content-Type-Options: nosniff`.
+       ```go
+       if strings.HasPrefix(c.Request.URL.Path, "/api/download") {
+           c.Writer.Header().Set("X-Frame-Options", "SAMEORIGIN")
+           c.Next()
+           return
+       }
+       ```
+2. **Penanganan Streaming Byte-Range di Backend Controller (`DownloadDocument`)**:
+   * Menggunakan standard library Go `http.ServeContent(c.Writer, c.Request, filename, stat.LastModified, reader)`.
+   * Objek MinIO (`*minio.Object`) mengimplementasikan `io.ReadSeeker`. Fungsi `http.ServeContent` secara native mendukung permintaan HTTP Byte-Range (`Accept-Ranges: bytes`, status `206 Partial Content`), yang sangat krusial bagi Chromium PDFium untuk membaca tabel xref dan metadata PDF secara bertahap tanpa perlu menunggu seluruh berkas diunduh.
+   * Middleware `TransactionLogger` mengecualikan endpoint `/api/download` dari *buffer response body*, sehingga berkas biner PDF tidak dibaca berulang ke dalam memori maupun dicetak mentah ke log terminal.
+   * Menambahkan header `Content-Disposition: inline; filename="..."`, `Accept-Ranges: bytes`, dan `X-Frame-Options: SAMEORIGIN`.
+3. **Helper Pemanggilan Aman di Frontend (`viewDocument` di `api.js`)**:
+   * Dibuat fungsi helper `viewDocument(path)` di `frontend/src/models/api.js`.
+   * Fungsi ini menyinkronkan token ke `document.cookie` dan mengambil berkas melalui `fetch` dengan `arrayBuffer()` dan `AbortController` untuk menghindari pemblokiran navigasi top-frame Chromium.
+4. **Modal Penampil PDF Terpadu Langsung di UI Verifikasi (`AppDetail.jsx`)**:
+   * Menggunakan elemen `<iframe>` mandiri yang bersih (tanpa nesting `<object>` yang memicu benturan subframe di Chromium).
+   * Menampilkan animasi indikator pemuatan ringan (*smooth loading spinner*) saat berkas diunduh via fetch blob memory (~30-50ms) dengan token terenkripsi.
+   * Begitu `blobUrl` tersedia, `iframe` langsung merender berkas PDF dari memori browser, terisolasi dari kendala sesi cookie dan batasan CSP browser.
+   * Tombol aksi **Buka Tab Baru** membuka `blobUrl` secara langsung melalui `window.open(blobUrl, "_blank")`, dan **Unduh PDF** menyediakan pengunduhan berkas langsung.
+
+---
+
+## 17. Konfigurasi HTTPS / SSL Lingkungan Pengembangan (Local Development)
+
+### 17.1 Gejala Isu (Peringatan "Not Secure" pada `https://localhost:3000`)
+Saat mengakses LIMS Frontend via HTTPS (misalnya `https://localhost:3000/verification`), browser Chrome atau Edge menampilkan peringatan keamanan:
+* Ikon peringatan berwarna merah/abu-abu: **"Not secure"** / **"Tidak Aman"**.
+* Galat SSL: `NET::ERR_CERT_AUTHORITY_INVALID` (*Your connection is not private*).
+* Pengguna harus mengklik *Advanced* $\rightarrow$ *Proceed to localhost (unsafe)* untuk melanjutkan.
+
+### 17.2 Akar Masalah
+Berkas sertifikat SSL yang digunakan oleh Vite (`frontend/sertifikat/lims.local+2.pem`) diterbitkan (*Issuer*) oleh Root CA mesin pengembang sebelumnya:
+* **Issuer**: `O=mkcert development CA, CN=mkcert LAPTOP-N8HKHQE7\Fairuz@LAPTOP-N8HKHQE7`
+* **Subject Alternative Name (SAN)**: `DNS:lims.local, DNS:localhost, IP:127.0.0.1`
+
+Karena sertifikat ini dibuat menggunakan utilitas `mkcert` di laptop `LAPTOP-N8HKHQE7`, private Root CA tersebut belum terpasang pada Windows Certificate Store (*Trusted Root Certification Authorities*) di laptop saat ini (`LAPTOP-O1IDN7SU`). Akibatnya, browser tidak dapat memverifikasi rantai kepercayaan (*trust chain*) sertifikat tersebut. Selain itu, status *untrusted certificate* pada Chrome dapat membatasi transmisi *subresources* (seperti WebSocket HMR, iframe blob, atau fetch berautentikasi).
+
+### 17.3 Solusi Penanganan HTTPS
+
+#### Opsi 1: Menerbitkan Sertifikat Lokal Tepercaya dengan `mkcert` (Sangat Direkomendasikan)
+Metode ini mendaftarkan Root CA lokal ke Windows Certificate Store laptop saat ini, sehingga browser Chrome, Edge, dan Firefox akan otomatis menampilkan ikon gembok hijau/aman 🔒 (*Connection is secure*):
+
+1. Buka **PowerShell** di Windows (sebagai Administrator atau User biasa).
+2. Instal `mkcert`:
+   ```powershell
+   winget install FiloSottile.mkcert
+   # atau via Chocolatey: choco install mkcert
+   ```
+3. Daftarkan Root CA ke sistem operasi Windows:
+   ```powershell
+   mkcert -install
+   ```
+   *(Akan muncul konfirmasi UAC Windows Security Dialog, klik **Yes**)*.
+4. Terbitkan ulang sertifikat untuk domain lokal ke folder frontend:
+   ```powershell
+   cd C:\Project\Application\lims\frontend\sertifikat
+   mkcert -key-file lims.local+2-key.pem -cert-file lims.local+2.pem lims.local localhost 127.0.0.1
+   ```
+5. Mulai ulang dev server Frontend Vite (`npm run dev`).
+6. Buka `https://localhost:3000/verification` di browser. Seluruh halaman kini berstatus HTTPS valid dan tepercaya.
+
+#### Opsi 2: Mengaktifkan Bypass Flag di Google Chrome (Cepat Tanpa Instalasi Software)
+Jika Anda tidak ingin menginstal `mkcert` di laptop:
+1. Buka Google Chrome.
+2. Di bilah alamat (*address bar*), ketik:
+   `chrome://flags/#allow-insecure-localhost`
+3. Ubah statusnya dari **Disabled / Default** menjadi **Enabled**.
+4. Klik tombol **Relaunch** di pojok kanan bawah jendela Chrome.
+5. Chrome tidak akan memblokir request HTTPS lokal pada alamat `localhost`.
+
+#### Opsi 3: Menonaktifkan HTTPS pada Sesi Pengembangan (Mode HTTP Standar)
+Jika enkripsi SSL tidak diwajibkan selama masa pengujian lokal:
+1. Buka file `frontend/.env`.
+2. Kosongkan parameter sertifikat SSL:
+   ```ini
+   VITE_SSL_CERT_PATH=
+   VITE_SSL_KEY_PATH=
+   ```
+3. Jalankan Vite dev server (`npm run dev`).
+4. Akses aplikasi melalui URL HTTP biasa: `http://localhost:3000/verification`. Tidak ada pemeriksaan sertifikat SSL yang dilakukan oleh browser.

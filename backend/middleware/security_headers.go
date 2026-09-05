@@ -16,17 +16,14 @@ func SecurityHeaders() gin.HandlerFunc {
 		// Mencegah browser menebak Content-Type (MIME sniffing)
 		c.Writer.Header().Set("X-Content-Type-Options", "nosniff")
 
-		// Mencegah halaman di-embed dalam iframe (anti-clickjacking)
-		c.Writer.Header().Set("X-Frame-Options", "DENY")
-
-		// Aktifkan XSS filter bawaan browser lama
-		c.Writer.Header().Set("X-XSS-Protection", "1; mode=block")
-
-		// Batasi informasi Referer yang dikirim
-		c.Writer.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
-
-		// Batasi fitur browser berbahaya
-		c.Writer.Header().Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+		// Khusus endpoint download / view dokumen, JANGAN pasang Content-Security-Policy (CSP)
+		// karena Chromium/Firefox PDF viewer internal extension (chrome-extension://) akan terblokir
+		// oleh CSP default-src 'self', yang menyebabkan PDF viewer hang/blank.
+		if strings.HasPrefix(c.Request.URL.Path, "/api/download") {
+			c.Writer.Header().Set("X-Frame-Options", "SAMEORIGIN")
+			c.Next()
+			return
+		}
 
 		// Content Security Policy:
 		// - default-src 'self'           : hanya izinkan resource dari domain sendiri
@@ -35,9 +32,10 @@ func SecurityHeaders() gin.HandlerFunc {
 		// - font-src 'self' fonts.gstatic.com data: : izinkan font dari Google
 		// - img-src 'self' data: blob:   : izinkan gambar inline (data URI) dan blob (untuk OCR/preview)
 		// - connect-src 'self'           : hanya izinkan XHR/fetch ke domain sendiri
-		// - frame-src 'self' blob:       : izinkan blob: untuk PDF preview di FinanceReportPage
-		// - object-src 'none'            : blokir plugin seperti Flash
+		// - frame-src 'self' blob: data: : izinkan blob: & data: untuk PDF preview di modal/iframe
+		// - object-src 'self' blob:      : izinkan embed PDF internal browser, blokir flash eksternal
 		// - base-uri 'self'              : cegah injeksi tag <base>
+		c.Writer.Header().Set("X-Frame-Options", "SAMEORIGIN")
 		c.Writer.Header().Set("Content-Security-Policy",
 			"default-src 'self'; "+
 				"script-src 'self' 'unsafe-inline'; "+
@@ -45,8 +43,8 @@ func SecurityHeaders() gin.HandlerFunc {
 				"font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; "+
 				"img-src 'self' data: blob:; "+
 				"connect-src 'self'; "+
-				"frame-src 'self' blob:; "+
-				"object-src 'none'; "+
+				"frame-src 'self' blob: data:; "+
+				"object-src 'self' blob:; "+
 				"base-uri 'self'",
 		)
 

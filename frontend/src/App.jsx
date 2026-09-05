@@ -64,13 +64,17 @@ function App() {
         if (res && res.user) {
           localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(res.user));
-          setUser(res.user);
-          setToken(localStorage.getItem("token") || localStorage.getItem("auth_token") || "ACTIVE");
+          const activeToken = localStorage.getItem("token") || localStorage.getItem("auth_token") || "ACTIVE";
+          if (activeToken && activeToken !== "ACTIVE") {
+            document.cookie = `auth_token=${activeToken}; path=/; SameSite=Lax`;
+          }
+          setToken(activeToken);
         } else {
           localStorage.removeItem("is_logged_in");
           localStorage.removeItem("user");
           localStorage.removeItem("token");
           localStorage.removeItem("auth_token");
+          document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
           setToken(null);
           setUser(null);
         }
@@ -465,6 +469,7 @@ function App() {
           if (tokenVal) {
             localStorage.setItem("token", tokenVal);
             localStorage.setItem("auth_token", tokenVal);
+            document.cookie = `auth_token=${tokenVal}; path=/; SameSite=Lax`;
           }
           setToken(tokenVal || "ACTIVE");
           setUser(userVal);

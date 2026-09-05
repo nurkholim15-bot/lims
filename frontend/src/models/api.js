@@ -9,13 +9,13 @@ const getApiUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL || "/api";
 
   if (typeof window !== "undefined") {
-    // Detect if running inside Capacitor mobile app or local Android WebView (localhost)
-    const isMobileApp = !!window.Capacitor || 
-                        window.location.hostname === "localhost" || 
-                        window.location.hostname === "127.0.0.1" || 
-                        window.location.protocol === "file:";
+    // Detect if running inside native Capacitor mobile app (Android / iOS)
+    const isNativeMobile = !!(
+      (window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform()) ||
+      (window.Capacitor && typeof window.Capacitor.getPlatform === "function" && window.Capacitor.getPlatform() !== "web")
+    );
 
-    if (isMobileApp && (!envUrl || envUrl === "/api" || !envUrl.startsWith("http"))) {
+    if (isNativeMobile && (!envUrl || envUrl === "/api" || !envUrl.startsWith("http"))) {
       // Relative '/api' will fail in mobile app since there is no local backend on the phone.
       // Use the dedicated mobile backend endpoint, falling back to lims.local HTTPS port 8082.
       return import.meta.env.VITE_MOBILE_API_URL || "https://lims.local:8082/api";
@@ -30,6 +30,102 @@ export const getDownloadUrl = (path) => {
   if (!path) return "";
   const base = API_URL.startsWith("http") ? API_URL : `${window.location.origin}${API_URL}`;
   return `${base}/download?path=${encodeURIComponent(path)}`;
+};
+
+export const viewDocument = async (path, customTitle = "Dokumen") => {
+  if (!path) return;
+
+  // Open blank tab synchronously within user gesture so browser does NOT block it
+  const newTab = window.open("", "_blank");
+  if (newTab) {
+    try {
+      newTab.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head><title>${customTitle} - Memuat...</title></head>
+          <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 90vh; background: #0f172a; color: white;">
+            <div style="text-align: center;">
+              <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 8px;">Memuat Dokumen...</div>
+              <div style="font-size: 0.9rem; color: #94a3b8;">Sedang mengunduh berkas dari server LIMS...</div>
+            </div>
+          </body>
+        </html>
+      `);
+      newTab.document.close();
+    } catch (_) {}
+  }
+
+  try {
+    const downloadUrl = getDownloadUrl(path);
+    const storedToken = localStorage.getItem("token") || localStorage.getItem("auth_token");
+    const headers = {
+      "ngrok-skip-browser-warning": "true",
+    };
+    if (storedToken) {
+      headers["Authorization"] = `Bearer ${storedToken}`;
+      headers["X-Access-Token"] = storedToken;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+    const response = await fetch(downloadUrl, {
+      headers,
+      credentials: "include",
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      if (newTab) newTab.close();
+      let errMsg = `Gagal memuat dokumen (Status: ${response.status})`;
+      try {
+        const errJson = await response.json();
+        if (errJson.error || errJson.message) {
+          errMsg = errJson.error || errJson.message;
+        }
+      } catch (_) {}
+      alert(errMsg);
+      return;
+    }
+
+    const blob = await response.blob();
+    const isPdf = path.toLowerCase().includes(".pdf");
+    const blobType = isPdf ? "application/pdf" : (blob.type || "application/octet-stream");
+    const blobUrl = URL.createObjectURL(new Blob([blob], { type: blobType }));
+
+    if (newTab) {
+      try {
+        newTab.document.title = customTitle;
+        newTab.document.body.style.margin = "0";
+        newTab.document.body.style.padding = "0";
+        newTab.document.body.style.overflow = "hidden";
+        newTab.document.body.style.backgroundColor = "#525659";
+        newTab.document.body.innerHTML = `
+          <object data="${blobUrl}#toolbar=1" type="${blobType}" style="width: 100vw; height: 100vh; border: none;">
+            <iframe src="${blobUrl}#toolbar=1" style="width: 100vw; height: 100vh; border: none;" title="${customTitle}">
+              <div style="font-family: sans-serif; text-align: center; padding: 40px; color: white;">
+                <h3>Dokumen siap diunduh</h3>
+                <a href="${blobUrl}" download="${path.split('/').pop() || 'dokumen.pdf'}" style="color: #60a5fa; font-size: 1.1rem;">Klik di sini untuk mengunduh</a>
+              </div>
+            </iframe>
+          </object>
+        `;
+      } catch (_) {
+        newTab.location.replace(blobUrl);
+      }
+    } else {
+      window.open(blobUrl, "_blank");
+    }
+  } catch (err) {
+    if (newTab) newTab.close();
+    console.error("View document error:", err);
+    if (err.name === 'AbortError') {
+      alert("Waktu memuat dokumen habis (Timeout). Pastikan koneksi server atau MinIO aktif.");
+    } else {
+      alert("Terjadi kesalahan saat memuat dokumen: " + (err.message || err));
+    }
+  }
 };
 
 export const apiRequest = async (endpoint, method = "GET", body = null) => {

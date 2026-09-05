@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"io"
 	"log"
 	"lim-system/models"
 	"lim-system/services"
@@ -153,12 +152,23 @@ func DownloadDocument(c *gin.Context) {
 		localFilePath := filepath.Join("./public/uploads", objectPath)
 		if _, err := os.Stat(localFilePath); err == nil {
 			filename := filepath.Base(localFilePath)
-			contentType := mime.TypeByExtension(filepath.Ext(filename))
+			ext := strings.ToLower(filepath.Ext(filename))
+			contentType := mime.TypeByExtension(ext)
 			if contentType == "" {
-				contentType = "application/octet-stream"
+				switch ext {
+				case ".pdf":
+					contentType = "application/pdf"
+				case ".png":
+					contentType = "image/png"
+				case ".jpg", ".jpeg":
+					contentType = "image/jpeg"
+				default:
+					contentType = "application/octet-stream"
+				}
 			}
 			c.Header("Content-Disposition", "inline; filename=\""+filename+"\"")
 			c.Header("Content-Type", contentType)
+			c.Header("X-Frame-Options", "SAMEORIGIN")
 			c.File(localFilePath)
 			return
 		}
@@ -174,19 +184,32 @@ func DownloadDocument(c *gin.Context) {
 	}
 	defer reader.Close()
 
-	c.Header("Content-Length", strconv.FormatInt(stat.Size, 10))
-
 	filename := objectPath
 	if idx := strings.LastIndex(objectPath, "/"); idx != -1 {
 		filename = objectPath[idx+1:]
 	}
-	contentType := mime.TypeByExtension(filepath.Ext(filename))
+	ext := strings.ToLower(filepath.Ext(filename))
+	contentType := mime.TypeByExtension(ext)
 	if contentType == "" {
-		contentType = "application/octet-stream"
+		switch ext {
+		case ".pdf":
+			contentType = "application/pdf"
+		case ".png":
+			contentType = "image/png"
+		case ".jpg", ".jpeg":
+			contentType = "image/jpeg"
+		default:
+			contentType = "application/octet-stream"
+		}
 	}
+
 	c.Header("Content-Disposition", "inline; filename=\""+filename+"\"")
 	c.Header("Content-Type", contentType)
-	io.Copy(c.Writer, reader)
+	c.Header("X-Frame-Options", "SAMEORIGIN")
+	c.Header("X-Content-Type-Options", "nosniff")
+	c.Header("Accept-Ranges", "bytes")
+
+	http.ServeContent(c.Writer, c.Request, filename, stat.LastModified, reader)
 }
 
 func GetMasterData(c *gin.Context) {

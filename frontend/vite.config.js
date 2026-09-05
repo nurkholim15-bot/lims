@@ -68,7 +68,7 @@ export default defineConfig(({ mode }) => {
       // Security headers — konsisten dengan Go backend middleware (security_headers.go)
       headers: {
         'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
+        'X-Frame-Options': 'SAMEORIGIN',
         'X-XSS-Protection': '1; mode=block',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
@@ -79,8 +79,8 @@ export default defineConfig(({ mode }) => {
           "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " +
           "img-src 'self' data: blob:; " +
           "connect-src 'self'; " +
-          "frame-src 'self' blob:; " +
-          "object-src 'none'; " +
+          "frame-src 'self' blob: data:; " +
+          "object-src 'self' blob:; " +
           "base-uri 'self'",
       },
     },

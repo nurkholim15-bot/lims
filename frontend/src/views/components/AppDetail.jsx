@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { apiRequest, getDownloadUrl, API_URL } from "@models/api";
+import { apiRequest, getDownloadUrl, viewDocument, API_URL } from "@models/api";
 import { printTechnicalReport, printRegistrationProof, printAssetLabel, printApplicationHandover } from "@utils/print";
 import Modal from "./Modal";
 import WebcamModal from "./WebcamModal";
@@ -57,6 +57,68 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const [aiGenerating, setAiGenerating] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiReportText, setAiReportText] = useState("");
+  const [previewDoc, setPreviewDoc] = useState(null);
+
+  const handleOpenDocPreview = async (path, title = "Dokumen") => {
+    if (!path) return;
+    const filename = path.split("/").pop() || "dokumen.pdf";
+    const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(filename);
+    const directUrl = getDownloadUrl(path);
+
+    const storedToken = localStorage.getItem("token") || localStorage.getItem("auth_token");
+    if (storedToken) {
+      document.cookie = `auth_token=${storedToken}; path=/; SameSite=Lax`;
+    }
+
+    setPreviewDoc({
+      isOpen: true,
+      title,
+      filename,
+      path,
+      directUrl,
+      isImage,
+      blobUrl: null,
+      loading: !isImage,
+      error: null,
+    });
+
+    if (storedToken) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const headers = {
+          "Authorization": `Bearer ${storedToken}`,
+          "X-Access-Token": storedToken,
+          "ngrok-skip-browser-warning": "true"
+        };
+        const response = await fetch(directUrl, {
+          headers,
+          credentials: "include",
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer();
+          const blobType = isImage ? (response.headers.get("content-type") || "image/jpeg") : "application/pdf";
+          const blobUrl = URL.createObjectURL(new Blob([arrayBuffer], { type: blobType }));
+          setPreviewDoc((prev) => (prev && prev.path === path ? { ...prev, blobUrl, loading: false } : prev));
+        } else {
+          let errMsg = null;
+          try {
+            const errData = await response.json();
+            errMsg = errData.error || errData.message;
+          } catch (_) {}
+          setPreviewDoc((prev) => (prev && prev.path === path ? { ...prev, loading: false, error: errMsg } : prev));
+        }
+      } catch (err) {
+        console.warn("Blob fetch failed, falling back to directUrl:", err);
+        setPreviewDoc((prev) => (prev && prev.path === path ? { ...prev, loading: false } : prev));
+      }
+    } else {
+      setPreviewDoc((prev) => (prev ? { ...prev, loading: false } : prev));
+    }
+  };
 
   useEffect(() => {
     if (!app || fetchedIdRef.current === app.id) return;
@@ -873,8 +935,11 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     } catch (err) {
       const isBlocked = (err.response && err.response.status === "BLOCKED") || 
                         (err.status === "BLOCKED") ||
-                        (err.message && err.message.includes("Deteksi Anomali"));
+                        (err.message && err.message.includes("Deteksi Anomali")) ||
+                        (err.message && err.message.includes("Override Gagal"));
       
+      const errorMsg = err.response?.message || err.message || "Terjadi kesalahan sistem";
+
       if (isBlocked) {
         setAnomalyBlock({
           aspectCode,
@@ -888,10 +953,11 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           },
           medians: err.response?.medians || err.medians || {},
           stds: err.response?.stds || err.stds || {},
-          message: err.response?.message || err.message
+          message: errorMsg
         });
+        showToast(errorMsg, 'error');
       } else {
-        showToast(err.message || "Gagal", 'error');
+        showToast(errorMsg, 'error');
       }
     } finally {
       setAspectSaving((prev) => ({ ...prev, [aspectCode]: false }));
@@ -1881,19 +1947,34 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         <div style={{ padding: "0.75rem 1.25rem", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", gap: "0.75rem" }}>
             {localApp.request_letter_path && (
-              <a href={getDownloadUrl(localApp.request_letter_path)} target="_blank" className="btn btn-outline-secondary btn-sm" style={{ fontSize: "0.75rem" }}>
+              <button
+                type="button"
+                onClick={() => handleOpenDocPreview(localApp.request_letter_path, "Surat Permohonan")}
+                className="btn btn-outline-secondary btn-sm"
+                style={{ fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.35rem", cursor: "pointer" }}
+              >
                 <i className="fas fa-file-pdf"></i> Surat Permohonan
-              </a>
+              </button>
             )}
             {localApp.equipment?.factory_spec_path && (
-              <a href={getDownloadUrl(localApp.equipment.factory_spec_path)} target="_blank" className="btn btn-outline-secondary btn-sm" style={{ fontSize: "0.75rem" }}>
+              <button
+                type="button"
+                onClick={() => handleOpenDocPreview(localApp.equipment.factory_spec_path, "Dokumen Teknis")}
+                className="btn btn-outline-secondary btn-sm"
+                style={{ fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.35rem", cursor: "pointer" }}
+              >
                 <i className="fas fa-file-pdf"></i> Dokumen Teknis
-              </a>
+              </button>
             )}
             {localApp.equipment?.quality_doc_path && (
-              <a href={getDownloadUrl(localApp.equipment.quality_doc_path)} target="_blank" className="btn btn-outline-secondary btn-sm" style={{ fontSize: "0.75rem" }}>
+              <button
+                type="button"
+                onClick={() => handleOpenDocPreview(localApp.equipment.quality_doc_path, "Dokumen Mutu")}
+                className="btn btn-outline-secondary btn-sm"
+                style={{ fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.35rem", cursor: "pointer" }}
+              >
                 <i className="fas fa-file-pdf"></i> Dokumen Mutu
-              </a>
+              </button>
             )}
           </div>
           <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
@@ -2124,6 +2205,11 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                   <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#92400e", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
                     🔐 Otorisasi Supervisor
                   </div>
+                  {anomalyBlock.message && anomalyBlock.message.startsWith("Override Gagal") && (
+                    <div style={{ background: "#fee2e2", border: "1px solid #f87171", borderRadius: "6px", padding: "0.5rem 0.75rem", fontSize: "0.8rem", color: "#991b1b", lineHeight: "1.4" }}>
+                      ⚠️ {anomalyBlock.message}
+                    </div>
+                  )}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
                     <div>
                       <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "#78350f", display: "block", marginBottom: "3px" }}>
@@ -2219,6 +2305,104 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
             </div>
           </div>
         </div>
+      )}
+
+      {/* In-App PDF Document Viewer Modal */}
+      {previewDoc && (
+        <Modal
+          isOpen={!!previewDoc}
+          onClose={() => {
+            if (previewDoc.blobUrl) URL.revokeObjectURL(previewDoc.blobUrl);
+            setPreviewDoc(null);
+          }}
+          title={previewDoc.title || "Pratinjau Dokumen"}
+          wide={true}
+          width="90%"
+        >
+          <div style={{ display: "flex", flexDirection: "column", height: "75vh" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", paddingBottom: "0.75rem", borderBottom: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "0.85rem", color: "#64748b" }}>
+                Berkas: <strong style={{ color: "#1e293b" }}>{previewDoc.filename}</strong>
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (previewDoc.blobUrl) {
+                      window.open(previewDoc.blobUrl, "_blank");
+                    } else if (previewDoc.directUrl) {
+                      window.open(previewDoc.directUrl, "_blank");
+                    } else if (previewDoc.path) {
+                      viewDocument(previewDoc.path, previewDoc.title);
+                    }
+                  }}
+                  className="btn btn-outline-secondary btn-sm"
+                  style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}
+                  title="Buka dokumen di tab browser baru"
+                >
+                  <i className="fas fa-external-link-alt"></i> Buka Tab Baru
+                </button>
+                <a
+                  href={previewDoc.blobUrl || previewDoc.directUrl}
+                  download={previewDoc.filename}
+                  className="btn btn-primary btn-sm"
+                  style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem", textDecoration: "none" }}
+                  title="Unduh berkas secara langsung"
+                >
+                  <i className="fas fa-download"></i> Unduh {previewDoc.isImage ? "Gambar" : "PDF"}
+                </a>
+              </div>
+            </div>
+
+            {previewDoc.error ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", color: "#ef4444" }}>
+                <i className="fas fa-exclamation-triangle" style={{ fontSize: "2.5rem", marginBottom: "1rem" }}></i>
+                <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>{previewDoc.error}</p>
+                <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "1.5rem" }}>Dokumen tetap dapat diunduh langsung melalui tautan server di bawah ini.</p>
+                <div style={{ display: "flex", gap: "0.75rem" }}>
+                  <a
+                    href={previewDoc.directUrl}
+                    download={previewDoc.filename}
+                    className="btn btn-primary btn-sm"
+                    style={{ fontSize: "0.85rem" }}
+                  >
+                    <i className="fas fa-download"></i> Unduh Berkas Langsung
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenDocPreview(previewDoc.path, previewDoc.title)}
+                    className="btn btn-outline-secondary btn-sm"
+                    style={{ fontSize: "0.85rem" }}
+                  >
+                    <i className="fas fa-redo"></i> Coba Lagi
+                  </button>
+                </div>
+              </div>
+            ) : previewDoc.loading ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", color: "#64748b", backgroundColor: "#f8fafc", borderRadius: "8px" }}>
+                <i className="fas fa-circle-notch fa-spin" style={{ fontSize: "2.5rem", color: "#2563eb", marginBottom: "1rem" }}></i>
+                <p style={{ fontWeight: 600, color: "#1e293b", marginBottom: "0.25rem" }}>Memuat Dokumen...</p>
+                <p style={{ fontSize: "0.85rem", color: "#64748b" }}>Sedang menyiapkan pratinjau dokumen dari server LIMS</p>
+              </div>
+            ) : previewDoc.isImage ? (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", overflow: "auto", backgroundColor: "#0f172a", borderRadius: "8px" }}>
+                <img
+                  src={previewDoc.blobUrl || previewDoc.directUrl}
+                  alt={previewDoc.title}
+                  style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                />
+              </div>
+            ) : (
+              <iframe
+                src={previewDoc.blobUrl ? `${previewDoc.blobUrl}#toolbar=1&view=FitH` : `${previewDoc.directUrl}#toolbar=1&view=FitH`}
+                title={previewDoc.title}
+                width="100%"
+                height="100%"
+                style={{ border: "1px solid #cbd5e1", borderRadius: "8px", flex: 1, backgroundColor: "#525659", minHeight: "550px" }}
+              />
+            )}
+          </div>
+        </Modal>
       )}
     </div>
   );

@@ -227,7 +227,7 @@ func ProcessRAGQuery(message string, username string) (string, []SourceCitation,
 	// 5. Construct prompts for LLM
 	var systemPrompt string
 	if finalContextText == "" {
-		systemPrompt = "Anda adalah Asisten Lab AI LIMS yang cerdas, sopan, dan jujur. Karena tidak ditemukan rujukan SOP atau data transaksi/produk yang relevan dalam database saat ini, jawablah secara jujur bahwa informasi tersebut tidak ditemukan dalam sistem, lalu berikan saran umum yang membantu dengan ramah dalam Bahasa Indonesia."
+		systemPrompt = "Anda adalah Asisten Lab AI LIMS yang cerdas, ramah, sopan, dan profesional. Jika user memberikan sapaan atau ucapan pembuka (seperti 'selamat pagi/siang/sore/malam', 'halo', 'hai', 'terima kasih', dsb.), balaslah sapaan tersebut dengan hangat, ramah, dan tawarkan bantuan terkait SOP atau sistem laboratorium LIMS. Jika user menanyakan informasi teknis atau data operasional yang memerlukan SOP/database namun datanya tidak tersedia di sistem, sampaikan dengan sopan bahwa dokumen atau data tersebut belum ditemukan dalam sistem saat ini dan tawarkan bantuan lain."
 	} else {
 		systemPrompt = fmt.Sprintf(`Anda adalah AI Asisten Lab LIMS yang cerdas, jujur, ramah, dan berwibawa.
 Tugas Anda adalah menjawab pertanyaan user secara komprehensif berdasarkan Konteks Data Realtime LIMS dan SOP Rujukan yang disediakan di bawah ini.

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiRequest, getDownloadUrl } from "@models/api";
+import { apiRequest, getDownloadUrl, viewDocument } from "@models/api";
 import Modal from "@components/Modal";
 import Pagination from "@components/Pagination";
 import TravelRequestSearchModal from "@components/TravelRequestSearchModal";
@@ -208,20 +208,7 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
 
   const handleViewReceipt = async (e, path) => {
     e.preventDefault();
-    try {
-      const url = getDownloadUrl(path);
-      const response = await fetch(url);
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const data = await response.json();
-        showToast(data.error || 'File tidak ditemukan di server.', 'error');
-        return;
-      }
-      
-      window.open(url, "_blank");
-    } catch (err) {
-      showToast('Gagal menghubungi server untuk mengunduh file.', 'error');
-    }
+    viewDocument(path, "Kuitansi");
   };
 
   return (

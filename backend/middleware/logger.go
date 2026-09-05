@@ -52,9 +52,9 @@ func TransactionLogger() gin.HandlerFunc {
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(requestBody))
 		}
 
-		// Capture Response Body (Needed for Level 1 and 3)
+		// Capture Response Body (Needed for Level 1 and 3, skip for binary downloads)
 		var w *responseBodyWriter
-		if traceLevel == "1" || traceLevel == "3" {
+		if (traceLevel == "1" || traceLevel == "3") && !strings.HasPrefix(c.Request.URL.Path, "/api/download") {
 			w = &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
 			c.Writer = w
 		}
@@ -83,11 +83,12 @@ func TransactionLogger() gin.HandlerFunc {
 			status = "Failed"
 		}
 
-
 		reqBodyStr := string(requestBody)
 		resBodyStr := ""
 		if w != nil {
 			resBodyStr = w.body.String()
+		} else if strings.HasPrefix(c.Request.URL.Path, "/api/download") {
+			resBodyStr = "[BINARY STREAM]"
 		}
 
 		utils.LogAPITraffic(start, traceLevel, method, path, ip, userID, status, latency, reqBodyStr, resBodyStr)

@@ -17471,3 +17471,2024 @@ Content-Type: image/jpeg
 [2026-09-01 13:20:31] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 49ms
       Request: 
       Response: {"error":"Session not found or revoked"}
+[2026-09-04 21:20:57] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 2ms
+      Request: {}
+      Response: {"status":400,"message":"Invalid request format","error":"Key: 'LoginRequest.Username' Error:Field validation for 'Username' failed on the 'required' tag\nKey: 'LoginRequest.Password' Error:Field validation for 'Password' failed on the 'required' tag"}
+[2026-09-04 21:21:04] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 0s
+      Request: {}
+      Response: {"status":400,"message":"Invalid request format","error":"Key: 'LoginRequest.Username' Error:Field validation for 'Username' failed on the 'required' tag\nKey: 'LoginRequest.Password' Error:Field validation for 'Password' failed on the 'required' tag"}
+[2026-09-04 21:21:21] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 0s
+      Request: {}
+      Response: {"status":400,"message":"Invalid request format","error":"Key: 'LoginRequest.Username' Error:Field validation for 'Username' failed on the 'required' tag\nKey: 'LoginRequest.Password' Error:Field validation for 'Password' failed on the 'required' tag"}
+[2026-09-04 21:22:00] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 59ms
+      Request: {"username":"nur","password":"***"}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-04 21:22:05] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 53ms
+      Request: {"username":"nur","password":"***"}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 3","status":401}
+[2026-09-04 21:23:37] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-04 21:23:37] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-04 21:23:37] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-04 21:23:37] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-04 21:25:05] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-04 21:25:15] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 49ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-04 21:25:29] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 60ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-04 21:25:29] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-04 21:25:29] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-04 21:25:41] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 50ms
+      Request: 
+      Response: {"data":[{"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:0...(truncated)
+[2026-09-04 21:25:43] 127.0.0.1 | GUEST | GET | /api/applications/210 | Status: Success | Latency: 91ms
+      Request: 
+      Response: {"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","c...(truncated)
+[2026-09-04 21:25:43] 127.0.0.1 | GUEST | GET | /api/applications/210/execution | Status: Success | Latency: 14ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-04 21:25:43] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-04 21:25:47] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-04 21:25:48] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-04 21:25:49] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-04 21:25:55] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202608","total":0}
+[2026-09-04 21:26:02] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-04 21:26:03] 127.0.0.1 | GUEST | GET | /api/applications/209 | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"id":209,"reg_number":"2026-00063","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-04 21:26:03] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-04 21:28:52] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-09-04 21:28:59] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-04 21:29:05] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 49ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-04 21:29:12] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 53ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-04 21:29:12] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-04 21:29:12] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-04 21:29:18] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:0...(truncated)
+[2026-09-04 21:41:03] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-09-04 21:41:08] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-04 21:41:39] 127.0.0.1 | GUEST | POST | /api/change-expired-password | Status: Success | Latency: 109ms
+      Request: {"username":"nur","old_password":"Nkl@031166","new_password":"Nkl@130200"}
+      Response: {"status":200,"message":"Password changed successfully. Please log in with your new password."}
+[2026-09-04 21:41:47] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 55ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-04 21:41:47] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-04 21:41:47] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-04 21:41:53] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:0...(truncated)
+[2026-09-04 21:41:54] 127.0.0.1 | GUEST | GET | /api/applications/210 | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"id":210,"reg_number":"2026-00064","status":"Certified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","c...(truncated)
+[2026-09-04 21:41:54] 127.0.0.1 | GUEST | GET | /api/applications/210/execution | Status: Success | Latency: 14ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-04 21:41:55] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-05 05:55:37] 127.0.0.1 | GUEST | POST | /api/logout | Status: Failed | Latency: 62ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-05 05:55:40] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 05:55:40] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 05:55:40] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 05:55:40] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:16:00] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:16:00] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 11ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:16:00] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:16:00] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:16:07] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 07:16:14] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 102ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-05 07:16:23] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 111ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:16:23] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 07:16:23] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:16:26] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}
+[2026-09-05 07:16:50] 127.0.0.1 | GUEST | POST | /api/change-expired-password | Status: Success | Latency: 228ms
+      Request: {"username":"nur","old_password":"Nkl@031166","new_password":"Nkl@130200"}
+      Response: {"status":200,"message":"Password changed successfully. Please log in with your new password."}
+[2026-09-05 07:16:54] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 07:17:00] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 135ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:17:01] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 07:17:01] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:17:14] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 07:17:16] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-09-05 07:17:16] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 50ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-05 07:17:20] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:43:12.789873+07:00","create...(truncated)
+[2026-09-05 07:20:18] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 139ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 07:20:18] 127.0.0.1 | GUEST | POST | /api/applications | Status: Success | Latency: 176ms
+      Request: ------WebKitFormBoundaryIrxIKJlX4Y6ouL4a
+Content-Disposition: form-data; name="partner_id"
+
+3
+------WebKitFormBoundaryIrxIKJlX4Y6ouL4a
+Content-Disposition: form-data; name="package_id"
+
+3
+------WebKitFormBoundaryIrxIKJlX4Y6ouL4a
+Content-Dispositio...(truncated)
+      Response: [{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},"a...(truncated)
+[2026-09-05 07:20:18] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 07:21:56] 127.0.0.1 | GUEST | GET | /api/applications/212/audit-history | Status: Success | Latency: 73ms
+      Request: 
+      Response: [{"id":502,"application_id":212,"reg_number":"2026-00066","application_date":"2026-09-05T07:20:18.465093Z","status":"REGISTERED","ip_address":"127.0.0.1","user_agent":"Google Chrome","created_user":"nur","created_at":"2026-09-05T07:20:18.480481Z","created_...(truncated)
+[2026-09-05 07:22:03] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 43ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 07:22:05] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 196ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 07:22:06] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 07:22:07] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 43ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 07:22:35] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 12ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23879
+/Length1 55892
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãpHOf&		·®!‹7BÄA3‰ ÅÑÑ$ú¢"àG<W<YW‘eΩ(ãÆ¢Ç∫¨+ÆÀ™®_<@T≈e˘¢H˙ˇ©◊=ì…Ö∏«oˇˇˇœ©ºöÍWØ™^Ω´™∫;		...(truncated)
+[2026-09-05 07:23:52] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-05 07:26:15] 127.0.0.1 | GUEST | POST | /api/check-version | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:26:20] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:26:43] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 40ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-09-05 07:35:10] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:35:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:35:10] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 11ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:35:10] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 23ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:35:10] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:35:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:35:11] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 5ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:35:11] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:35:11] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:35:11] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:35:11] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:35:17] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 07:35:22] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 135ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:35:23] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 07:35:23] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:35:25] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 59ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 07:35:27] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 83ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 07:35:27] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 07:35:32] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 40ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 07:35:37] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 26ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23852
+/Length1 55888
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&êûÃL8¬PC8Â$àö!	$$&ƒ#û+û¨+Í≤ﬁãÉ(ãÆ¢Ç∫¨+ÆÀWE]ºïEqYø(í˛Íuœdr!ÓÒ€ˇˇˇ≥+Ø∫˙’Î™WÔ™™ÓNB...(truncated)
+[2026-09-05 07:35:38] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 9ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23852
+/Length1 55888
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&êûÃL8¬PC8Â$àö!	$$&ƒ#û+û¨+Í≤ﬁãÉ(ãÆ¢Ç∫¨+ÆÀWE]ºïEqYø(í˛Íuœdr!ÓÒ€ˇˇˇ≥+Ø∫˙’Î™WÔ™™ÓNB...(truncated)
+[2026-09-05 07:35:50] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 7ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 07:36:17] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 37ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23852
+/Length1 55888
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&êûÃL8¬PC8Â$àö!	$$&ƒ#û+û¨+Í≤ﬁãÉ(ãÆ¢Ç∫¨+ÆÀWE]ºïEqYø(í˛Íuœdr!ÓÒ€ˇˇˇ≥+Ø∫˙’Î™WÔ™™ÓNB...(truncated)
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:42:36] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:42:39] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 98ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 07:42:39] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 07:42:50] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 20ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 07:46:42] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-05 07:46:54] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 49ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-09-05 07:50:38] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"status":401,"message":"Authorization header is required","error":"Unauthorized access"}
+[2026-09-05 07:51:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:51:16] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 86ms
+      Request: {"username": "admin", "password": "***"}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-05 07:54:45] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:57:05] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:57:05] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:57:05] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:57:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:57:06] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:57:06] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:57:06] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:57:06] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 07:57:57] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 07:58:02] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 119ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:58:02] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 07:58:02] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:58:04] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 55ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 07:58:06] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 71ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 07:58:06] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 07:58:07] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 40ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 07:58:16] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 7ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 07:59:15] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 07:59:47] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 78ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 07:59:48] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:00:00] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 15ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:03:19] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 08:03:36] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 56ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 08:03:36] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:03:42] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 7ms
+      Request: 
+      Response: %PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 23859
+/Length1 56052
+/Type /Stream
+>>
+stream
+xúÏΩ	`Eˆ?˛™∫gríãp&0=ôôp$$Ñ#†ÜpBÄP2‰ ÅÑƒ$Ä(*¢xƒs≈ìuE]◊{1à"∫ä
+Í∫*ÆÀ™®_DAtYóıãÈˇß^˜L&ó‚Ó˙€ˇˇ˜∑+Ø∫˙’Î™WÔ™™ÓN...(truncated)
+[2026-09-05 08:06:31] 127.0.0.1 | GUEST | HEAD | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:06:38] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 40ms
+      Request: 
+      Response: {"error":"Akses ditolak. Deteksi perubahan perangkat atau IP ilegal. Sesi Anda telah ditutup."}
+[2026-09-05 08:08:00] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:08:08] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:09:40] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 10ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 55ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 55ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 57ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:15:03] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:15:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:15:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:15:12] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 08:15:18] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 142ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:15:18] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 08:15:18] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:15:22] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 68ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 08:15:24] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 109ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 08:15:24] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:15:26] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 46ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 50ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 08:16:03] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:16:08] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 85ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 08:16:08] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:16:09] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 12ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:09] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 8ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:09] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 12ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:17] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 38ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:17] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 45ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:17] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 9ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:24] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 44ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:41] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 35ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:41] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 11ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:16:41] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 8ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:17:18] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 45ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:17:18] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 47ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:17:18] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 6ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:18:12] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 39ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:19:33] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:19:47] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 42ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:19:54] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 7ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:21:25] 127.0.0.1 | GUEST | HEAD | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:21:43] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:21:48] 127.0.0.1 | GUEST | HEAD | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:21:54] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 2ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:22:24] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 34ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:22:54] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:25:19] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 3ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:25:27] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:26:39] 127.0.0.1 | GUEST | GET | /api/download | Status: Failed | Latency: 0s
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 21ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 35ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 7ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:27:48] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 08:27:57] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 08:27:57] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 158ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:27:57] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 08:27:57] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:27:59] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 69ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 08:28:01] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 102ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 08:28:01] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:28:02] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 49ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:28:19] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 39ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:28:25] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 10ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 08:29:12] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 110ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 08:29:13] 127.0.0.1 | GUEST | PUT | /api/applications/212/verify | Status: Success | Latency: 56ms
+      Request: {"status":"Verified","is_docs_complete":true,"verification_notes":"verified"}
+      Response: {"message":"Verification completed"}
+[2026-09-05 08:29:13] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 08:29:15] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 70ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Verified","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 08:29:17] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 53ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Verified","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11...(truncated)
+[2026-09-05 08:29:17] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:30:27] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 143ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 08:30:27] 127.0.0.1 | GUEST | PUT | /api/applications/212/approve | Status: Success | Latency: 49ms
+      Request: {"status":"Approved","is_docs_complete":true,"approval_notes":"approved"}
+      Response: {"message":"Persetujuan pimpinan berhasil disimpan"}
+[2026-09-05 08:30:28] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 08:30:30] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Approved","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 08:30:32] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-05 08:30:32] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 08:30:32] 127.0.0.1 | GUEST | GET | /api/tester-masters | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Data tim penguji retrieved","data":[{"tester_id":"103  ","name":"Kapten Lazaro","position":"Kepala Tim Lab","methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code"...(truncated)
+[2026-09-05 08:30:32] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:30:32] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 08:30:40] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-05 08:58:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:58:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:58:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 08:58:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 08:58:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 65ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:58:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 74ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:58:05] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 08:58:05] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 08:58:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:58:05] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 08:58:05] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 81ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Approved","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 2ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 09:27:25] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Approved","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 09:27:58] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-05 09:27:58] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 09:27:58] 127.0.0.1 | GUEST | GET | /api/tester-masters | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Data tim penguji retrieved","data":[{"tester_id":"103  ","name":"Kapten Lazaro","position":"Kepala Tim Lab","methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code"...(truncated)
+[2026-09-05 09:27:58] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 09:27:58] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 09:28:05] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-05 09:28:08] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 7ms
+      Request: 
+      Response: [{"code":"Oscillosc","name":"Oscilloscope","type":"USAGE","min_stock":0,"initial_stock":0,"current_stock":0,"location_code":"LDIS","location":{"code":"LDIS","name":"Lab Dislitbangad","test_type_code":"LAB","test_type":{"code":"","name":"","created_at":"000...(truncated)
+[2026-09-05 09:28:24] 127.0.0.1 | GUEST | GET | /api/testing-tools/availability | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"availability":[{"hour":0,"status":"OUT_OF_OFFICE","quantity":1},{"hour":1,"status":"OUT_OF_OFFICE","quantity":1},{"hour":2,"status":"OUT_OF_OFFICE","quantity":1},{"hour":3,"status":"OUT_OF_OFFICE","quantity":1},{"hour":4,"status":"OUT_OF_OFFICE","quantit...(truncated)
+[2026-09-05 09:28:24] 127.0.0.1 | GUEST | GET | /api/testing-tools/availability | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"availability":[{"hour":0,"status":"OUT_OF_OFFICE","quantity":1},{"hour":1,"status":"OUT_OF_OFFICE","quantity":1},{"hour":2,"status":"OUT_OF_OFFICE","quantity":1},{"hour":3,"status":"OUT_OF_OFFICE","quantity":1},{"hour":4,"status":"OUT_OF_OFFICE","quantit...(truncated)
+[2026-09-05 09:28:32] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-05 09:28:35] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 3ms
+      Request: 
+      Response: []
+[2026-09-05 09:28:45] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ASMAN","name":"Aspek Manusia","description":"","weight":150,"threshold":60,"methodology_code":"MANAG","methodology":{"code":"MANAG","name":"Umum","test_type_code":"MANAG","test_type":{"code":"","name":""...(truncated)
+[2026-09-05 09:28:48] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 3ms
+      Request: 
+      Response: []
+[2026-09-05 09:28:57] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 53ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 09:28:57] 127.0.0.1 | GUEST | PUT | /api/applications/212/plan | Status: Success | Latency: 95ms
+      Request: {"status":"Planned","lab_methodology_code":"ALKOM","field_methodology_code":"AKLAP","methodology_code":"MANAG","relational_plans":[{"type":"LAB","aspect_code":"KONPE","aspect_name":"Uji konstruksi dan perlengkapan","location_code":"LDIS","scheduled_date":"...(truncated)
+      Response: {"message":"Planning completed"}
+[2026-09-05 09:28:58] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 09:29:06] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Planned","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-09-05 09:29:10] 127.0.0.1 | GUEST | GET | /api/applications/212/audit-history | Status: Success | Latency: 9ms
+      Request: 
+      Response: [{"id":505,"application_id":212,"reg_number":"2026-00066","application_date":"2026-09-05T07:20:18.465093Z","status":"Planned","ip_address":"127.0.0.1","user_agent":"Google Chrome","created_user":"nur","created_at":"2026-09-05T09:28:58.007779Z","created_at_...(truncated)
+[2026-09-05 09:29:20] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Planned","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-09-05 09:29:20] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 13ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-05 09:29:20] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-05 09:29:20] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 09:29:22] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 10ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 09:29:27] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 6ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 09:30:06] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Success | Latency: 105ms
+      Request: ------WebKitFormBoundaryeeD5riW554tIRZUo
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KODAY","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"message":"Aspect results saved successfully"}
+[2026-09-05 09:30:29] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KEPEN | Status: Success | Latency: 66ms
+      Request: ------WebKitFormBoundaryLCuhlt5K0Nx4Zfjh
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KEDAI","score":45,"notes":"","aspect_code":"KEPEN","is_disabled":false}]
+------WebKitFormBoundaryLCuhlt5K0Nx4Zfjh--
+
+      Response: {"message":"Aspect results saved successfully"}
+[2026-09-05 09:30:40] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/ASMAN | Status: Success | Latency: 62ms
+      Request: ------WebKitFormBoundaryj45JrGHtKhPGnf3a
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"INPER","score":100,"notes":"","aspect_code":"ASMAN","is_disabled":false}]
+------WebKitFormBoundaryj45JrGHtKhPGnf3a--
+
+      Response: {"message":"Aspect results saved successfully"}
+[2026-09-05 09:30:47] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 56ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 09:30:47] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute | Status: Success | Latency: 75ms
+      Request: ------WebKitFormBoundary0mjPxuTPLwra0cG1
+Content-Disposition: form-data; name="status"
+
+Executed
+------WebKitFormBoundary0mjPxuTPLwra0cG1
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KO...(truncated)
+      Response: {"final_score":76.81341719077568,"final_status":"Tidak Lulus","message":"Execution results updated"}
+[2026-09-05 09:30:47] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-05 09:30:59] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Executed","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 16ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 18ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 10:34:55] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 10:34:56] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 10:34:56] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 10:34:56] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-05 10:34:56] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 10:35:01] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 10:35:02] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 79ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"message":"Username atau password salah. Sisa percobaan: 4","status":401}
+[2026-09-05 10:35:07] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-05 10:35:35] 127.0.0.1 | GUEST | POST | /api/change-expired-password | Status: Success | Latency: 271ms
+      Request: {"username":"nur","old_password":"Nkl@031166","new_password":"Nkl@130200"}
+      Response: {"status":200,"message":"Password changed successfully. Please log in with your new password."}
+[2026-09-05 10:35:37] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 130ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 10:35:37] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 10:35:37] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 10:35:40] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 10:35:43] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 31ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-05 10:35:43] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-09-05 10:35:48] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:43:12.789873+07:00","create...(truncated)
+[2026-09-05 10:38:11] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 151ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 10:38:11] 127.0.0.1 | GUEST | POST | /api/applications | Status: Success | Latency: 132ms
+      Request: ------WebKitFormBoundarydmTVobDUwFzKwiwI
+Content-Disposition: form-data; name="partner_id"
+
+3
+------WebKitFormBoundarydmTVobDUwFzKwiwI
+Content-Disposition: form-data; name="package_id"
+
+4
+------WebKitFormBoundarydmTVobDUwFzKwiwI
+Content-Dispositio...(truncated)
+      Response: [{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},"a...(truncated)
+[2026-09-05 10:38:11] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 10:38:31] 127.0.0.1 | GUEST | GET | /api/applications/212/audit-history | Status: Success | Latency: 60ms
+      Request: 
+      Response: [{"id":502,"application_id":212,"reg_number":"2026-00066","application_date":"2026-09-05T10:38:11.787899Z","status":"REGISTERED","ip_address":"127.0.0.1","user_agent":"Google Chrome","created_user":"nur","created_at":"2026-09-05T10:38:11.801744Z","created_...(truncated)
+[2026-09-05 10:38:58] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 41ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"20...(truncated)
+[2026-09-05 10:38:59] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 191ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"REGISTERED","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T...(truncated)
+[2026-09-05 10:38:59] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 10:39:01] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 23ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 10:39:36] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 151ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 10:39:36] 127.0.0.1 | GUEST | PUT | /api/applications/212/verify | Status: Success | Latency: 17ms
+      Request: {"status":"Verified","is_docs_complete":true,"verification_notes":"VERIFIED"}
+      Response: {"message":"Verification completed"}
+[2026-09-05 10:39:36] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 10:39:39] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Verified","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 10:39:40] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 49ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Verified","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11...(truncated)
+[2026-09-05 10:39:40] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 10:39:42] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 10ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 10:39:54] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 117ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 10:39:55] 127.0.0.1 | GUEST | PUT | /api/applications/212/approve | Status: Success | Latency: 47ms
+      Request: {"status":"Approved","is_docs_complete":true,"approval_notes":"APPROVED"}
+      Response: {"message":"Persetujuan pimpinan berhasil disimpan"}
+[2026-09-05 10:39:55] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 10:39:57] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Approved","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 10:40:01] 127.0.0.1 | GUEST | GET | /api/applications/212/audit-history | Status: Success | Latency: 8ms
+      Request: 
+      Response: [{"id":504,"application_id":212,"reg_number":"2026-00066","application_date":"2026-09-05T10:38:11.787899Z","status":"Approved","ip_address":"127.0.0.1","user_agent":"Google Chrome","created_user":"nur","created_at":"2026-09-05T10:39:55.082769Z","created_at...(truncated)
+[2026-09-05 10:40:04] 127.0.0.1 | GUEST | GET | /api/tester-masters | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Data tim penguji retrieved","data":[{"tester_id":"103  ","name":"Kapten Lazaro","position":"Kepala Tim Lab","methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code"...(truncated)
+[2026-09-05 10:40:04] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-05 10:40:04] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 10:40:04] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 10:40:04] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 10:40:08] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-05 10:40:12] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 13ms
+      Request: 
+      Response: [{"code":"Oscillosc","name":"Oscilloscope","type":"USAGE","min_stock":0,"initial_stock":0,"current_stock":0,"location_code":"LDIS","location":{"code":"LDIS","name":"Lab Dislitbangad","test_type_code":"LAB","test_type":{"code":"","name":"","created_at":"000...(truncated)
+[2026-09-05 10:40:28] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONJA","name":"Uji kelancaran kerja","description":"","weight":250,"threshold":60,"methodology_code":"MANAG","methodology":{"code":"MANAG","name":"Umum","test_type_code":"MANAG","test_type":{"code":"","n...(truncated)
+[2026-09-05 10:40:31] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 6ms
+      Request: 
+      Response: []
+[2026-09-05 10:40:42] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-05 10:40:46] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 5ms
+      Request: 
+      Response: []
+[2026-09-05 10:41:08] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 113ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 10:41:08] 127.0.0.1 | GUEST | PUT | /api/applications/212/plan | Status: Success | Latency: 209ms
+      Request: {"status":"Planned","lab_methodology_code":"ALKOM","field_methodology_code":"AKLAP","methodology_code":"MANAG","relational_plans":[{"type":"LAB","aspect_code":"KONPE","aspect_name":"Uji konstruksi dan perlengkapan","location_code":"LDIS","scheduled_date":"...(truncated)
+      Response: {"message":"Planning completed"}
+[2026-09-05 10:41:08] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 10:41:11] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 59ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Planned","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-09-05 10:41:15] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 57ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Planned","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-09-05 10:41:15] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 21ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 10:41:16] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":11,"sub_aspect_code":"KORUS","sub_aspect":{"code":"KORUS","name":"Konstruksi-Pengaman arus","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":...(truncated)
+[2026-09-05 10:41:16] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 10:41:30] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.911s
+      Request: ------WebKitFormBoundary6xWJFVdCdgnOKSMH
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 10:43:55] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 10:44:13] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 78ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-09-05 10:44:13] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":7,"username":"admin","email":"admin@gmail.com","phone":"","role_id":1,"role":{"id":1,"name":"ADMIN","description":"System Administrator","created_at":"0001-01-01T00:00:00Z","updated_at":"2026-06-29T13...(truncated)
+[2026-09-05 10:44:22] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":15,"username":"supervisor","email":"nurkholim15@gmail.com","phone":"","role_id":8,"role":{"id":8,"name":"SUPERVISOR","description":"SUPERVISOR Role","created_at":"0001-01-01T00:00:00Z","updated_at":"0...(truncated)
+[2026-09-05 10:44:28] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":27,"username":"spv_verify","email":"nurkholim15@gmail.com","phone":"","role_id":12,"role":{"id":12,"name":"SUPERVISOR_VERIFY","description":"Supervisor Verifikasi Administrasi","created_at":"0001-01-0...(truncated)
+[2026-09-05 10:44:46] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-09-05 10:44:46] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-09-05 10:45:17] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.155s
+      Request: ------WebKitFormBoundaryr3LoOXXpb3oTorK4
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:45:37] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 44ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 10:45:37] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":11,"sub_aspect_code":"KORUS","sub_aspect":{"code":"KORUS","name":"Konstruksi-Pengaman arus","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":...(truncated)
+[2026-09-05 10:45:53] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.974s
+      Request: ------WebKitFormBoundaryvxoM6nX3qzKmcl3z
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":0,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":0,"notes":"","aspect_code":"KONPE","is_disabled...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:46:01] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 32ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 10:46:01] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":11,"sub_aspect_code":"KORUS","sub_aspect":{"code":"KORUS","name":"Konstruksi-Pengaman arus","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":...(truncated)
+[2026-09-05 10:46:30] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KEPEN | Status: Failed | Latency: 1.837s
+      Request: ------WebKitFormBoundary2RXsqerpBMt7vH0T
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KEDAI","score":45,"notes":"","aspect_code":"KEPEN","is_disabled":false},{"param_code":"KELCH","score":100,"notes":"","aspect_code":"KEPEN","is_disab...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KEDAI":90,"KELCH":86.92,"KERUS":87.05000000000001,"KESEL":87.22999999999999,"KESEN":87.19,"KESUA":86.475},"message":"Deteksi Anomali: Nilai parameter di luar batas wajar. Hubungi supervisor untuk melakukan override.","shap...(truncated)
+[2026-09-05 10:46:58] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KEPEN | Status: Failed | Latency: 1.932s
+      Request: ------WebKitFormBoundary3yKMIN4eskxXN0Pg
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KEDAI","score":45,"notes":"","aspect_code":"KEPEN","is_disabled":false},{"param_code":"KELCH","score":100,"notes":"","aspect_code":"KEPEN","is_disab...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KEDAI":90,"KELCH":86.92,"KERUS":87.05000000000001,"KESEL":87.22999999999999,"KESEN":87.19,"KESUA":86.475},"message":"Override Gagal: Password Supervisor salah. Silakan hubungi supervisor dengan wewenang yang tepat.","shap_...(truncated)
+[2026-09-05 10:47:53] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 22ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 10:47:53] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":11,"sub_aspect_code":"KORUS","sub_aspect":{"code":"KORUS","name":"Konstruksi-Pengaman arus","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":...(truncated)
+[2026-09-05 10:48:50] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KEPEN | Status: Failed | Latency: 1.911s
+      Request: ------WebKitFormBoundaryPjROpDc6uYAyhyrY
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KEDAI","score":60,"notes":"","aspect_code":"KEPEN","is_disabled":false},{"param_code":"KELCH","score":0,"notes":"","aspect_code":"KEPEN","is_disable...(truncated)
+      Response: {"anomaly_score":0.7486,"medians":{"KEDAI":90,"KELCH":86.92,"KERUS":87.05000000000001,"KESEL":87.22999999999999,"KESEN":87.19,"KESUA":86.475},"message":"Deteksi Anomali: Nilai parameter di luar batas wajar. Hubungi supervisor untuk melakukan override.","sh...(truncated)
+[2026-09-05 10:48:55] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 69ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 10:48:56] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":11,"sub_aspect_code":"KORUS","sub_aspect":{"code":"KORUS","name":"Konstruksi-Pengaman arus","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":...(truncated)
+[2026-09-05 10:49:23] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.943s
+      Request: ------WebKitFormBoundarylATFspfU1iraBOV9
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:50:12] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 2.051s
+      Request: ------WebKitFormBoundaryDB8sZ0lXpW1Oog77
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:50:31] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.964s
+      Request: ------WebKitFormBoundaryJvlBXOm5LOdLmvga
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:53:37] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":14,"name":"SUPERVISOR_SCORE","description":"Supervisor Scoring / Analisa","created_at":"0001-01-01T00:00:00...(truncated)
+[2026-09-05 10:54:15] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.926s
+      Request: ------WebKitFormBoundary4AEebAlJ1jMxaOzt
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:57:01] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.796s
+      Request: ------WebKitFormBoundaryG10Rf3mfaKMtELOG
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:57:22] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Failed | Latency: 1.857s
+      Request: ------WebKitFormBoundaryjwHB2nrmaNFohdM2
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KOBEL":84.54,"KOBNC":85.28,"KODAY":85.52,"KODES":83.95,"KOFAS":85.995,"KOKON":85.8,"KOLOC":85.51,"KONSI":81.78,"KOPEM":85.82,"KOPEN":85.22,"KOPOL":85.98,"KORUS":85.815,"KOTAN":85.68,"KOWAR":85.69,"PEBEL":86.71,"PEENE":85.0...(truncated)
+[2026-09-05 10:57:34] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-09-05 10:57:34] 127.0.0.1 | GUEST | GET | /api/roles | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Roles retrieved","data":[{"id":52,"name":"SuperUser","description":"Super User","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_at":null,"deleted_use...(truncated)
+[2026-09-05 10:57:45] 127.0.0.1 | GUEST | PUT | /api/management/users/22 | Status: Success | Latency: 174ms
+      Request: {"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"password":"***","telegram_chat_id":"","whatsapp_phone":"","teams_user_id":"","force_pwd_change":false,"is_active":true,"id":22,"last_pwd_change":"2026-06-24T11:27:52.088089+07:0...(truncated)
+      Response: {"status":200,"message":"User updated successfully","data":{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00...(truncated)
+[2026-09-05 10:57:45] 127.0.0.1 | GUEST | GET | /api/users | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Users retrieved","data":[{"id":22,"username":"sv_score","email":"kakangs087@gmail.com","phone":"","role_id":14,"role":{"id":14,"name":"SUPERVISOR_SCORE","description":"Supervisor Scoring / Analisa","created_at":"0001-01-01T00:00:00...(truncated)
+[2026-09-05 10:58:01] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KONPE | Status: Success | Latency: 2.245s
+      Request: ------WebKitFormBoundaryaAE3TnMAUuZXBRLi
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOFAS","score":100,"notes":"","aspect_code":"KONPE","is_disabled":false},{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KONPE","is_disa...(truncated)
+      Response: {"message":"Aspect results saved successfully"}
+[2026-09-05 10:58:56] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KEPEN | Status: Failed | Latency: 1.945s
+      Request: ------WebKitFormBoundary4kteMR4zDDApFgTo
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KEDAI","score":89,"notes":"","aspect_code":"KEPEN","is_disabled":false},{"param_code":"KELCH","score":100,"notes":"","aspect_code":"KEPEN","is_disab...(truncated)
+      Response: {"anomaly_score":0.55,"medians":{"KEDAI":90,"KELCH":86.92,"KERUS":87.05000000000001,"KESEL":87.22999999999999,"KESEN":87.19,"KESUA":86.475},"message":"Deteksi Anomali: Nilai parameter di luar batas wajar. Hubungi supervisor untuk melakukan override.","shap...(truncated)
+[2026-09-05 10:59:15] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute-aspect/KEPEN | Status: Success | Latency: 2.217s
+      Request: ------WebKitFormBoundaryTGBKcysLJ7IdctYN
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KEDAI","score":89,"notes":"","aspect_code":"KEPEN","is_disabled":false},{"param_code":"KELCH","score":100,"notes":"","aspect_code":"KEPEN","is_disab...(truncated)
+      Response: {"message":"Aspect results saved successfully"}
+[2026-09-05 10:59:25] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 114ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 10:59:26] 127.0.0.1 | GUEST | PUT | /api/applications/212/execute | Status: Success | Latency: 208ms
+      Request: ------WebKitFormBoundaryxBSQkJM1N3RvAuWA
+Content-Disposition: form-data; name="status"
+
+Executed
+------WebKitFormBoundaryxBSQkJM1N3RvAuWA
+Content-Disposition: form-data; name="results"
+
+[{"param_code":"KOLOC","score":100,"notes":"","aspect_code":"KO...(truncated)
+      Response: {"final_score":86.85526315789474,"final_status":"Lulus Amat Baik","message":"Execution results updated"}
+[2026-09-05 10:59:26] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 89ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-05 10:59:36] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Executed","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 10:59:38] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 69ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Executed","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11...(truncated)
+[2026-09-05 10:59:38] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 22ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 10:59:38] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 10:59:41] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 40ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 10:59:49] 127.0.0.1 | GUEST | POST | /api/applications/212/generate-report | Status: Success | Latency: 291ms
+      Request: 
+      Response: :                                                                                                                                                                                                                                                               ...(truncated)
+[2026-09-05 11:00:00] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 124ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 11:00:00] 127.0.0.1 | GUEST | PUT | /api/applications/212/analyze | Status: Success | Latency: 148ms
+      Request: {"status":"Analyzed","final_score":86.85526315789474,"analysis_notes":"","report_ai":"AI API mengembalikan kode error 400: {\"error\":{\"message\":\"property 'options' is unsupported\",\"type\":\"invalid_request_error\"}}\n\nB. Analisis Kekuatan & Kelebiha...(truncated)
+      Response: {"message":"Analysis completed"}
+[2026-09-05 11:00:01] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 11:00:10] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 41ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Analyzed","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026...(truncated)
+[2026-09-05 11:00:12] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 54ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Analyzed","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11...(truncated)
+[2026-09-05 11:00:12] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 21ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 11:00:12] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:00:22] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 120ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 11:00:22] 127.0.0.1 | GUEST | PUT | /api/applications/212/finalize | Status: Success | Latency: 54ms
+      Request: {"status":"Certified","is_docs_complete":true,"report_ai":"AI API mengembalikan kode error 400: {\"error\":{\"message\":\"property 'options' is unsupported\",\"type\":\"invalid_request_error\"}}\n\nB. Analisis Kekuatan & Kelebihan Teknis\n   (Daftar parame...(truncated)
+      Response: {"message":"Final recommendation issued"}
+[2026-09-05 11:00:22] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Certified","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"202...(truncated)
+[2026-09-05 11:00:26] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 53ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Certified","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T1...(truncated)
+[2026-09-05 11:00:27] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 20ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 11:00:27] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:00:57] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 118ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 11:00:57] 127.0.0.1 | GUEST | PUT | /api/applications/212/finalize | Status: Success | Latency: 55ms
+      Request: {"status":"Finalized","is_docs_complete":true,"report_ai":"AI API mengembalikan kode error 400: {\"error\":{\"message\":\"property 'options' is unsupported\",\"type\":\"invalid_request_error\"}}\n\nB. Analisis Kekuatan & Kelebihan Teknis\n   (Daftar parame...(truncated)
+      Response: {"message":"Final recommendation issued"}
+[2026-09-05 11:00:58] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 11:01:10] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-05 11:01:10] 127.0.0.1 | GUEST | GET | /api/sop | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"SOP documents retrieved successfully.","data":[{"id":7,"file_name":"System Documentation Lims.pdf","file_path":"public/uploads/sop/1788230185714805210_System Documentation Lims.pdf","file_size":2462727,"uploaded_at":"2026-09-01T09:...(truncated)
+[2026-09-05 11:01:14] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 2.117s
+      Request: {"message":"hai"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Halo!  \nMaaf, saat ini sistem kami tidak menemukan referensi SOP atau data transaksi/produk yang relevan. Namun, saya tetap siap membantu. Jika Anda memiliki pertanyaan spesifik‚Ä...(truncated)
+[2026-09-05 11:01:27] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.162s
+      Request: {"message":"ai/pagi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Selamat pagi!  \nMaaf, saat ini tidak ada referensi SOP atau data transaksi/produk yang relevan dalam database kami. Namun, saya tetap siap membantu dengan informasi umum atau sara...(truncated)
+[2026-09-05 11:01:50] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.521s
+      Request: {"message":"apa LIMS?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"**LIMS** (Laboratory Information Management System) adalah sebuah platform perangkat lunak yang dirancang khusus untuk membantu laboratorium mengelola data, proses, dan alur kerja ...(truncated)
+[2026-09-05 11:07:09] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 2.401s
+      Request: {"message":"selamat pagi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Selamat pagi!  \n\nMaaf, saat ini sistem kami tidak menemukan referensi SOP atau data transaksi/produk yang relevan terkait permintaan Anda.  \n\nNamun, saya tetap bisa membantu de...(truncated)
+[2026-09-05 11:11:39] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 511ms
+      Request: {"message":"hi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Halo!  \nMaaf, saat ini sistem kami tidak menemukan referensi SOP atau data transaksi/produk yang relevan. Namun, saya tetap siap membantu. Jika Anda memiliki pertanyaan atau membu...(truncated)
+[2026-09-05 11:16:04] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.24s
+      Request: {"message":"pagi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Selamat pagi! Ada yang bisa saya bantu hari ini?","sources":[{"file_name":"Modul Asset LIMS.pdf","page_number":10},{"file_name":"Modul Asset LIMS.pdf","page_number":8},{"file_name"...(truncated)
+[2026-09-05 11:16:24] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 677ms
+      Request: {"message":"hi"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Halo! Ada yang bisa saya bantu terkait LIMS atau proses pengelolaan aset di laboratorium? Silakan beri tahu pertanyaan atau kebutuhan Anda. üòä","sources":[{"file_name":"Modul Ass...(truncated)
+[2026-09-05 11:16:37] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.653s
+      Request: {"message":"apa lims?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"**LIMS (Laboratory Information Management System)**  \nSistem ini adalah platform terintegrasi yang dirancang khusus untuk mengelola seluruh siklus hidup peralatan dan data di labo...(truncated)
+[2026-09-05 11:16:57] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 1.659s
+      Request: {"message":"bagaimana install golang?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"## Cara Meng‚Äëinstall Go (Golang) di Komputer Anda\n\nBerikut panduan lengkap untuk meng‚Äëinstall Go (Golang) pada tiga sistem operasi utama: **Windows**, **macOS**, dan **Linux*...(truncated)
+[2026-09-05 11:17:21] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 978ms
+      Request: {"message":"bagaimana install ollama?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Maaf, informasi mengenai cara instalasi **Ollama** tidak tersedia dalam data yang kami miliki saat ini. Jika Anda membutuhkan panduan instalasi, Anda dapat merujuk ke dokumentasi r...(truncated)
+[2026-09-05 11:17:39] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 883ms
+      Request: {"message":"bagaimana install local AI?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Maaf, informasi mengenai cara menginstal ‚Äúlocal AI‚Äù tidak tersedia dalam data dan SOP yang telah disediakan. Jika Anda membutuhkan panduan tersebut, silakan merujuk ke dokument...(truncated)
+[2026-09-05 11:18:07] 127.0.0.1 | GUEST | POST | /api/chat | Status: Success | Latency: 479ms
+      Request: {"message":"bagaimana mengecek ollama?"}
+      Response: {"status":200,"message":"Response generated successfully","data":{"answer":"Maaf, informasi mengenai ‚Äúollama‚Äù tidak terdaftar atau tidak ditemukan dalam sistem LIMS kami. Jika Anda memiliki konteks atau detail tambahan tentang apa yang dimaksud dengan ...(truncated)
+[2026-09-05 11:20:08] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 49ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 11:20:10] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 11:20:11] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 62ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-05 11:21:36] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 43ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-05 11:21:37] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 45ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Planned","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-...(truncated)
+[2026-09-05 11:21:43] 127.0.0.1 | GUEST | GET | /api/applications/212 | Status: Success | Latency: 145ms
+      Request: 
+      Response: {"id":212,"reg_number":"2026-00066","status":"Planned","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:...(truncated)
+[2026-09-05 11:21:43] 127.0.0.1 | GUEST | GET | /api/applications/212/execution | Status: Success | Latency: 25ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Frekuensi lock","param_code":"KOLOC","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight":15,"act...(truncated)
+[2026-09-05 11:21:43] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":11,"sub_aspect_code":"KORUS","sub_aspect":{"code":"KORUS","name":"Konstruksi-Pengaman arus","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":...(truncated)
+[2026-09-05 11:21:44] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:21:55] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-05 11:21:55] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-05 11:21:55] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 11:21:55] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-05 11:21:55] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 11:21:55] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-05 11:22:04] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Assets retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-05 11:22:35] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 59ms
+      Request: 
+      Response: {"status":200,"message":"Assets retrieved","data":[{"id":70,"equipment_name":"Alat Komunikasi","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 11:22:41] 127.0.0.1 | GUEST | GET | /api/asset-handover/70 | Status: Failed | Latency: 50ms
+      Request: 
+      Response: {"status":404,"message":"Handover record not found","error":"record not found"}
+[2026-09-05 11:22:44] 127.0.0.1 | GUEST | GET | /api/asset-logs | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Logs retrieved","data":[]}
+[2026-09-05 11:23:09] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Success | Latency: 60ms
+      Request: {"equipment_id":70,"activity_type":"MOVE","to_location":"LDIS","to_status":"3","partner_id":3,"receiver_name":"","notes":"kirim ke lokasi"}
+      Response: {"status":200,"message":"Activity logged successfully","data":{"id":59,"asset_id":70,"activity_type":"MOVE","from_location":"HO","to_location":"LDIS","from_status":"1","to_status":"3","notes":"kirim ke lokasi","created_at":"2026-09-05T11:23:09.11428578+07:...(truncated)
+[2026-09-05 11:23:09] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Assets retrieved","data":[{"id":70,"equipment_name":"Alat Komunikasi","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 11:23:11] 127.0.0.1 | GUEST | GET | /api/asset-logs | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Logs retrieved","data":[{"id":59,"asset_id":70,"activity_type":"MOVE","from_location":"HO","to_location":"LDIS","from_status":"1","to_status":"3","notes":"kirim ke lokasi","created_at":"2026-09-05T11:23:09.114285Z","created_user":"...(truncated)
+[2026-09-05 11:23:25] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Success | Latency: 45ms
+      Request: {"equipment_id":70,"activity_type":"MOVE","to_location":"LDIS","to_status":"2","partner_id":3,"receiver_name":"","notes":"barang diterima"}
+      Response: {"status":200,"message":"Activity logged successfully","data":{"id":60,"asset_id":70,"activity_type":"MOVE","from_location":"LDIS","to_location":"LDIS","from_status":"3","to_status":"2","notes":"barang diterima","created_at":"2026-09-05T11:23:25.602589958+...(truncated)
+[2026-09-05 11:23:25] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Assets retrieved","data":[{"id":70,"equipment_name":"Alat Komunikasi","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 11:23:27] 127.0.0.1 | GUEST | GET | /api/asset-logs | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Logs retrieved","data":[{"id":60,"asset_id":70,"activity_type":"MOVE","from_location":"LDIS","to_location":"LDIS","from_status":"3","to_status":"2","notes":"barang diterima","created_at":"2026-09-05T11:23:25.602589Z","created_user"...(truncated)
+[2026-09-05 11:23:46] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Failed | Latency: 45ms
+      Request: {"equipment_id":70,"activity_type":"DISPO","to_location":"LDIS","to_status":"4","partner_id":3,"receiver_name":"DC Adi","notes":"dikembalikan"}
+      Response: {"status":400,"message":"Disposal gagal karena status aplikasi Planned tidak sesuai syarat disposal Finalized"}
+[2026-09-05 11:24:00] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Failed | Latency: 12ms
+      Request: {"equipment_id":70,"activity_type":"DISPO","to_location":"LDIS","to_status":"4","partner_id":3,"receiver_name":"Adt","notes":""}
+      Response: {"status":400,"message":"Disposal gagal karena status aplikasi Planned tidak sesuai syarat disposal Finalized"}
+[2026-09-05 11:24:05] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Failed | Latency: 8ms
+      Request: {"equipment_id":70,"activity_type":"DISPO","to_location":"LDIS","to_status":"4","partner_id":3,"receiver_name":"Adt","notes":""}
+      Response: {"status":400,"message":"Disposal gagal karena status aplikasi Planned tidak sesuai syarat disposal Finalized"}
+[2026-09-05 11:24:27] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Failed | Latency: 9ms
+      Request: {"equipment_id":70,"activity_type":"DISPO","to_location":"LDIS","to_status":"4","partner_id":3,"receiver_name":"Adt","notes":""}
+      Response: {"status":400,"message":"Disposal gagal karena status aplikasi Planned tidak sesuai syarat disposal Finalized"}
+[2026-09-05 11:24:49] 127.0.0.1 | GUEST | POST | /api/asset-activity | Status: Success | Latency: 57ms
+      Request: {"equipment_id":70,"activity_type":"DISPO","to_location":"LDIS","to_status":"4","partner_id":3,"receiver_name":"Adi","notes":"selesai test"}
+      Response: {"status":200,"message":"Activity logged successfully","data":{"id":61,"asset_id":70,"activity_type":"DISPO","from_location":"LDIS","to_location":"LDIS","from_status":"2","to_status":"4","notes":"selesai test","created_at":"2026-09-05T11:24:49.547890745+07...(truncated)
+[2026-09-05 11:24:49] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"status":200,"message":"Assets retrieved","data":[{"id":70,"equipment_name":"Alat Komunikasi","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 11:24:53] 127.0.0.1 | GUEST | GET | /api/asset-logs | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Logs retrieved","data":[{"id":61,"asset_id":70,"activity_type":"DISPO","from_location":"LDIS","to_location":"LDIS","from_status":"2","to_status":"4","notes":"selesai test","created_at":"2026-09-05T11:24:49.54789Z","created_user":"n...(truncated)
+[2026-09-05 11:24:58] 127.0.0.1 | GUEST | GET | /api/asset-handover/70 | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"status":200,"message":"Handover retrieved","data":{"asset_id":70,"asset":{"id":70,"equipment_name":"Alat Komunikasi","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00...(truncated)
+[2026-09-05 11:25:38] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 15ms
+      Request: 
+      Response: [{"code":"Oscillosc","name":"Oscilloscope","type":"USAGE","min_stock":0,"initial_stock":0,"current_stock":0,"location_code":"LDIS","location":{"code":"LDIS","name":"Lab Dislitbangad","test_type_code":"LAB","test_type":{"code":"","name":"","created_at":"000...(truncated)
+[2026-09-05 11:25:39] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 13ms
+      Request: 
+      Response: [{"code":"Oscillosc","name":"Oscilloscope","type":"USAGE","min_stock":0,"initial_stock":0,"current_stock":0,"location_code":"LDIS","location":{"code":"LDIS","name":"Lab Dislitbangad","test_type_code":"LAB","test_type":{"code":"","name":"","created_at":"000...(truncated)
+[2026-09-05 11:25:39] 127.0.0.1 | GUEST | GET | /api/testing-tools/availability | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"availability":[{"hour":0,"status":"OUT_OF_OFFICE","quantity":1},{"hour":1,"status":"OUT_OF_OFFICE","quantity":1},{"hour":2,"status":"OUT_OF_OFFICE","quantity":1},{"hour":3,"status":"OUT_OF_OFFICE","quantity":1},{"hour":4,"status":"OUT_OF_OFFICE","quantit...(truncated)
+[2026-09-05 11:25:39] 127.0.0.1 | GUEST | GET | /api/testing-tools/availability | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"availability":[{"hour":0,"status":"OUT_OF_OFFICE","quantity":1},{"hour":1,"status":"OUT_OF_OFFICE","quantity":1},{"hour":2,"status":"OUT_OF_OFFICE","quantity":1},{"hour":3,"status":"OUT_OF_OFFICE","quantity":1},{"hour":4,"status":"OUT_OF_OFFICE","quantit...(truncated)
+[2026-09-05 11:25:45] 127.0.0.1 | GUEST | GET | /api/testing-tools/availability | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"availability":[{"hour":0,"status":"OUT_OF_OFFICE","quantity":1},{"hour":1,"status":"OUT_OF_OFFICE","quantity":1},{"hour":2,"status":"OUT_OF_OFFICE","quantity":1},{"hour":3,"status":"OUT_OF_OFFICE","quantity":1},{"hour":4,"status":"OUT_OF_OFFICE","quantit...(truncated)
+[2026-09-05 11:25:48] 127.0.0.1 | GUEST | GET | /api/testing-tools/availability | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"availability":[{"hour":0,"status":"OUT_OF_OFFICE","quantity":1},{"hour":1,"status":"OUT_OF_OFFICE","quantity":1},{"hour":2,"status":"OUT_OF_OFFICE","quantity":1},{"hour":3,"status":"OUT_OF_OFFICE","quantity":1},{"hour":4,"status":"OUT_OF_OFFICE","quantit...(truncated)
+[2026-09-05 11:26:17] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 78ms
+      Request: 
+      Response: {"data":[{"id":211,"reg_number":"2026-00065","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-05 11:26:26] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 11:26:26] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":100,"page":1,"total":0},"source_table":"travel_requests_202609"}
+[2026-09-05 11:26:26] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 11:26:26] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":100,"page":1,"total":0},"source_table":"travel_requests_202609"}
+[2026-09-05 11:26:51] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 56ms
+      Request: 
+      Response: {"data":[{"id":212,"reg_number":"2026-00066","status":"Finalized","partner_id":3,"partner":{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"202...(truncated)
+[2026-09-05 11:27:27] 127.0.0.1 | GUEST | POST | /api/travel-requests | Status: Success | Latency: 63ms
+      Request: {"reg_number":"2026-00065","location_code":"BANYU","purpose":"SPD 2 hari","start_date":"2026-09-06T00:00:00Z","end_date":"2026-09-07T00:00:00Z","estimated_budget":3000000,"status":"DRAFT","notes":""}
+      Response: {"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_...(truncated)
+[2026-09-05 11:27:27] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:27:30] 127.0.0.1 | GUEST | PUT | /api/travel-requests/21 | Status: Success | Latency: 40ms
+      Request: {"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"...(truncated)
+      Response: {"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_...(truncated)
+[2026-09-05 11:27:30] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:27:38] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:27:45] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 116ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 11:27:45] 127.0.0.1 | GUEST | PUT | /api/travel-requests/21/approve | Status: Success | Latency: 37ms
+      Request: {"status":"APPROVED","notes":""}
+      Response: {"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","menus":null,"deleted_...(truncated)
+[2026-09-05 11:27:45] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":100,"page":1,"total":0},"source_table":"travel_requests_202609"}
+[2026-09-05 11:27:50] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:27:50] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:28:05] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Failed | Latency: 8ms
+      Request: 
+      Response: {"error":"Failed to fetch cash advances"}
+[2026-09-05 11:28:08] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Failed | Latency: 10ms
+      Request: 
+      Response: {"error":"Failed to fetch cash advances"}
+[2026-09-05 11:28:24] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:28:33] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 49ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 11:28:33] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:28:33] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-05 11:28:33] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:28:39] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:28:40] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:28:42] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Failed | Latency: 9ms
+      Request: 
+      Response: {"error":"Failed to fetch cash advances"}
+[2026-09-05 11:28:49] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:28:54] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:29:12] 127.0.0.1 | GUEST | POST | /api/cash-advances | Status: Success | Latency: 60ms
+      Request: {"title":"DP SPD","amount":2000000,"notes":"DP SPD","travel_request_id":21}
+      Response: {"id":4,"no_cash_advance":"ADV-2026-00007","travel_request_id":21,"travel_request":null,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0...(truncated)
+[2026-09-05 11:29:12] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"data":[{"id":4,"no_cash_advance":"ADV-2026-00007","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","u...(truncated)
+[2026-09-05 11:29:16] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"data":[{"id":4,"no_cash_advance":"ADV-2026-00007","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","u...(truncated)
+[2026-09-05 11:29:22] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"cash_advances_202609"}
+[2026-09-05 11:29:24] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 116ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 11:29:24] 127.0.0.1 | GUEST | PUT | /api/cash-advances/4/approve | Status: Success | Latency: 63ms
+      Request: {"status":"APPROVED","notes":"ok"}
+      Response: {"message":"Cash advance status updated successfully"}
+[2026-09-05 11:29:24] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":4,"no_cash_advance":"ADV-2026-00007","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","u...(truncated)
+[2026-09-05 11:29:40] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 56ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"reimbursements_202609"}
+[2026-09-05 11:30:00] 127.0.0.1 | GUEST | GET | /api/cash-advances | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[{"id":4,"no_cash_advance":"ADV-2026-00007","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","u...(truncated)
+[2026-09-05 11:30:04] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-05 11:31:00] 127.0.0.1 | GUEST | POST | /api/reimbursements | Status: Success | Latency: 89ms
+      Request: ------WebKitFormBoundarygTLj2Dit9EivmTnd
+Content-Disposition: form-data; name="title"
+
+Reimbursement
+------WebKitFormBoundarygTLj2Dit9EivmTnd
+Content-Disposition: form-data; name="amount"
+
+3000000
+------WebKitFormBoundarygTLj2Dit9EivmTnd
+Content-D...(truncated)
+      Response: {"id":18,"reg_number":"REIM-2026-00020","travel_request_id":21,"travel_request":null,"cash_advance_id":4,"cash_advance":null,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"...(truncated)
+[2026-09-05 11:31:00] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":18,"reg_number":"REIM-2026-00020","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","upda...(truncated)
+[2026-09-05 11:31:05] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":18,"reg_number":"REIM-2026-00020","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","upda...(truncated)
+[2026-09-05 11:31:08] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 9ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 11:31:24] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":18,"reg_number":"REIM-2026-00020","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","upda...(truncated)
+[2026-09-05 11:31:31] 127.0.0.1 | GUEST | GET | /api/download | Status: Success | Latency: 7ms
+      Request: 
+      Response: [BINARY STREAM]
+[2026-09-05 11:31:40] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"data":[{"id":18,"reg_number":"REIM-2026-00020","travel_request_id":21,"travel_request":{"id":21,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","upda...(truncated)
+[2026-09-05 11:31:53] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 120ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-05 11:31:53] 127.0.0.1 | GUEST | PUT | /api/reimbursements/18/approve | Status: Success | Latency: 103ms
+      Request: {"status":"APPROVED","notes":""}
+      Response: {"id":18,"reg_number":"REIM-2026-00020","travel_request_id":21,"travel_request":null,"cash_advance_id":4,"cash_advance":null,"user_id":8,"user":{"id":0,"username":"","email":"","phone":"","role_id":0,"role":{"id":0,"name":"","description":"","created_at":"...(truncated)
+[2026-09-05 11:31:53] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"reimbursements_202609"}
+[2026-09-05 11:31:56] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"reimbursements_202609"}
+[2026-09-05 11:32:21] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"reimbursements_202609"}
+[2026-09-05 11:32:23] 127.0.0.1 | GUEST | GET | /api/reimbursements | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[],"metadata":{"limit":10,"page":1,"total":0},"source_table":"reimbursements_202609"}
+[2026-09-05 11:33:10] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:33:28] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 47ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:33:41] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:33:51] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":3,"name":"PT PAL Indonesia","type_code":"BUMN","type":{"code":"BUMN","name":"Perusahaan BUMN","created_at":"2026-04-21T11:43:12.789873+07:00","updated_at":"2026-04-21T11:43:12.789873+07:00","create...(truncated)
+[2026-09-05 11:33:51] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 11:33:58] 127.0.0.1 | GUEST | POST | /api/payments | Status: Success | Latency: 75ms
+      Request: {"invoice_id":50,"amount_paid":75000,"payment_method":"Transfer","reference_no":""}
+      Response: {"id":11,"invoice_id":50,"invoice":{"id":0,"application_id":0,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-...(truncated)
+[2026-09-05 11:34:18] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[{"id":50,"application_id":212,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 54ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-05 13:01:57] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
