@@ -12,14 +12,7 @@ import (
 	ort "github.com/yalue/onnxruntime_go"
 )
 
-func checkAnomaly(appID uint64, aspectCode string, reqItems []struct {
-	SubAspectCode string  `json:"sub_aspect_code"`
-	ParamCode     string  `json:"param_code"`
-	Score         float64 `json:"score"`
-	Notes         string  `json:"notes"`
-	PhotoPath     string  `json:"photo_path"`
-	IsDisabled    bool    `json:"is_disabled"`
-}) (bool, float64, map[string]float64, map[string]float64, map[string]float64, error) {
+func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) (bool, float64, map[string]float64, map[string]float64, map[string]float64, error) {
 	if models.GetGlobalParam("AI_PQC_ENABLED", "true") != "true" {
 		return false, 0.0, nil, nil, nil, nil
 	}

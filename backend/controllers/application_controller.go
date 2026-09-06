@@ -1474,6 +1474,7 @@ func GetExecution(c *gin.Context) {
 		Unit             string  `json:"unit"`
 		Weight           float64 `json:"weight"`
 		ActualValue      string  `json:"actual_value"`
+		Score            float64 `json:"score"`
 		Notes            string  `json:"notes"`
 		PhotoPath        string  `json:"photo_path"`
 		IsSimulator      bool    `json:"is_simulator"`
@@ -1620,7 +1621,12 @@ func GetExecution(c *gin.Context) {
 				Keterangan:       "-",
 			}
 			if exists {
-				item.ActualValue = fmt.Sprintf("%v", er.Score)
+				if er.ActualValue != nil {
+					item.ActualValue = fmt.Sprintf("%v", *er.ActualValue)
+				} else {
+					item.ActualValue = fmt.Sprintf("%v", er.Score)
+				}
+				item.Score = er.Score
 				item.Notes = er.Notes
 				item.PhotoPath = er.PhotoPath
 			}
@@ -1651,7 +1657,13 @@ func GetExecution(c *gin.Context) {
 						switch strings.TrimSpace(strings.ToLower(sub.StandardOperator)) {
 						case "range":
 							isPassed = actualVal >= sub.StandardValue && actualVal <= sub.StandardValueMax
-							percentStr = "-"
+							if exists && er.Score >= 0 {
+								percentStr = fmt.Sprintf("%.0f%%", er.Score)
+							} else if isPassed {
+								percentStr = "100%"
+							} else {
+								percentStr = "0%"
+							}
 						case "<=":
 							isPassed = actualVal <= sub.StandardValue
 							if actualVal > 0 {
@@ -1715,11 +1727,12 @@ func ExecuteApplication(c *gin.Context) {
 	fmt.Printf("ExecuteApplication: ID=%s, Status=%s, ResultsLength=%d\n", id, status, len(resultsStr))
 
 	type ResultItem struct {
-		ParamCode     string  `json:"param_code"`
-		SubAspectCode string  `json:"sub_aspect_code"`
-		Score         float64 `json:"score"`
-		Notes         string  `json:"notes"`
-		IsDisabled    bool    `json:"is_disabled"`
+		ParamCode     string      `json:"param_code"`
+		SubAspectCode string      `json:"sub_aspect_code"`
+		ActualValue   interface{} `json:"actual_value"`
+		Score         float64     `json:"score"`
+		Notes         string      `json:"notes"`
+		IsDisabled    bool        `json:"is_disabled"`
 	}
 	var results []ResultItem
 	if resultsStr != "" {
@@ -1826,6 +1839,66 @@ func ExecuteApplication(c *gin.Context) {
 			aspectCode = sa.AspectCode
 		}
 
+		// Parse ActualValue (NUMERIC) secara aman dari payload
+		var actualValPtr *float64
+		if r.ActualValue != nil {
+			switch v := r.ActualValue.(type) {
+			case float64:
+				actualValPtr = &v
+			case float32:
+				f := float64(v)
+				actualValPtr = &f
+			case int:
+				f := float64(v)
+				actualValPtr = &f
+			case int64:
+				f := float64(v)
+				actualValPtr = &f
+			case string:
+				trimmed := strings.TrimSpace(v)
+				if trimmed != "" {
+					if parsed, err := strconv.ParseFloat(trimmed, 64); err == nil {
+						actualValPtr = &parsed
+					}
+				}
+			}
+		}
+
+		finalScore := r.Score
+
+		// Validasi Konsistensi Skor: Cek apakah hasil uji aktual konsisten dengan skor yang disubmit
+		if sa, ok := subAspectMap[subCode]; ok && actualValPtr != nil && !r.IsDisabled {
+			val := *actualValPtr
+			hasStandard := sa.StandardValue != 0 || sa.StandardValueMax != 0 || sa.StandardUnit != ""
+			if hasStandard {
+				isPassed := false
+				op := strings.TrimSpace(strings.ToLower(sa.StandardOperator))
+				switch op {
+				case "range":
+					isPassed = val >= sa.StandardValue && val <= sa.StandardValueMax
+				case "<=":
+					isPassed = val <= sa.StandardValue
+				case "<":
+					isPassed = val < sa.StandardValue
+				case ">":
+					isPassed = val > sa.StandardValue
+				case "=":
+					isPassed = val == sa.StandardValue
+				default:
+					isPassed = val >= sa.StandardValue
+				}
+
+				// Jika hasil uji TIDAK MEMENUHI standar, tetapi dikirim skor lulus (misal score >= 65 atau 100)
+				if !isPassed && finalScore >= 65.0 {
+					tx.Rollback()
+					c.JSON(http.StatusBadRequest, gin.H{
+						"error": fmt.Sprintf("Inkonsistensi skor pada parameter '%s': Nilai hasil uji (%.2f %s) Tidak Memenuhi standar, tetapi disubmit dengan skor lulus (%.2f). Skor untuk hasil tidak memenuhi tidak boleh lulus/100.", sa.Name, val, sa.StandardUnit, finalScore),
+					})
+					return
+				}
+			}
+		}
+
 		// Sanitasi HTML pada kolom Notes untuk mencegah Stored XSS
 		// saat data dirender di halaman Print Preview atau output HTML lainnya.
 		sanitizedNotes := html.EscapeString(r.Notes)
@@ -1834,7 +1907,8 @@ func ExecuteApplication(c *gin.Context) {
 			ApplicationID:        appIDInt,
 			AspectCode:           aspectCode,
 			SubAspectCode:        &subCode,
-			Score:                r.Score,
+			ActualValue:          actualValPtr,
+			Score:                finalScore,
 			Notes:                sanitizedNotes,
 			PhotoPath:            photoPath,
 			IsDisabled:           r.IsDisabled,
@@ -2318,6 +2392,17 @@ func findModelFile(aspectCode, ext string) string {
 // checkAnomaly and explainAnomaly are defined in ai_detect_linux.go (linux only)
 // or ai_detect_stub.go (non-linux) via build tags.
 
+// AspectResultItem represents an item in execute-aspect payload
+type AspectResultItem struct {
+	SubAspectCode string      `json:"sub_aspect_code"`
+	ParamCode     string      `json:"param_code"`
+	ActualValue   interface{} `json:"actual_value"`
+	Score         float64     `json:"score"`
+	Notes         string      `json:"notes"`
+	PhotoPath     string      `json:"photo_path"`
+	IsDisabled    bool        `json:"is_disabled"`
+}
+
 // SaveAspectResults saves results for all sub-aspects under a specific aspect
 func SaveAspectResults(c *gin.Context) {
 	appID, _ := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -2331,14 +2416,7 @@ func SaveAspectResults(c *gin.Context) {
 		return
 	}
 	
-	var reqItems []struct {
-		SubAspectCode string  `json:"sub_aspect_code"`
-		ParamCode     string  `json:"param_code"`
-		Score         float64 `json:"score"`
-		Notes         string  `json:"notes"`
-		PhotoPath     string  `json:"photo_path"`
-		IsDisabled    bool    `json:"is_disabled"`
-	}
+	var reqItems []AspectResultItem
 	
 	if err := json.Unmarshal([]byte(resultsStr), &reqItems); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid results format: " + err.Error()})
@@ -2483,10 +2561,35 @@ func SaveAspectResults(c *gin.Context) {
 			}
 		}
 
+		var actualValPtr *float64
+		if item.ActualValue != nil {
+			switch v := item.ActualValue.(type) {
+			case float64:
+				actualValPtr = &v
+			case float32:
+				f := float64(v)
+				actualValPtr = &f
+			case int:
+				f := float64(v)
+				actualValPtr = &f
+			case int64:
+				f := float64(v)
+				actualValPtr = &f
+			case string:
+				trimmed := strings.TrimSpace(v)
+				if trimmed != "" {
+					if parsed, err := strconv.ParseFloat(trimmed, 64); err == nil {
+						actualValPtr = &parsed
+					}
+				}
+			}
+		}
+
 		res := models.TestingResult{
 			ApplicationID:        appID,
 			AspectCode:           aspectCode,
 			SubAspectCode:        &code,
+			ActualValue:          actualValPtr,
 			Score:                item.Score,
 			Notes:                item.Notes,
 			PhotoPath:            photoPath,

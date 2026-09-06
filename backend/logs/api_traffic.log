@@ -20790,3 +20790,806 @@ Content-Type: image/jpeg
 [2026-09-06 10:03:05] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 23ms
       Request: 
       Response: {"status":200,"message":"Assets retrieved","data":[{"id":71,"equipment_name":"Alat Komunikasi","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 57ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 11:08:59] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 11:09:07] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-06 11:09:09] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-09-06 11:09:09] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-06 11:16:13] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 53ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-06 11:16:15] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 72ms
+      Request: 
+      Response: {"data":[{"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-06 11:16:19] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 167ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 11:16:19] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 27ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 11:16:19] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 11:16:19] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 55ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 64ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 11:36:10] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-06 11:36:11] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-06 11:36:25] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:36:25] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:36:25] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:36:25] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:36:35] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:38:58] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"PESWT","name":"Perlengkapan pesawat","description":"","weight":75,"threshold":60,"methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code...(truncated)
+[2026-09-06 11:39:18] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:39:18] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:39:28] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:39:34] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:39:42] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"PESWT","name":"Perlengkapan pesawat","description":"","weight":75,"threshold":60,"methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code...(truncated)
+[2026-09-06 11:39:48] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:39:55] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEKER","name":"Kemampuan Kelancaran kerja","description":"","weight":200,"threshold":60,"methodology_code":"MANAG","methodology":{"code":"MANAG","name":"Umum","test_type_code":"MANAG","test_type":{"code"...(truncated)
+[2026-09-06 11:40:01] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 40ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:42:09] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 41ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:42:12] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:42:42] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:42:50] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:43:04] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:43:04] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:43:04] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:43:04] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:43:07] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_value":80,"standard_value_max":120,"standard_o...(truncated)
+[2026-09-06 11:44:02] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 42ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:44:04] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:44:04] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:44:04] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:44:04] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:44:06] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KONPE","name":"Uji konstruksi dan perlengkapan","description":"","weight":250,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_...(truncated)
+[2026-09-06 11:44:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:44:08] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:44:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:44:08] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:44:11] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KOLOC","name":"Konstruksi-Frekuensi lock","aspect_code":"KONPE","description":"","weight":15,"standard_value":65,"standard_value_max":100,"standard_operator":"\u003e=","standard_unit":"","is_simulator":f...(truncated)
+[2026-09-06 11:44:35] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_value":80,"standard_value_max":120,"standard_o...(truncated)
+[2026-09-06 11:45:06] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 57ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-06 11:45:06] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 26ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:45:10] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:45:21] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 100ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:45:22] 127.0.0.1 | GUEST | PUT | /api/management/testing-packages/3 | Status: Success | Latency: 90ms
+      Request: {"package_code":"ALKSIMPLE","name":"ALKOM-SIMPLE-NAME","description":"ALKOM-SIMPLE-DESC","base_price":100000,"is_active":true,"methodology_codes":["MANAG","AKLAP","ALKOM"],"active_aspect_codes":["KEPEN","ASMAN","KONPE","OPR"],"active_sub_aspect_codes":["KE...(truncated)
+      Response: {"status":200,"message":"Paket berhasil diperbarui","data":{"id":3,"package_code":"ALKSIMPLE","name":"ALKOM-SIMPLE-NAME","description":"ALKOM-SIMPLE-DESC","base_price":100000,"is_active":true,"methodologies":[{"code":"MANAG","name":"Umum","test_type_code":...(truncated)
+[2026-09-06 11:45:22] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-06 11:45:31] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 94ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 11:45:31] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 23ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 11:45:31] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 11:45:31] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 18ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 32ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:47:08] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:47:14] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 100ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:47:14] 127.0.0.1 | GUEST | PUT | /api/management/testing-packages/3 | Status: Success | Latency: 88ms
+      Request: {"package_code":"ALKSIMPLE","name":"ALKOM-SIMPLE-NAME","description":"ALKOM-SIMPLE-DESC","base_price":100000,"is_active":true,"methodology_codes":["MANAG","AKLAP","ALKOM"],"active_aspect_codes":["KEPEN","ASMAN","KONPE"],"active_sub_aspect_codes":["KEDAI","...(truncated)
+      Response: {"status":200,"message":"Paket berhasil diperbarui","data":{"id":3,"package_code":"ALKSIMPLE","name":"ALKOM-SIMPLE-NAME","description":"ALKOM-SIMPLE-DESC","base_price":100000,"is_active":true,"methodologies":[{"code":"MANAG","name":"Umum","test_type_code":...(truncated)
+[2026-09-06 11:47:14] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/test-types | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},{"code":"FLD","name":"Lapangan","created_at":"0001-01-01T00:00:00Z"...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 24ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspects | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"t1","name":"tes1","aspect_code":"KEPEN","description":"","weight":35,"standard_value":0,"standard_value_max":0,"standard_operator":"\u003e=","standard_unit":"","is_simulator":false,"is_active":true,"ocr_...(truncated)
+[2026-09-06 11:47:16] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"KEPEN","name":"Kemampuan Penerima","description":"","weight":130,"threshold":60,"methodology_code":"AKLAP","methodology":{"code":"AKLAP","name":"Uji Alat Komunikasi Lapangan","test_type_code":"FLD","test...(truncated)
+[2026-09-06 11:48:32] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 148ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:48:32] 127.0.0.1 | GUEST | POST | /api/management/testing-packages | Status: Success | Latency: 74ms
+      Request: {"package_code":"ALKSUHU","name":"ALK-UJI-SUHU","description":"Uji Suhu","base_price":25000,"is_active":true,"methodology_codes":["ALKOM"],"active_aspect_codes":["OPR"],"active_sub_aspect_codes":["SUHU1"]}
+      Response: {"status":201,"message":"Paket berhasil dibuat","data":{"id":9,"package_code":"ALKSUHU","name":"ALK-UJI-SUHU","description":"Uji Suhu","base_price":25000,"is_active":true,"methodologies":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type...(truncated)
+[2026-09-06 11:48:32] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[],"metadata":{"limit":10,"page":1,"total":0}}
+[2026-09-06 11:48:37] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 15ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-06 11:48:38] 127.0.0.1 | GUEST | GET | /api/master-data | Status: Success | Latency: 22ms
+      Request: 
+      Response: {"asset_statuses":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_status_code":"3","asset_stat...(truncated)
+[2026-09-06 11:48:38] 127.0.0.1 | GUEST | GET | /api/testing-packages | Status: Success | Latency: 21ms
+      Request: 
+      Response: {"status":200,"message":"Packages retrieved","data":[{"id":1,"package_code":"ALKOM-1","name":"Alat Komunikasi Paket-1","description":"Alat Komunikasi Paket-1","base_price":150000,"is_active":true,"methodologies":[{"code":"AKLAP","name":"Uji Alat Komunikasi...(truncated)
+[2026-09-06 11:48:44] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user"...(truncated)
+[2026-09-06 11:49:46] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 133ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:49:46] 127.0.0.1 | GUEST | POST | /api/applications | Status: Success | Latency: 118ms
+      Request: ------WebKitFormBoundaryZnnKJm99IbDDhOVI
+Content-Disposition: form-data; name="partner_id"
+
+12
+------WebKitFormBoundaryZnnKJm99IbDDhOVI
+Content-Disposition: form-data; name="package_id"
+
+9
+------WebKitFormBoundaryZnnKJm99IbDDhOVI
+Content-Dispositi...(truncated)
+      Response: [{"id":214,"reg_number":"2026-00068","status":"REGISTERED","partner_id":12,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":""},"...(truncated)
+[2026-09-06 11:49:46] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 36ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:...(truncated)
+[2026-09-06 11:49:49] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 34ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:...(truncated)
+[2026-09-06 11:49:51] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 79ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"REGISTERED","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","...(truncated)
+[2026-09-06 11:49:51] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:49:58] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 101ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:49:58] 127.0.0.1 | GUEST | PUT | /api/applications/214/verify | Status: Success | Latency: 16ms
+      Request: {"status":"Verified","is_docs_complete":true,"verification_notes":""}
+      Response: {"message":"Verification completed"}
+[2026-09-06 11:49:58] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-06 11:50:01] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 35ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Verified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-09-06 11:50:02] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 46ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Verified","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cr...(truncated)
+[2026-09-06 11:50:02] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:50:09] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 101ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:50:09] 127.0.0.1 | GUEST | PUT | /api/applications/214/approve | Status: Success | Latency: 15ms
+      Request: {"status":"Approved","is_docs_complete":true,"approval_notes":""}
+      Response: {"message":"Persetujuan pimpinan berhasil disimpan"}
+[2026-09-06 11:50:09] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-06 11:50:12] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 33ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Approved","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00...(truncated)
+[2026-09-06 11:50:15] 127.0.0.1 | GUEST | GET | /api/tester-masters | Status: Success | Latency: 25ms
+      Request: 
+      Response: {"status":200,"message":"Data tim penguji retrieved","data":[{"tester_id":"103  ","name":"Kapten Lazaro","position":"Kepala Tim Lab","methodology_code":"MLAB","methodology":{"code":"MLAB","name":"Uji Laboratorium","test_type_code":"LAB","test_type":{"code"...(truncated)
+[2026-09-06 11:50:15] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 27ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:50:15] 127.0.0.1 | GUEST | GET | /api/methodologies | Status: Success | Latency: 20ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"ALKOM","name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_us...(truncated)
+[2026-09-06 11:50:15] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 30ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 11:50:15] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 16ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:50:17] 127.0.0.1 | GUEST | GET | /api/scoring-aspects | Status: Success | Latency: 13ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"OPR","name":"Uji Operasional \u0026 Kinerja","description":"Penilaian parameter operasional mesin dan suhu kerja","weight":100,"threshold":60,"methodology_code":"ALKOM","methodology":{"code":"ALKOM","nam...(truncated)
+[2026-09-06 11:50:23] 127.0.0.1 | GUEST | GET | /api/testing-tools | Status: Success | Latency: 12ms
+      Request: 
+      Response: [{"code":"Oscillosc","name":"Oscilloscope","type":"USAGE","min_stock":0,"initial_stock":0,"current_stock":0,"location_code":"LDIS","location":{"code":"LDIS","name":"Lab Dislitbangad","test_type_code":"LAB","test_type":{"code":"","name":"","created_at":"000...(truncated)
+[2026-09-06 11:50:36] 127.0.0.1 | GUEST | POST | /api/verify-password | Status: Success | Latency: 102ms
+      Request: {"password":"***"}
+      Response: {"status":200,"message":"Password verified","data":{"verified":true}}
+[2026-09-06 11:50:36] 127.0.0.1 | GUEST | PUT | /api/applications/214/plan | Status: Success | Latency: 61ms
+      Request: {"status":"Planned","lab_methodology_code":"ALKOM","field_methodology_code":"","methodology_code":"","relational_plans":[{"type":"LAB","aspect_code":"OPR","aspect_name":"Uji Operasional & Kinerja","location_code":"LDIS","scheduled_date":"2026-09-07","team"...(truncated)
+      Response: {"message":"Planning completed"}
+[2026-09-06 11:50:37] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[],"limit":10,"page":1,"source_table":"testing_applications_202609","total":0}
+[2026-09-06 11:50:39] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-06 11:50:48] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 129ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 11:50:49] 127.0.0.1 | GUEST | GET | /api/applications/214/execution | Status: Success | Latency: 19ms
+      Request: 
+      Response: [{"parameter_name":"Pengukuran Suhu Operasional","param_code":"SUHU1","aspect_name":"Uji Operasional \u0026 Kinerja","aspect_code":"OPR","aspect_weight":100,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"Â°C","weight":20,"a...(truncated)
+[2026-09-06 11:50:49] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[]}
+[2026-09-06 11:50:49] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 11:52:11] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 89ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 11:52:12] 127.0.0.1 | GUEST | GET | /api/applications/214/execution | Status: Success | Latency: 16ms
+      Request: 
+      Response: [{"parameter_name":"Pengukuran Suhu Operasional","param_code":"SUHU1","aspect_name":"Uji Operasional \u0026 Kinerja","aspect_code":"OPR","aspect_weight":100,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"Â°C","weight":20,"a...(truncated)
+[2026-09-06 11:52:12] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":96,"sub_aspect_code":"SUHU1","sub_aspect":{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_...(truncated)
+[2026-09-06 11:52:12] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 39ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 40ms
+      Request: 
+      Response: {"error":"Sesi Anda telah berakhir karena tidak ada aktivitas."}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/config | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-06 16:06:32] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 2ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-06 16:06:33] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:06:33] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 3ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-06 16:06:33] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:06:33] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Failed | Latency: 4ms
+      Request: 
+      Response: {"error":"Session not found or revoked"}
+[2026-09-06 16:06:35] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-06 16:06:35] 127.0.0.1 | GUEST | POST | /api/login | Status: Failed | Latency: 2ms
+      Request: {"username":"nkholim@yahoo.com","password":"***","force_login":false}
+      Response: {"status":401,"message":"Invalid username or password","error":"Unauthorized access"}
+[2026-09-06 16:06:42] 127.0.0.1 | GUEST | GET | /api/check-password-expiry | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"expiring_soon":false}
+[2026-09-06 16:06:46] 127.0.0.1 | GUEST | POST | /api/login | Status: Success | Latency: 106ms
+      Request: {"username":"nur","password":"***","force_login":false}
+      Response: {"status":200,"message":"Login successful","data":{"pwd_warning":{"expiring_soon":false},"token":"***","user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 16:06:47] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 16:06:47] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:06:56] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 37ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-06 16:06:58] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:06:58] 127.0.0.1 | GUEST | GET | /api/applications/214/execution | Status: Success | Latency: 14ms
+      Request: 
+      Response: [{"parameter_name":"Pengukuran Suhu Operasional","param_code":"SUHU1","aspect_name":"Uji Operasional \u0026 Kinerja","aspect_code":"OPR","aspect_weight":100,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"Â°C","weight":20,"a...(truncated)
+[2026-09-06 16:06:58] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":96,"sub_aspect_code":"SUHU1","sub_aspect":{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_...(truncated)
+[2026-09-06 16:06:58] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:11:05] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 135ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:11:05] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 26ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 16:11:05] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 16:11:05] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:11:45] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 52ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:11:45] 127.0.0.1 | GUEST | GET | /api/applications/214/execution | Status: Success | Latency: 17ms
+      Request: 
+      Response: [{"parameter_name":"Pengukuran Suhu Operasional","param_code":"SUHU1","aspect_name":"Uji Operasional \u0026 Kinerja","aspect_code":"OPR","aspect_weight":100,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"Â°C","weight":20,"a...(truncated)
+[2026-09-06 16:11:45] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":96,"sub_aspect_code":"SUHU1","sub_aspect":{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_...(truncated)
+[2026-09-06 16:11:46] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 55ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:31:19] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 49ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-06 16:31:20] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 80ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:31:20] 127.0.0.1 | GUEST | GET | /api/applications/214/execution | Status: Success | Latency: 21ms
+      Request: 
+      Response: [{"parameter_name":"Pengukuran Suhu Operasional","param_code":"SUHU1","aspect_name":"Uji Operasional \u0026 Kinerja","aspect_code":"OPR","aspect_weight":100,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"Â°C","weight":20,"a...(truncated)
+[2026-09-06 16:31:21] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":96,"sub_aspect_code":"SUHU1","sub_aspect":{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_...(truncated)
+[2026-09-06 16:31:21] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:32:55] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 62ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:32:55] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 22ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 16:32:55] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 16:32:56] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 39ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 44ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 12ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 16:47:53] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 72ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-06 16:47:55] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 84ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:47:56] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 24ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 16:47:56] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 16:47:56] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 10ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:48:35] 127.0.0.1 | GUEST | GET | /api/applications/214 | Status: Success | Latency: 48ms
+      Request: 
+      Response: {"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:48:35] 127.0.0.1 | GUEST | GET | /api/applications/214/execution | Status: Success | Latency: 18ms
+      Request: 
+      Response: [{"parameter_name":"Pengukuran Suhu Operasional","param_code":"SUHU1","aspect_name":"Uji Operasional \u0026 Kinerja","aspect_code":"OPR","aspect_weight":100,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"Â°C","weight":20,"a...(truncated)
+[2026-09-06 16:48:35] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 8ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":99,"sub_aspect_code":"SUHU1","sub_aspect":{"code":"SUHU1","name":"Pengukuran Suhu Operasional","aspect_code":"OPR","description":"Suhu operasional alat dalam rentang optimal 80-120 Â°C","weight":20,"standard_...(truncated)
+[2026-09-06 16:48:35] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":52,"application_id":214,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:57:41] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 86ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 16:57:41] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 20ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 16:57:41] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 16:57:41] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 16:59:09] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 16.982s
+      Request: ------WebKitFormBoundaryFhOuoh8FxDhsq4Rb
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{},"message":"OCR test results extraction successful","ocr_log":null,"raw_text":"1\n2\n3\n4\n5\n6\n7\n8\n9\n10","status":200}
+[2026-09-06 16:59:52] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 181ms
+      Request: ------WebKitFormBoundary2VyfG0khqox555M3
+Content-Disposition: form-data; name="document"; filename="OCR_NOBORDER_10.pdf"
+Content-Type: application/pdf
+
+%PDF-1.7
+
+4 0 obj
+(Identity)
+endobj
+5 0 obj
+(Adobe)
+endobj
+8 0 obj
+<<
+/Filter /FlateDecode
+/Length 2...(truncated)
+      Response: {"data":{"KODAY":"7","KOFAS":"10","KOKON":"3","KONSI":"1","KOPEN":"2","KORUS":"9","KOTAN":"6","PEENE":"4","PEGER":"5","PEPEM":"8"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOFAS","raw_val":"10","final_val":"10","has_dropdown":...(truncated)
+[2026-09-06 17:00:06] 127.0.0.1 | GUEST | GET | /api/applications/213 | Status: Success | Latency: 51ms
+      Request: 
+      Response: {"id":213,"reg_number":"2026-00067","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","cre...(truncated)
+[2026-09-06 17:00:06] 127.0.0.1 | GUEST | GET | /api/applications/213/execution | Status: Success | Latency: 13ms
+      Request: 
+      Response: [{"parameter_name":"Konstruksi-Fasilitas anti Pernika","param_code":"KOFAS","aspect_name":"Uji konstruksi dan perlengkapan","aspect_code":"KONPE","aspect_weight":250,"method_name":"Uji Alat Komunikasi Laboratorium","test_type_code":"LAB","unit":"","weight"...(truncated)
+[2026-09-06 17:00:06] 127.0.0.1 | GUEST | GET | /api/scoring-sub-aspect-items | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Success","data":[{"id":7,"sub_aspect_code":"KOTAN","sub_aspect":{"code":"KOTAN","name":"Konstruksi-Sistem perakitan","aspect_code":"KONPE","description":"","weight":10,"standard_value":65,"standard_value_max":100,"standard_operator...(truncated)
+[2026-09-06 17:00:06] 127.0.0.1 | GUEST | GET | /api/invoices | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"data":[{"id":51,"application_id":213,"application":{"id":0,"reg_number":"","status":"","partner_id":0,"partner":{"id":0,"name":"","type_code":"","type":{"code":"","name":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_...(truncated)
+[2026-09-06 17:01:13] 127.0.0.1 | GUEST | POST | /api/ocr-extract-results | Status: Success | Latency: 14.543s
+      Request: ------WebKitFormBoundarygBaHfB49BPizr9vA
+Content-Disposition: form-data; name="document"; filename="camera_capture.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà JFIF      ÿâØICC_PROFILE   È    0  mntrRGB XYZ à        acsp                           ...(truncated)
+      Response: {"data":{"KODAY":"7","KOFAS":"10","KOKON":"3","KONSI":"1","KOPEN":"2","KORUS":"9","KOTAN":"6","PEENE":"4","PEGER":"5","PEPEM":"8"},"message":"OCR test results extraction successful","ocr_log":[{"code":"KOKON","raw_val":"3","final_val":"3","has_dropdown":tr...(truncated)
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 1ms
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 0s
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 11ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/check-version | Status: Success | Latency: 0s
+      Request: 
+      Response: {"status":"OK"}
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 28ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/me | Status: Failed | Latency: 1ms
+      Request: 
+      Response: {"error":"API route not found"}
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/verify-session | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Session verified successfully","data":{"user":{"id":8,"role":"ADMIN","role_id":1,"username":"nur"}}}
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/menus | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Menus retrieved successfully","data":[{"id":97,"parent_id":0,"title":"Cari Data","icon":"fas fa-search","path":"","order":0,"is_password":false,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":...(truncated)
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/config | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Config retrieved successfully","data":{"AI_CHUNK_OVERLAP":"200","AI_CHUNK_SIZE":"1000","AI_INTERVAL_CHAT":"12000","AI_MAX_TOKENS":"1000","AI_METADATA_FOLDER":"/home/lims/lims1/backend/ai_service/models","AI_OCR_ENABLED":"true","AI_...(truncated)
+[2026-09-06 17:26:04] 127.0.0.1 | GUEST | GET | /api/applications | Status: Success | Latency: 56ms
+      Request: 
+      Response: {"data":[{"id":214,"reg_number":"2026-00068","status":"Planned","partner_id":12,"partner":{"id":12,"name":"PT Pindad (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:...(truncated)
+[2026-09-06 17:32:46] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 14ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 17:32:46] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 5ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-06 17:32:46] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-06 17:32:46] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 7ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 17:32:46] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-06 17:32:46] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-06 17:33:21] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 17:33:21] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 17ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-06 17:33:21] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 17:33:21] 127.0.0.1 | GUEST | GET | /api/travel-requests | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"data":[{"id":21,"user_id":8,"user":{"id":8,"username":"nur","email":"nurkholim15@gmail.com","phone":"","role_id":1,"role":{"id":0,"name":"","description":"","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","update...(truncated)
+[2026-09-06 17:33:22] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 4ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-06 17:33:22] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 17:33:22] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 9ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-06 17:33:22] 127.0.0.1 | GUEST | GET | /api/asset-statuses | Status: Success | Latency: 3ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"asset_status_code":"2","asset_status_name":"Check-In","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":"","deleted_at":null,"deleted_user":""},{"asset_sta...(truncated)
+[2026-09-06 17:33:22] 127.0.0.1 | GUEST | GET | /api/locations | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Retrieved","data":[{"code":"BPPT2","name":"BPPT Pamulang","test_type_code":"LAB","test_type":{"code":"LAB","name":"Laboratorium","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_use...(truncated)
+[2026-09-06 17:33:22] 127.0.0.1 | GUEST | GET | /api/partners | Status: Success | Latency: 6ms
+      Request: 
+      Response: {"status":200,"message":"Partners retrieved","data":[{"id":1,"name":"PT Dahana (Persero)","type_code":"PERS","type":{"code":"PERS","name":"Perusahaan","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","updated_user":...(truncated)
+[2026-09-06 17:33:29] 127.0.0.1 | GUEST | GET | /api/assets | Status: Success | Latency: 19ms
+      Request: 
+      Response: {"status":200,"message":"Assets retrieved","data":[{"id":72,"equipment_name":"Anti Panas","category_code":"COMM","category":{"code":"COMM","name":"Alat Komunikasi","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","created_user":"","u...(truncated)
+[2026-09-06 18:08:06] 127.0.0.1 | GUEST | POST | /api/logout | Status: Success | Latency: 92ms
+      Request: 
+      Response: {"status":200,"message":"Successfully logged out"}

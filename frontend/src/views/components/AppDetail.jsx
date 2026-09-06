@@ -26,6 +26,132 @@ const safeLocaleDateString = (dateVal) => {
   return d.toLocaleDateString("id-ID");
 };
 
+export const parseOptionRule = (label) => {
+  if (!label) return null;
+  const str = label.trim();
+
+  // 1. Range: "80 - 120", "80 s.d 120", "80 s/d 120", "80 to 120", "80-120", "80 - 120 °C"
+  const rangeMatch = str.match(/(\d+(?:[.,]\d+)?)\s*(?:-|s\.d|s\/d|\bto\b)\s*(\d+(?:[.,]\d+)?)/i);
+  if (rangeMatch) {
+    const n1 = parseFloat(rangeMatch[1].replace(',', '.'));
+    const n2 = parseFloat(rangeMatch[2].replace(',', '.'));
+    const min = Math.min(n1, n2);
+    const max = Math.max(n1, n2);
+    return {
+      type: "RANGE",
+      min,
+      max,
+      check: (val) => val >= min && val <= max,
+      desc: `${min} s.d ${max}`
+    };
+  }
+
+  // 2. Greater-or-equal: ">= 140", "lebih dari sama dengan 140", "di atas sama dengan 140"
+  const gteMatch = str.match(/(?:>=|\blebih\s*dari\s*sama\s*dengan\b|\bdi\s*atas\s*sama\s*dengan\b)\s*(\d+(?:[.,]\d+)?)/i);
+  if (gteMatch) {
+    const target = parseFloat(gteMatch[1].replace(',', '.'));
+    return {
+      type: ">=",
+      target,
+      check: (val) => val >= target,
+      desc: `>= ${target}`
+    };
+  }
+
+  // 3. Greater-than: "> 140", "lebih dari 140", "di atas 140", "diatas 140"
+  const gtMatch = str.match(/(?:>|\blebih\s*dari\b|\bdi\s*atas\b|\bdiatas\b)\s*(\d+(?:[.,]\d+)?)/i);
+  if (gtMatch) {
+    const target = parseFloat(gtMatch[1].replace(',', '.'));
+    return {
+      type: ">",
+      target,
+      check: (val) => val > target,
+      desc: `> ${target}`
+    };
+  }
+
+  // 4. Less-or-equal: "<= 80", "kurang dari sama dengan 80", "di bawah sama dengan 80"
+  const lteMatch = str.match(/(?:<=|\bkurang\s*dari\s*sama\s*dengan\b|\bdi\s*bawah\s*sama\s*dengan\b)\s*(\d+(?:[.,]\d+)?)/i);
+  if (lteMatch) {
+    const target = parseFloat(lteMatch[1].replace(',', '.'));
+    return {
+      type: "<=",
+      target,
+      check: (val) => val <= target,
+      desc: `<= ${target}`
+    };
+  }
+
+  // 5. Less-than: "< 80", "kurang dari 80", "di bawah 80", "dibawah 80"
+  const ltMatch = str.match(/(?:<|\bkurang\s*dari\b|\bdi\s*bawah\b|\bdibawah\b)\s*(\d+(?:[.,]\d+)?)/i);
+  if (ltMatch) {
+    const target = parseFloat(ltMatch[1].replace(',', '.'));
+    return {
+      type: "<",
+      target,
+      check: (val) => val < target,
+      desc: `< ${target}`
+    };
+  }
+
+  // 6. Equal: "= 220", "=220", "== 220", "sama dengan 220"
+  const eqMatch = str.match(/(?:(?<![><!=])={1,2}(?!=)|\bsama\s*dengan\b)\s*(\d+(?:[.,]\d+)?)/i);
+  if (eqMatch) {
+    const target = parseFloat(eqMatch[1].replace(',', '.'));
+    return {
+      type: "=",
+      target,
+      check: (val) => Math.abs(val - target) < 0.0001,
+      desc: `= ${target}`
+    };
+  }
+
+  return null;
+};
+
+export const getOptionRule = (opt) => {
+  if (!opt) return null;
+
+  const hasLow = opt.test_result_low !== undefined && opt.test_result_low !== null && opt.test_result_low !== "";
+  const hasHigh = opt.test_result_high !== undefined && opt.test_result_high !== null && opt.test_result_high !== "";
+
+  // 1. Jika terdefinisi di database via test_result_low atau test_result_high
+  if (hasLow || hasHigh) {
+    const low = hasLow ? parseFloat(opt.test_result_low) : -Infinity;
+    const high = hasHigh ? parseFloat(opt.test_result_high) : Infinity;
+
+    // Strict equal jika low === high (misal 75 dan 75)
+    if (hasLow && hasHigh && Math.abs(low - high) < 0.0001) {
+      return {
+        type: "=",
+        target: low,
+        check: (val) => Math.abs(val - low) < 0.0001,
+        desc: `= ${low}`
+      };
+    }
+
+    let desc = "";
+    if (hasLow && hasHigh) {
+      desc = `${low} s.d ${high}`;
+    } else if (hasLow) {
+      desc = `>= ${low}`;
+    } else {
+      desc = `<= ${high}`;
+    }
+
+    return {
+      type: "RANGE",
+      min: low,
+      max: high,
+      check: (val) => val >= low && val <= high,
+      desc
+    };
+  }
+
+  // 2. Fallback ke parsing regex nama label (backward compatibility data lama)
+  return parseOptionRule(opt.label || opt.name);
+};
+
 const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPasswordRequirement }) => {
   const { showToast } = useToast();
   const aiOcrEnabled = (appConfig.AI_OCR_ENABLED || "true").toString().trim().toLowerCase() !== "false";
@@ -163,8 +289,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     try {
       const data = await apiRequest(`/applications/${currentApp.id}/execution`);
       if (data) {
-        setExecutionData(data);
-        
         // Auto-detect saved aspects from existing scores
         const savedMap = {};
         const allAspectCodes = Array.from(new Set(data.map(r => r.aspect_code)));
@@ -178,6 +302,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         });
         setPersistentSaved(savedMap);
 
+        let initialData = [...data];
+
         // OPTIMIZATION: Fetch dropdown config ONLY during active testing stage.
         // During reporting/analysis, we only need to display the raw score.
         if (stage === "testing") {
@@ -189,15 +315,53 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                         const mapping = {};
                         items.forEach((itm) => {
                             if (!mapping[itm.sub_aspect_code]) mapping[itm.sub_aspect_code] = [];
-                            mapping[itm.sub_aspect_code].push({ label: itm.name, value: itm.score.toString() });
+                            mapping[itm.sub_aspect_code].push({
+                                label: itm.name,
+                                value: itm.score.toString(),
+                                test_result_low: itm.test_result_low,
+                                test_result_high: itm.test_result_high
+                            });
                         });
                         setDropdownConfig(mapping);
+
+                        // Sync initialData with dropdown matching
+                        initialData = initialData.map(item => {
+                            const opts = mapping[item.param_code];
+                            if (opts && opts.length > 0) {
+                                if (item.actual_value !== undefined && item.actual_value !== null && item.actual_value !== "") {
+                                    const numVal = parseFloat(item.actual_value);
+                                    if (!isNaN(numVal)) {
+                                        for (const opt of opts) {
+                                            const rule = getOptionRule(opt);
+                                            if (rule && rule.check(numVal)) {
+                                                return {
+                                                    ...item,
+                                                    selected_dropdown: opt.value,
+                                                    score: parseFloat(opt.value),
+                                                    dropdown_disabled: true,
+                                                    is_manual_dropdown: false
+                                                };
+                                            }
+                                        }
+                                    }
+                                } else if (item.score !== undefined && item.score !== null && item.score !== "") {
+                                    return {
+                                        ...item,
+                                        selected_dropdown: item.score.toString(),
+                                        dropdown_disabled: false,
+                                        is_manual_dropdown: true
+                                    };
+                                }
+                            }
+                            return item;
+                        });
                     }
                 } catch (err) {
                     console.warn("Targeted dropdown fetch failed:", err);
                 }
             }
         }
+        setExecutionData(initialData);
       }
     } catch (err) {
       console.error("Fetch execution error:", err);
@@ -225,6 +389,157 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const handleParamChange = (index, field, value) => {
     const newData = [...executionData];
     newData[index][field] = value;
+    setExecutionData(newData);
+  };
+
+  const handleActualValueChange = (index, rawVal) => {
+    const newData = [...executionData];
+    const p = { ...newData[index] };
+    newData[index] = p;
+    p.actual_value = rawVal;
+    p.validation_error = null;
+
+    const opts = dropdownConfig[p.param_code] || [];
+
+    // Jika input dikosongkan
+    if (rawVal === "" || rawVal === null || rawVal === undefined) {
+      if (!p.is_manual_dropdown) {
+        p.dropdown_disabled = false;
+        p.selected_dropdown = "";
+        p.score = undefined;
+      }
+      setExecutionData(newData);
+      return;
+    }
+
+    const numVal = parseFloat(rawVal);
+    if (isNaN(numVal)) {
+      setExecutionData(newData);
+      return;
+    }
+
+    if (opts.length > 0) {
+      // Jika user sebelumnya sudah memilih dropdown secara manual
+      if (p.is_manual_dropdown && p.selected_dropdown) {
+        const curOpt = opts.find(o => o.value === p.selected_dropdown);
+        const curRule = curOpt ? getOptionRule(curOpt) : null;
+        if (curRule) {
+          if (!curRule.check(numVal)) {
+            p.validation_error = `Nilai uji (${numVal}) harus ${curRule.desc}`;
+          } else {
+            p.validation_error = null;
+          }
+        }
+      } else {
+        // Mode Otomatis: cari opsi dropdown yang cocok dengan nilai numVal
+        let matchedOpt = null;
+        for (const opt of opts) {
+          const rule = getOptionRule(opt);
+          if (rule && rule.check(numVal)) {
+            matchedOpt = opt;
+            break;
+          }
+        }
+
+        if (matchedOpt) {
+          p.score = parseFloat(matchedOpt.value);
+          p.selected_dropdown = matchedOpt.value;
+          p.dropdown_disabled = true; // Kunci dropdown karena ditentukan oleh nilai fisik
+          p.is_manual_dropdown = false;
+          p.validation_error = null;
+        } else {
+          p.dropdown_disabled = false;
+          p.selected_dropdown = "";
+          // Jika tidak ada rule dropdown yang cocok, gunakan standar spesifikasi jika ada
+          if (p.standard_value || p.standard_value_max || p.standard_unit) {
+            const op = (p.standard_operator || "").trim().toLowerCase();
+            let isPassed = false;
+            if (op === "range") isPassed = numVal >= p.standard_value && numVal <= p.standard_value_max;
+            else if (op === "<=") isPassed = numVal <= p.standard_value;
+            else if (op === "<") isPassed = numVal < p.standard_value;
+            else if (op === ">") isPassed = numVal > p.standard_value;
+            else if (op === "=") isPassed = numVal === p.standard_value;
+            else isPassed = numVal >= p.standard_value;
+            p.score = isPassed ? 100 : 0;
+          } else {
+            p.score = numVal;
+          }
+        }
+      }
+    } else {
+      // Jika tidak ada dropdown untuk parameter ini
+      if (p.standard_value || p.standard_value_max || p.standard_unit) {
+        const op = (p.standard_operator || "").trim().toLowerCase();
+        let isPassed = false;
+        if (op === "range") isPassed = numVal >= p.standard_value && numVal <= p.standard_value_max;
+        else if (op === "<=") isPassed = numVal <= p.standard_value;
+        else if (op === "<") isPassed = numVal < p.standard_value;
+        else if (op === ">") isPassed = numVal > p.standard_value;
+        else if (op === "=") isPassed = numVal === p.standard_value;
+        else isPassed = numVal >= p.standard_value;
+        p.score = isPassed ? 100 : 0;
+      } else {
+        p.score = numVal;
+      }
+    }
+
+    setExecutionData(newData);
+  };
+
+  const handleDropdownChange = (index, selectedVal) => {
+    const newData = [...executionData];
+    const p = { ...newData[index] };
+    newData[index] = p;
+
+    if (selectedVal === "" || selectedVal === null || selectedVal === undefined) {
+      p.is_manual_dropdown = false;
+      p.selected_dropdown = "";
+      p.score = undefined;
+      p.validation_error = null;
+      // Jika ada nilai fisik, coba cocokkan kembali
+      if (p.actual_value !== "" && p.actual_value !== null && p.actual_value !== undefined) {
+        const numVal = parseFloat(p.actual_value);
+        if (!isNaN(numVal)) {
+          const opts = dropdownConfig[p.param_code] || [];
+          for (const opt of opts) {
+            const rule = getOptionRule(opt);
+            if (rule && rule.check(numVal)) {
+              p.score = parseFloat(opt.value);
+              p.selected_dropdown = opt.value;
+              p.dropdown_disabled = true;
+              break;
+            }
+          }
+        }
+      }
+      setExecutionData(newData);
+      return;
+    }
+
+    p.is_manual_dropdown = true;
+    p.selected_dropdown = selectedVal;
+    p.score = parseFloat(selectedVal);
+    p.dropdown_disabled = false;
+    p.validation_error = null;
+
+    const opts = dropdownConfig[p.param_code] || [];
+    const chosenOpt = opts.find(o => o.value === selectedVal);
+
+    if (chosenOpt) {
+      const rule = getOptionRule(chosenOpt);
+      if (rule) {
+        // Requirement 3: jika pilihan bernilai '=', maka nilai input otomatis harus = nilai tsb
+        if (rule.type === "=") {
+          p.actual_value = rule.target.toString();
+        } else if (p.actual_value !== "" && p.actual_value !== null && p.actual_value !== undefined) {
+          const numVal = parseFloat(p.actual_value);
+          if (!isNaN(numVal) && !rule.check(numVal)) {
+            p.validation_error = `Nilai uji (${numVal}) harus ${rule.desc}`;
+          }
+        }
+      }
+    }
+
     setExecutionData(newData);
   };
 
@@ -526,14 +841,58 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           const formData = new FormData();
           formData.append("status", "Executed");
 
-          const resultsJson = executionData.map((p) => ({
-            param_code: p.param_code,
-            score: parseFloat(p.actual_value) || 0,
-            notes: p.notes,
-            aspect_code: p.aspect_code,
-            sub_aspect_code: p.param_code,
-            is_disabled: p.is_disabled || false,
-          }));
+          const resultsJson = executionData.map((p) => {
+            let actVal = null;
+            if (p.actual_value !== undefined && p.actual_value !== null && p.actual_value !== "") {
+              const parsed = parseFloat(p.actual_value);
+              if (!isNaN(parsed)) actVal = parsed;
+            }
+
+            let scoreVal = 0;
+            if (p.score !== undefined && p.score !== null && p.score !== "") {
+              scoreVal = parseFloat(p.score) || 0;
+            } else if (actVal !== null) {
+              if (p.standard_value || p.standard_value_max || p.standard_unit) {
+                const op = (p.standard_operator || "").trim().toLowerCase();
+                let isPassed = false;
+                if (op === "range") isPassed = actVal >= p.standard_value && actVal <= p.standard_value_max;
+                else if (op === "<=") isPassed = actVal <= p.standard_value;
+                else if (op === "<") isPassed = actVal < p.standard_value;
+                else if (op === ">") isPassed = actVal > p.standard_value;
+                else if (op === "=") isPassed = actVal === p.standard_value;
+                else isPassed = actVal >= p.standard_value;
+                scoreVal = isPassed ? 100 : 0;
+              } else {
+                scoreVal = actVal;
+              }
+            }
+
+            // Validasi Guard: Jika nilai terukur tidak memenuhi standar, pastikan skor tidak boleh lulus (> 65)
+            if (actVal !== null && (p.standard_value || p.standard_value_max || p.standard_unit)) {
+              const op = (p.standard_operator || "").trim().toLowerCase();
+              let isPassed = false;
+              if (op === "range") isPassed = actVal >= p.standard_value && actVal <= p.standard_value_max;
+              else if (op === "<=") isPassed = actVal <= p.standard_value;
+              else if (op === "<") isPassed = actVal < p.standard_value;
+              else if (op === ">") isPassed = actVal > p.standard_value;
+              else if (op === "=") isPassed = actVal === p.standard_value;
+              else isPassed = actVal >= p.standard_value;
+
+              if (!isPassed && scoreVal >= 65) {
+                scoreVal = 0;
+              }
+            }
+
+            return {
+              param_code: p.param_code,
+              actual_value: actVal,
+              score: scoreVal,
+              notes: p.notes,
+              aspect_code: p.aspect_code,
+              sub_aspect_code: p.param_code,
+              is_disabled: p.is_disabled || false,
+            };
+          });
           formData.append("results", JSON.stringify(resultsJson));
 
           const simLogIds = executionData.filter((p) => p.is_simulator && p.simulator_log_id != null).map((p) => p.simulator_log_id);
@@ -636,7 +995,10 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           if (sub.is_disabled) {
             return;
           }
-          subWeighted += (parseFloat(sub.actual_value) || 0) * (sub.weight || 0);
+          const subScore = (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score)))
+            ? parseFloat(sub.score)
+            : (parseFloat(sub.actual_value) || 0);
+          subWeighted += subScore * (sub.weight || 0);
           subWeight += sub.weight || 0;
         });
         aspScore = subWeight > 0 ? subWeighted / subWeight : 0;
@@ -669,48 +1031,72 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   };
 
   const getPercentString = (actualValue, p) => {
+    // 1. Jika p memiliki score (dari rubrik dropdown atau kalkulasi skor), tampilkan skor tersebut
+    if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
+      return `${parseFloat(p.score).toFixed(0)}%`;
+    }
+
     const val = parseFloat(actualValue);
-    if (isNaN(val) || !actualValue || actualValue === "") return "-";
-    if (!p.standard_value && !p.standard_unit) return "-";
+    if (isNaN(val) || actualValue === undefined || actualValue === null || actualValue === "") return "-";
+    if (!p.standard_value && !p.standard_unit && !p.standard_value_max) return "-";
     
     const op = (p.standard_operator || "").trim().toLowerCase();
-    if (op === "range") return "-";
+    if (op === "range") {
+      const isPassed = val >= p.standard_value && val <= p.standard_value_max;
+      return isPassed ? "100%" : "0%";
+    }
     if (op === "<=" || op === "<") {
-      if (val > 0) return ((p.standard_value / val) * 100).toFixed(1) + "%";
-      return "100.0%";
+      if (val > 0) return ((p.standard_value / val) * 100).toFixed(0) + "%";
+      return "100%";
     }
     if (p.standard_value > 0) {
-      return ((val / p.standard_value) * 100).toFixed(1) + "%";
+      return ((val / p.standard_value) * 100).toFixed(0) + "%";
     }
     return "-";
   };
 
   const getKeterangan = (actualValue, p) => {
     const val = parseFloat(actualValue);
-    if (isNaN(val) || !actualValue || actualValue === "") return "-";
-    if (!p.standard_value && !p.standard_unit) return "-";
+    const hasActualVal = !isNaN(val) && actualValue !== undefined && actualValue !== null && actualValue !== "";
 
-    const op = (p.standard_operator || "").trim().toLowerCase();
-    let isPassed = false;
-    if (op === "range") {
-      isPassed = val >= p.standard_value && val <= p.standard_value_max;
-    } else if (op === "<=") {
-      isPassed = val <= p.standard_value;
-    } else if (op === "<") {
-      isPassed = val < p.standard_value;
-    } else if (op === ">") {
-      isPassed = val > p.standard_value;
-    } else if (op === "=") {
-      isPassed = val === p.standard_value;
-    } else { // default >=
-      isPassed = val >= p.standard_value;
+    // 1. Evaluasi standar spesifikasi jika ada nilai fisik
+    if (hasActualVal && (p.standard_value || p.standard_value_max || p.standard_unit)) {
+      const op = (p.standard_operator || "").trim().toLowerCase();
+      let isPassed = false;
+      if (op === "range") {
+        isPassed = val >= p.standard_value && val <= p.standard_value_max;
+      } else if (op === "<=") {
+        isPassed = val <= p.standard_value;
+      } else if (op === "<") {
+        isPassed = val < p.standard_value;
+      } else if (op === ">") {
+        isPassed = val > p.standard_value;
+      } else if (op === "=") {
+        isPassed = val === p.standard_value;
+      } else { // default >=
+        isPassed = val >= p.standard_value;
+      }
+
+      return isPassed ? (
+        <span style={{ color: "#10b981", fontWeight: 700 }}>Memenuhi</span>
+      ) : (
+        <span style={{ color: "#ef4444", fontWeight: 700 }}>Tidak Memenuhi</span>
+      );
     }
 
-    return isPassed ? (
-      <span style={{ color: "#10b981", fontWeight: 700 }}>Memenuhi</span>
-    ) : (
-      <span style={{ color: "#ef4444", fontWeight: 700 }}>Tidak Memenuhi</span>
-    );
+    // 2. Jika tidak ada nilai fisik tapi ada skor rubrik (misal opsi kualitatif skor 75)
+    if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
+      const sc = parseFloat(p.score);
+      const threshold = p.standard_value || 65;
+      const isPassed = sc >= threshold;
+      return isPassed ? (
+        <span style={{ color: "#10b981", fontWeight: 700 }}>Memenuhi</span>
+      ) : (
+        <span style={{ color: "#ef4444", fontWeight: 700 }}>Tidak Memenuhi</span>
+      );
+    }
+
+    return "-";
   };
 
   const renderAnalysisGroup = (title, items, icon, color, bg) => {
@@ -754,7 +1140,9 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 if (sub.is_disabled) {
                   return;
                 }
-                const score = parseFloat(sub.actual_value) || 0;
+                const score = (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score)))
+                  ? parseFloat(sub.score)
+                  : (parseFloat(sub.actual_value) || 0);
                 subWeightedSum += score * (sub.weight || 0);
                 subTotalWeight += sub.weight || 0;
               });
@@ -843,18 +1231,30 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     <tbody>
                        {asp.items.map((res, i) => {
                         const isParamDisabled = res.is_disabled === true;
+                        const scoreVal = isPreExecution || isParamDisabled ? 0 : (
+                          (res.score !== undefined && res.score !== null && res.score !== "" && !isNaN(parseFloat(res.score)))
+                            ? parseFloat(res.score)
+                            : (parseFloat(res.actual_value) || 0)
+                        );
                         const actualVal = isPreExecution || isParamDisabled ? 0 : (parseFloat(res.actual_value) || 0);
                         const subWeight = res.weight || 0;
-                        const hasil = (actualVal * subWeight) / 100;
+                        const hasil = (scoreVal * subWeight) / 100;
                         return (
                           <tr key={res.param_code || i} style={isParamDisabled ? { opacity: 0.6, background: "#f8fafc" } : {}}>
                             <td style={{ fontSize: "0.8rem", paddingLeft: "1rem" }}>
                               <div style={{ fontWeight: 600, color: "#334155" }}>
                                 {res.param_code && <span style={{ color: "#94a3b8", marginRight: "0.5rem", fontWeight: 700 }}>{res.param_code}</span>}
-                                {res.parameter_name} {isParamDisabled && <span style={{ color: "#ef4444", marginLeft: "0.5rem", fontWeight: "bold" }}>(NON-AKTIF)</span>} {res.notes && <span style={{ fontWeight: 400, color: "#94a3b8", marginLeft: "0.5rem" }}>• {res.notes}</span>}
+                                {res.parameter_name}
+                                {res.actual_value !== undefined && res.actual_value !== null && res.actual_value !== "" && res.actual_value.toString() !== scoreVal.toString() && (
+                                  <span style={{ fontSize: "0.75rem", color: "#0284c7", background: "#e0f2fe", padding: "1px 6px", borderRadius: "4px", marginLeft: "0.5rem", fontWeight: 600 }}>
+                                    Nilai: {res.actual_value} {res.standard_unit || ""}
+                                  </span>
+                                )}
+                                {isParamDisabled && <span style={{ color: "#ef4444", marginLeft: "0.5rem", fontWeight: "bold" }}>(NON-AKTIF)</span>}
+                                {res.notes && <span style={{ fontWeight: 400, color: "#94a3b8", marginLeft: "0.5rem" }}>• {res.notes}</span>}
                               </div>
                             </td>
-                            <td style={{ textAlign: "center", fontWeight: 600, fontSize: "0.8rem" }}>{isParamDisabled ? "N/A" : (actualVal === 0 && isPreExecution ? "-" : actualVal)}</td>
+                            <td style={{ textAlign: "center", fontWeight: 600, fontSize: "0.8rem" }}>{isParamDisabled ? "N/A" : (scoreVal === 0 && isPreExecution ? "-" : scoreVal)}</td>
                             <td style={{ textAlign: "center", color: "#64748b", fontSize: "0.8rem" }}>{res.weight}%</td>
                             <td style={{ textAlign: "center", fontWeight: 700, color: "#1e293b", fontSize: "0.8rem" }}>{isParamDisabled ? "N/A" : (hasil === 0 && isPreExecution ? "-" : hasil.toFixed(2))}</td>
                             <td style={{ textAlign: "center", fontSize: "0.8rem", fontWeight: 600 }}>{isPreExecution || isParamDisabled ? "-" : getStandardString(res)}</td>
@@ -902,15 +1302,44 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
     setAspectSaving((prev) => ({ ...prev, [aspectCode]: true }));
     try {
-      const formData = new FormData();
-      const resultsJson = aspectItems.map((p) => ({
-        param_code: p.param_code,
-        score: parseFloat(p.actual_value) || 0,
-        notes: p.notes || "",
-        aspect_code: p.aspect_code,
-        sub_aspect_code: p.sub_aspect_code,
-        is_disabled: p.is_disabled || false,
-      }));
+      // Validasi: cek apakah ada item yang memiliki validation_error
+      const hasValidationError = aspectItems.some((p) => {
+        const idx = executionData.findIndex((item) => item.param_code === p.param_code);
+        return idx !== -1 && executionData[idx]?.validation_error;
+      });
+      if (hasValidationError) {
+        alert("⚠️ Terdapat nilai hasil uji yang tidak sesuai dengan kriteria pilihan rubrik. Silakan periksa kembali nilai yang ditandai merah.");
+        setAspectSaving((prev) => ({ ...prev, [aspectCode]: false }));
+        return;
+      }
+
+      const resultsJson = aspectItems.map((p) => {
+        const idx = executionData.findIndex((item) => item.param_code === p.param_code);
+        const item = idx !== -1 ? executionData[idx] : p;
+
+        let actVal = null;
+        if (item.actual_value !== undefined && item.actual_value !== null && item.actual_value !== "") {
+          const parsed = parseFloat(item.actual_value);
+          if (!isNaN(parsed)) actVal = parsed;
+        }
+
+        let scoreVal = 0;
+        if (item.score !== undefined && item.score !== null && item.score !== "") {
+          scoreVal = parseFloat(item.score) || 0;
+        } else if (actVal !== null) {
+          scoreVal = actVal;
+        }
+
+        return {
+          param_code: p.param_code,
+          actual_value: actVal,
+          score: scoreVal,
+          notes: item.notes || "",
+          aspect_code: p.aspect_code,
+          sub_aspect_code: p.sub_aspect_code,
+          is_disabled: item.is_disabled || false,
+        };
+      });
       formData.append("results", JSON.stringify(resultsJson));
       aspectItems.forEach((p) => {
         if (photos[p.param_code]) formData.append(`photo_${p.param_code}`, photos[p.param_code]);
@@ -1171,7 +1600,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     <tbody>
                       {group.items.map((p) => {
                         const idx = executionData.findIndex((item) => item.param_code === p.param_code);
-                        const isParamDisabled = idx !== -1 ? executionData[idx]?.is_disabled === true : false;
+                        const item = idx !== -1 ? executionData[idx] : p;
+                        const isParamDisabled = item?.is_disabled === true;
                         const isSim = p.is_simulator === true;
                         const isFieldDisabled = isSim || isInteractionDisabled || isParamDisabled;
 
@@ -1199,50 +1629,87 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                             </td>
                             <td style={{ textAlign: "center" }}>
                               {dropdownConfig[p.param_code] && dropdownConfig[p.param_code].length > 0 ? (
-                                <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
-                                  <select
-                                    value={p.actual_value || ""}
-                                    onChange={(e) => !isFieldDisabled && handleParamChange(idx, "actual_value", e.target.value)}
-                                    disabled={isFieldDisabled}
-                                    style={{ flex: 1, textAlign: "left", background: isFieldDisabled ? "#f1f5f9" : "white", padding: "6px", fontSize: "0.85rem", border: "1px solid #cbd5e1", borderRadius: "6px" }}
-                                  >
-                                    <option value="">-- Pilih --</option>
-                                    {dropdownConfig[p.param_code].map((opt) => (
-                                      <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                      </option>
-                                    ))}
-                                  </select>
-                                  {p.actual_value !== undefined && p.actual_value !== null && p.actual_value !== "" && <div style={{ fontWeight: 800, color: "#0f172a", fontSize: "1rem", marginRight: "4px" }}>{p.actual_value}</div>}
-                                  {!isFieldDisabled && aiOcrEnabled && (
-                                    <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
-                                      <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%" }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
+                                    <input
+                                      type="number"
+                                      step="any"
+                                      placeholder="Nilai Fisik"
+                                      title="Nilai hasil pengukuran instrumen"
+                                      value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
+                                      onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
+                                      readOnly={isFieldDisabled}
+                                      disabled={isFieldDisabled}
+                                      style={{
+                                        width: "85px",
+                                        textAlign: "center",
+                                        background: isFieldDisabled ? "#f1f5f9" : "white",
+                                        padding: "5px",
+                                        fontSize: "0.85rem",
+                                        border: item.validation_error ? "1.5px solid #ef4444" : "1px solid #cbd5e1",
+                                        borderRadius: "6px"
+                                      }}
+                                    />
+                                    <select
+                                      value={item.selected_dropdown !== undefined ? item.selected_dropdown : (item.score !== undefined && item.score !== null && item.score !== "" ? item.score.toString() : "")}
+                                      onChange={(e) => !isFieldDisabled && handleDropdownChange(idx, e.target.value)}
+                                      disabled={isFieldDisabled || item.dropdown_disabled}
+                                      title={item.dropdown_disabled ? "Terkunci otomatis berdasarkan Nilai Fisik (Kosongkan nilai fisik untuk memilih manual)" : "Pilih kriteria/rubrik"}
+                                      style={{
+                                        flex: 1,
+                                        textAlign: "left",
+                                        background: (isFieldDisabled || item.dropdown_disabled) ? "#f1f5f9" : "white",
+                                        color: item.dropdown_disabled ? "#334155" : "inherit",
+                                        fontWeight: item.dropdown_disabled ? 600 : "normal",
+                                        padding: "5px",
+                                        fontSize: "0.8rem",
+                                        border: "1px solid #cbd5e1",
+                                        borderRadius: "6px",
+                                        cursor: item.dropdown_disabled ? "not-allowed" : "pointer"
+                                      }}
+                                    >
+                                      <option value="">-- Pilihan Rubrik --</option>
+                                      {dropdownConfig[p.param_code].map((opt) => (
+                                        <option key={opt.value} value={opt.value}>
+                                          {opt.label} ({opt.value})
+                                        </option>
+                                      ))}
+                                    </select>
+                                    {!isFieldDisabled && aiOcrEnabled && (
+                                      <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
+                                        <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                                          <button
+                                            type="button"
+                                            disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                            title="Upload File OCR parameter ini saja"
+                                            style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                          >
+                                            <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                          </button>
+                                          {!(ocrLoading === p.param_code || ocrLoading === true) && (
+                                            <input 
+                                              type="file" 
+                                              accept="image/*,.pdf,.txt,.csv,.log"
+                                              onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
+                                              style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                                            />
+                                          )}
+                                        </div>
                                         <button
                                           type="button"
                                           disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                          title="Upload File OCR parameter ini saja"
+                                          onClick={() => handleOpenCameraModal(group.code, p.param_code)}
+                                          title="Ambil Foto OCR parameter ini saja"
                                           style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
                                         >
-                                          <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                          <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
                                         </button>
-                                        {!(ocrLoading === p.param_code || ocrLoading === true) && (
-                                          <input 
-                                            type="file" 
-                                            accept="image/*,.pdf,.txt,.csv,.log"
-                                            onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
-                                            style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                                          />
-                                        )}
                                       </div>
-                                      <button
-                                        type="button"
-                                        disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                        onClick={() => handleOpenCameraModal(group.code, p.param_code)}
-                                        title="Ambil Foto OCR parameter ini saja"
-                                        style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                      >
-                                        <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
-                                      </button>
+                                    )}
+                                  </div>
+                                  {item.validation_error && (
+                                    <div style={{ fontSize: "0.7rem", color: "#ef4444", fontWeight: 700, textAlign: "left", paddingLeft: "2px" }}>
+                                      <i className="fas fa-exclamation-circle"></i> {item.validation_error}
                                     </div>
                                   )}
                                 </div>
@@ -1250,8 +1717,10 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                 <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
                                   <input
                                     type="number"
-                                    value={p.actual_value || ""}
-                                    onChange={(e) => !isFieldDisabled && handleParamChange(idx, "actual_value", e.target.value)}
+                                    step="any"
+                                    placeholder="Nilai Fisik"
+                                    value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
+                                    onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
                                     readOnly={isFieldDisabled}
                                     disabled={isFieldDisabled}
                                     style={{ flex: 1, textAlign: "center", background: isFieldDisabled ? "#f1f5f9" : "white" }}
@@ -1292,11 +1761,31 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                             </td>
                             <td style={{ textAlign: "center", fontSize: "0.8rem" }}>{p.weight}%</td>
                             <td style={{ textAlign: "center", fontSize: "0.8rem", fontWeight: 600 }}>{getStandardString(p)}</td>
-                            <td style={{ textAlign: "center", fontSize: "0.8rem", color: "#475569" }}>{getPercentString(p.actual_value, p)}</td>
-                            <td style={{ textAlign: "center", fontSize: "0.8rem" }}>{getKeterangan(p.actual_value, p)}</td>
+                            <td style={{ textAlign: "center" }}>
+                              <input
+                                type="text"
+                                readOnly
+                                disabled
+                                value={getPercentString(item.actual_value, item)}
+                                title="Persentase hasil uji (% Hasil otomatis terkunci sesuai skor rubrik)"
+                                style={{
+                                  width: "65px",
+                                  textAlign: "center",
+                                  background: "#f1f5f9",
+                                  border: "1px solid #cbd5e1",
+                                  borderRadius: "6px",
+                                  padding: "4px 6px",
+                                  fontSize: "0.8rem",
+                                  fontWeight: 700,
+                                  color: (item.score !== undefined && item.score !== null && item.score !== "") ? (parseFloat(item.score) >= 65 ? "#166534" : "#991b1b") : "#64748b",
+                                  cursor: "not-allowed"
+                                }}
+                              />
+                            </td>
+                            <td style={{ textAlign: "center", fontSize: "0.8rem" }}>{getKeterangan(item.actual_value, item)}</td>
                             <td>{!isFieldDisabled && <input type="file" onChange={(e) => handleFileChange(p.param_code, e.target.files[0])} style={{ fontSize: "10px" }} />}</td>
                             <td>
-                              <input type="text" value={p.notes || ""} onChange={(e) => !isFieldDisabled && handleParamChange(idx, "notes", e.target.value)} readOnly={isFieldDisabled} disabled={isFieldDisabled} style={{ width: "100%", fontSize: "0.85rem", background: isFieldDisabled ? "#f1f5f9" : "white" }} />
+                              <input type="text" value={item.notes || ""} onChange={(e) => !isFieldDisabled && handleParamChange(idx, "notes", e.target.value)} readOnly={isFieldDisabled} disabled={isFieldDisabled} style={{ width: "100%", fontSize: "0.85rem", background: isFieldDisabled ? "#f1f5f9" : "white" }} />
                             </td>
                           </tr>
                         );

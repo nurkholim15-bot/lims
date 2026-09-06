@@ -1,65 +1,67 @@
 === OCR EXTRACTION LOG ===
 Total parameter diekstrak: 10
 
-KOFAS [dropdown]: OCR='100' -> Final='100'
-KOPEN: OCR='20' -> Final='20'
-KODAY [dropdown]: OCR='70' -> Final='70'
-PEPEM [dropdown]: OCR='80' -> Final='80'
-KOKON [dropdown]: OCR='30' -> Final='30'
-KORUS [dropdown]: OCR='50' -> Final='50'
-PEENE [dropdown]: OCR='40' -> Final='40'
-KOTAN [dropdown]: OCR='60' -> Final='60'
-PEGER [dropdown]: OCR='50' -> Final='50'
-KONSI: OCR='10' -> Final='10'
+KOKON [dropdown]: OCR='3' -> Final='3'
+KONSI: OCR='1' -> Final='1'
+KOFAS [dropdown]: OCR='10' -> Final='10'
+PEENE [dropdown]: OCR='4' -> Final='4'
+PEGER [dropdown]: OCR='5' -> Final='5'
+KORUS [dropdown]: OCR='9' -> Final='9'
+KOPEN: OCR='2' -> Final='2'
+KOTAN [dropdown]: OCR='6' -> Final='6'
+KODAY [dropdown]: OCR='7' -> Final='7'
+PEPEM [dropdown]: OCR='8' -> Final='8'
 
 [EXTRACTION PROCESS DETAILS]
-  [Match Technique A] Parameter KOFAS  (Konstruksi-Fasilitas anti Pernika): RawCapture='100' -> Cleaned='100'
-  [Match Technique A] Parameter KOPEN  (Konstruksi-Penurunan tegangan catu daya): RawCapture='20  ' -> Cleaned='20'
-  [Match Technique A] Parameter PEENE  (Perlengkapan-Antene           ): RawCapture='40  ' -> Cleaned='40'
-  [Match Technique A] Parameter KOTAN  (Konstruksi-Sistem perakitan   ): RawCapture='60  ' -> Cleaned='60'
-  [Match Technique A] Parameter KODAY  (Konstruksi-Jenis catu daya    ): RawCapture='70  ' -> Cleaned='70'
-  [Match Technique A] Parameter PEPEM  (Perlengkapan-Buku petunjuk pemakaian dan pemeliharaan): RawCapture='80  ' -> Cleaned='80'
-  [Match Technique A] Parameter PEGER  (Perlengkapan-Dilengkapi dengan pengisi battery (battery charger)): RawCapture='50  ' -> Cleaned='50'
-  [Match Technique A] Parameter KOKON  (Konstruksi-Kekokohan perakitan): RawCapture='30  ' -> Cleaned='30'
-  [Match Technique A] Parameter KONSI  (Konstruksi-Dimensi            ): RawCapture='10  ' -> Cleaned='10'
-  [Table Line Matcher] Parameter KOFAS : Score='100' from line: 10 KOFAS 100
-  [Table Line Matcher] Parameter KOPEN : Score='20' from line: 2 KOPEN 20
-  [Table Line Matcher] Parameter PEENE : Score='40' from line: 4 PEENE 40
-  [Table Line Matcher] Parameter KOTAN : Score='60' from line: 6 KOTAN 60
-  [Table Line Matcher] Parameter KODAY : Score='70' from line: 7 KODAY 70
-  [Table Line Matcher] Parameter PEPEM : Score='80' from line: 8 PEPEM 80
-  [Table Line Matcher] Parameter PEGER : Score='50' from line: 5 PEGER 50
-  [Table Line Matcher] Parameter KOKON : Score='30' from line: 3 KOKON 30
-  [Table Line Matcher] Parameter KONSI : Score='10' from line: 1 KONSI 10
-  [Match Technique D] Row 1   | Line 1  : Matched KONSI  (Konstruksi-Dimensi            ) -> RawScore='10' (BestScore=0.62)
-  [Match Technique D] Row 2   | Line 2  : Matched KOPEN  (Konstruksi-Penurunan tegangan catu daya) -> RawScore='20' (BestScore=0.54)
-  [Match Technique D] Row 3   | Line 3  : Matched KOKON  (Konstruksi-Kekokohan perakitan) -> RawScore='30' (BestScore=0.56)
-  [Match Technique D] Row 4   | Line 4  : Matched PEENE  (Perlengkapan-Antene           ) -> RawScore='40' (BestScore=0.58)
-  [Match Technique D] Row 5   | Line 5  : Matched PEGER  (Perlengkapan-Dilengkapi dengan pengisi battery (battery charger)) -> RawScore='50' (BestScore=0.54)
-  [Match Technique D] Row 6   | Line 6  : Matched KOTAN  (Konstruksi-Sistem perakitan   ) -> RawScore='60' (BestScore=0.56)
-  [Match Technique D] Row 7   | Line 7  : Matched KODAY  (Konstruksi-Jenis catu daya    ) -> RawScore='70' (BestScore=0.56)
-  [Match Technique D] Row 8   | Line 8  : Matched PEPEM  (Perlengkapan-Buku petunjuk pemakaian dan pemeliharaan) -> RawScore='80' (BestScore=0.52)
-  [Match Technique D] Row 9   | Line 9  : Matched KORUS  (Konstruksi-Pengaman arus      ) -> RawScore='50' (BestScore=0.56)
-  [Match Technique D] Row 10  | Line 10 : Matched KOFAS  (Konstruksi-Fasilitas anti Pernika) -> RawScore='100' (BestScore=0.55)
-  [Direct Score] Parameter KOFAS : Score='100'
-  [Direct Score] Parameter KOPEN : Score='20'
-  [Direct Score] Parameter KODAY : Score='70'
-  [Direct Score] Parameter PEPEM : Score='80'
-  [Direct Score] Parameter KOKON : Score='30'
-  [Direct Score] Parameter KORUS : Score='50'
-  [Direct Score] Parameter PEENE : Score='40'
-  [Direct Score] Parameter KOTAN : Score='60'
-  [Direct Score] Parameter PEGER : Score='50'
-  [Direct Score] Parameter KONSI : Score='10'
+  [Match Technique A] Parameter KOFAS  (Konstruksi-Fasilitas anti Pernika): RawCapture='10' -> Cleaned='10'
+  [Match Technique A] Parameter KORUS  (Konstruksi-Pengaman arus      ): RawCapture='9  ' -> Cleaned='9'
+  [Match Technique A] Parameter KOPEN  (Konstruksi-Penurunan tegangan catu daya): RawCapture='2  ' -> Cleaned='2'
+  [Match Technique A] Parameter PEENE  (Perlengkapan-Antene           ): RawCapture='4  ' -> Cleaned='4'
+  [Match Technique A] Parameter KOTAN  (Konstruksi-Sistem perakitan   ): RawCapture='AA 6  ' -> Cleaned='6'
+  [Match Technique A] Parameter KODAY  (Konstruksi-Jenis catu daya    ): RawCapture='7  ' -> Cleaned='7'
+  [Match Technique A] Parameter PEPEM  (Perlengkapan-Buku petunjuk pemakaian dan pemeliharaan): RawCapture='8  ' -> Cleaned='8'
+  [Match Technique A] Parameter PEGER  (Perlengkapan-Dilengkapi dengan pengisi battery (battery charger)): RawCapture='5  ' -> Cleaned='5'
+  [Match Technique A] Parameter KOKON  (Konstruksi-Kekokohan perakitan): RawCapture='3  ' -> Cleaned='3'
+  [Match Technique A] Parameter KONSI  (Konstruksi-Dimensi            ): RawCapture='1  ' -> Cleaned='1'
+  [Table Line Matcher] Parameter KOFAS : Score='10' from line: 10 KOFAS 10
+  [Table Line Matcher] Parameter KORUS : Score='9' from line: 9 KORUS 9
+  [Table Line Matcher] Parameter KOPEN : Score='2' from line: 2 KOPEN 2
+  [Table Line Matcher] Parameter PEENE : Score='4' from line: 4 PEENE 4
+  [Table Line Matcher] Parameter KOTAN : Score='6' from line: 6 KOTAN AA 6
+  [Table Line Matcher] Parameter KODAY : Score='7' from line: 7 KODAY 7
+  [Table Line Matcher] Parameter PEPEM : Score='8' from line: 8 PEPEM 8
+  [Table Line Matcher] Parameter PEGER : Score='5' from line: 5 PEGER 5
+  [Table Line Matcher] Parameter KOKON : Score='3' from line: 3 KOKON 3
+  [Table Line Matcher] Parameter KONSI : Score='1' from line: 1 KONSI 1
+  [Match Technique D] Row 1   | Line 1  : Matched KONSI  (Konstruksi-Dimensi            ) -> RawScore='1' (BestScore=0.62)
+  [Match Technique D] Row 2   | Line 2  : Matched KOPEN  (Konstruksi-Penurunan tegangan catu daya) -> RawScore='2' (BestScore=0.55)
+  [Match Technique D] Row 3   | Line 3  : Matched KOKON  (Konstruksi-Kekokohan perakitan) -> RawScore='3' (BestScore=0.56)
+  [Match Technique D] Row 4   | Line 4  : Matched PEENE  (Perlengkapan-Antene           ) -> RawScore='4' (BestScore=0.58)
+  [Match Technique D] Row 5   | Line 5  : Matched PEGER  (Perlengkapan-Dilengkapi dengan pengisi battery (battery charger)) -> RawScore='5' (BestScore=0.54)
+  [Match Technique D] Row 6   | Line 6  : Matched KOTAN  (Konstruksi-Sistem perakitan   ) -> RawScore='6' (BestScore=0.56)
+  [Match Technique D] Row 7   | Line 7  : Matched KODAY  (Konstruksi-Jenis catu daya    ) -> RawScore='7' (BestScore=0.56)
+  [Match Technique D] Row 8   | Line 8  : Matched PEPEM  (Perlengkapan-Buku petunjuk pemakaian dan pemeliharaan) -> RawScore='8' (BestScore=0.52)
+  [Match Technique D] Row 9   | Line 9  : Matched KORUS  (Konstruksi-Pengaman arus      ) -> RawScore='9' (BestScore=0.57)
+  [Match Technique D] Row 10  | Line 10 : Matched KOFAS  (Konstruksi-Fasilitas anti Pernika) -> RawScore='10' (BestScore=0.55)
+  [Direct Score] Parameter KOKON : Score='3'
+  [Direct Score] Parameter KONSI : Score='1'
+  [Direct Score] Parameter KOFAS : Score='10'
+  [Direct Score] Parameter PEENE : Score='4'
+  [Direct Score] Parameter PEGER : Score='5'
+  [Direct Score] Parameter KORUS : Score='9'
+  [Direct Score] Parameter KOPEN : Score='2'
+  [Direct Score] Parameter KOTAN : Score='6'
+  [Direct Score] Parameter KODAY : Score='7'
+  [Direct Score] Parameter PEPEM : Score='8'
 
 === RAW OCR TEXT ===
-1 KONSI 10
-2 KOPEN 20
-3 KOKON 30
-4 PEENE 40
-5 PEGER 50
-6 KOTAN 60
-7 KODAY 70
-8 PEPEM 80
-9 KORUS so
-10 KOFAS 100
+1 KONSI 1
+2 KOPEN 2
+3 KOKON 3
+4 PEENE 4
+5 PEGER 5
+6 KOTAN AA 6
+7 KODAY 7
+8 PEPEM 8
+9 KORUS 9
+10 KOFAS 10

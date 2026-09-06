@@ -688,10 +688,18 @@ AI bertindak sebagai **lapisan analisis cerdas (overlay)** yang memantau perform
 
 #### C. Tabel Basis Data yang Digunakan dalam Penilaian
 Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
-1. **`lims.testing_results`**: Menyimpan nilai mentah aktual (`actual_value`) dan skor terhitung (`score`) per parameter uji / sub-aspek (Level 4).
-2. **`lims.testing_aspect_scores`**: Menyimpan rata-rata terhitung aspek (`score`) hasil kalkulasi kumulatif sub-aspek (Level 3).
-3. **`lims.testing_applications`**: Menyimpan skor akhir gabungan (`final_score`) dan status keputusan kelayakan (`final_status`) (Level 1, 2, dan 5).
-4. **`lims.global_parameters`**: Menyimpan ambang batas nilai kelulusan sistem (`SCORE_THRESHOLD_PASS` & `SCORE_THRESHOLD_NOTE`).
+1. **`lims.scoring_sub_aspect_items`**: Menyimpan opsi kriteria / rubrik penilaian detail di bawah masing-masing sub-aspek. Dilengkapi kolom numerik batas fisik terstruktur:
+   - `test_result_low NUMERIC(15, 4)`: Batas bawah nilai hasil pengukuran fisik instrumen (NULL jika parameter kualitatif).
+   - `test_result_high NUMERIC(15, 4)`: Batas atas nilai hasil pengukuran fisik instrumen (jika sama dengan low, maka aturan strict equal `=`).
+   - `score FLOAT8`: Skor bobot yang diberikan untuk kriteria tersebut (misal: 30%, 50%, 75%, 100%).
+2. **`lims.testing_results`**: Menyimpan hasil pengujian aktual per parameter uji / sub-aspek (Level 4):
+   - `actual_value NUMERIC(15, 4)`: Nilai mentah hasil pengukuran instrumen fisik riil (contoh: Suhu `150.00 °C`, Tegangan `220.00 V`).
+   - `score FLOAT8`: Skor rubrik terhitung yang berlaku untuk nilai fisik tersebut (contoh: skor `30.0` untuk kondisi suhu kritis `150 °C`).
+   - `notes VARCHAR(255)`: Catatan operasional pengujian dari analis/tester.
+   - `is_disabled BOOLEAN`: Indikator parameter diaktifkan/dinonaktifkan pada pengujian terkait.
+3. **`lims.testing_aspect_scores`**: Menyimpan rata-rata terhitung aspek (`score`) hasil kalkulasi kumulatif sub-aspek (Level 3).
+4. **`lims.testing_applications`**: Menyimpan skor akhir gabungan (`final_score`) dan status keputusan kelayakan (`final_status`) (Level 1, 2, dan 5).
+5. **`lims.global_parameters`**: Menyimpan ambang batas nilai kelulusan sistem (`SCORE_THRESHOLD_PASS` & `SCORE_THRESHOLD_NOTE`).
 
 ---
 
@@ -703,7 +711,7 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
    \[
    Score_{Aspect} = \frac{\sum_{i=1}^{n} (Score_{SubAspect, i} \times Weight_{SubAspect, i})}{\sum_{i=1}^{n} Weight_{SubAspect, i}}
    \]
-   *Catatan*: Jika suatu sub-aspek dinonaktifkan (`is_disabled = true` / disembunyikan lewat konfigurasi paket), maka nilai serta bobotnya dikeluarkan dari rumus perhitungan di atas. Hasil perhitungan ini disimpan di `lims.testing_aspect_scores`.
+   *Catatan*: Jika suatu sub-aspek dinonaktifkan (`is_disabled = true` / disembunyikan lewat konfigurasi paket), maka nilai serta bobotnya dikeluarkan dari rumus perhitungan di atas. Hasil perhitungan ini disimpan di `lims.testing_aspect_scores`. Perhitungan menggunakan kolom `score` (skor rubrik terhitung), bukan kolom `actual_value` (nilai fisik mentah).
 
 2. **Nilai Akhir Gabungan (\(Score_{Final}\))**:
    Nilai akhir gabungan merupakan kalkulasi terbobot dari seluruh aspek penilaian aktif di `lims.testing_aspect_scores`:
@@ -719,6 +727,82 @@ Perhitungan skor LIMS melintasi beberapa tabel utama berikut:
 
    Klasifikasi akhir disimpan di kolom `final_status` pada tabel `lims.testing_applications`:
    - **TIDAK LULUS** : Jika nilai akhir gabungan berada di bawah batas minimum (\(< 75\)).
+
+---
+
+
+#### E. Mekanisme Perekaman Nilai Fisik, Pemetaan Rubrik Terstruktur, dan Validasi Dua Arah
+
+Untuk memastikan integritas data antara angka instrumen riil dan evaluasi rubrik penilaian, LIMS menerapkan arsitektur validasi dua arah (*bi-directional auto-lock & real-time validation*) yang didukung oleh batas numerik terstruktur di database.
+
+##### 1. Desain Pemisahan Nilai Fisik (`actual_value`) dan Skor Rubrik (`score`)
+- **Tantangan Lama**: Jika nilai fisik langsung disimpan sebagai skor (misal nilai suhu `150` disimpan ke kolom skor), maka sistem penilaian akan mengalami distorsi berat karena skor dihitung dari angka `150` (melebihi skala 100%), bukannya skor rubrik standar (misal `30%`).
+- **Solusi LIMS**:
+  - Kolom **`actual_value NUMERIC(15, 4)`** murni menyimpan nilai mentah instrumen pengujian lapangan/lab (misal: suhu `150.00 °C`, tegangan `220.00 V`).
+  - Kolom **`score FLOAT8`** menyimpan skor rubrik evaluasi kelayakan parameter (misal: skor `30.0` untuk kondisi suhu kritis).
+  - Kolom **`% Hasil`** pada antarmuka pengujian dirender sebagai elemen input berstatus **DISABLED / READ-ONLY** (mengunci persentase skor rubrik, misal `30%`).
+
+##### 2. Matriks Penentuan Batas Uji (`test_result_low` & `test_result_high`)
+Tabel `lims.scoring_sub_aspect_items` menyimpan batas numerik terstruktur yang dievaluasi secara langsung tanpa bergantung pada parsing teks regex:
+
+| Jenis Kriteria | `test_result_low` | `test_result_high` | Aturan Evaluasi Sistem | Perilaku UI/UX |
+| :--- | :---: | :---: | :--- | :--- |
+| **Rentang Optimal (Range 80 - 120)** | `80.0` | `120.0` | $80.0 \le \text{Nilai Uji} \le 120.0$ | Otomatis memilih opsi jika nilai dalam rentang. |
+| **Batas Atas Kritis (> 140)** | `140.0001` | `999999.0` | $\text{Nilai Uji} \ge 140.0001$ | Otomatis memilih opsi suhu kritis dan mengunci dropdown. |
+| **Batas Bawah Rendah (< 80)** | `0.0` | `79.9999` | $\text{Nilai Uji} \le 79.9999$ | Otomatis memilih opsi suhu rendah. |
+| **Strict Equal (= 75 atau = 220)** | `75.0` | `75.0` | $\text{Nilai Uji} = 75.0$ ($low = high$) | Otomatis auto-populate angka `75` pada field `Nilai Fisik` dan memvalidasi kesamaan ketat. |
+| **Kualitatif Murni (Checklist)** | `NULL` | `NULL` | Tidak ada evaluasi fisik | Pengguna memilih opsi dropdown secara bebas tanpa memicu validasi nilai fisik. |
+| **Kompatibilitas Data Lama** | `NULL` | `NULL` | Fallback regex parsing label (`parseOptionRule`) | Menjamin data historis tetap berjalan normal jika kolom belum diisi. |
+
+##### 3. Alur Interaksi Pengguna (UI/UX 3 Skenario)
+1. **Skenario 1: User Memasukkan Nilai Fisik (Misal `150`)**:
+   - Sistem mencocokkan `150` terhadap batas `test_result_low` dan `test_result_high` di seluruh opsi parameter terkait.
+   - Dropdown rubrik otomatis memilih opsi `> 140 °C (30)` dan statusnya menjadi **DISABLED / TERKUNCI**.
+   - Kolom `% Hasil` otomatis terisi nilai **`30%`** dalam status **DISABLED** (read-only input dengan warna latar `#f1f5f9`).
+   - Kolom `Keterangan` otomatis mengevaluasi terhadap batas standar spesifikasi, menghasilkan status **`Tidak Memenuhi`** (merah).
+   - Jika nilai fisik dikosongkan (dihapus), dropdown otomatis terbuka kembali untuk pemilihan manual.
+2. **Skenario 2: User Memilih Dropdown Manual Terlebih Dahulu (Misal Opsi `> 140`)**:
+   - Kolom `% Hasil` langsung terkunci menampilkan skor rubrik **`30%`** (disabled).
+   - Ketika user mengetikkan angka pada kolom `Nilai Fisik`:
+     - Jika nilai **melanggar** kriteria rubrik yang dipilih (misal memilih `> 140` namun mengetik `100`), sistem memunculkan peringatan merah: `⚠️ Nilai uji (100) harus 140.0001 s.d 999999`. Garis batas input berubah menjadi merah dan tombol *Save Aspect* memblokir penyimpanan.
+     - Jika nilai **memenuhi** kriteria (misal mengetik `150`), peringatan error otomatis hilang dan data valid untuk disimpan.
+3. **Skenario 3: Pilihan Dropdown dengan Aturan Sama Dengan (`=`)**:
+   - Ketika opsi dengan $test\_result\_low = test\_result\_high$ (misal `= 75` atau `= 220`) dipilih, field `Nilai Fisik` otomatis terisi dengan nilai target tersebut (`75`).
+   - Jika user mengedit nilai menjadi angka lain (misal `70`), sistem memvalidasi ketat bahwa nilai fisik harus `= 75`.
+
+##### 4. Skrip DDL & DML Penataan Basis Data
+```sql
+-- DDL Penambahan Kolom Batas Fisik Rubrik
+ALTER TABLE lims.scoring_sub_aspect_items 
+ADD COLUMN IF NOT EXISTS test_result_low NUMERIC(15, 4) DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS test_result_high NUMERIC(15, 4) DEFAULT NULL;
+
+COMMENT ON COLUMN lims.scoring_sub_aspect_items.test_result_low IS 'Batas minimal hasil uji fisik instrumen (NULL jika kualitatif)';
+COMMENT ON COLUMN lims.scoring_sub_aspect_items.test_result_high IS 'Batas maksimal hasil uji fisik instrumen (jika sama dengan low, maka =)';
+
+ALTER TABLE lims.hist_scoring_sub_aspect_items 
+ADD COLUMN IF NOT EXISTS test_result_low NUMERIC(15, 4) DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS test_result_high NUMERIC(15, 4) DEFAULT NULL;
+
+-- DML Contoh Konfigurasi Rubrik
+-- 1. Parameter Suhu (SUHU1)
+INSERT INTO lims.scoring_sub_aspect_items (sub_aspect_code, name, score, test_result_low, test_result_high, created_at, updated_at, created_user) 
+VALUES 
+('SUHU1', 'Suhu Rendah (< 80 °C)', 50.0, 0.0, 79.9999, NOW(), NOW(), 'admin'),
+('SUHU1', 'Suhu Optimal (80 - 120 °C)', 100.0, 80.0, 120.0, NOW(), NOW(), 'admin'),
+('SUHU1', 'Suhu Transisi (120 - 140 °C)', 75.0, 120.0001, 140.0, NOW(), NOW(), 'admin'),
+('SUHU1', 'Suhu Kritis / Tidak Memenuhi (> 140 °C)', 30.0, 140.0001, 999999.0, NOW(), NOW(), 'admin');
+
+-- 2. Parameter Strict Equal (KODAY)
+INSERT INTO lims.scoring_sub_aspect_items (sub_aspect_code, name, score, test_result_low, test_result_high, created_at, updated_at, created_user) 
+VALUES 
+('KODAY', 'Kesesuaian Daya Terukur (= 75 Watt)', 75.0, 75.0, 75.0, NOW(), NOW(), 'admin');
+
+-- 3. Parameter Kualitatif Murni (KOMUN)
+INSERT INTO lims.scoring_sub_aspect_items (sub_aspect_code, name, score, test_result_low, test_result_high, created_at, updated_at, created_user) 
+VALUES 
+('KOMUN', 'Salah satu (pesawat masih dapat berkomunikasi)', 75.0, NULL, NULL, NOW(), NOW(), 'admin');
+```
 
 ---
 

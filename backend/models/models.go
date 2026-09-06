@@ -994,6 +994,7 @@ type TestingResult struct {
 	Aspect        ScoringAspect     `gorm:"foreignKey:AspectCode;references:Code" json:"aspect"`
 	SubAspectCode *string           `gorm:"type:varchar(50)" json:"sub_aspect_code"`
 	SubAspect     *ScoringSubAspect `gorm:"foreignKey:SubAspectCode;references:Code" json:"sub_aspect"`
+	ActualValue   *float64          `gorm:"column:actual_value;type:numeric(15,4)" json:"actual_value"`
 	Score         float64           `json:"score"`
 	Notes         string            `gorm:"type:varchar(500)" json:"notes"`
 	PhotoPath     string            `gorm:"type:varchar(255)" json:"photo_path"`
@@ -1355,17 +1356,19 @@ func (ScoringSubAspect) TableName() string {
 
 // ScoringSubAspectItem merepresentasikan table scoring_sub_aspect_items
 type ScoringSubAspectItem struct {
-	ID            uint             `gorm:"primaryKey" json:"id"`
-	SubAspectCode string           `gorm:"type:varchar(5);not null;index" json:"sub_aspect_code"`
-	SubAspect     ScoringSubAspect `gorm:"foreignKey:SubAspectCode;references:Code" json:"sub_aspect"`
-	Name          string           `gorm:"type:varchar(100);not null" json:"name"`
-	Score         float64          `json:"score"`
-	CreatedAt     time.Time        `json:"created_at"`
-	UpdatedAt     time.Time        `json:"updated_at"`
-	CreatedUser   string           `gorm:"type:varchar(30)" json:"created_user"`
-	UpdatedUser   string           `gorm:"type:varchar(30)" json:"updated_user"`
-	DeletedAt     *time.Time       `json:"deleted_at"`
-	DeletedUser   string           `gorm:"type:varchar(30)" json:"deleted_user"`
+	ID             uint             `gorm:"primaryKey" json:"id"`
+	SubAspectCode  string           `gorm:"type:varchar(5);not null;index" json:"sub_aspect_code"`
+	SubAspect      ScoringSubAspect `gorm:"foreignKey:SubAspectCode;references:Code" json:"sub_aspect"`
+	Name           string           `gorm:"type:varchar(100);not null" json:"name"`
+	Score          float64          `json:"score"`
+	TestResultLow  *float64         `gorm:"type:numeric(15,4)" json:"test_result_low"`
+	TestResultHigh *float64         `gorm:"type:numeric(15,4)" json:"test_result_high"`
+	CreatedAt      time.Time        `json:"created_at"`
+	UpdatedAt      time.Time        `json:"updated_at"`
+	CreatedUser    string           `gorm:"type:varchar(30)" json:"created_user"`
+	UpdatedUser    string           `gorm:"type:varchar(30)" json:"updated_user"`
+	DeletedAt      *time.Time       `json:"deleted_at"`
+	DeletedUser    string           `gorm:"type:varchar(30)" json:"deleted_user"`
 }
 
 func (ScoringSubAspectItem) TableName() string {
@@ -1374,17 +1377,19 @@ func (ScoringSubAspectItem) TableName() string {
 
 // HistScoringSubAspectItem merepresentasikan table hist_scoring_sub_aspect_items
 type HistScoringSubAspectItem struct {
-	ID            uint      `gorm:"primaryKey" json:"id"`
-	SaiID         uint      `gorm:"index" json:"sai_id"`
-	SubAspectCode string    `gorm:"type:varchar(5)" json:"sub_aspect_code"`
-	Name          string    `gorm:"type:varchar(100)" json:"name"`
-	Score         float64   `json:"score"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
-	CreatedUser   string    `gorm:"type:varchar(30)" json:"created_user"`
-	UpdatedUser   string    `gorm:"type:varchar(30)" json:"updated_user"`
-	DeletedAt     *time.Time `json:"deleted_at"`
-	DeletedUser   string    `gorm:"type:varchar(30)" json:"deleted_user"`
+	ID             uint       `gorm:"primaryKey" json:"id"`
+	SaiID          uint       `gorm:"index" json:"sai_id"`
+	SubAspectCode  string     `gorm:"type:varchar(5)" json:"sub_aspect_code"`
+	Name           string     `gorm:"type:varchar(100)" json:"name"`
+	Score          float64    `json:"score"`
+	TestResultLow  *float64   `gorm:"type:numeric(15,4)" json:"test_result_low"`
+	TestResultHigh *float64   `gorm:"type:numeric(15,4)" json:"test_result_high"`
+	CreatedAt      time.Time  `json:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at"`
+	CreatedUser    string     `gorm:"type:varchar(30)" json:"created_user"`
+	UpdatedUser    string     `gorm:"type:varchar(30)" json:"updated_user"`
+	DeletedAt      *time.Time `json:"deleted_at"`
+	DeletedUser    string     `gorm:"type:varchar(30)" json:"deleted_user"`
 }
 
 // ScoringLevel merepresentasikan table scoring_levels

@@ -2277,16 +2277,18 @@ func UpdateScoringSubAspectItem(c *gin.Context) {
 	}
 	
 	hist := models.HistScoringSubAspectItem{
-		SaiID:         item.ID,
-		SubAspectCode: item.SubAspectCode,
-		Name:          item.Name,
-		Score:         item.Score,
-		CreatedAt:     item.CreatedAt,
-		UpdatedAt:     item.UpdatedAt,
-		CreatedUser:   item.CreatedUser,
-		UpdatedUser:   item.UpdatedUser,
-		DeletedAt:     item.DeletedAt,
-		DeletedUser:   item.DeletedUser,
+		SaiID:          item.ID,
+		SubAspectCode:  item.SubAspectCode,
+		Name:           item.Name,
+		Score:          item.Score,
+		TestResultLow:  item.TestResultLow,
+		TestResultHigh: item.TestResultHigh,
+		CreatedAt:      item.CreatedAt,
+		UpdatedAt:      item.UpdatedAt,
+		CreatedUser:    item.CreatedUser,
+		UpdatedUser:    item.UpdatedUser,
+		DeletedAt:      item.DeletedAt,
+		DeletedUser:    item.DeletedUser,
 	}
 	database.DB.Create(&hist)
 
@@ -2315,14 +2317,16 @@ func DeleteScoringSubAspectItem(c *gin.Context) {
 	now := time.Now()
 	
 	hist := models.HistScoringSubAspectItem{
-		SaiID:         item.ID,
-		SubAspectCode: item.SubAspectCode,
-		Name:          item.Name,
-		Score:         item.Score,
-		CreatedAt:     item.CreatedAt,
-		UpdatedAt:     item.UpdatedAt,
-		DeletedAt:     &now,
-		DeletedUser:   getCtxUsername(c),
+		SaiID:          item.ID,
+		SubAspectCode:  item.SubAspectCode,
+		Name:           item.Name,
+		Score:          item.Score,
+		TestResultLow:  item.TestResultLow,
+		TestResultHigh: item.TestResultHigh,
+		CreatedAt:      item.CreatedAt,
+		UpdatedAt:      item.UpdatedAt,
+		DeletedAt:      &now,
+		DeletedUser:    getCtxUsername(c),
 	}
 	database.DB.Create(&hist)
 
