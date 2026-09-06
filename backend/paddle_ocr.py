@@ -40,26 +40,14 @@ def main():
         with Image.open(img_path) as img:
             img_width, img_height = img.size
             
-            # Auto-compress image to dramatically reduce processing time (max width 1200px)
+            # Auto-compress image to reduce processing time if excessively large (max width 1200px)
             MAX_WIDTH = 1200
             if img_width > MAX_WIDTH:
                 ratio = MAX_WIDTH / float(img_width)
                 new_height = int(float(img_height) * float(ratio))
                 img = img.resize((MAX_WIDTH, new_height), Image.Resampling.LANCZOS)
                 img_width = MAX_WIDTH
-
-            # Auto-Enhance: Increase Contrast and Sharpness to help OCR read blurry camera photos
-            try:
-                from PIL import ImageEnhance
-                enhancer_contrast = ImageEnhance.Contrast(img)
-                img = enhancer_contrast.enhance(1.5) # Increase contrast by 50%
-                
-                enhancer_sharpness = ImageEnhance.Sharpness(img)
-                img = enhancer_sharpness.enhance(2.0) # Double the sharpness
-            except Exception as e:
-                print(f"Warning: Failed to enhance image: {e}", file=sys.stderr)
-
-            img.save(img_path)
+                img.save(img_path)
     except Exception as e:
         print(f"Warning: Failed to process image width/resizing: {e}", file=sys.stderr)
         filter_cols = False
@@ -126,7 +114,49 @@ def main():
     if slopes:
         slopes.sort()
         avg_slope = slopes[len(slopes) // 2] # Median slope
-    
+    # Dynamic header column detection (Code, Skor, Name)
+    code_hdr = None
+    skor_hdr = None
+    name_hdr = None
+    header_ymax = 0
+    use_smart_header = False
+
+    for item in boxes_info:
+        box = item[0]
+        text_clean = item[1][0].strip().lower()
+        ymin = min(pt[1] for pt in box)
+        ymax = max(pt[1] for pt in box)
+        xmin = min(pt[0] for pt in box)
+        xmax = max(pt[0] for pt in box)
+        
+        # Check top 35% of image for headers
+        if ymin / img_height < 0.35:
+            if any(k in text_clean for k in ['code', 'kode', 'parameter', 'param']):
+                code_hdr = (xmin / img_width, xmax / img_width)
+                header_ymax = max(header_ymax, ymax)
+            elif any(k in text_clean for k in ['skor', 'score', 'nilai', 'hasil']):
+                skor_hdr = (xmin / img_width, xmax / img_width)
+                header_ymax = max(header_ymax, ymax)
+            elif any(k in text_clean for k in ['name', 'nama', 'aspek', 'keterangan', 'uraian']):
+                name_hdr = (xmin / img_width, xmax / img_width)
+                header_ymax = max(header_ymax, ymax)
+
+    if code_hdr and skor_hdr:
+        use_smart_header = True
+        filter_cols = True
+        if skor_hdr[0] < (name_hdr[0] if name_hdr else 0.60):
+            # Layout: [No] [Code] [:] [Skor] [Name] (Skor column is in the middle!)
+            code_min = 0.0
+            code_max = (code_hdr[1] + skor_hdr[0]) / 2.0
+            skor_min = code_max
+            skor_max = skor_hdr[1] + 0.02
+        else:
+            # Layout: [No] [Code] [Name] [Skor] (Skor column is at the far right!)
+            code_min = 0.0
+            code_max = code_hdr[1] + 0.10
+            skor_min = skor_hdr[0] - 0.05
+            skor_max = 1.0
+
     def extract_items(use_filter):
         extracted = []
         for item in boxes_info:
@@ -141,16 +171,23 @@ def main():
             xmax = max(pt[0] for pt in box)
             height = ymax - ymin
             
+            # Skip header row items when smart header is active
+            if use_smart_header and ymax <= header_ymax + 5:
+                continue
+
+            # Skip standalone punctuation or bullet chars
+            if text.strip() in [':', '.', '•', '••', '• •', '-']:
+                continue
+
             # Project ymin using the average tilt slope to align tilted rows
             projected_ymin = ymin - xmin * avg_slope
             
             if use_filter:
-                # Check horizontal range overlap with the code or score columns
-                x_min_ratio = xmin / img_width
-                x_max_ratio = xmax / img_width
-                overlaps_code = (x_min_ratio <= code_max) and (x_max_ratio >= code_min)
-                overlaps_skor = (x_min_ratio <= skor_max) and (x_max_ratio >= skor_min)
-                if not (overlaps_code or overlaps_skor):
+                # Check horizontal position using center point
+                x_center = (xmin + xmax) / (2.0 * img_width)
+                in_code = (code_min <= x_center <= code_max)
+                in_skor = (skor_min <= x_center <= skor_max)
+                if not (in_code or in_skor):
                     continue
             
             extracted.append({
@@ -166,8 +203,8 @@ def main():
         return extracted
 
     items = extract_items(filter_cols)
-    if filter_cols and len(items) == 0:
-        # Fallback for camera photos/scans where coordinates don't align to standard ratios
+    if filter_cols and (len(items) == 0 or not any(any(c.isdigit() for c in it['text']) for it in items)):
+        # Fallback if filter dropped everything or dropped all digits
         items = extract_items(False)
 
     # Sort items vertically by projected_ymin
@@ -182,14 +219,22 @@ def main():
             avg_proj_ymin = sum(b['projected_ymin'] for b in group) / len(group)
             avg_height = sum(b['height'] for b in group) / len(group)
             
-            # Use dynamic threshold based on box height (around 90% of text height)
-            threshold = avg_height * 0.90
-            if threshold < 12:
-                threshold = 12
-            elif threshold > 32:
-                threshold = 32
-                
-            if abs(item['projected_ymin'] - avg_proj_ymin) < threshold:
+            item_cy = item['projected_ymin'] + item['height'] / 2.0
+            group_cy = avg_proj_ymin + avg_height / 2.0
+            
+            item_top = item['projected_ymin']
+            item_bot = item['projected_ymin'] + item['height']
+            group_top = min(b['projected_ymin'] for b in group)
+            group_bot = max(b['projected_ymin'] + b['height'] for b in group)
+            overlap = min(item_bot, group_bot) - max(item_top, group_top)
+            
+            cy_diff = abs(item_cy - group_cy)
+            min_h = min(item['height'], avg_height)
+            overlap_ratio = (overlap / float(min_h)) if min_h > 0 else 0.0
+            
+            # Belongs to the same line if vertical overlap is substantial (>=45%) 
+            # OR vertical center difference is small (within 35% of text height)
+            if (overlap > 0 and overlap_ratio >= 0.45) or (cy_diff <= min(avg_height * 0.35, 25.0)):
                 group.append(item)
                 placed = True
                 break

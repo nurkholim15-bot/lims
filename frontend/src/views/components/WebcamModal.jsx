@@ -20,10 +20,18 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
       setCapturedImage(null);
       
       try {
-        // Request webcam permission first
-        const initialStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" }
-        });
+        // Request webcam permission (try environment camera first, fallback to default/user camera for laptops)
+        let initialStream;
+        try {
+          initialStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" }
+          });
+        } catch (envErr) {
+          console.warn("Camera environment mode failed, falling back to default camera:", envErr);
+          initialStream = await navigator.mediaDevices.getUserMedia({
+            video: true
+          });
+        }
         
         setStream(initialStream);
         if (videoRef.current) {
@@ -32,18 +40,51 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
 
         // Get list of video devices
         const allDevices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = allDevices.filter(d => d.kind === "videoinput");
+        const videoDevices = allDevices.filter(d => d.kind === "videoinput" && !d.label?.toLowerCase().includes("virtual"));
         setDevices(videoDevices);
 
         // Find active device ID from active stream track settings
         const activeTrack = initialStream.getVideoTracks()[0];
         const activeSettings = activeTrack ? activeTrack.getSettings() : null;
-        const activeDeviceId = activeSettings?.deviceId || (videoDevices.length > 0 ? videoDevices[0].deviceId : "");
+        let activeDeviceId = activeSettings?.deviceId || (videoDevices.length > 0 ? videoDevices[0].deviceId : "");
         setSelectedDeviceId(activeDeviceId);
+
+        // Auto-switch to preferred or external camera if available
+        const savedId = localStorage.getItem("preferred_webcam_device");
+        const foundSaved = videoDevices.find(d => d.deviceId === savedId);
+        const externalDevice = videoDevices.find(d => 
+          d.label?.toLowerCase().includes("hd camera") || 
+          d.label?.toLowerCase().includes("usb") || 
+          (!d.label?.toLowerCase().includes("integrated") && !d.label?.toLowerCase().includes("internal"))
+        );
+        const targetDevice = foundSaved || externalDevice;
+        if (targetDevice && targetDevice.deviceId && targetDevice.deviceId !== activeDeviceId) {
+          try {
+            initialStream.getTracks().forEach(t => t.stop());
+            const extStream = await navigator.mediaDevices.getUserMedia({
+              video: { deviceId: { exact: targetDevice.deviceId } }
+            });
+            setStream(extStream);
+            if (videoRef.current) {
+              videoRef.current.srcObject = extStream;
+            }
+            setSelectedDeviceId(targetDevice.deviceId);
+          } catch (switchErr) {
+            console.warn("Could not auto-switch to external camera:", switchErr);
+          }
+        }
 
       } catch (err) {
         console.error("Gagal mengakses kamera:", err);
-        setError("Gagal mengakses kamera. Silakan pastikan izin kamera telah diberikan di browser Anda.");
+        if (err.name === "NotReadableError" || err.message?.includes("in use") || err.name === "TrackStartError") {
+          setError("Kamera sedang digunakan oleh aplikasi lain (seperti Lenovo Vantage atau aplikasi Camera). Silakan tutup aplikasi tersebut lalu coba lagi.");
+        } else if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+          setError("Izin kamera diblokir di browser. Klik ikon 'Not secure' / gembok di sebelah kiri URL dan ubah Kamera menjadi 'Allow' (Izinkan).");
+        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+          setError("Tidak ada perangkat kamera yang ditemukan di laptop Anda.");
+        } else {
+          setError(`Gagal mengakses kamera (${err.name || err.message || "Error"}). Silakan periksa izin kamera di browser Anda.`);
+        }
       } finally {
         setCamerasLoading(false);
       }
@@ -51,7 +92,24 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
 
     initCamera();
 
+    const handleDeviceChange = async () => {
+      try {
+        const allDevices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = allDevices.filter(d => d.kind === "videoinput");
+        setDevices(videoDevices);
+      } catch (e) {
+        console.error("Error updating camera devices list:", e);
+      }
+    };
+
+    if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+      navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    }
+
     return () => {
+      if (navigator.mediaDevices && navigator.mediaDevices.removeEventListener) {
+        navigator.mediaDevices.removeEventListener("devicechange", handleDeviceChange);
+      }
       stopCamera();
     };
   }, [isOpen]);
@@ -67,6 +125,9 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
   const switchCamera = async (deviceId) => {
     stopCamera();
     setSelectedDeviceId(deviceId);
+    try {
+      localStorage.setItem("preferred_webcam_device", deviceId);
+    } catch (e) {}
     setError("");
     
     try {
@@ -83,9 +144,16 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
       
       // Fallback to default
       try {
-        const fallbackStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" }
-        });
+        let fallbackStream;
+        try {
+          fallbackStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" }
+          });
+        } catch {
+          fallbackStream = await navigator.mediaDevices.getUserMedia({
+            video: true
+          });
+        }
         setStream(fallbackStream);
         if (videoRef.current) {
           videoRef.current.srcObject = fallbackStream;
@@ -124,19 +192,23 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
 
   const handleUsePhoto = () => {
     if (!capturedImage) return;
-    
-    // Convert base64 dataUrl back to a File object
-    fetch(capturedImage)
-      .then(res => res.blob())
-      .then(blob => {
-        const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
-        onCapture(file);
-        onClose();
-      })
-      .catch(err => {
-        console.error("Error converting captured image to file:", err);
-        alert("Gagal memproses foto hasil tangkapan.");
-      });
+
+    try {
+      const parts = capturedImage.split(",");
+      const mime = parts[0].match(/:(.*?);/)?.[1] || "image/jpeg";
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      const file = new File([u8arr], "camera_capture.jpg", { type: mime });
+      onCapture(file);
+      onClose();
+    } catch (err) {
+      console.error("Error converting captured image to file:", err);
+      alert("Gagal memproses foto hasil tangkapan: " + err.message);
+    }
   };
 
   const handleModalClose = () => {
@@ -177,11 +249,21 @@ const WebcamModal = ({ isOpen, onClose, onCapture }) => {
                   boxShadow: "0 1px 2px rgba(0,0,0,0.02)"
                 }}
               >
-                {devices.map((device, idx) => (
-                  <option key={device.deviceId} value={device.deviceId}>
-                    {device.label || `Kamera Eksternal ${idx + 1}`}
-                  </option>
-                ))}
+                {devices.map((device, idx) => {
+                  const label = device.label || `Kamera Eksternal ${idx + 1}`;
+                  const lower = label.toLowerCase();
+                  let displayLabel = `📷 ${label}`;
+                  if (lower.includes("integrated") || lower.includes("internal") || lower.includes("built-in")) {
+                    displayLabel = `💻 ${label} (Kamera Laptop)`;
+                  } else if (lower.includes("hd camera") || lower.includes("usb") || lower.includes("external")) {
+                    displayLabel = `📷 ${label} (Kamera Eksternal)`;
+                  }
+                  return (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {displayLabel}
+                    </option>
+                  );
+                })}
               </select>
               <div style={{ position: "absolute", top: "50%", right: "12px", transform: "translateY(-50%)", pointerEvents: "none", color: "#64748b" }}>
                 <i className="fas fa-chevron-down" style={{ fontSize: "0.8rem" }}></i>

@@ -324,8 +324,9 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           }
         }
 
+        const isMultiMatch = Object.keys(resultData).length > 1;
         Object.keys(resultData).forEach((subAspectCode) => {
-          if (targetParamCode && subAspectCode !== targetParamCode) {
+          if (targetParamCode && !isMultiMatch && subAspectCode !== targetParamCode) {
             return;
           }
 

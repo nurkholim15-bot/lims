@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
+import BarcodeScannerModal from "@components/BarcodeScannerModal";
 import AppDetail from "@components/AppDetail";
 import { printAssetLabel, printAssetHandover } from "@utils/print";
 import { QRCodeSVG } from "qrcode.react";
@@ -253,70 +254,35 @@ const AssetManagementPage = ({ currentUser, appConfig }) => {
 
   const startScanner = (fieldName) => {
     setScanningField(fieldName);
-    setTimeout(async () => {
-      const scannerFps = parseInt(appConfig?.SCANNER_FPS) || 25;
-      const scannerBoxScale = parseFloat(appConfig?.SCANNER_QRBOX_SCALE) || 0.7;
-
-      try {
-        const { Html5QrcodeScanner } = await import("html5-qrcode");
-
-      const scanner = new Html5QrcodeScanner("asset-scanner", {
-        fps: scannerFps,
-        qrbox: (viewfinderWidth, viewfinderHeight) => {
-          return {
-            width: viewfinderWidth * scannerBoxScale,
-            height: viewfinderHeight * scannerBoxScale
-          };
-        },
-        aspectRatio: 1.0,
-        disableFlip: true,
-        videoConstraints: {
-          facingMode: "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        },
-        experimentalFeatures: {
-          useBarCodeDetectorIfSupported: true
-        }
-      });
-      scanner.render(async (decodedText) => {
-        stopScanner();
-        
-        // Try to find asset by asset_id or serial_no
-        let found = assets.find(a => a.id?.toString() === decodedText || a.serial_no === decodedText);
-        
-        if (!found) {
-          try {
-            const res = await apiRequest(`/assets?id=${decodedText}`);
-            const assetsList = (res && Array.isArray(res)) ? res : (res && res.data ? res.data : []);
-            if (assetsList && assetsList.length > 0) {
-              found = assetsList[0];
-            }
-          } catch (err) {
-            console.error("Scanner search error:", err);
-          }
-        }
-
-        if (found) {
-          handleAction(found, "MOVE");
-        } else {
-          alert("Asset tidak ditemukan: " + decodedText);
-        }
-      }, (err) => {});
-      scannerRef.current = scanner;
-      } catch (err) {
-        console.error("Gagal memuat modul scanner:", err);
-        alert("Gagal memuat fitur scanner. Pastikan koneksi ke server stabil.");
-      }
-    }, 100);
   };
 
   const stopScanner = () => {
-    if (scannerRef.current) {
-      scannerRef.current.clear().catch(e => console.error(e));
-      scannerRef.current = null;
-    }
     setScanningField(null);
+  };
+
+  const handleScannedAsset = async (decodedText) => {
+    stopScanner();
+    
+    // Try to find asset by asset_id or serial_no
+    let found = assets.find(a => a.id?.toString() === decodedText || a.serial_no === decodedText);
+    
+    if (!found) {
+      try {
+        const res = await apiRequest(`/assets?id=${encodeURIComponent(decodedText)}`);
+        const assetsList = (res && Array.isArray(res)) ? res : (res && res.data ? res.data : []);
+        if (assetsList && assetsList.length > 0) {
+          found = assetsList[0];
+        }
+      } catch (err) {
+        console.error("Scanner search error:", err);
+      }
+    }
+
+    if (found) {
+      handleAction(found, "MOVE");
+    } else {
+      showToast(`Asset "${decodedText}" tidak ditemukan di database.`, "warning");
+    }
   };
 
   const getStatusBadge = (status, finalStatus) => {
@@ -779,19 +745,12 @@ const AssetManagementPage = ({ currentUser, appConfig }) => {
          </div>
       </Modal>
 
-      {scanningField && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0, 
-          background: "rgba(0,0,0,0.8)", zIndex: 10000, display: "flex",
-          flexDirection: "column", alignItems: "center", justifyContent: "center"
-        }}>
-          <div style={{ background: "white", padding: "1rem", borderRadius: "8px", width: "90%", maxWidth: "500px" }}>
-            <h3 style={{ marginTop: 0 }}>Scan Barcode / QR Asset</h3>
-            <div id="asset-scanner" style={{ width: "100%" }}></div>
-            <button className="btn btn-danger" style={{ marginTop: "1rem", width: "100%" }} onClick={stopScanner}>Stop Scanner</button>
-          </div>
-        </div>
-      )}
+      <BarcodeScannerModal
+        isOpen={!!scanningField}
+        onClose={stopScanner}
+        onScan={handleScannedAsset}
+        title="Scan Barcode / QR Asset"
+      />
 
       {viewingApp && (
         <Modal

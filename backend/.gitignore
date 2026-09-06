@@ -34,3 +34,7 @@ logs/*.log
 *~
 .DS_Store
 
+# Virtual environments
+venv_ocr
+venv/
+venv_ocr/

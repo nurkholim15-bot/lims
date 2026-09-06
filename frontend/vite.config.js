@@ -71,14 +71,14 @@ export default defineConfig(({ mode }) => {
         'X-Frame-Options': 'SAMEORIGIN',
         'X-XSS-Protection': '1; mode=block',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+        'Permissions-Policy': 'camera=(self), microphone=(), geolocation=()',
         'Content-Security-Policy':
           "default-src 'self'; " +
           "script-src 'self' 'unsafe-inline'; " +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
           "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " +
           "img-src 'self' data: blob:; " +
-          "connect-src 'self'; " +
+          "connect-src 'self' data: blob:; " +
           "frame-src 'self' blob: data:; " +
           "object-src 'self' blob:; " +
           "base-uri 'self'",

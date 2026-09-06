@@ -326,11 +326,7 @@ func OCRExtractTestResults(c *gin.Context) {
 					}
 					defer os.Remove(imgPath)
 
-					var originalPath = imgPath // Keep raw image path
-					if preprocessedPath, errPrep := preprocessImage(imgPath, false, true); errPrep == nil {
-						imgPath = preprocessedPath
-						defer os.Remove(preprocessedPath)
-					}
+					var originalPath = imgPath // Keep raw image path for KTP fallback
 					rawTextPage, errOCR := runPaddleOCR(imgPath)
 					if errOCR != nil {
 						views.InternalError(c, fmt.Sprintf("Failed to run PaddleOCR for page %d.", page), errOCR.Error())
@@ -390,11 +386,7 @@ func OCRExtractTestResults(c *gin.Context) {
 			}
 
 			for _, imgPath := range pagePaths {
-				var originalPath = imgPath
-				if preprocessedPath, errPrep := preprocessImage(imgPath, false, false); errPrep == nil {
-					imgPath = preprocessedPath
-					defer os.Remove(preprocessedPath)
-				}
+				var originalPath = imgPath // Keep raw image path for KTP fallback
 				rawTextPage, errOCR := runPaddleOCR(imgPath)
 				if errOCR != nil {
 					views.InternalError(c, "Failed to run PaddleOCR.", errOCR.Error())
@@ -423,10 +415,6 @@ func OCRExtractTestResults(c *gin.Context) {
 	} else {
 		// Non-PDF file (e.g. image)
 		var originalPath = tempInputPath
-		if paddedImgPath, err := preprocessImage(tempInputPath, false, false); err == nil {
-			tempInputPath = paddedImgPath
-			defer os.Remove(paddedImgPath)
-		}
 		var errOCR error
 		rawText, errOCR = runPaddleOCR(tempInputPath)
 		if errOCR != nil {
@@ -578,9 +566,12 @@ func OCRExtractTestResults(c *gin.Context) {
 					if len(words) == 1 {
 						val = strings.Trim(words[0], `.*[]!| `)
 					} else if len(words) >= 2 {
+						firstWord := strings.Trim(words[0], `:-= `)
 						lastWord := strings.Trim(words[len(words)-1], `.*[]!| `)
 						cand := strings.Trim(words[len(words)-2], `:-= `)
-						if seqNo != "" && (lastWord == seqNo || lastWord == seqNo+"." || levenshtein(lastWord, seqNo) <= 1) && isValidScoreCandidate(cand, sa.Code) {
+						if isValidScoreCandidate(firstWord, sa.Code) {
+							val = firstWord
+						} else if seqNo != "" && (lastWord == seqNo || lastWord == seqNo+"." || levenshtein(lastWord, seqNo) <= 1) && isValidScoreCandidate(cand, sa.Code) {
 							if cand != "" {
 								val = cand
 							} else {
@@ -1932,9 +1923,12 @@ func parseSinglePageRobust(pageText string, subAspects []models.ScoringSubAspect
 			if len(words) == 1 {
 				scoreCandClean = strings.Trim(words[0], `.*[]!| `)
 			} else if len(words) >= 2 {
+				firstWord := strings.Trim(words[0], `:-=*|# `)
 				lastWord := strings.Trim(words[len(words)-1], `.*[]!| `)
 				cand := strings.Trim(words[len(words)-2], `:-=*|# `)
-				if seqNo != "" && (lastWord == seqNo || lastWord == seqNo+"." || levenshtein(lastWord, seqNo) <= 1) && isValidScoreCandidate(cand, bestSA.Code) {
+				if isValidScoreCandidate(firstWord, bestSA.Code) {
+					scoreCandClean = firstWord
+				} else if seqNo != "" && (lastWord == seqNo || lastWord == seqNo+"." || levenshtein(lastWord, seqNo) <= 1) && isValidScoreCandidate(cand, bestSA.Code) {
 					scoreCandClean = cand
 				} else {
 					scoreCandClean = lastWord

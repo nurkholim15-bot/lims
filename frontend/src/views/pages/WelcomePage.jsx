@@ -34,20 +34,18 @@ const WelcomePage = ({ user, appConfig, onOpenApp, menus }) => {
         const scanner = new Html5QrcodeScanner("reg-scanner", {
           fps: scannerFps,
           qrbox: (viewfinderWidth, viewfinderHeight) => {
+            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+            const boxSize = Math.floor(minEdge * scannerBoxScale);
             return {
-              width: viewfinderWidth * scannerBoxScale,
-              height: viewfinderHeight * scannerBoxScale
+              width: boxSize,
+              height: Math.floor(boxSize * 0.7)
             };
           },
-          aspectRatio: 1.0,
-          disableFlip: true,
+          rememberLastUsedCamera: true,
+          showTorchButtonIfSupported: true,
           videoConstraints: {
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-          experimentalFeatures: {
-            useBarCodeDetectorIfSupported: true
+            width: { ideal: 1280, min: 640 },
+            height: { ideal: 720, min: 480 }
           }
         });
         

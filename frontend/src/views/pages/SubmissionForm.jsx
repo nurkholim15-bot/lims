@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import BarcodeScannerModal from "@components/BarcodeScannerModal";
 import { apiRequest } from "@models/api";
 import PartnerSearchModal from "@components/PartnerSearchModal";
 import WebcamModal from "@components/WebcamModal";
@@ -12,22 +12,11 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
   const [submitting, setSubmitting] = useState(false);
   const fetchedRef = useRef(false);
   const [scanningField, setScanningField] = useState(null); // { index, field }
-  const scannerRef = useRef(null);
   const [isPartnerModalOpen, setIsPartnerModalOpen] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [partnerSearch, setPartnerSearch] = useState("");
   const [testingPackages, setTestingPackages] = useState([]);
   const [selectedPackage, setSelectedPackage] = useState(null);
-
-  // Scanner cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear().catch(e => console.error("Error clearing scanner on unmount", e));
-        scannerRef.current = null;
-      }
-    };
-  }, []);
 
   // Common application data
   const [commonData, setCommonData] = useState({
@@ -291,46 +280,9 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
 
   const startScanner = (index, fieldName) => {
     setScanningField({ index, field: fieldName });
-    setTimeout(() => {
-      const scannerFps = parseInt(appConfig?.SCANNER_FPS) || 25;
-      const scannerBoxScale = parseFloat(appConfig?.SCANNER_QRBOX_SCALE) || 0.7;
-
-      const scanner = new Html5QrcodeScanner("scanner-reader", {
-        fps: scannerFps,
-        qrbox: (viewfinderWidth, viewfinderHeight) => {
-          return {
-            width: viewfinderWidth * scannerBoxScale,
-            height: viewfinderHeight * scannerBoxScale
-          };
-        },
-        aspectRatio: 1.0,
-        disableFlip: true,
-        videoConstraints: {
-          facingMode: "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        },
-        experimentalFeatures: {
-          useBarCodeDetectorIfSupported: true
-        }
-      });
-      scanner.render((decodedText) => {
-        setEquipments((prevEquipments) => {
-          const newEquipments = [...prevEquipments];
-          newEquipments[index] = { ...newEquipments[index], [fieldName]: decodedText };
-          return newEquipments;
-        });
-        stopScanner();
-      });
-      scannerRef.current = scanner;
-    }, 100);
   };
 
   const stopScanner = () => {
-    if (scannerRef.current) {
-      scannerRef.current.clear().catch(e => console.error("Error clearing scanner", e));
-      scannerRef.current = null;
-    }
     setScanningField(null);
   };
 
@@ -635,14 +587,22 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
         <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Mengirim..." : editingApp ? "Update" : "Kirim Batch"}</button>
       </div>
 
-      {scanningField && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "white", padding: "1rem", borderRadius: "8px", width: "90%", maxWidth: "400px" }}>
-            <div id="scanner-reader"></div>
-            <button type="button" className="btn btn-danger mt-3 w-100" onClick={stopScanner}>Tutup</button>
-          </div>
-        </div>
-      )}
+      <BarcodeScannerModal
+        isOpen={!!scanningField}
+        onClose={stopScanner}
+        onScan={(decodedText) => {
+          if (scanningField) {
+            const { index, field } = scanningField;
+            setEquipments((prevEquipments) => {
+              const newEquipments = [...prevEquipments];
+              newEquipments[index] = { ...newEquipments[index], [field]: decodedText };
+              return newEquipments;
+            });
+          }
+          stopScanner();
+        }}
+        title="Scan Barcode / QR Registrasi"
+      />
 
       {errorNotif && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center" }}>

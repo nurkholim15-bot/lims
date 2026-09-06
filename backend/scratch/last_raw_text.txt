@@ -1,11 +1,10 @@
-No code
-1 KONSI
-2 KOPEN : 2 Penurunan tegangan catu daya
-3 KOKON :
-4 PEENE
-5 PEGER 5 Dilengkapi dengan pengisi battery
-6 KOTAN : 6 Konstruksi-Sistem perakitan
-7 KODAY :
-8 PEPEM : 8 8uku petunjuk pemakaian dan pemeliharaan
-9 KORUS :
-10 K0FAS : 10 Konstruksi-Fasilitas anti Pernika
+1 KONSI 10
+2 KOPEN 20
+3 KOKON 30
+4 PEENE 40
+5 PEGER 50
+6 KOTAN 60
+7 KODAY 70
+8 PEPEM 80
+9 KORUS so
+10 KOFAS 100
