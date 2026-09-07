@@ -39,6 +39,8 @@ const ItemSubAspectItemsPage = ({ onEdit, onAdd, refreshTrigger }) => {
     { key: "sub_aspect_name", header: "Sub-Aspek", render: (item) => (item.sub_aspect ? item.sub_aspect.name : "-") },
     { key: "name", header: "Nama Opsi" },
     { key: "score", header: "Skor" },
+    { key: "test_result_low", header: "Nilai Uji Min", render: (item) => (item.test_result_low !== null && item.test_result_low !== undefined ? item.test_result_low : "-") },
+    { key: "test_result_high", header: "Nilai Uji Max", render: (item) => (item.test_result_high !== null && item.test_result_high !== undefined ? item.test_result_high : "-") },
   ];
 
   const handleAspectChange = (e) => {
@@ -160,47 +162,52 @@ const ItemSubAspectItemsPage = ({ onEdit, onAdd, refreshTrigger }) => {
         isOpen={isHistModalOpen} 
         onClose={() => setIsHistModalOpen(false)} 
         title={`Riwayat Perubahan ${selectedSaiId ? `(ID: ${selectedSaiId})` : "Keseluruhan"}`}
+        wide={true}
       >
-        <div style={{ padding: "1.5rem", maxWidth: "950px" }}>
-          <div className="table-container" style={{ overflowX: "auto", maxHeight: "60vh" }}>
-            <table style={{ borderCollapse: "separate", borderSpacing: 0, width: "100%", fontSize: "0.875rem" }}>
+        <div style={{ padding: "0.5rem 0", width: "100%" }}>
+          <div className="table-container" style={{ overflowX: "auto", maxHeight: "65vh" }}>
+            <table style={{ borderCollapse: "separate", borderSpacing: 0, width: "100%", minWidth: "1100px", fontSize: "0.875rem" }}>
               <thead style={{ position: "sticky", top: 0, zIndex: 10, background: "white" }}>
                 <tr>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Hist ID</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Item ID</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Sub-Aspek</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Nama Opsi</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Skor</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Waktu</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Dibuat Oleh</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Diperbarui Oleh</th>
-                  <th style={{ background: "white", borderBottom: "2px solid #f1f5f9" }}>Dihapus Oleh</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Hist ID</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Item ID</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Sub-Aspek</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", minWidth: "220px" }}>Nama Opsi</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Skor</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Nilai Min</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Nilai Max</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Waktu</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Dibuat Oleh</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Diperbarui Oleh</th>
+                  <th style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderBottom: "2px solid #e2e8f0", whiteSpace: "nowrap", textAlign: "center" }}>Dihapus Oleh</th>
                 </tr>
               </thead>
               <tbody>
                 {histLoading ? (
                   <tr>
-                    <td colSpan="9" style={{ textAlign: "center", padding: "2rem" }}>
+                    <td colSpan="11" style={{ textAlign: "center", padding: "3rem" }}>
                       <i className="fas fa-spinner fa-spin"></i> Memuat data...
                     </td>
                   </tr>
                 ) : histData.length > 0 ? (
                   histData.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.id}</td>
-                      <td>{item.sai_id}</td>
-                      <td>{item.sub_aspect_code}</td>
-                      <td>{item.name}</td>
-                      <td>{item.score}</td>
-                      <td>{formatDate(item.created_at)}</td>
-                      <td>{item.created_user || "-"}</td>
-                      <td>{item.updated_user || "-"}</td>
-                      <td>{item.deleted_user || "-"}</td>
+                    <tr key={item.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap" }}>{item.id}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap" }}>{item.sai_id}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", fontWeight: 600, color: "#009688", whiteSpace: "nowrap" }}>{item.sub_aspect_code}</td>
+                      <td style={{ padding: "0.75rem 1rem", fontWeight: 500 }}>{item.name}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", fontWeight: 600, color: "#1e293b", whiteSpace: "nowrap" }}>{item.score}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap" }}>{item.test_result_low !== null && item.test_result_low !== undefined ? item.test_result_low : "-"}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap" }}>{item.test_result_high !== null && item.test_result_high !== undefined ? item.test_result_high : "-"}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap", color: "#64748b" }}>{formatDate(item.created_at)}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap" }}>{item.created_user || "-"}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap" }}>{item.updated_user || "-"}</td>
+                      <td style={{ padding: "0.75rem 1rem", textAlign: "center", whiteSpace: "nowrap", color: item.deleted_user ? "#ef4444" : "#64748b" }}>{item.deleted_user || "-"}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="9" style={{ textAlign: "center", padding: "2rem", color: "#94a3b8" }}>
+                    <td colSpan="11" style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}>
                       Belum ada riwayat perubahan.
                     </td>
                   </tr>
@@ -208,7 +215,7 @@ const ItemSubAspectItemsPage = ({ onEdit, onAdd, refreshTrigger }) => {
               </tbody>
             </table>
           </div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1.5rem" }}>
             <button className="btn btn-secondary" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
           </div>
         </div>

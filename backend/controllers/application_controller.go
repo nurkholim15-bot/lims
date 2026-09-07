@@ -1732,6 +1732,7 @@ func ExecuteApplication(c *gin.Context) {
 		ActualValue   interface{} `json:"actual_value"`
 		Score         float64     `json:"score"`
 		Notes         string      `json:"notes"`
+		PhotoPath     string      `json:"photo_path"`
 		IsDisabled    bool        `json:"is_disabled"`
 	}
 	var results []ResultItem
@@ -1831,6 +1832,11 @@ func ExecuteApplication(c *gin.Context) {
 					f.Close()
 				}
 			}
+		}
+
+		// Preserve existing photo_path if no new file is uploaded
+		if photoPath == "" && r.PhotoPath != "" {
+			photoPath = r.PhotoPath
 		}
 
 		// Map codes for hierarchical scoring v2.0
@@ -2559,6 +2565,11 @@ func SaveAspectResults(c *gin.Context) {
 					f.Close()
 				}
 			}
+		}
+
+		// Preserve existing photo_path if no new file is uploaded
+		if photoPath == "" && item.PhotoPath != "" {
+			photoPath = item.PhotoPath
 		}
 
 		var actualValPtr *float64

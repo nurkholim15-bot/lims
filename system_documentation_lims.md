@@ -654,7 +654,7 @@ Mesin penilaian LIMS beroperasi melalui hierarki terstruktur enam level yang ter
 
 ```mermaid
 graph TD
-    L1[Level 1: testing_types - Tipe Pengujian] --> L2[Level 2: methodologies - Metodologi Uji]
+    L1[Level 1: test_types - Tipe Pengujian] --> L2[Level 2: methodologies - Metodologi Uji]
     L2 --> L3[Level 3: scoring_aspects - Aspek Penilaian]
     L3 --> L4[Level 4: scoring_sub_aspects - Parameter Uji]
     
@@ -662,8 +662,8 @@ graph TD
     L5 --> L6[Level 6: level_groups - Grup Level Kelulusan]
 ```
 
-1. **Level 1: `testing_types` (Tipe Pengujian)**:
-   - Klasifikasi tertinggi dari pengujian (seperti *Uji Laboratorium*, *Uji Lapangan*, atau *Uji Umum*).
+1. **Level 1: `test_types` (Tipe Pengujian)**:
+   - Klasifikasi tertinggi dari pengujian (seperti *Uji Laboratorium*, *Uji Lapangan*, atau *Uji Umum*). Tabel: `lims.test_types`.
 2. **Level 2: `methodologies` (Metodologi Uji)**:
    - Prosedur pengujian spesifik yang terikat pada tipe pengujian (via `test_type_code`).
 3. **Level 3: `scoring_aspects` (Aspek Penilaian)**:

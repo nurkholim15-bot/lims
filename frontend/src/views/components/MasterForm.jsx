@@ -22,7 +22,7 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
     else if (baseEndpoint === "/users") defaults = { username: "", email: "", phone: "", role_id: "", password: "", telegram_chat_id: "", whatsapp_phone: "", teams_user_id: "", force_pwd_change: false, is_active: true };
     else if (baseEndpoint === "/scoring-aspects") defaults = { code: "", name: "", methodology_code: "", weight: 0, is_used: true };
     else if (baseEndpoint === "/scoring-sub-aspects") defaults = { code: "", name: "", aspect_code: "", weight: 0, is_simulator: false, ocr_keywords: "" };
-    else if (baseEndpoint === "/scoring-sub-aspect-items") defaults = { id: "", sub_aspect_code: "", name: "", score: 0 };
+    else if (baseEndpoint === "/scoring-sub-aspect-items") defaults = { id: "", sub_aspect_code: "", name: "", score: 0, test_result_low: "", test_result_high: "" };
     else if (baseEndpoint === "/asset-statuses") defaults = { asset_status_code: "", asset_status_name: "" };
     else if (baseEndpoint === "/status-applications") defaults = { status_code: "", desc: "" };
     else if (baseEndpoint === "/provinces") defaults = { province_code: "", province_name: "" };
@@ -49,6 +49,10 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
     // Merge with either the item being edited OR the predefined initial data
     if (item) {
         result = { ...result, ...item };
+        if (baseEndpoint === "/scoring-sub-aspect-items") {
+          if (result.test_result_low === null || result.test_result_low === undefined) result.test_result_low = "";
+          if (result.test_result_high === null || result.test_result_high === undefined) result.test_result_high = "";
+        }
         if (baseEndpoint === "/testing-packages") {
           if (item.methodologies) {
             result.methodology_codes = item.methodologies.map(m => m.code);
@@ -228,6 +232,12 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
       if (processedData.note_threshold !== undefined && processedData.note_threshold !== "") processedData.note_threshold = parseFloat(processedData.note_threshold);
       if (processedData.threshold !== undefined && processedData.threshold !== "") processedData.threshold = parseFloat(processedData.threshold);
       if (processedData.score !== undefined && processedData.score !== "") processedData.score = parseFloat(processedData.score);
+      if (processedData.test_result_low !== undefined) {
+        processedData.test_result_low = (processedData.test_result_low === "" || processedData.test_result_low === null) ? null : parseFloat(processedData.test_result_low);
+      }
+      if (processedData.test_result_high !== undefined) {
+        processedData.test_result_high = (processedData.test_result_high === "" || processedData.test_result_high === null) ? null : parseFloat(processedData.test_result_high);
+      }
       if (processedData.base_price !== undefined && processedData.base_price !== "") processedData.base_price = parseFloat(processedData.base_price);
       if (processedData.price !== undefined && processedData.price !== "") processedData.price = parseFloat(processedData.price);
       if (processedData.min_score !== undefined && processedData.min_score !== "") processedData.min_score = parseFloat(processedData.min_score);
@@ -889,6 +899,10 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
           else if (key === "max_score") fieldLabel = "Skor Max";
           else if (key === "label") fieldLabel = "Label";
           else if (key === "description") fieldLabel = "Deskripsi";
+          else if (key === "name" && baseEndpoint === "/scoring-sub-aspect-items") fieldLabel = "Nama Opsi";
+          else if (key === "score" && baseEndpoint === "/scoring-sub-aspect-items") fieldLabel = "Skor";
+          else if (key === "test_result_low") fieldLabel = "Nilai Uji Min (Low)";
+          else if (key === "test_result_high") fieldLabel = "Nilai Uji Max (High)";
           
           if (key === "param_value" || key === "description" || key === "alamat") {
             return renderField(key, fieldLabel, (
@@ -906,14 +920,14 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
             ), required, isFullWidth);
           }
 
-          const inputType = ["weight", "pass_threshold", "note_threshold", "score", "order", "parent_id", "min_stock", "initial_stock", "current_stock"].includes(key) ? "number" : typeof formData[key] === "number" ? "number" : "text";
+          const inputType = ["weight", "pass_threshold", "note_threshold", "score", "order", "parent_id", "min_stock", "initial_stock", "current_stock", "test_result_low", "test_result_high"].includes(key) ? "number" : typeof formData[key] === "number" ? "number" : "text";
 
           return renderField(key, fieldLabel, (
             <input
               type={inputType}
-              step={["weight", "pass_threshold", "note_threshold", "score"].includes(key) ? "0.01" : undefined}
+              step={["weight", "pass_threshold", "note_threshold", "score", "test_result_low", "test_result_high"].includes(key) ? "any" : undefined}
               name={key}
-              value={formData[key] || ""}
+              value={formData[key] !== undefined && formData[key] !== null ? formData[key] : ""}
               onChange={handleChange}
               required={required}
               disabled={!isNew && (key === "code" || key === "status_code" || key === "tester_id" || key === "param_key" || key === "id" || key === "asset_status_code" || key === "province_code" || key === "city_code")}

@@ -174,6 +174,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const fetchedIdRef = useRef(null);
   const [overrideStatus, setOverrideStatus] = useState("");
   const [dropdownConfig, setDropdownConfig] = useState({});
+  const dropdownConfigRef = useRef({});
   const [assetStatuses, setAssetStatuses] = useState([]);
   const [aspectEditing, setAspectEditing] = useState({});
   const [invoice, setInvoice] = useState(null);
@@ -183,6 +184,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const [aiGenerating, setAiGenerating] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiReportText, setAiReportText] = useState("");
+  const [aiError, setAiError] = useState(null);
   const [previewDoc, setPreviewDoc] = useState(null);
 
   const handleOpenDocPreview = async (path, title = "Dokumen") => {
@@ -304,61 +306,86 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
         let initialData = [...data];
 
-        // OPTIMIZATION: Fetch dropdown config ONLY during active testing stage.
-        // During reporting/analysis, we only need to display the raw score.
-        if (stage === "testing") {
-            const subCodes = Array.from(new Set(data.map(r => r.param_code))).join(",");
-            if (subCodes) {
-                try {
-                    const items = await apiRequest(`/scoring-sub-aspect-items?sub_aspect_codes=${subCodes}`);
-                    if (items && Array.isArray(items)) {
-                        const mapping = {};
-                        items.forEach((itm) => {
-                            if (!mapping[itm.sub_aspect_code]) mapping[itm.sub_aspect_code] = [];
-                            mapping[itm.sub_aspect_code].push({
-                                label: itm.name,
-                                value: itm.score.toString(),
-                                test_result_low: itm.test_result_low,
-                                test_result_high: itm.test_result_high
-                            });
+        // Fetch dropdown config for parameters with scoring rubric items
+        const subCodes = Array.from(new Set(data.map(r => r.param_code || r.sub_aspect_code).filter(Boolean))).join(",");
+        if (subCodes) {
+            try {
+                const items = await apiRequest(`/scoring-sub-aspect-items?sub_aspect_codes=${subCodes}`);
+                if (items && Array.isArray(items)) {
+                    const mapping = {};
+                    items.forEach((itm) => {
+                        if (!mapping[itm.sub_aspect_code]) mapping[itm.sub_aspect_code] = [];
+                        const scoreVal = itm.score !== undefined && itm.score !== null ? parseFloat(itm.score) : 0;
+                        mapping[itm.sub_aspect_code].push({
+                            id: itm.id,
+                            label: itm.name,
+                            score: scoreVal,
+                            value: scoreVal.toString(),
+                            test_result_low: itm.test_result_low,
+                            test_result_high: itm.test_result_high
                         });
-                        setDropdownConfig(mapping);
+                    });
+                    setDropdownConfig(mapping);
+                    dropdownConfigRef.current = mapping;
 
-                        // Sync initialData with dropdown matching
-                        initialData = initialData.map(item => {
-                            const opts = mapping[item.param_code];
-                            if (opts && opts.length > 0) {
-                                if (item.actual_value !== undefined && item.actual_value !== null && item.actual_value !== "") {
-                                    const numVal = parseFloat(item.actual_value);
-                                    if (!isNaN(numVal)) {
-                                        for (const opt of opts) {
-                                            const rule = getOptionRule(opt);
-                                            if (rule && rule.check(numVal)) {
-                                                return {
-                                                    ...item,
-                                                    selected_dropdown: opt.value,
-                                                    score: parseFloat(opt.value),
-                                                    dropdown_disabled: true,
-                                                    is_manual_dropdown: false
-                                                };
-                                            }
+                    // Sync initialData with dropdown matching
+                    initialData = initialData.map(item => {
+                        const code = item.param_code || item.sub_aspect_code;
+                        const opts = mapping[code];
+                        if (opts && opts.length > 0) {
+                            if (item.actual_value !== undefined && item.actual_value !== null && item.actual_value !== "") {
+                                const numVal = parseFloat(item.actual_value);
+                                if (!isNaN(numVal)) {
+                                    for (const opt of opts) {
+                                        const rule = getOptionRule(opt);
+                                        if (rule && rule.check(numVal)) {
+                                            return {
+                                                ...item,
+                                                selected_dropdown: opt.value,
+                                                score: opt.score,
+                                                dropdown_disabled: true,
+                                                is_manual_dropdown: false
+                                            };
                                         }
                                     }
-                                } else if (item.score !== undefined && item.score !== null && item.score !== "") {
+                                }
+                            } else if (item.score !== undefined && item.score !== null && item.score !== "" && parseFloat(item.score) > 0) {
+                                const scoreStr = parseFloat(item.score).toString();
+                                const hasMatchingOpt = opts.some(opt => opt.value === scoreStr);
+                                if (hasMatchingOpt) {
                                     return {
                                         ...item,
-                                        selected_dropdown: item.score.toString(),
+                                        selected_dropdown: scoreStr,
                                         dropdown_disabled: false,
                                         is_manual_dropdown: true
                                     };
                                 }
                             }
+                            return {
+                                ...item,
+                                selected_dropdown: "",
+                                dropdown_disabled: false,
+                                is_manual_dropdown: false
+                            };
+                        } else {
+                            if (item.actual_value !== undefined && item.actual_value !== null && item.actual_value !== "") {
+                                const numVal = parseFloat(item.actual_value);
+                                if (!isNaN(numVal)) {
+                                    return {
+                                        ...item,
+                                        score: numVal,
+                                        selected_dropdown: "",
+                                        dropdown_disabled: false,
+                                        is_manual_dropdown: false
+                                    };
+                                }
+                            }
                             return item;
-                        });
-                    }
-                } catch (err) {
-                    console.warn("Targeted dropdown fetch failed:", err);
+                        }
+                    });
                 }
+            } catch (err) {
+                console.warn("Targeted dropdown fetch failed:", err);
             }
         }
         setExecutionData(initialData);
@@ -392,14 +419,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     setExecutionData(newData);
   };
 
-  const handleActualValueChange = (index, rawVal) => {
-    const newData = [...executionData];
-    const p = { ...newData[index] };
-    newData[index] = p;
+  const applyActualValueLogic = (p, rawVal) => {
     p.actual_value = rawVal;
     p.validation_error = null;
 
-    const opts = dropdownConfig[p.param_code] || [];
+    const code = p.param_code || p.sub_aspect_code;
+    const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+    const opts = (cfg && (cfg[code] || (p.param_code && cfg[p.param_code]) || (p.sub_aspect_code && cfg[p.sub_aspect_code]))) || [];
 
     // Jika input dikosongkan
     if (rawVal === "" || rawVal === null || rawVal === undefined) {
@@ -408,81 +434,83 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         p.selected_dropdown = "";
         p.score = undefined;
       }
-      setExecutionData(newData);
       return;
     }
 
     const numVal = parseFloat(rawVal);
     if (isNaN(numVal)) {
-      setExecutionData(newData);
       return;
     }
 
     if (opts.length > 0) {
-      // Jika user sebelumnya sudah memilih dropdown secara manual
+      // 1. Cari opsi yang cocok berdasarkan query master data scoring_sub_aspect_items (test_result_low & test_result_high)
+      let matchedOpt = null;
+      for (const opt of opts) {
+        const rule = getOptionRule(opt);
+        if (rule && rule.check(numVal)) {
+          matchedOpt = opt;
+          break;
+        }
+      }
+
+      // 2. Jika user sebelumnya secara manual memilih opsi rubrik tertentu
       if (p.is_manual_dropdown && p.selected_dropdown) {
         const curOpt = opts.find(o => o.value === p.selected_dropdown);
         const curRule = curOpt ? getOptionRule(curOpt) : null;
         if (curRule) {
           if (!curRule.check(numVal)) {
             p.validation_error = `Nilai uji (${numVal}) harus ${curRule.desc}`;
+            p.dropdown_disabled = false;
+            return;
           } else {
+            // Nilai sesuai dengan opsi manual pilihan user -> kunci dropdown
             p.validation_error = null;
+            p.dropdown_disabled = true;
+            p.is_manual_dropdown = false;
+            p.score = parseFloat(curOpt.score !== undefined ? curOpt.score : curOpt.value);
+            return;
           }
         }
-      } else {
-        // Mode Otomatis: cari opsi dropdown yang cocok dengan nilai numVal
-        let matchedOpt = null;
-        for (const opt of opts) {
-          const rule = getOptionRule(opt);
-          if (rule && rule.check(numVal)) {
-            matchedOpt = opt;
-            break;
-          }
-        }
+      }
 
-        if (matchedOpt) {
-          p.score = parseFloat(matchedOpt.value);
-          p.selected_dropdown = matchedOpt.value;
-          p.dropdown_disabled = true; // Kunci dropdown karena ditentukan oleh nilai fisik
-          p.is_manual_dropdown = false;
-          p.validation_error = null;
+      // 3. Mode Otomatis (default atau fallback dari scan/input)
+      if (matchedOpt) {
+        const scoreVal = parseFloat(matchedOpt.score !== undefined ? matchedOpt.score : matchedOpt.value);
+        p.score = scoreVal;
+        p.selected_dropdown = matchedOpt.value;
+        p.dropdown_disabled = true; // Kunci dropdown otomatis karena ditentukan oleh Nilai Fisik
+        p.is_manual_dropdown = false;
+        p.validation_error = null;
+      } else {
+        p.dropdown_disabled = false;
+        p.selected_dropdown = "";
+        p.is_manual_dropdown = false;
+        // Jika tidak ada rule dropdown yang cocok, gunakan standar spesifikasi jika ada
+        if (p.standard_value || p.standard_value_max || p.standard_unit) {
+          const op = (p.standard_operator || "").trim().toLowerCase();
+          let isPassed = false;
+          if (op === "range") isPassed = numVal >= p.standard_value && numVal <= p.standard_value_max;
+          else if (op === "<=") isPassed = numVal <= p.standard_value;
+          else if (op === "<") isPassed = numVal < p.standard_value;
+          else if (op === ">") isPassed = numVal > p.standard_value;
+          else if (op === "=") isPassed = numVal === p.standard_value;
+          else isPassed = numVal >= p.standard_value;
+          p.score = isPassed ? 100 : 0;
         } else {
-          p.dropdown_disabled = false;
-          p.selected_dropdown = "";
-          // Jika tidak ada rule dropdown yang cocok, gunakan standar spesifikasi jika ada
-          if (p.standard_value || p.standard_value_max || p.standard_unit) {
-            const op = (p.standard_operator || "").trim().toLowerCase();
-            let isPassed = false;
-            if (op === "range") isPassed = numVal >= p.standard_value && numVal <= p.standard_value_max;
-            else if (op === "<=") isPassed = numVal <= p.standard_value;
-            else if (op === "<") isPassed = numVal < p.standard_value;
-            else if (op === ">") isPassed = numVal > p.standard_value;
-            else if (op === "=") isPassed = numVal === p.standard_value;
-            else isPassed = numVal >= p.standard_value;
-            p.score = isPassed ? 100 : 0;
-          } else {
-            p.score = numVal;
-          }
+          p.score = numVal;
         }
       }
     } else {
-      // Jika tidak ada dropdown untuk parameter ini
-      if (p.standard_value || p.standard_value_max || p.standard_unit) {
-        const op = (p.standard_operator || "").trim().toLowerCase();
-        let isPassed = false;
-        if (op === "range") isPassed = numVal >= p.standard_value && numVal <= p.standard_value_max;
-        else if (op === "<=") isPassed = numVal <= p.standard_value;
-        else if (op === "<") isPassed = numVal < p.standard_value;
-        else if (op === ">") isPassed = numVal > p.standard_value;
-        else if (op === "=") isPassed = numVal === p.standard_value;
-        else isPassed = numVal >= p.standard_value;
-        p.score = isPassed ? 100 : 0;
-      } else {
-        p.score = numVal;
-      }
+      // Jika tidak ada dropdown untuk parameter ini, skor sama dengan nilai
+      p.score = numVal;
     }
+  };
 
+  const handleActualValueChange = (index, rawVal) => {
+    const newData = [...executionData];
+    const p = { ...newData[index] };
+    newData[index] = p;
+    applyActualValueLogic(p, rawVal);
     setExecutionData(newData);
   };
 
@@ -498,32 +526,22 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       p.validation_error = null;
       // Jika ada nilai fisik, coba cocokkan kembali
       if (p.actual_value !== "" && p.actual_value !== null && p.actual_value !== undefined) {
-        const numVal = parseFloat(p.actual_value);
-        if (!isNaN(numVal)) {
-          const opts = dropdownConfig[p.param_code] || [];
-          for (const opt of opts) {
-            const rule = getOptionRule(opt);
-            if (rule && rule.check(numVal)) {
-              p.score = parseFloat(opt.value);
-              p.selected_dropdown = opt.value;
-              p.dropdown_disabled = true;
-              break;
-            }
-          }
-        }
+        applyActualValueLogic(p, p.actual_value);
       }
       setExecutionData(newData);
       return;
     }
 
+    const code = p.param_code || p.sub_aspect_code;
+    const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+    const opts = (cfg && (cfg[code] || (p.param_code && cfg[p.param_code]) || (p.sub_aspect_code && cfg[p.sub_aspect_code]))) || [];
+    const chosenOpt = opts.find(o => o.value === selectedVal);
+
     p.is_manual_dropdown = true;
     p.selected_dropdown = selectedVal;
-    p.score = parseFloat(selectedVal);
+    p.score = parseFloat(chosenOpt?.score !== undefined ? chosenOpt.score : selectedVal);
     p.dropdown_disabled = false;
     p.validation_error = null;
-
-    const opts = dropdownConfig[p.param_code] || [];
-    const chosenOpt = opts.find(o => o.value === selectedVal);
 
     if (chosenOpt) {
       const rule = getOptionRule(chosenOpt);
@@ -620,6 +638,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       if (res) {
         const newData = [...executionData];
         let updatedCount = 0;
+        const newPhotos = { ...photos };
 
         const resultData = res.data || res;
 
@@ -639,6 +658,31 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           }
         }
 
+        // Helper to attach file to a parameter and sync with DOM file input
+        const attachFileToParam = (code) => {
+          const ext = file.name ? (file.name.split('.').pop() || 'jpg') : 'jpg';
+          const safeExt = ext.toLowerCase() === 'pdf' ? 'pdf' : 'jpg';
+          const fileName = file.name && !file.name.includes("camera_capture")
+            ? `scan_${code}_${file.name}`
+            : `scan_${code}_${Date.now()}.${safeExt}`;
+          const attachedFile = new File([processedFile || file], fileName, { type: (processedFile || file).type || 'image/jpeg' });
+          newPhotos[code] = attachedFile;
+
+          // Sync with DOM file input element so native "Choose file" shows the file name
+          setTimeout(() => {
+            const fileInput = document.getElementById(`file-input-${code}`);
+            if (fileInput) {
+              try {
+                const dt = new DataTransfer();
+                dt.items.add(attachedFile);
+                fileInput.files = dt.files;
+              } catch (dtErr) {
+                console.warn("DataTransfer not supported:", dtErr);
+              }
+            }
+          }, 50);
+        };
+
         const isMultiMatch = Object.keys(resultData).length > 1;
         Object.keys(resultData).forEach((subAspectCode) => {
           if (targetParamCode && !isMultiMatch && subAspectCode !== targetParamCode) {
@@ -652,17 +696,28 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           if (paramIdx !== -1) {
             if (resultData[subAspectCode] !== undefined && resultData[subAspectCode] !== "") {
               const cleaned = cleanParsedValue(resultData[subAspectCode]);
-              newData[paramIdx].actual_value = cleaned;
-              const numeric = parseFloat(cleaned) || 0;
-              newData[paramIdx].score = numeric;
+              const p = { ...newData[paramIdx] };
+              p.is_manual_dropdown = false;
+              newData[paramIdx] = p;
+              applyActualValueLogic(p, cleaned);
+              attachFileToParam(subAspectCode);
               updatedCount++;
             }
           }
         });
 
+        // If targetParamCode was explicitly scanned, always attach the photo even if OCR digits were not found
+        if (targetParamCode && !newPhotos[targetParamCode]) {
+          attachFileToParam(targetParamCode);
+        }
+
         setExecutionData(newData);
+        setPhotos(newPhotos);
+
         if (updatedCount > 0) {
-          alert(`Berhasil memperbarui ${updatedCount} parameter hasil uji!`);
+          showToast(`Berhasil membaca hasil scan (${updatedCount} parameter) dan melampirkan foto!`, 'success');
+        } else if (targetParamCode) {
+          alert("Foto hasil scan berhasil dilampirkan pada 'Choose file'. Nilai angka tidak terdeteksi otomatis, silakan isi Nilai Fisik secara manual.");
         } else {
           alert("Tidak ada parameter yang cocok atau bernilai dalam dokumen.");
         }
@@ -694,6 +749,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
   const handleGenerateAIReport = async () => {
     setAiGenerating(true);
+    setAiError(null);
     setAiReportText(""); // Kosongkan teks sebelumnya
     setShowAIModal(true); // Langsung buka modal untuk melihat efek ngetik
 
@@ -779,6 +835,9 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
               if (currentEvent === "sectionB") {
                   sectionBText += parsedData;
+              } else if (currentEvent === "error") {
+                  setAiError(parsedData);
+                  showToast(parsedData, 'error');
               } else {
                   streamedText += parsedData;
               }
@@ -849,26 +908,20 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
             }
 
             let scoreVal = 0;
-            if (p.score !== undefined && p.score !== null && p.score !== "") {
+            const code = p.param_code || p.sub_aspect_code;
+            const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+            const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+            if (!hasDropdown && actVal !== null) {
+              scoreVal = actVal;
+            } else if (p.score !== undefined && p.score !== null && p.score !== "") {
               scoreVal = parseFloat(p.score) || 0;
             } else if (actVal !== null) {
-              if (p.standard_value || p.standard_value_max || p.standard_unit) {
-                const op = (p.standard_operator || "").trim().toLowerCase();
-                let isPassed = false;
-                if (op === "range") isPassed = actVal >= p.standard_value && actVal <= p.standard_value_max;
-                else if (op === "<=") isPassed = actVal <= p.standard_value;
-                else if (op === "<") isPassed = actVal < p.standard_value;
-                else if (op === ">") isPassed = actVal > p.standard_value;
-                else if (op === "=") isPassed = actVal === p.standard_value;
-                else isPassed = actVal >= p.standard_value;
-                scoreVal = isPassed ? 100 : 0;
-              } else {
-                scoreVal = actVal;
-              }
+              scoreVal = actVal;
             }
 
-            // Validasi Guard: Jika nilai terukur tidak memenuhi standar, pastikan skor tidak boleh lulus (> 65)
-            if (actVal !== null && (p.standard_value || p.standard_value_max || p.standard_unit)) {
+            // Validasi Guard untuk parameter dropdown: Jika nilai terukur tidak memenuhi standar, pastikan skor tidak boleh lulus (> 65)
+            if (hasDropdown && actVal !== null && (p.standard_value || p.standard_value_max || p.standard_unit)) {
               const op = (p.standard_operator || "").trim().toLowerCase();
               let isPassed = false;
               if (op === "range") isPassed = actVal >= p.standard_value && actVal <= p.standard_value_max;
@@ -890,6 +943,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               notes: p.notes,
               aspect_code: p.aspect_code,
               sub_aspect_code: p.param_code,
+              photo_path: p.photo_path || "",
               is_disabled: p.is_disabled || false,
             };
           });
@@ -995,9 +1049,18 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           if (sub.is_disabled) {
             return;
           }
-          const subScore = (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score)))
-            ? parseFloat(sub.score)
-            : (parseFloat(sub.actual_value) || 0);
+          const code = sub.param_code || sub.sub_aspect_code;
+          const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+          const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+          let subScore = 0;
+          if (!hasDropdown && sub.actual_value !== undefined && sub.actual_value !== null && sub.actual_value !== "" && !isNaN(parseFloat(sub.actual_value))) {
+            subScore = parseFloat(sub.actual_value);
+          } else if (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score))) {
+            subScore = parseFloat(sub.score);
+          } else {
+            subScore = parseFloat(sub.actual_value) || 0;
+          }
           subWeighted += subScore * (sub.weight || 0);
           subWeight += sub.weight || 0;
         });
@@ -1031,6 +1094,21 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   };
 
   const getPercentString = (actualValue, p) => {
+    const code = p?.param_code || p?.sub_aspect_code;
+    const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+    const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+    // Jika tidak punya dropdown, skor sama dengan nilai aktual
+    if (!hasDropdown) {
+      if (actualValue !== undefined && actualValue !== null && actualValue !== "" && !isNaN(parseFloat(actualValue))) {
+        return `${parseFloat(actualValue)}`;
+      }
+      if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
+        return `${parseFloat(p.score)}`;
+      }
+      return "-";
+    }
+
     // 1. Jika p memiliki score (dari rubrik dropdown atau kalkulasi skor), tampilkan skor tersebut
     if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
       return `${parseFloat(p.score).toFixed(0)}%`;
@@ -1140,9 +1218,19 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 if (sub.is_disabled) {
                   return;
                 }
-                const score = (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score)))
-                  ? parseFloat(sub.score)
-                  : (parseFloat(sub.actual_value) || 0);
+                const code = sub.param_code || sub.sub_aspect_code;
+                const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+                const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+                let score = 0;
+                if (!hasDropdown && sub.actual_value !== undefined && sub.actual_value !== null && sub.actual_value !== "" && !isNaN(parseFloat(sub.actual_value))) {
+                  score = parseFloat(sub.actual_value);
+                } else if (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score))) {
+                  score = parseFloat(sub.score);
+                } else {
+                  score = parseFloat(sub.actual_value) || 0;
+                }
+
                 subWeightedSum += score * (sub.weight || 0);
                 subTotalWeight += sub.weight || 0;
               });
@@ -1219,48 +1307,103 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     <thead style={{ background: "#f8fafc" }}>
                       <tr>
                         <th style={{ paddingLeft: "1rem" }}>Sub-Aspek / Parameter</th>
+                        <th style={{ textAlign: "center", width: "100px" }}>Nilai</th>
                         <th style={{ textAlign: "center", width: "80px" }}>Skor</th>
                         <th style={{ textAlign: "center", width: "70px" }}>Bobot</th>
                         <th style={{ textAlign: "center", width: "80px" }}>Hasil</th>
-                        <th style={{ textAlign: "center", width: "120px" }}>Standar</th>
-                        <th style={{ textAlign: "center", width: "90px" }}>% Hasil</th>
+                        <th style={{ textAlign: "center", width: "120px" }}>Standard</th>
                         <th style={{ textAlign: "center", width: "140px" }}>Keterangan</th>
-                        <th style={{ textAlign: "center", paddingRight: "1rem", width: "50px" }}>Foto</th>
+                        <th style={{ textAlign: "center", paddingRight: "1rem", width: "100px" }}>Foto</th>
                       </tr>
                     </thead>
                     <tbody>
                        {asp.items.map((res, i) => {
                         const isParamDisabled = res.is_disabled === true;
-                        const scoreVal = isPreExecution || isParamDisabled ? 0 : (
-                          (res.score !== undefined && res.score !== null && res.score !== "" && !isNaN(parseFloat(res.score)))
-                            ? parseFloat(res.score)
-                            : (parseFloat(res.actual_value) || 0)
-                        );
+                        const code = res.param_code || res.sub_aspect_code;
+                        const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+                        const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+                        let scoreVal = 0;
+                        if (!isPreExecution && !isParamDisabled) {
+                          if (!hasDropdown && res.actual_value !== undefined && res.actual_value !== null && res.actual_value !== "" && !isNaN(parseFloat(res.actual_value))) {
+                            scoreVal = parseFloat(res.actual_value);
+                          } else if (res.score !== undefined && res.score !== null && res.score !== "" && !isNaN(parseFloat(res.score))) {
+                            scoreVal = parseFloat(res.score);
+                          } else {
+                            scoreVal = parseFloat(res.actual_value) || 0;
+                          }
+                        }
+
                         const actualVal = isPreExecution || isParamDisabled ? 0 : (parseFloat(res.actual_value) || 0);
                         const subWeight = res.weight || 0;
                         const hasil = (scoreVal * subWeight) / 100;
+                        const hasActualVal = !isPreExecution && !isParamDisabled && res.actual_value !== undefined && res.actual_value !== null && res.actual_value !== "";
+                        const displayActual = hasActualVal
+                          ? `${res.actual_value}${res.standard_unit ? " " + res.standard_unit : ""}`
+                          : "-";
+                        const displaySkor = isParamDisabled
+                          ? "N/A"
+                          : (isPreExecution
+                              ? "-"
+                              : (hasDropdown ? `${scoreVal}%` : `${scoreVal}`));
+
                         return (
                           <tr key={res.param_code || i} style={isParamDisabled ? { opacity: 0.6, background: "#f8fafc" } : {}}>
                             <td style={{ fontSize: "0.8rem", paddingLeft: "1rem" }}>
                               <div style={{ fontWeight: 600, color: "#334155" }}>
                                 {res.param_code && <span style={{ color: "#94a3b8", marginRight: "0.5rem", fontWeight: 700 }}>{res.param_code}</span>}
                                 {res.parameter_name}
-                                {res.actual_value !== undefined && res.actual_value !== null && res.actual_value !== "" && res.actual_value.toString() !== scoreVal.toString() && (
-                                  <span style={{ fontSize: "0.75rem", color: "#0284c7", background: "#e0f2fe", padding: "1px 6px", borderRadius: "4px", marginLeft: "0.5rem", fontWeight: 600 }}>
-                                    Nilai: {res.actual_value} {res.standard_unit || ""}
-                                  </span>
-                                )}
                                 {isParamDisabled && <span style={{ color: "#ef4444", marginLeft: "0.5rem", fontWeight: "bold" }}>(NON-AKTIF)</span>}
                                 {res.notes && <span style={{ fontWeight: 400, color: "#94a3b8", marginLeft: "0.5rem" }}>• {res.notes}</span>}
                               </div>
                             </td>
-                            <td style={{ textAlign: "center", fontWeight: 600, fontSize: "0.8rem" }}>{isParamDisabled ? "N/A" : (scoreVal === 0 && isPreExecution ? "-" : scoreVal)}</td>
-                            <td style={{ textAlign: "center", color: "#64748b", fontSize: "0.8rem" }}>{res.weight}%</td>
-                            <td style={{ textAlign: "center", fontWeight: 700, color: "#1e293b", fontSize: "0.8rem" }}>{isParamDisabled ? "N/A" : (hasil === 0 && isPreExecution ? "-" : hasil.toFixed(2))}</td>
-                            <td style={{ textAlign: "center", fontSize: "0.8rem", fontWeight: 600 }}>{isPreExecution || isParamDisabled ? "-" : getStandardString(res)}</td>
-                            <td style={{ textAlign: "center", fontSize: "0.8rem", color: "#475569" }}>{isPreExecution || isParamDisabled ? "-" : getPercentString(res.actual_value, res)}</td>
-                            <td style={{ textAlign: "center", fontSize: "0.8rem" }}>{isPreExecution || isParamDisabled ? "-" : getKeterangan(res.actual_value, res)}</td>
-                            <td style={{ textAlign: "center", paddingRight: "1rem" }}>{res.photo_path ? <i className="fas fa-image" style={{ color: "#10b981", fontSize: "0.8rem" }}></i> : "-"}</td>
+                            <td style={{ textAlign: "center", fontWeight: 600, fontSize: "0.8rem", color: hasActualVal ? "#0284c7" : "#64748b" }}>
+                              {displayActual}
+                            </td>
+                            <td style={{ textAlign: "center", fontWeight: 600, fontSize: "0.8rem" }}>
+                              {displaySkor}
+                            </td>
+                            <td style={{ textAlign: "center", color: "#64748b", fontSize: "0.8rem" }}>
+                              {res.weight}%
+                            </td>
+                            <td style={{ textAlign: "center", fontWeight: 700, color: "#1e293b", fontSize: "0.8rem" }}>
+                              {isParamDisabled ? "N/A" : (hasil === 0 && isPreExecution ? "-" : hasil.toFixed(2))}
+                            </td>
+                            <td style={{ textAlign: "center", fontSize: "0.8rem", fontWeight: 600 }}>
+                              {isPreExecution || isParamDisabled ? "-" : getStandardString(res)}
+                            </td>
+                            <td style={{ textAlign: "center", fontSize: "0.8rem" }}>
+                              {isPreExecution || isParamDisabled ? "-" : getKeterangan(res.actual_value, res)}
+                            </td>
+                            <td style={{ textAlign: "center", paddingRight: "1rem" }}>
+                              {res.photo_path ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenDocPreview(res.photo_path, `Foto Scan ${res.param_code ? `(${res.param_code})` : ''} - ${res.parameter_name || 'Hasil Uji'}`)}
+                                  className="btn btn-sm"
+                                  style={{
+                                    background: "#f0fdf4",
+                                    border: "1px solid #86efac",
+                                    color: "#166534",
+                                    borderRadius: "6px",
+                                    padding: "3px 8px",
+                                    fontSize: "0.75rem",
+                                    fontWeight: 600,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "5px",
+                                    cursor: "pointer",
+                                    transition: "all 0.15s ease"
+                                  }}
+                                  title="Klik untuk melihat dan mereview foto hasil scan"
+                                >
+                                  <i className="fas fa-image" style={{ color: "#16a34a" }}></i>
+                                  <span>Lihat Foto</span>
+                                </button>
+                              ) : (
+                                <span style={{ color: "#94a3b8", fontSize: "0.8rem" }}>-</span>
+                              )}
+                            </td>
                           </tr>
                         );
                       })}
@@ -1324,7 +1467,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         }
 
         let scoreVal = 0;
-        if (item.score !== undefined && item.score !== null && item.score !== "") {
+        const code = p.param_code || p.sub_aspect_code;
+        const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+        const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+        if (!hasDropdown && actVal !== null) {
+          scoreVal = actVal;
+        } else if (item.score !== undefined && item.score !== null && item.score !== "") {
           scoreVal = parseFloat(item.score) || 0;
         } else if (actVal !== null) {
           scoreVal = actVal;
@@ -1337,9 +1486,12 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           notes: item.notes || "",
           aspect_code: p.aspect_code,
           sub_aspect_code: p.sub_aspect_code,
+          photo_path: item.photo_path || "",
           is_disabled: item.is_disabled || false,
         };
       });
+
+      const formData = new FormData();
       formData.append("results", JSON.stringify(resultsJson));
       aspectItems.forEach((p) => {
         if (photos[p.param_code]) formData.append(`photo_${p.param_code}`, photos[p.param_code]);
@@ -1360,6 +1512,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         setAnomalyBlock(null);
         setOverrideReasonInput("");
         setAnomalySubNotes({});
+        await fetchExecution(localApp || app);
         setTimeout(() => setAspectSaved((prev) => ({ ...prev, [aspectCode]: false })), 3000);
       }
     } catch (err) {
@@ -1590,8 +1743,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                         <th style={{ paddingLeft: "1.25rem" }}>Parameter</th>
                         <th style={{ width: "220px", textAlign: "center" }}>Nilai</th>
                         <th style={{ width: "80px", textAlign: "center" }}>Bobot</th>
-                        <th style={{ width: "120px", textAlign: "center" }}>Standar</th>
-                        <th style={{ width: "90px", textAlign: "center" }}>% Hasil</th>
+                        <th style={{ width: "120px", textAlign: "center" }}>Standard</th>
+                        <th style={{ width: "90px", textAlign: "center" }}>Skor</th>
                         <th style={{ width: "140px", textAlign: "center" }}>Keterangan</th>
                         <th style={{ width: "140px", textAlign: "center" }}>Foto</th>
                         <th>Catatan</th>
@@ -1628,53 +1781,112 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                               <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>Bobot: {p.weight}%</div>
                             </td>
                             <td style={{ textAlign: "center" }}>
-                              {dropdownConfig[p.param_code] && dropdownConfig[p.param_code].length > 0 ? (
-                                <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%" }}>
+                              {(() => {
+                                const pCode = p.param_code || p.sub_aspect_code;
+                                const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+                                const currentOpts = (cfg && (cfg[pCode] || (p.param_code && cfg[p.param_code]) || (p.sub_aspect_code && cfg[p.sub_aspect_code]))) || [];
+
+                                if (currentOpts.length > 0) {
+                                  const selectedVal = item.selected_dropdown || (item.score !== undefined && item.score !== null && item.score !== "" && parseFloat(item.score) > 0 ? parseFloat(item.score).toString() : "");
+                                  return (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%" }}>
+                                      <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
+                                        <input
+                                          type="number"
+                                          step="any"
+                                          placeholder="Nilai Fisik"
+                                          title="Nilai hasil pengukuran instrumen"
+                                          value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
+                                          onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
+                                          readOnly={isFieldDisabled}
+                                          disabled={isFieldDisabled}
+                                          style={{
+                                            width: "95px",
+                                            textAlign: "center",
+                                            background: isFieldDisabled ? "#f1f5f9" : "white",
+                                            padding: "5px 4px",
+                                            fontSize: "0.85rem",
+                                            border: item.validation_error ? "1.5px solid #ef4444" : "1px solid #cbd5e1",
+                                            borderRadius: "6px"
+                                          }}
+                                        />
+                                        <select
+                                          value={selectedVal}
+                                          onChange={(e) => !isFieldDisabled && handleDropdownChange(idx, e.target.value)}
+                                          disabled={isFieldDisabled || item.dropdown_disabled}
+                                          title={item.dropdown_disabled ? "Terkunci otomatis berdasarkan Nilai Fisik (Kosongkan nilai fisik untuk memilih manual)" : "Pilih kriteria/rubrik"}
+                                          style={{
+                                            flex: 1,
+                                            textAlign: "left",
+                                            background: (isFieldDisabled || item.dropdown_disabled) ? "#f1f5f9" : "white",
+                                            color: item.dropdown_disabled ? "#334155" : "inherit",
+                                            fontWeight: item.dropdown_disabled ? 600 : "normal",
+                                            padding: "5px",
+                                            fontSize: "0.8rem",
+                                            border: "1px solid #cbd5e1",
+                                            borderRadius: "6px",
+                                            cursor: item.dropdown_disabled ? "not-allowed" : "pointer"
+                                          }}
+                                        >
+                                          <option value="">-- Pilihan Rubrik --</option>
+                                          {currentOpts.map((opt) => (
+                                            <option key={opt.id || opt.value} value={opt.value}>
+                                              {opt.label} ({opt.value})
+                                            </option>
+                                          ))}
+                                        </select>
+                                        {!isFieldDisabled && aiOcrEnabled && (
+                                          <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
+                                            <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                                              <button
+                                                type="button"
+                                                disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                                title="Upload File OCR parameter ini saja"
+                                                style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                              >
+                                                <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                              </button>
+                                              {!(ocrLoading === p.param_code || ocrLoading === true) && (
+                                                <input 
+                                                  type="file" 
+                                                  accept="image/*,.pdf,.txt,.csv,.log"
+                                                  onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
+                                                  style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                                                />
+                                              )}
+                                            </div>
+                                            <button
+                                              type="button"
+                                              disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                              onClick={() => handleOpenCameraModal(group.code, p.param_code)}
+                                              title="Ambil Foto OCR parameter ini saja"
+                                              style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                            >
+                                              <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                      {item.validation_error && (
+                                        <div style={{ fontSize: "0.7rem", color: "#ef4444", fontWeight: 700, textAlign: "left", paddingLeft: "2px" }}>
+                                          <i className="fas fa-exclamation-circle"></i> {item.validation_error}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                }
+                                return (
                                   <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
                                     <input
                                       type="number"
                                       step="any"
                                       placeholder="Nilai Fisik"
-                                      title="Nilai hasil pengukuran instrumen"
                                       value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
                                       onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
                                       readOnly={isFieldDisabled}
                                       disabled={isFieldDisabled}
-                                      style={{
-                                        width: "85px",
-                                        textAlign: "center",
-                                        background: isFieldDisabled ? "#f1f5f9" : "white",
-                                        padding: "5px",
-                                        fontSize: "0.85rem",
-                                        border: item.validation_error ? "1.5px solid #ef4444" : "1px solid #cbd5e1",
-                                        borderRadius: "6px"
-                                      }}
+                                      style={{ flex: 1, textAlign: "center", background: isFieldDisabled ? "#f1f5f9" : "white" }}
                                     />
-                                    <select
-                                      value={item.selected_dropdown !== undefined ? item.selected_dropdown : (item.score !== undefined && item.score !== null && item.score !== "" ? item.score.toString() : "")}
-                                      onChange={(e) => !isFieldDisabled && handleDropdownChange(idx, e.target.value)}
-                                      disabled={isFieldDisabled || item.dropdown_disabled}
-                                      title={item.dropdown_disabled ? "Terkunci otomatis berdasarkan Nilai Fisik (Kosongkan nilai fisik untuk memilih manual)" : "Pilih kriteria/rubrik"}
-                                      style={{
-                                        flex: 1,
-                                        textAlign: "left",
-                                        background: (isFieldDisabled || item.dropdown_disabled) ? "#f1f5f9" : "white",
-                                        color: item.dropdown_disabled ? "#334155" : "inherit",
-                                        fontWeight: item.dropdown_disabled ? 600 : "normal",
-                                        padding: "5px",
-                                        fontSize: "0.8rem",
-                                        border: "1px solid #cbd5e1",
-                                        borderRadius: "6px",
-                                        cursor: item.dropdown_disabled ? "not-allowed" : "pointer"
-                                      }}
-                                    >
-                                      <option value="">-- Pilihan Rubrik --</option>
-                                      {dropdownConfig[p.param_code].map((opt) => (
-                                        <option key={opt.value} value={opt.value}>
-                                          {opt.label} ({opt.value})
-                                        </option>
-                                      ))}
-                                    </select>
                                     {!isFieldDisabled && aiOcrEnabled && (
                                       <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
                                         <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
@@ -1707,57 +1919,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                       </div>
                                     )}
                                   </div>
-                                  {item.validation_error && (
-                                    <div style={{ fontSize: "0.7rem", color: "#ef4444", fontWeight: 700, textAlign: "left", paddingLeft: "2px" }}>
-                                      <i className="fas fa-exclamation-circle"></i> {item.validation_error}
-                                    </div>
-                                  )}
-                                </div>
-                              ) : (
-                                <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
-                                  <input
-                                    type="number"
-                                    step="any"
-                                    placeholder="Nilai Fisik"
-                                    value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
-                                    onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
-                                    readOnly={isFieldDisabled}
-                                    disabled={isFieldDisabled}
-                                    style={{ flex: 1, textAlign: "center", background: isFieldDisabled ? "#f1f5f9" : "white" }}
-                                  />
-                                  {!isFieldDisabled && aiOcrEnabled && (
-                                    <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
-                                      <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
-                                        <button
-                                          type="button"
-                                          disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                          title="Upload File OCR parameter ini saja"
-                                          style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                        >
-                                          <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
-                                        </button>
-                                        {!(ocrLoading === p.param_code || ocrLoading === true) && (
-                                          <input 
-                                            type="file" 
-                                            accept="image/*,.pdf,.txt,.csv,.log"
-                                            onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
-                                            style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                                          />
-                                        )}
-                                      </div>
-                                      <button
-                                        type="button"
-                                        disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                        onClick={() => handleOpenCameraModal(group.code, p.param_code)}
-                                        title="Ambil Foto OCR parameter ini saja"
-                                        style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                      >
-                                        <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
-                                      </button>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
+                                );
+                              })()}
                             </td>
                             <td style={{ textAlign: "center", fontSize: "0.8rem" }}>{p.weight}%</td>
                             <td style={{ textAlign: "center", fontSize: "0.8rem", fontWeight: 600 }}>{getStandardString(p)}</td>
@@ -1783,7 +1946,68 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                               />
                             </td>
                             <td style={{ textAlign: "center", fontSize: "0.8rem" }}>{getKeterangan(item.actual_value, item)}</td>
-                            <td>{!isFieldDisabled && <input type="file" onChange={(e) => handleFileChange(p.param_code, e.target.files[0])} style={{ fontSize: "10px" }} />}</td>
+                            <td>
+                              {!isFieldDisabled ? (
+                                <div>
+                                  <input 
+                                    type="file" 
+                                    id={`file-input-${p.param_code}`}
+                                    onChange={(e) => handleFileChange(p.param_code, e.target.files[0])} 
+                                    style={{ fontSize: "10px", width: "100%", maxWidth: "160px" }} 
+                                  />
+                                  {photos[p.param_code] && (
+                                    <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "3px", fontSize: "0.7rem", color: "#166534", background: "#f0fdf4", padding: "2px 6px", borderRadius: "4px", border: "1px solid #bbf7d0" }}>
+                                      <i className="fas fa-camera" style={{ color: "#16a34a" }} title="Foto scan siap diupload"></i>
+                                      <span style={{ maxWidth: "100px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={photos[p.param_code].name}>
+                                        {photos[p.param_code].name}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const np = { ...photos };
+                                          delete np[p.param_code];
+                                          setPhotos(np);
+                                          const fi = document.getElementById(`file-input-${p.param_code}`);
+                                          if (fi) fi.value = "";
+                                        }}
+                                        style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: "0 2px", fontWeight: "bold", fontSize: "0.75rem", lineHeight: 1 }}
+                                        title="Hapus foto ini"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+                                  )}
+                                  {!photos[p.param_code] && item.photo_path && (
+                                    <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "3px", fontSize: "0.7rem", color: "#2563eb", background: "#eff6ff", padding: "2px 6px", borderRadius: "4px", border: "1px solid #bfdbfe" }}>
+                                      <i className="fas fa-paperclip" style={{ color: "#2563eb" }}></i>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleOpenDocPreview(item.photo_path, `Foto Scan ${p.param_code ? `(${p.param_code})` : ''} - ${p.parameter_name || 'Hasil Uji'}`)}
+                                        style={{ background: "none", border: "none", color: "#2563eb", textDecoration: "underline", maxWidth: "110px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: "pointer", padding: 0, fontSize: "inherit" }}
+                                        title="Lihat foto tersimpan"
+                                      >
+                                        Foto Tersimpan
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                item.photo_path ? (
+                                  <div style={{ textAlign: "center" }}>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleOpenDocPreview(item.photo_path, `Foto Scan ${p.param_code ? `(${p.param_code})` : ''} - ${p.parameter_name || 'Hasil Uji'}`)}
+                                      style={{ background: "none", border: "none", color: "#2563eb", fontSize: "0.8rem", textDecoration: "underline", display: "inline-flex", alignItems: "center", gap: "4px", cursor: "pointer", padding: 0 }}
+                                      title="Lihat foto tersimpan"
+                                    >
+                                      <i className="fas fa-image"></i> Lihat Foto
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div style={{ textAlign: "center", color: "#94a3b8", fontSize: "0.8rem" }}>-</div>
+                                )
+                              )}
+                            </td>
                             <td>
                               <input type="text" value={item.notes || ""} onChange={(e) => !isFieldDisabled && handleParamChange(idx, "notes", e.target.value)} readOnly={isFieldDisabled} disabled={isFieldDisabled} style={{ width: "100%", fontSize: "0.85rem", background: isFieldDisabled ? "#f1f5f9" : "white" }} />
                             </td>
@@ -2523,13 +2747,19 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 value={aiReportText}
                 onChange={(e) => setAiReportText(e.target.value)}
               />
-              <p style={{ margin: "6px 0 0 0", fontSize: "0.85rem", color: aiGenerating ? "#3b82f6" : "#10b981", fontWeight: "bold" }}>
-                {aiGenerating ? (
-                  <><i className="fas fa-spinner fa-spin"></i> Sedang Proses Generate Laporan AI...</>
-                ) : (
-                  <><i className="fas fa-check-circle"></i> Proses Generate Laporan AI selesai.</>
-                )}
-              </p>
+              {aiError ? (
+                <p style={{ margin: "6px 0 0 0", fontSize: "0.85rem", color: "#ef4444", fontWeight: "bold" }}>
+                  <i className="fas fa-exclamation-triangle"></i> Gagal menghasilkan laporan AI: {aiError}
+                </p>
+              ) : (
+                <p style={{ margin: "6px 0 0 0", fontSize: "0.85rem", color: aiGenerating ? "#3b82f6" : "#10b981", fontWeight: "bold" }}>
+                  {aiGenerating ? (
+                    <><i className="fas fa-spinner fa-spin"></i> Sedang Proses Generate Laporan AI...</>
+                  ) : (
+                    <><i className="fas fa-check-circle"></i> Proses Generate Laporan AI selesai.</>
+                  )}
+                </p>
+              )}
               <p style={{ margin: "6px 0 0 0", fontSize: "0.75rem", color: "#64748b", fontStyle: "italic" }}>
                 * Anda dapat mengoreksi atau mengedit langsung draf teks di atas sebelum menerapkannya ke catatan.
               </p>

@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { apiRequest } from "@models/api";
 import { useToast } from '@context/ToastContext';
 
-const AsistenLab = ({ user = {}, appConfig = {} }) => {
+const AsistenLab = ({ user: rawUser = {}, appConfig = {} }) => {
+  const user = rawUser || {};
+  const currentUsername = user?.username || "";
   const { showToast } = useToast();
   const chatInterval = parseInt(appConfig?.AI_INTERVAL_CHAT) || 2500;
   const [sops, setSops] = useState([]);
@@ -139,7 +141,7 @@ const AsistenLab = ({ user = {}, appConfig = {} }) => {
       try {
         const data = await apiRequest("/agent-chat/history");
         const formatted = (data || []).map(m => ({
-          sender: m.sender_name === user.username ? "user" : "agent",
+          sender: m.sender_name === currentUsername ? "user" : "agent",
           text: m.message,
           createdAt: m.created_at
         }));
@@ -152,7 +154,7 @@ const AsistenLab = ({ user = {}, appConfig = {} }) => {
     fetchHistory();
     const interval = setInterval(fetchHistory, chatInterval);
     return () => clearInterval(interval);
-  }, [isAgentChatActive, user.username, chatInterval]);
+  }, [isAgentChatActive, currentUsername, chatInterval]);
 
   // 3. Polling chat history for Helpdesk (when selectedOperator is set)
   useEffect(() => {
@@ -162,7 +164,7 @@ const AsistenLab = ({ user = {}, appConfig = {} }) => {
       try {
         const data = await apiRequest(`/agent-chat/history?username=${selectedOperator}`);
         const formatted = (data || []).map(m => ({
-          sender: m.sender_name === user.username ? "user" : "agent",
+          sender: m.sender_name === currentUsername ? "user" : "agent",
           text: m.message,
           createdAt: m.created_at
         }));
@@ -175,7 +177,7 @@ const AsistenLab = ({ user = {}, appConfig = {} }) => {
     fetchHistory();
     const interval = setInterval(fetchHistory, chatInterval);
     return () => clearInterval(interval);
-  }, [selectedOperator, user.username, chatInterval]);
+  }, [selectedOperator, currentUsername, chatInterval]);
 
 
   // ==========================================

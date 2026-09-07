@@ -110,6 +110,7 @@ type AIExecutionItem struct {
 	AspectCode       string  `json:"aspect_code"`
 	Weight           float64 `json:"weight"`
 	ActualValue      string  `json:"actual_value"`
+	Score            float64 `json:"score"`
 	Notes            string  `json:"notes"`
 	TestTypeCode     string  `json:"test_type_code"`
 	StandardValue    float64 `json:"standard_value"`
@@ -233,8 +234,13 @@ func GenerateReport(c *gin.Context) {
 					}
 				}
 				
-				aspectSecB.WriteString(fmt.Sprintf("      %d.%d. %s (%s) - Skor: %s (Memenuhi standar, Standar: %s)\n", 
-					aspectIndex, paramIndex, item.ParameterName, item.ParamCode, item.ActualValue, stdStr))
+				unitStr := item.StandardUnit
+				if unitStr != "" {
+					unitStr = " " + unitStr
+				}
+				
+				aspectSecB.WriteString(fmt.Sprintf("      %d.%d. %s (%s) - Nilai: %s%s, Skor: %.1f (Memenuhi standar, Standar: %s)\n", 
+					aspectIndex, paramIndex, item.ParameterName, item.ParamCode, item.ActualValue, unitStr, item.Score, stdStr))
 				paramIndex++
 			}
 		}
@@ -272,19 +278,44 @@ func GenerateReport(c *gin.Context) {
 			}
 			
 			isPassed := false
-			switch strings.TrimSpace(strings.ToLower(item.StandardOperator)) {
+			deviasiKet := "Tidak Memenuhi Standar"
+			op := strings.TrimSpace(strings.ToLower(item.StandardOperator))
+
+			switch op {
 			case "range":
 				isPassed = actualVal >= item.StandardValue && actualVal <= item.StandardValueMax
+				if !isPassed {
+					if actualVal > item.StandardValueMax {
+						deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimum standar (%.2f%s) / Terlalu Tinggi / Panas Berlebih (Overheat)", actualVal, item.StandardUnit, item.StandardValueMax, item.StandardUnit)
+					} else {
+						deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimum standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+					}
+				}
 			case "<=":
 				isPassed = actualVal <= item.StandardValue
+				if !isPassed {
+					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimal standar (%.2f%s) / Terlalu Tinggi", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+				}
 			case "<":
 				isPassed = actualVal < item.StandardValue
+				if !isPassed {
+					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimal standar (%.2f%s) / Terlalu Tinggi", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+				}
 			case ">":
 				isPassed = actualVal > item.StandardValue
+				if !isPassed {
+					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimal standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+				}
 			case "=":
 				isPassed = actualVal == item.StandardValue
+				if !isPassed {
+					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) TIDAK SAMA dengan target standar (%.2f%s)", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+				}
 			default:
 				isPassed = actualVal >= item.StandardValue
+				if !isPassed {
+					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimal standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+				}
 			}
 			
 			if !isPassed {
@@ -301,20 +332,19 @@ func GenerateReport(c *gin.Context) {
 					}
 				}
 				
-				percentStr := "-"
-				if actualVal > 0 && (strings.TrimSpace(strings.ToLower(item.StandardOperator)) == "<=" || strings.TrimSpace(strings.ToLower(item.StandardOperator)) == "<") {
-					percentStr = fmt.Sprintf("%.1f%%", (item.StandardValue/actualVal)*100)
-				} else if item.StandardValue > 0 {
-					percentStr = fmt.Sprintf("%.1f%%", (actualVal/item.StandardValue)*100)
+				unitStr := item.StandardUnit
+				if unitStr != "" {
+					unitStr = " " + unitStr
 				}
+				measuredStr := fmt.Sprintf("%v%s", item.ActualValue, unitStr)
 				
 				notesStr := ""
 				if item.Notes != "" {
 					notesStr = fmt.Sprintf(", Temuan=%s", item.Notes)
 				}
 				
-				aspectFailingText.WriteString(fmt.Sprintf("  - %s (%s): Skor=%s, Bobot=%.1f%%, Standar=%s, Hasil=%s, Ket=Tidak Memenuhi%s\n", 
-					item.ParameterName, item.ParamCode, item.ActualValue, item.Weight, stdStr, percentStr, notesStr))
+				aspectFailingText.WriteString(fmt.Sprintf("  - %s (%s): Hasil Pengukuran=%s, Skor=%.1f, Bobot=%.1f%%, Standar=%s, Kondisi Deviasi=%s%s\n", 
+					item.ParameterName, item.ParamCode, measuredStr, item.Score, item.Weight, stdStr, deviasiKet, notesStr))
 			}
 		}
 		
@@ -374,8 +404,11 @@ func GenerateReport(c *gin.Context) {
 		"   A. Ringkasan Eksekutif Analis (Executive Summary)\n" +
 		"   C. Analisis Deviasi Teknis & Dampak Operasional\n" +
 		"   D. Saran Perbaikan & Tindak Lanjut Spesifik\n" +
-		"4. Untuk Bagian C & D, gunakan pengelompokan aspek dengan angka (1., 2.) dan rincian parameter dengan desimal (1.1., 1.2.).\n" +
-		"5. Tulis secara ringkas dan padat. HANYA analisis parameter yang berstatus TIDAK MEMENUHI standar pada data.\n" +
+		"4. Untuk Bagian C, kelompokkan per aspek dengan angka (1., 2.) dan per parameter dengan desimal (1.1., 1.2.). Untuk setiap parameter deviasi, WAJIB tuliskan struktur poin berikut secara persis:\n" +
+		"   - Standar: [Tuliskan batas standar yang dipersyaratkan]\n" +
+		"   - Hasil Pengukuran: [Wajib cantumkan nilai terukur fisik beserta satuannya secara persis dari data, contoh: 150 °C]\n" +
+		"   - Dampak: [Analisis dampak teknis dan risiko operasional. Analisis HARUS SESUAI dengan Kondisi Deviasi pada data. Contoh: Jika Hasil Pengukuran melebihi batas maksimum standar seperti suhu 150 °C > 120 °C, jelaskan dampak sebagai PANAS BERLEBIH / OVERHEATING / SUHU TERLALU TINGGI seperti risiko kerusakan komponen, degradasi termal, atau kegagalan sistem pendingin. DILARANG KERAS mengatakan 'suhu terlalu rendah' jika hasil pengukuran lebih tinggi dari standar].\n" +
+		"5. Untuk Bagian D, berikan saran perbaikan spesifik sesuai kondisi deviasi (misal: perbaikan sistem pendingin / heatsink / ventilasi jika terjadi suhu overheat).\n" +
 		"6. Di Bagian A, sebutkan nilai akhir, status kelulusan, dan HANYA sebutkan aspek yang terdaftar di [ASPEK YANG BENAR-BENAR GAGAL].\n" +
 		"7. Gunakan Bahasa Indonesia yang formal (dilarang bahasa Inggris)."
 
@@ -436,7 +469,7 @@ func GenerateReport(c *gin.Context) {
 		}
 	}
 
-	// Call OpenAI-compatible service with Stream enabled & Ollama CPU options
+	// Call OpenAI-compatible service with Stream enabled
 	payload := ChatCompletionRequest{
 		Model:       modelName,
 		Messages:    []ChatCompletionMessage{
@@ -446,11 +479,21 @@ func GenerateReport(c *gin.Context) {
 		Temperature: 0.2,
 		MaxTokens:   maxTokens,
 		Stream:      true, // Enable streaming
-		Options: &OllamaOptions{
+	}
+
+	// Only attach Ollama-specific options if targeting Ollama.
+	// Standard OpenAI/Groq/Cloud endpoints reject unknown properties with:
+	// 400 invalid_request_error: property 'options' is unsupported
+	isOllama := strings.Contains(strings.ToLower(fullURL), "ollama") ||
+		strings.Contains(strings.ToLower(fullURL), "11434") ||
+		strings.ToLower(os.Getenv("AI_PROVIDER")) == "ollama" ||
+		strings.ToLower(apiKey) == "none"
+	if isOllama {
+		payload.Options = &OllamaOptions{
 			NumCtx:     numCtx,
 			NumThread:  numThread,
 			NumPredict: maxTokens,
-		},
+		}
 	}
 
 	jsonBytes, err := json.Marshal(payload)
@@ -635,6 +678,7 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 				AspectCode:       asp.Code,
 				Weight:           sub.Weight,
 				ActualValue:      "",
+				Score:            0,
 				Notes:            "",
 				TestTypeCode:     testTypeCode,
 				StandardValue:    sub.StandardValue,
@@ -643,7 +687,12 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 				StandardUnit:     sub.StandardUnit,
 			}
 			if exists {
-				item.ActualValue = fmt.Sprintf("%v", er.Score)
+				if er.ActualValue != nil {
+					item.ActualValue = fmt.Sprintf("%v", *er.ActualValue)
+				} else {
+					item.ActualValue = fmt.Sprintf("%v", er.Score)
+				}
+				item.Score = er.Score
 				item.Notes = er.Notes
 			}
 			items = append(items, item)

@@ -315,6 +315,8 @@ export const getMasterRoutes = (onNavigate) => ({
       { key: "sub_aspect_name", header: "Sub-Aspek", render: (item) => (item.sub_aspect ? item.sub_aspect.name : "-") },
       { key: "name", header: "Nama Opsi" },
       { key: "score", header: "Skor" },
+      { key: "test_result_low", header: "Nilai Uji Min", render: (item) => (item.test_result_low !== null && item.test_result_low !== undefined ? item.test_result_low : "-") },
+      { key: "test_result_high", header: "Nilai Uji Max", render: (item) => (item.test_result_high !== null && item.test_result_high !== undefined ? item.test_result_high : "-") },
     ],
   },
   "/scoring-levels": {
