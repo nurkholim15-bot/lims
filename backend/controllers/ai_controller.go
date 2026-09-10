@@ -9,6 +9,7 @@ import (
 	"lim-system/models"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -620,6 +621,7 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 	}
 	database.DB.Table(plansTable).Preload("Aspect.Methodology").Preload("Aspect.TestType").
 		Where("application_id = ?", appID).
+		Order("aspect_code ASC").
 		Find(&plans)
 
 	if len(plans) == 0 {
@@ -629,12 +631,12 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 		var aspects []models.ScoringAspect
 		if app.LabMethodologyCode != nil {
 			var labAspects []models.ScoringAspect
-			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.LabMethodologyCode).Find(&labAspects)
+			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.LabMethodologyCode).Order("code ASC").Find(&labAspects)
 			aspects = append(aspects, labAspects...)
 		}
 		if app.FieldMethodologyCode != nil {
 			var fieldAspects []models.ScoringAspect
-			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.FieldMethodologyCode).Find(&fieldAspects)
+			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.FieldMethodologyCode).Order("code ASC").Find(&fieldAspects)
 			aspects = append(aspects, fieldAspects...)
 		}
 		for _, a := range aspects {
@@ -659,7 +661,7 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 	for _, p := range plans {
 		asp := p.Aspect
 		var subAspects []models.ScoringSubAspect
-		database.DB.Where("aspect_code = ?", asp.Code).Find(&subAspects)
+		database.DB.Where("aspect_code = ?", asp.Code).Order("code ASC").Find(&subAspects)
 
 		for _, sub := range subAspects {
 			er, exists := resultsMap[sub.Code]
@@ -698,5 +700,13 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 			items = append(items, item)
 		}
 	}
+
+	sort.SliceStable(items, func(i, j int) bool {
+		if items[i].AspectCode != items[j].AspectCode {
+			return items[i].AspectCode < items[j].AspectCode
+		}
+		return items[i].ParamCode < items[j].ParamCode
+	})
+
 	return items
 }

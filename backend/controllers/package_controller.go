@@ -361,3 +361,335 @@ func GetHistPackageActiveSubAspects(c *gin.Context) {
 		"limit": limit,
 	}, "Package sub aspects history retrieved")
 }
+
+// --- Active Aspects & Sub-Aspects Management ---
+
+func GetPackageActiveAspects(c *gin.Context) {
+	var items []models.PackageActiveAspect
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", models.GetGlobalParam("PAGINATION_LIMIT", "10")))
+	offset := (page - 1) * limit
+	packageID := c.Query("package_id")
+	aspectCode := c.Query("aspect_code")
+	search := c.Query("search")
+
+	query := database.DB.Model(&models.PackageActiveAspect{}).
+		Preload("Package").
+		Preload("Aspect").
+		Preload("Aspect.Methodology")
+
+	if packageID != "" {
+		query = query.Where("package_active_aspects.package_id = ?", packageID)
+	}
+	if aspectCode != "" {
+		query = query.Where("package_active_aspects.aspect_code = ?", aspectCode)
+	}
+	if search != "" {
+		query = query.Joins("LEFT JOIN testing_packages tp ON tp.id = package_active_aspects.package_id").
+			Joins("LEFT JOIN scoring_aspects sa ON sa.code = package_active_aspects.aspect_code").
+			Where("tp.package_code ILIKE ? OR tp.name ILIKE ? OR sa.code ILIKE ? OR sa.name ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	var total int64
+	query.Count(&total)
+
+	if c.Query("dropdown") == "1" || c.Query("all") == "1" {
+		if err := query.Order("package_active_aspects.package_id asc, package_active_aspects.aspect_code asc").Find(&items).Error; err != nil {
+			views.Error(c, 500, "Gagal mengambil data aspek aktif paket", err.Error())
+			return
+		}
+		views.Success(c, items, "Package aspects retrieved")
+		return
+	}
+
+	err := query.Order("package_active_aspects.package_id asc, package_active_aspects.aspect_code asc").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Gagal mengambil data aspek aktif paket", err.Error())
+		return
+	}
+
+	views.SuccessWithMeta(c, items, gin.H{
+		"total": total,
+		"page":  page,
+		"limit": limit,
+	}, "Package aspects retrieved")
+}
+
+func CreatePackageActiveAspect(c *gin.Context) {
+	var input struct {
+		PackageID   uint     `json:"package_id"`
+		AspectCode  string   `json:"aspect_code"`
+		AspectCodes []string `json:"aspect_codes"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		views.BadRequest(c, "Input tidak valid", err.Error())
+		return
+	}
+
+	if input.PackageID == 0 {
+		views.BadRequest(c, "package_id wajib diisi", "")
+		return
+	}
+
+	codesToInsert := input.AspectCodes
+	if input.AspectCode != "" {
+		codesToInsert = append(codesToInsert, input.AspectCode)
+	}
+	if len(codesToInsert) == 0 {
+		views.BadRequest(c, "aspect_code atau aspect_codes wajib diisi", "")
+		return
+	}
+
+	username := getCtxUsername(c)
+	tx := database.DB.Begin()
+
+	for _, code := range codesToInsert {
+		if code == "" {
+			continue
+		}
+		var count int64
+		tx.Table("package_active_aspects").Where("package_id = ? AND aspect_code = ?", input.PackageID, code).Count(&count)
+		if count == 0 {
+			tx.Create(&models.HistPackageActiveAspect{
+				PackageID:   input.PackageID,
+				AspectCode:  code,
+				ActionType:  "INSERT",
+				CreatedAt:   time.Now(),
+				CreatedUser: username,
+			})
+			if err := tx.Exec("INSERT INTO package_active_aspects (package_id, aspect_code, created_user, updated_user) VALUES (?, ?, ?, ?)", input.PackageID, code, username, username).Error; err != nil {
+				tx.Rollback()
+				views.Error(c, 500, "Gagal menambahkan aspek aktif ke paket", err.Error())
+				return
+			}
+		}
+	}
+
+	tx.Commit()
+	views.Created(c, nil, "Aspek aktif berhasil ditambahkan ke paket")
+}
+
+func DeletePackageActiveAspect(c *gin.Context) {
+	pkgIDStr := c.Param("package_id")
+	if pkgIDStr == "" {
+		pkgIDStr = c.Query("package_id")
+	}
+	aspectCode := c.Param("aspect_code")
+	if aspectCode == "" {
+		aspectCode = c.Query("aspect_code")
+	}
+
+	if pkgIDStr == "" || aspectCode == "" {
+		var req struct {
+			PackageID  uint   `json:"package_id"`
+			AspectCode string `json:"aspect_code"`
+		}
+		if err := c.ShouldBindJSON(&req); err == nil {
+			if req.PackageID != 0 {
+				pkgIDStr = strconv.Itoa(int(req.PackageID))
+			}
+			if req.AspectCode != "" {
+				aspectCode = req.AspectCode
+			}
+		}
+	}
+
+	if pkgIDStr == "" || aspectCode == "" {
+		views.BadRequest(c, "package_id dan aspect_code diperlukan", "")
+		return
+	}
+
+	packageID, err := strconv.ParseUint(pkgIDStr, 10, 64)
+	if err != nil {
+		views.BadRequest(c, "ID paket tidak valid", err.Error())
+		return
+	}
+
+	username := getCtxUsername(c)
+	tx := database.DB.Begin()
+
+	tx.Create(&models.HistPackageActiveAspect{
+		PackageID:   uint(packageID),
+		AspectCode:  aspectCode,
+		ActionType:  "DELETE",
+		CreatedAt:   time.Now(),
+		CreatedUser: username,
+	})
+
+	if err := tx.Exec("DELETE FROM package_active_aspects WHERE package_id = ? AND aspect_code = ?", packageID, aspectCode).Error; err != nil {
+		tx.Rollback()
+		views.Error(c, 500, "Gagal menghapus aspek aktif dari paket", err.Error())
+		return
+	}
+
+	tx.Commit()
+	views.Success(c, nil, "Aspek aktif paket berhasil dihapus")
+}
+
+func GetPackageActiveSubAspects(c *gin.Context) {
+	var items []models.PackageActiveSubAspect
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", models.GetGlobalParam("PAGINATION_LIMIT", "10")))
+	offset := (page - 1) * limit
+	packageID := c.Query("package_id")
+	subAspectCode := c.Query("sub_aspect_code")
+	aspectCode := c.Query("aspect_code")
+	search := c.Query("search")
+
+	query := database.DB.Model(&models.PackageActiveSubAspect{}).
+		Preload("Package").
+		Preload("SubAspect")
+
+	if packageID != "" {
+		query = query.Where("package_active_sub_aspects.package_id = ?", packageID)
+	}
+	if subAspectCode != "" {
+		query = query.Where("package_active_sub_aspects.sub_aspect_code = ?", subAspectCode)
+	}
+	if aspectCode != "" {
+		query = query.Joins("LEFT JOIN scoring_sub_aspects ssa ON ssa.code = package_active_sub_aspects.sub_aspect_code").
+			Where("ssa.aspect_code = ?", aspectCode)
+	}
+	if search != "" {
+		query = query.Joins("LEFT JOIN testing_packages tp ON tp.id = package_active_sub_aspects.package_id").
+			Joins("LEFT JOIN scoring_sub_aspects ssa2 ON ssa2.code = package_active_sub_aspects.sub_aspect_code").
+			Where("tp.package_code ILIKE ? OR tp.name ILIKE ? OR ssa2.code ILIKE ? OR ssa2.name ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	var total int64
+	query.Count(&total)
+
+	if c.Query("dropdown") == "1" || c.Query("all") == "1" {
+		if err := query.Order("package_active_sub_aspects.package_id asc, package_active_sub_aspects.sub_aspect_code asc").Find(&items).Error; err != nil {
+			views.Error(c, 500, "Gagal mengambil data sub-aspek aktif paket", err.Error())
+			return
+		}
+		views.Success(c, items, "Package sub aspects retrieved")
+		return
+	}
+
+	err := query.Order("package_active_sub_aspects.package_id asc, package_active_sub_aspects.sub_aspect_code asc").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Gagal mengambil data sub-aspek aktif paket", err.Error())
+		return
+	}
+
+	views.SuccessWithMeta(c, items, gin.H{
+		"total": total,
+		"page":  page,
+		"limit": limit,
+	}, "Package sub aspects retrieved")
+}
+
+func CreatePackageActiveSubAspect(c *gin.Context) {
+	var input struct {
+		PackageID      uint     `json:"package_id"`
+		SubAspectCode  string   `json:"sub_aspect_code"`
+		SubAspectCodes []string `json:"sub_aspect_codes"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		views.BadRequest(c, "Input tidak valid", err.Error())
+		return
+	}
+
+	if input.PackageID == 0 {
+		views.BadRequest(c, "package_id wajib diisi", "")
+		return
+	}
+
+	codesToInsert := input.SubAspectCodes
+	if input.SubAspectCode != "" {
+		codesToInsert = append(codesToInsert, input.SubAspectCode)
+	}
+	if len(codesToInsert) == 0 {
+		views.BadRequest(c, "sub_aspect_code atau sub_aspect_codes wajib diisi", "")
+		return
+	}
+
+	username := getCtxUsername(c)
+	tx := database.DB.Begin()
+
+	for _, code := range codesToInsert {
+		if code == "" {
+			continue
+		}
+		var count int64
+		tx.Table("package_active_sub_aspects").Where("package_id = ? AND sub_aspect_code = ?", input.PackageID, code).Count(&count)
+		if count == 0 {
+			tx.Create(&models.HistPackageActiveSubAspect{
+				PackageID:     input.PackageID,
+				SubAspectCode: code,
+				ActionType:    "INSERT",
+				CreatedAt:     time.Now(),
+				CreatedUser:   username,
+			})
+			if err := tx.Exec("INSERT INTO package_active_sub_aspects (package_id, sub_aspect_code, created_user, updated_user) VALUES (?, ?, ?, ?)", input.PackageID, code, username, username).Error; err != nil {
+				tx.Rollback()
+				views.Error(c, 500, "Gagal menambahkan sub-aspek aktif ke paket", err.Error())
+				return
+			}
+		}
+	}
+
+	tx.Commit()
+	views.Created(c, nil, "Sub-aspek aktif berhasil ditambahkan ke paket")
+}
+
+func DeletePackageActiveSubAspect(c *gin.Context) {
+	pkgIDStr := c.Param("package_id")
+	if pkgIDStr == "" {
+		pkgIDStr = c.Query("package_id")
+	}
+	subAspectCode := c.Param("sub_aspect_code")
+	if subAspectCode == "" {
+		subAspectCode = c.Query("sub_aspect_code")
+	}
+
+	if pkgIDStr == "" || subAspectCode == "" {
+		var req struct {
+			PackageID     uint   `json:"package_id"`
+			SubAspectCode string `json:"sub_aspect_code"`
+		}
+		if err := c.ShouldBindJSON(&req); err == nil {
+			if req.PackageID != 0 {
+				pkgIDStr = strconv.Itoa(int(req.PackageID))
+			}
+			if req.SubAspectCode != "" {
+				subAspectCode = req.SubAspectCode
+			}
+		}
+	}
+
+	if pkgIDStr == "" || subAspectCode == "" {
+		views.BadRequest(c, "package_id dan sub_aspect_code diperlukan", "")
+		return
+	}
+
+	packageID, err := strconv.ParseUint(pkgIDStr, 10, 64)
+	if err != nil {
+		views.BadRequest(c, "ID paket tidak valid", err.Error())
+		return
+	}
+
+	username := getCtxUsername(c)
+	tx := database.DB.Begin()
+
+	tx.Create(&models.HistPackageActiveSubAspect{
+		PackageID:     uint(packageID),
+		SubAspectCode: subAspectCode,
+		ActionType:    "DELETE",
+		CreatedAt:     time.Now(),
+		CreatedUser:   username,
+	})
+
+	if err := tx.Exec("DELETE FROM package_active_sub_aspects WHERE package_id = ? AND sub_aspect_code = ?", packageID, subAspectCode).Error; err != nil {
+		tx.Rollback()
+		views.Error(c, 500, "Gagal menghapus sub-aspek aktif dari paket", err.Error())
+		return
+	}
+
+	tx.Commit()
+	views.Success(c, nil, "Sub-aspek aktif paket berhasil dihapus")
+}

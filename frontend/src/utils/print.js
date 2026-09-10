@@ -211,6 +211,7 @@ export const printTechnicalReport = async (a, executionData = [], locationsMap =
     
         const groups = Object.entries(aspectMap);
         if (groups.length === 0) return { finalScore: 0, minAspectScore: 0 };
+        groups.sort(([codeA], [codeB]) => codeA.localeCompare(codeB));
     
         groups.forEach(([aspCode, asp]) => {
           // Check for persisted score (manual/cached) in testing_aspect_scores
@@ -246,15 +247,21 @@ export const printTechnicalReport = async (a, executionData = [], locationsMap =
         };
     };
 
-    const labResults = executionData.filter(r => {
+    const sortedExecutionData = [...executionData].sort((a, b) => {
+        const diff = (a.aspect_code || "").localeCompare(b.aspect_code || "");
+        if (diff !== 0) return diff;
+        return (a.param_code || a.sub_aspect_code || "").localeCompare(b.param_code || b.sub_aspect_code || "");
+    });
+
+    const labResults = sortedExecutionData.filter(r => {
         const tc = (r.test_type_code || "").toUpperCase();
         return tc === 'LAB' || tc === 'LABORATORIUM' || tc === 'FNL' || tc === 'REL' || tc === 'SAF';
     });
-    const fieldResults = executionData.filter(r => {
+    const fieldResults = sortedExecutionData.filter(r => {
         const tc = (r.test_type_code || "").toUpperCase();
         return tc === 'FLD' || tc === 'FIELD' || tc === 'LAPANGAN';
     });
-    const managementResults = executionData.filter(r => {
+    const managementResults = sortedExecutionData.filter(r => {
         const tc = (r.test_type_code || "").toUpperCase();
         const isLab = ['LAB', 'LABORATORIUM', 'FNL', 'REL', 'SAF'].includes(tc);
         const isField = ['FLD', 'FIELD', 'LAPANGAN'].includes(tc);
@@ -283,7 +290,10 @@ export const printTechnicalReport = async (a, executionData = [], locationsMap =
             aspectMap[key].items.push(p);
         });
 
-        const aspectGroups = Object.values(aspectMap);
+        const aspectGroups = Object.values(aspectMap).sort((a, b) => (a.code || "").localeCompare(b.code || ""));
+        aspectGroups.forEach(asp => {
+            asp.items.sort((a, b) => (a.param_code || a.sub_aspect_code || "").localeCompare(b.param_code || b.sub_aspect_code || ""));
+        });
         const allPlans = safeParsePlans(a.test_plans);
         const isLab = testType === 'LAB';
 

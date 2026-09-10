@@ -1,8 +1,6 @@
 # LIMS System Documentation (Laboratory Information Management System)
 
 Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alur akses pengguna, struktur direktori, mekanisme partisi data, pemetaan modul dengan API serta basis data, konfigurasi paket dinamis, sistem penilaian (*scoring*) LIMS, dan panduan deployment produksi Nginx terlengkap.
-- [16. Standarisasi Penampil Dokumen PDF (PDF Viewer) & Header Keamanan (CSP)](#16-standarisasi-penampil-dokumen-pdf-pdf-viewer--header-keamanan-csp)
-- [17. Konfigurasi HTTPS / SSL Lingkungan Pengembangan (Local Development)](#17-konfigurasi-https--ssl-lingkungan-pengembangan-local-development)
 
 ---
 
@@ -58,6 +56,13 @@ Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alu
   - [O. Strategi Manajemen Versi Aplikasi Android LIMS](#o-strategi-manajemen-versi-aplikasi-android-lims)
   - [P. Panduan Pembuatan APK Android (Berbagai Skema Jaringan & Target)](#p-panduan-pembuatan-apk-android-berbagai-skema-jaringan-amp-target)
   - [Q. Monitoring Infrastruktur LIMS (Grafana & Prometheus)](#q-monitoring-infrastruktur-lims-grafana--prometheus)
+- [16. Standarisasi Penampil Dokumen PDF (PDF Viewer) & Header Keamanan (CSP)](#16-standarisasi-penampil-dokumen-pdf-pdf-viewer--header-keamanan-csp)
+- [17. Konfigurasi HTTPS / SSL Lingkungan Pengembangan (Local Development)](#17-konfigurasi-https--ssl-lingkungan-pengembangan-local-development)
+- [18. Panduan Akses VPS via SSH, pgAdmin 4, dan MinIO Console (WSL & Remote)](#18-panduan-akses-vps-via-ssh-pgadmin-4-dan-minio-console-wsl--remote)
+  - [18.1 Panduan Akses VPS Menggunakan SSH](#181-panduan-akses-vps-menggunakan-ssh)
+  - [18.2 Panduan Akses dan Konfigurasi pgAdmin 4 (WSL & VPS Remote)](#182-panduan-akses-dan-konfigurasi-pgadmin-4-wsl--vps-remote)
+  - [18.3 Panduan Akses dan Manajemen MinIO Object Storage (Console & API)](#183-panduan-akses-dan-manajemen-minio-object-storage-console--api)
+  - [18.4 Troubleshooting & Ringkasan Perintah Penting (Cheat Sheet)](#184-troubleshooting--ringkasan-perintah-penting-cheat-sheet)
 
 ---
 
@@ -2284,14 +2289,14 @@ Anda **TIDAK perlu menyalin folder kode sumber `.go`** (seperti `controllers`, `
 **Opsi A: Menggunakan `rsync` (Direkomendasikan)**
 Gunakan *flag* `-vt` (verbose, times) atau `-av` (archive, verbose):
 ```bash
-rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@<IP_VPS>:/home/lims/lims1/backend/
-rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@<IP_VPS>:/home/lims/lims2/backend/
+rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.85.24.33:/home/lims/lims1/backend/
+rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.85.24.33:/home/lims/lims2/backend/
 ```
 
 **Opsi B: Menggunakan `scp`**
 Gunakan atribut `-p` (preserve modification times):
 ```bash
-scp -p /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@<IP_VPS>:/home/lims/lims1/backend/
+scp -p /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.85.24.33:/home/lims/lims1/backend/
 ```
 
 *(Jika Anda melakukan deployment langsung di dalam OS yang sama / WSL, Anda bisa menggunakan perintah `cp -p`)*:
@@ -2962,7 +2967,7 @@ sudo goaccess /var/log/nginx/lims_access.log \
   --log-format='%h - ClientIP: %^ - [%d:%t %^] "%r" %s %b to_server=%v status=%^ resp_time=%^ agent="%u"' \
   --date-format='%d/%b/%Y' \
   --time-format='%H:%M:%S' \
-  --ws-url=wss://<IP_VPS_ANDA>:8082/ws \
+  --ws-url=wss://212.85.24.33:8082/ws \
   -o /home/lims/shared_reports/report.html \
   --real-time-html &
 ```
@@ -5960,3 +5965,307 @@ Jika enkripsi SSL tidak diwajibkan selama masa pengujian lokal:
    ```
 3. Jalankan Vite dev server (`npm run dev`).
 4. Akses aplikasi melalui URL HTTP biasa: `http://localhost:3000/verification`. Tidak ada pemeriksaan sertifikat SSL yang dilakukan oleh browser.
+
+---
+
+## 18. Panduan Akses VPS via SSH, pgAdmin 4, dan MinIO Console (WSL & Remote)
+
+Bab ini memuat panduan operasional komprehensif untuk mengakses infrastruktur LIMS, baik pada lingkungan lokal (WSL2) maupun server produksi jarak jauh (VPS Remote), meliputi akses terminal aman via SSH, manajemen basis data visual menggunakan pgAdmin 4, serta pengelolaan penyimpanan berkas menggunakan MinIO Object Storage Console dan API.
+
+---
+
+### 18.1 Panduan Akses VPS Menggunakan SSH (Secure Shell)
+
+Akses SSH digunakan oleh Administrator dan Pengembang untuk mengelola sistem operasi, layanan background (systemd/PM2), konfigurasi Nginx, dan memantau log aplikasi pada server VPS (IP: `212.85.24.33` atau VM lokal staging: `192.168.142.144`).
+
+#### 1. Perintah Dasar Akses SSH
+Buka terminal (Windows PowerShell atau WSL Ubuntu), jalankan perintah berikut:
+
+* **Masuk sebagai Superuser (Root)**:
+  ```bash
+  ssh root@212.85.24.33
+  ```
+* **Masuk sebagai Pengguna Aplikasi (`lims`)**:
+  ```bash
+  ssh lims@212.85.24.33
+  ```
+* **Jika SSH Menggunakan Port Kustom**:
+  Jika port SSH default (22) diubah demi keamanan (misalnya port `2222`):
+  ```bash
+  ssh -p 2222 lims@212.85.24.33
+  ```
+
+#### 2. Autentikasi Menggunakan SSH Keypair (Tanpa Password)
+Menggunakan otentikasi SSH Key lebih aman dan efisien dibanding mengetik password secara berulang.
+
+1. **Periksa atau Buat SSH Key di Mesin Klien (WSL / Windows)**:
+   ```bash
+   # Di terminal WSL atau Git Bash:
+   ls -la ~/.ssh/id_ed25519
+   # Jika belum ada, buat pasangan kunci baru:
+   ssh-keygen -t ed25519 -C "admin-lims"
+   ```
+2. **Salin Kunci Publik (`.pub`) ke VPS**:
+   ```bash
+   ssh-copy-id -i ~/.ssh/id_ed25519.pub lims@212.85.24.33
+   ```
+   *(Atau salin isi `~/.ssh/id_ed25519.pub` secara manual ke berkas `~/.ssh/authorized_keys` di server VPS).*
+3. **Login Menggunakan Kunci Spesifik**:
+   ```bash
+   ssh -i ~/.ssh/id_ed25519 lims@212.85.24.33
+   ```
+
+#### 3. Membuat Pintasan Koneksi SSH (`~/.ssh/config`)
+Agar tidak perlu mengetik alamat IP, username, dan port berulang-ulang, buat konfigurasi alias pada mesin lokal:
+
+1. Buka/buat file `~/.ssh/config` di WSL atau Windows (`C:\Users\<User>\.ssh\config`):
+   ```bash
+   nano ~/.ssh/config
+   ```
+2. Tambahkan konfigurasi berikut:
+   ```ssh-config
+   Host vps-lims
+       HostName 212.85.24.33
+       User lims
+       Port 22
+       IdentityFile ~/.ssh/id_ed25519
+       ServerAliveInterval 60
+       ServerAliveCountMax 3
+
+   Host vm-lims-local
+       HostName 192.168.142.144
+       User lims
+       Port 22
+       IdentityFile ~/.ssh/id_ed25519
+   ```
+3. Set hak akses berkas (di WSL/Linux):
+   ```bash
+   chmod 600 ~/.ssh/config
+   ```
+4. Kini Anda dapat langsung terhubung cukup dengan perintah:
+   ```bash
+   ssh vps-lims
+   ```
+
+#### 4. SSH Port Forwarding / Tunneling (Akses Layanan Internal Secara Aman)
+Jika port layanan tertentu (seperti database PostgreSQL port `5432` atau Camunda port `8080`) tidak dibuka ke publik melalui firewall VPS, Anda dapat melakukan tunnel ke mesin lokal:
+
+* **Tunneling PostgreSQL VPS ke Port Lokal**:
+  ```bash
+  # Memetakan port 5432 VPS ke port 5433 lokal mesin Anda:
+  ssh -L 5433:localhost:5432 -N -f lims@212.85.24.33
+  ```
+  *Setelah tunnel aktif, Anda dapat membuka pgAdmin atau DBeaver dan menghubungkannya ke `localhost:5433`.*
+
+---
+
+### 18.2 Panduan Akses dan Konfigurasi pgAdmin 4 (WSL & VPS Remote)
+
+pgAdmin 4 adalah GUI berbasis web untuk administrasi basis data PostgreSQL. Pada arsitektur LIMS, pgAdmin berjalan di dalam WSL melalui Apache2 Web Server (`mod_wsgi`) dan dapat mengelola database lokal WSL maupun database VPS remote.
+
+#### 1. Membuka Antarmuka pgAdmin 4 di Browser
+pgAdmin 4 di lingkungan WSL telah terkonfigurasi sebagai web application terintegrasi:
+
+* **Alamat Web URL**:
+  ```text
+  http://localhost/pgadmin4/
+  ```
+  *(Catatan: Pastikan menyertakan garis miring di akhir URL `/pgadmin4/`).*
+* **Perintah Membuka Cepat dari Terminal WSL**:
+  ```bash
+  cmd.exe /c start http://localhost/pgadmin4/
+  ```
+* **Kredensial Login Administrator pgAdmin**:
+  * **Email / Username**: `nurkholim15@gmail.com`
+  * **Password**: *(Password master yang Anda tetapkan saat konfigurasi `pgadmin4-web`)*.
+* **Cara Reset Password pgAdmin jika Terlupa**:
+  Jalankan perintah berikut di dalam terminal WSL:
+  ```bash
+  sudo /usr/pgadmin4/bin/setup-web.py
+  ```
+  Masukkan email dan password baru saat diminta.
+
+#### 2. Menghubungkan pgAdmin ke PostgreSQL Lokal (WSL)
+1. Buka `http://localhost/pgadmin4/` dan login.
+2. Di panel kiri, klik kanan pada menu **Servers** $\rightarrow$ **Register** $\rightarrow$ **Server...**.
+3. Pada tab **General**:
+   * **Name**: `PostgreSQL WSL Lokal`
+4. Pada tab **Connection**:
+   * **Host name/address**: `localhost` (atau `127.0.0.1`)
+   * **Port**: `5432`
+   * **Maintenance database**: `lims_prod_db` (atau `postgres`)
+   * **Username**: `admin_lims` (atau `postgres`)
+   * **Password**: *(Password database lokal Anda)*
+   * Beri centang pada opsi **Save password?**.
+5. Klik **Save**. Seluruh database (`lims_prod_db`, `chatbot_db`, dll.) akan muncul di hierarki Object Explorer.
+
+#### 3. Menghubungkan pgAdmin ke PostgreSQL Remote (VPS Server)
+1. Klik kanan **Servers** $\rightarrow$ **Register** $\rightarrow$ **Server...**.
+2. Pada tab **General**:
+   * **Name**: `VPS LIMS Production (212.85.24.33)`
+3. Pada tab **Connection**:
+   * **Host name/address**: `212.85.24.33`
+   * **Port**: `5432`
+   * **Maintenance database**: `lims_prod_db` (atau `postgres`)
+   * **Username**: `postgres` (atau `admin_lims`)
+   * **Password**: *(Password database PostgreSQL di VPS)*
+   * Centang **Save password?**.
+4. *(Opsi Terbaik)* **Menggunakan Tab SSH Tunnel** (Sangat disarankan jika port 5432 tidak dibuka ke publik):
+   * Buka tab **SSH Tunnel**:
+     * Geser toggle **Use SSH tunneling** ke posisi aktif (`True`).
+     * **Tunnel host**: `212.85.24.33`
+     * **Tunnel port**: `22`
+     * **Username**: `lims` (atau `root`)
+     * **Authentication**: Pilih `Identity File` (arahkan ke `id_ed25519`) atau `Password`.
+5. Klik **Save**.
+
+#### 4. Penanganan Galat `FATAL: password authentication failed for user "lims"`
+* **Penyebab**:
+  Nama pengguna `lims` adalah akun login sistem operasi Linux (Ubuntu VPS), **bukan** user PostgreSQL default. Secara default, PostgreSQL hanya membuat user superuser bernama `postgres`.
+* **Solusi**:
+  1. Masukkan Username: `postgres` pada konfigurasi pgAdmin.
+  2. Atau, jika ingin membuat akun PostgreSQL khusus dengan nama `lims`:
+     * Login ke VPS:
+       ```bash
+       ssh lims@212.85.24.33
+       ```
+     * Masuk ke prompt PostgreSQL:
+       ```bash
+       sudo -u postgres psql
+       ```
+     * Jalankan query SQL:
+       ```sql
+       -- Buat user lims dan tentukan password:
+       CREATE USER lims WITH SUPERUSER PASSWORD 'PasswordKuatAnda123!';
+       -- Atau reset password jika user sudah pernah dibuat:
+       ALTER USER lims WITH PASSWORD 'PasswordKuatAnda123!';
+       -- Berikan hak penuh ke database lims_prod_db:
+       GRANT ALL PRIVILEGES ON DATABASE lims_prod_db TO lims;
+       \q
+       ```
+  3. **Pastikan PostgreSQL VPS Mendengarkan Alamat Eksternal**:
+     * Buka berkas konfigurasi:
+       ```bash
+       sudo nano /etc/postgresql/*/main/postgresql.conf
+       ```
+       Pastikan baris berikut aktif:
+       ```ini
+       listen_addresses = '*'
+       ```
+     * Buka berkas otentikasi host:
+       ```bash
+       sudo nano /etc/postgresql/*/main/pg_hba.conf
+       ```
+       Tambahkan aturan izin koneksi remote di baris paling bawah:
+       ```text
+       # Izinkan koneksi dengan autentikasi password SCRAM/MD5:
+       host    all             all             0.0.0.0/0               scram-sha-256
+       ```
+     * Restart service PostgreSQL VPS:
+       ```bash
+       sudo systemctl restart postgresql
+       ```
+
+---
+
+### 18.3 Panduan Akses dan Manajemen MinIO Object Storage (Console & API)
+
+MinIO merupakan platform penyimpanan objek (*Object Storage*) performa tinggi yang kompatibel dengan Amazon S3 API. Di dalam arsitektur LIMS, MinIO digunakan untuk menyimpan seluruh lampiran dokumen digital pengujian: Surat Permohonan, Dokumen Mutu, Spesifikasi Teknis Alat, Bukti Pembayaran, dan Surat Hasil Pengujian (SHP).
+
+#### 1. Perbedaan Port MinIO (Console vs API)
+MinIO berjalan menggunakan dua port dengan fungsi yang berbeda:
+* **Port 9001 (Web Console GUI)**:
+  * Digunakan oleh administrator melalui browser untuk menjelajahi bucket, melihat preview dokumen, mengunggah berkas secara manual, dan memantau kuota storage.
+  * URL: `http://localhost:9001` (atau `http://212.85.24.33:9001` di VPS).
+* **Port 9000 (S3 API Endpoint)**:
+  * Digunakan oleh backend aplikasi LIMS (Go) melalui protokol HTTP/REST untuk operasi *put*, *get*, *delete*, dan *generate presigned URL*.
+  * URL: `http://localhost:9000` (atau `http://127.0.0.1:9000`).
+
+#### 2. Akses Web Console MinIO
+1. Buka browser dan navigasikan ke alamat:
+   ```text
+   http://localhost:9001
+   ```
+   *(Atau dari WSL jalankan: `cmd.exe /c start http://localhost:9001`)*.
+2. Masukkan kredensial administrator LIMS:
+   * **Username / Access Key**: `adminmiliter`
+   * **Password / Secret Key**: `password12345`
+3. Klik **Login**.
+4. Di dashboard MinIO, Anda dapat mengklik menu **Buckets** untuk melihat daftar bucket yang ada.
+
+#### 3. Struktur Bucket & Konfigurasi Backend LIMS
+* **Nama Bucket Utama LIMS**: `lims-docs`
+* **Konfigurasi Lingkungan (`backend/.env`)**:
+  Pastikan konfigurasi backend Go sesuai dengan parameter service MinIO:
+  ```ini
+  MINIO_ENDPOINT=127.0.0.1:9000
+  MINIO_ACCESS_KEY=adminmiliter
+  MINIO_SECRET_KEY=password12345
+  MINIO_USE_SSL=false
+  MINIO_BUCKET_NAME=lims-docs
+  ```
+  > [!NOTE]
+  > Backend LIMS secara otomatis memverifikasi keberadaan bucket `lims-docs` saat inisialisasi aplikasi (`backend/config/minio.go`). Jika bucket belum ada, backend akan membuatnya secara otomatis (*auto-create*).
+
+#### 4. Manajemen Service MinIO (systemd)
+MinIO dikelola sebagai daemon systemd pada WSL dan VPS:
+
+* **Cek Status MinIO**:
+  ```bash
+  sudo systemctl status minio
+  ```
+* **Menjalankan MinIO**:
+  ```bash
+  sudo systemctl start minio
+  ```
+* **Menghentikan MinIO**:
+  ```bash
+  sudo systemctl stop minio
+  ```
+* **Memulai Ulang (Restart) MinIO**:
+  ```bash
+  sudo systemctl restart minio
+  ```
+* **Melihat Log Real-Time MinIO**:
+  ```bash
+  sudo journalctl -u minio -f -n 50
+  ```
+* **Menjalankan MinIO secara Manual (Mode Debugging)**:
+  Jika ingin melihat output konsol langsung tanpa systemd:
+  ```bash
+  minio server --address :9000 --console-address :9001 /var/lib/minio/data
+  ```
+
+---
+
+### 18.4 Troubleshooting & Ringkasan Perintah Penting (Cheat Sheet)
+
+#### 1. Tabel Ringkasan Layanan dan Port Akses
+
+| Layanan | Protokol / Port | URL / Alamat Akses | Kredensial Default | Catatan |
+| :--- | :--- | :--- | :--- | :--- |
+| **SSH VPS** | TCP `22` | `212.85.24.33:22` | User: `lims` / `root` | Gunakan key `~/.ssh/id_ed25519` |
+| **pgAdmin 4 (WSL)** | HTTP `80` (Apache) | `http://localhost/pgadmin4/` | `nurkholim15@gmail.com` | Wajib ada trailing slash (`/`) |
+| **PostgreSQL Lokal** | TCP `5432` | `localhost:5432` | User: `admin_lims` / `postgres` | Database: `lims_prod_db` |
+| **PostgreSQL VPS** | TCP `5432` | `212.85.24.33:5432` | User: `postgres` / `lims` | Disarankan via SSH Tunnel |
+| **MinIO Console** | HTTP `9001` | `http://localhost:9001` | User: `adminmiliter`<br>Pass: `password12345` | Dashboard browser manajemen berkas |
+| **MinIO S3 API** | HTTP `9000` | `http://localhost:9000` | S3 Key / Secret Key | Digunakan backend Go LIMS |
+
+#### 2. Perintah Penting Sekali Klik (WSL Terminal)
+
+```bash
+# Buka pgAdmin di browser Windows dari WSL:
+cmd.exe /c start http://localhost/pgadmin4/
+
+# Buka MinIO Console di browser Windows dari WSL:
+cmd.exe /c start http://localhost:9001
+
+# Masuk ke prompt PostgreSQL WSL lokal:
+sudo -u postgres psql -d lims_prod_db
+
+# Masuk ke SSH VPS Remote:
+ssh lims@212.85.24.33
+
+# Cek apakah port PostgreSQL dan MinIO aktif mendengarkan:
+ss -tulpn | grep -E '5432|9000|9001|80'
+```

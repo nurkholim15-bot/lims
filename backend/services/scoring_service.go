@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"sort"
 	"lim-system/models"
 	"lim-system/database"
 	"strings"
@@ -137,6 +138,7 @@ func CalculateAspectScore(applicationID uint64, aspectCode string) (AspectScore,
 
 	// Get all sub-aspects for this aspect
 	if err := database.DB.Where("aspect_code = ? AND is_active = ?", aspect.Code, true).
+		Order("code ASC").
 		Find(&subAspects).Error; err != nil {
 		return AspectScore{}, err
 	}
@@ -214,6 +216,10 @@ func CalculateAspectScore(applicationID uint64, aspectCode string) (AspectScore,
 			IsDisabled:    false,
 		})
 	}
+
+	sort.SliceStable(subAspectScores, func(i, j int) bool {
+		return subAspectScores[i].SubAspectCode < subAspectScores[j].SubAspectCode
+	})
 
 	// Avoid division by zero
 	var aspectScore float64
@@ -366,7 +372,7 @@ func RefreshApplicationScoring(applicationID uint64) (ScoringResult, error) {
 		if err := database.DB.Where(
 			"methodology_code IN ? AND is_active = ? AND is_used = ?",
 			methodologyCodes, true, true,
-		).Find(&aspects).Error; err != nil {
+		).Order("code ASC").Find(&aspects).Error; err != nil {
 			return result, fmt.Errorf("failed to fetch aspects: %w", err)
 		}
 	}
@@ -403,6 +409,10 @@ func RefreshApplicationScoring(applicationID uint64) (ScoringResult, error) {
 		}
 		aspectScores = append(aspectScores, aspScore)
 	}
+
+	sort.SliceStable(aspectScores, func(i, j int) bool {
+		return aspectScores[i].AspectCode < aspectScores[j].AspectCode
+	})
 
 	// Validate all aspects meet thresholds (HARD FAILURE RULE)
 	failedAspects, allPassed := ValidateAspectThresholds(aspectScores)

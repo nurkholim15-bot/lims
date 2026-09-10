@@ -5,11 +5,13 @@ import (
 	"lim-system/views"
 	"lim-system/database"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // Helper to get username from context
@@ -1919,7 +1921,11 @@ func GetScoringAspects(c *gin.Context) {
 	packageIDStr := c.Query("package_id")
 	var aspects []models.ScoringAspect
 	
-	query := database.DB.Preload("Methodology").Preload("TestType").Preload("SubAspects")
+	query := database.DB.Preload("Methodology").Preload("TestType").
+		Preload("SubAspects", func(db *gorm.DB) *gorm.DB {
+			return db.Order("scoring_sub_aspects.code ASC")
+		}).
+		Order("scoring_aspects.code ASC")
 	if methodologyCode != "" {
 		query = query.Where("methodology_code = ?", methodologyCode)
 	}
@@ -1977,6 +1983,15 @@ func GetScoringAspects(c *gin.Context) {
 				aspects = filteredAspects
 			}
 		}
+	}
+
+	sort.SliceStable(aspects, func(i, j int) bool {
+		return aspects[i].Code < aspects[j].Code
+	})
+	for k := range aspects {
+		sort.SliceStable(aspects[k].SubAspects, func(i, j int) bool {
+			return aspects[k].SubAspects[i].Code < aspects[k].SubAspects[j].Code
+		})
 	}
 	
 	views.Success(c, aspects, "Retrieved")
@@ -2111,6 +2126,8 @@ func GetScoringSubAspects(c *gin.Context) {
 		query = query.Where("code ILIKE ? OR name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 	
+	query = query.Order("code ASC")
+
 	if err := query.Find(&items).Error; err != nil {
 		views.Error(c, http.StatusInternalServerError, "Gagal memproses data", err.Error())
 		return
@@ -2239,12 +2256,16 @@ func GetScoringSubAspectItems(c *gin.Context) {
 		q = q.Where("sub_aspect_code IN ?", codes)
 	} else if subCode := c.Query("sub_aspect_code"); subCode != "" {
 		q = q.Where("sub_aspect_code = ?", subCode)
+	} else if aspectCode := c.Query("aspect_code"); aspectCode != "" {
+		q = q.Where("sub_aspect_code IN (SELECT code FROM scoring_sub_aspects WHERE aspect_code = ?)", aspectCode)
 	}
 
 	search := c.Query("search")
 	if search != "" {
 		q = q.Where("sub_aspect_code ILIKE ? OR name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
+
+	q = q.Order("sub_aspect_code ASC, id ASC")
 
 	if err := q.Find(&items).Error; err != nil {
 		views.Error(c, http.StatusInternalServerError, "Failed to fetch items", err.Error())

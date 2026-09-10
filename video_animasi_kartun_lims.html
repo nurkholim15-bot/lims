@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Animasi 3D Alur Kerja LIMS - Ruangan Laboratorium Modern</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="./three.min.js"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.02); }
+    }
+    .hud-glow { animation: pulse-glow 3s ease-in-out infinite; }
+    
+    .active-stage {
+      border-color: #10b981 !important;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(15, 23, 42, 0.95)) !important;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+    }
+
+    #threejsCanvas {
+      cursor: grab;
+    }
+    #threejsCanvas:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col items-center justify-start p-2 sm:p-5 font-sans">
+
+  <!-- Container Utama -->
+  <div class="w-full max-w-6xl bg-slate-900/95 border-2 border-emerald-500/40 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl flex flex-col my-auto">
+    
+    <!-- Header Video Bar -->
+    <div class="px-5 py-4 border-b border-slate-800 bg-gradient-to-r from-emerald-950/80 via-slate-900 to-sky-950/80 flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-ping"></div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-950/70 px-2.5 py-0.5 rounded-full border border-emerald-500/40">SOP Alur 6 Tahap LIMS</span>
+            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/40 font-bold">🎬 Animasi Gerak Alami (Foto Asli Alur)</span>
+            <span class="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded border border-sky-500/30 font-mono font-bold">1280x720 HD • 02:40</span>
+          </div>
+          <h1 class="text-sm sm:text-base font-extrabold text-white tracking-tight flex items-center gap-2 mt-1">
+            Video Animasi Gerak Alami Alur Kerja Sistem LIMS (Foto Asli Beranimasi)
+          </h1>
+        </div>
+      </div>
+
+      <!-- Action & Mode Switch Buttons -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- Direct Download MP4 Button -->
+        <a href="./video_animasi_lims_indonesia.mp4" download="video_animasi_lims_indonesia.mp4" class="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white transition-all shadow-lg shadow-emerald-950/50 active:scale-95">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Unduh Video MP4 (9.7 MB)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Info Banner Status File -->
+    <div class="bg-cyan-950/60 border-b border-cyan-500/30 px-5 py-2.5 flex items-center justify-between text-xs text-cyan-200 flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span>Video animasi gerak alami alur LIMS telah tersimpan di: <code class="font-mono bg-cyan-900/70 text-cyan-100 px-2 py-0.5 rounded font-bold">Downloads\video_animasi_lims_indonesia.mp4</code></span>
+      </div>
+      <span class="text-cyan-300 font-semibold flex items-center gap-1">
+        ✓ Modifikasi Foto Asli Beranimasi Alami (Ketik Laptop, Print Barcode, Laser Scanning) & Dubbing Indonesia
+      </span>
+    </div>
+
+    <!-- MAIN DISPLAY AREA -->
+    
+    <!-- 1. Native 3D HD Video Player Container (16:9) -->
+    <div id="videoContainer" class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden group">
+      <video id="mainVideo" src="./video_animasi_lims_indonesia.mp4" class="w-full h-full object-contain" controls preload="auto" playsinline>
+        Peramban Anda tidak mendukung pemutaran video MP4.
+      </video>
+
+      <!-- Live Dynamic Lower-Third Overlay -->
+      <div id="lowerThirdBox" class="absolute bottom-16 left-6 pointer-events-none transition-all duration-300 opacity-0 transform -translate-x-10 z-20">
+        <div class="bg-slate-950/90 border-l-4 border-cyan-400 px-4 py-2.5 rounded-r-xl shadow-2xl backdrop-blur-md border border-slate-800 flex flex-col">
+          <span id="ltStageNum" class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Tahap 1</span>
+          <span id="ltStageTitle" class="text-sm font-extrabold text-white tracking-wide">Register LIMS & Barcode 3D</span>
+          <span id="ltActorRole" class="text-[11px] font-semibold text-slate-300">PIC: Siti Rahmawati • Petugas Registrasi & Barcode</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Interactive Real-Time 3D WebGL Three.js Laboratory Studio -->
+    <div id="threejsStudioContainer" class="hidden relative w-full aspect-video bg-slate-950 flex flex-col items-center justify-center overflow-hidden border-b border-slate-800">
+      
+      <!-- Top Bar for 3D Studio -->
+      <div class="absolute top-4 left-6 right-6 flex items-center justify-between z-30 bg-slate-950/85 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+          <div>
+            <h3 id="stationTitle" class="text-xs sm:text-sm font-extrabold text-white flex items-center gap-2">
+              Ruangan Laboratorium LIMS 3D Interaktif (WebGL 360°)
+            </h3>
+            <p class="text-[11px] text-slate-400">
+              Drag mouse untuk putar 360° • Scroll untuk Zoom In/Out • Klik stasiun di bawah untuk terbang ke meja laboratorium
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="playStationVoice()" id="btnVoiceStation" class="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-md">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            <span id="voiceStationText">Putar Narasi Suara</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- WebGL Canvas Container -->
+      <div id="threejsMount" class="w-full h-full relative">
+        <canvas id="threejsCanvas" class="w-full h-full block"></canvas>
+      </div>
+
+      <!-- 3D Station Selector Pills at Bottom -->
+      <div class="absolute bottom-4 left-4 right-4 flex items-center justify-center gap-2 z-30 flex-wrap">
+        <button onclick="focusStation(1)" class="stn-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" data-stn="1">
+          1. Meja Intake & Barcode
+        </button>
+        <button onclick="focusStation(2)" class="stn-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" data-stn="2">
+          2. Meja Pipet Robotik
+        </button>
+        <button onclick="focusStation(3)" class="stn-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" data-stn="3">
+          3. Instrumen & Osiloskop
+        </button>
+        <button onclick="focusStation(4)" class="stn-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" data-stn="4">
+          4. Konsol AI-PQC
+        </button>
+        <button onclick="focusStation(5)" class="stn-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" data-stn="5">
+          5. Meja Supervisor (CoA)
+        </button>
+        <button onclick="focusStation(6)" class="stn-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" data-stn="6">
+          6. Meja Serah Terima Coolbox
+        </button>
+        <button onclick="reset3DCamera()" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-cyan-700 hover:bg-cyan-600 text-white transition">
+          🔄 Lihat Seluruh Lab
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Interactive Navigation: 6 Flow Stages -->
+    <div class="p-5 bg-slate-950/95 border-t border-slate-800 flex flex-col gap-4">
+      
+      <!-- Video Animasi Bergerak Alur LIMS (Sesuai Permintaan Foto/Ilustrasi Asli Pengguna) -->
+      <div class="bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-4 flex flex-col gap-3 shadow-xl">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-extrabold text-[10px] border border-emerald-500/40">🎬 PINTASAN ANIMASI ALUR LIMS (FOTO ASLI)</span>
+            <span class="text-xs font-bold text-white">Klik tombol untuk langsung memutar animasi bergerak sub-topik terkait:</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-mono">12 Sub-Topik Beranimasi Alami</span>
+        </div>
+
+        <!-- Baris 1: Registrasi & Preparasi (Tahap 1 & 2) -->
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Tahap 1 & 2: Registrasi, Preparasi & Penugasan
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            <button onclick="seekTo(16.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-emerald-400">00:16</span>
+                <span class="text-[10px]">🪪</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-emerald-300 leading-tight">1. Pencatatan Pengirim</div>
+              <div class="text-[9px] text-slate-400">Scan ID Card & Kalender</div>
+            </button>
+            <button onclick="seekTo(24.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-sky-400">00:24</span>
+                <span class="text-[10px]">🧪</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-sky-300 leading-tight">2. Parameter Uji</div>
+              <div class="text-[9px] text-slate-400">Lengan Robot & Wi-Fi DB</div>
+            </button>
+            <button onclick="seekTo(32.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-cyan-400">00:32</span>
+                <span class="text-[10px]">💧</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-cyan-300 leading-tight">3. Pembagian Sampel</div>
+              <div class="text-[9px] text-slate-400">Tetes Nozzle Aliquot</div>
+            </button>
+            <button onclick="seekTo(41.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-amber-400">00:41</span>
+                <span class="text-[10px]">📋</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-amber-300 leading-tight">4. Penjadwalan Kerja</div>
+              <div class="text-[9px] text-slate-400">Worklist Scan & Konsol</div>
+            </button>
+            <button onclick="seekTo(49.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-teal-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-teal-400">00:49</span>
+                <span class="text-[10px]">🚐</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-teal-300 leading-tight">5. Pengiriman Sampel</div>
+              <div class="text-[9px] text-slate-400">Coolbox Uap & Van GPS</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Baris 2: Pengujian & Validasi Formula (Tahap 3 & 4) -->
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Tahap 3 & 4: Pelaksanaan Pengujian, AI-PQC & Kalkulasi Formula
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="seekTo(57.0)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-indigo-400">00:57</span>
+                <span class="text-[10px]">📈</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-indigo-300 leading-tight">6. Pelaksanaan Pengujian</div>
+              <div class="text-[9px] text-slate-400">Kromatogram & Kabel Bus</div>
+            </button>
+            <button onclick="seekTo(67.0)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-emerald-400">01:07</span>
+                <span class="text-[10px]">🛡️</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-emerald-300 leading-tight">7. Anti Human Error</div>
+              <div class="text-[9px] text-slate-400">Perisai Data & Blokir Typo</div>
+            </button>
+            <button onclick="seekTo(76.8)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-blue-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-blue-400">01:17</span>
+                <span class="text-[10px]">🧮</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-blue-300 leading-tight">8. Kalkulasi Formula</div>
+              <div class="text-[9px] text-slate-400">Kotak Rumus & Scoring Auto</div>
+            </button>
+            <button onclick="seekTo(90.3)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-amber-400">01:30</span>
+                <span class="text-[10px]">📦</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-amber-300 leading-tight">9. Flagging & Retur</div>
+              <div class="text-[9px] text-slate-400">Packing Kardus & Scanner</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Baris 3: Approval, Sertifikasi & Penyerahan Klien (Tahap 5 & 6) -->
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+            Tahap 5 & 6: Approval Supervisor, OOS, Kompilasi & Penyerahan Klien
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            <button onclick="seekTo(103.8)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-purple-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-purple-400">01:44</span>
+                <span class="text-[10px]">👨‍⚕️</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-purple-300 leading-tight">10. Verifikasi Supervisor</div>
+              <div class="text-[9px] text-slate-400">Pemeriksaan Uji Senior</div>
+            </button>
+            <button onclick="seekTo(112.3)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-rose-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-rose-400">01:52</span>
+                <span class="text-[10px]">⚠️</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-rose-300 leading-tight">11. Penanganan OOS</div>
+              <div class="text-[9px] text-slate-400">Sirine & Investigasi Re-test</div>
+            </button>
+            <button onclick="seekTo(120.8)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-sky-400">02:01</span>
+                <span class="text-[10px]">📑</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-sky-300 leading-tight">12. Kompilasi Sertifikat</div>
+              <div class="text-[9px] text-slate-400">LHA & Stempel Rosette</div>
+            </button>
+            <button onclick="seekTo(128.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-teal-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-teal-400">02:08</span>
+                <span class="text-[10px]">🏆</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-teal-300 leading-tight">13. Penyerahan Sertifikat</div>
+              <div class="text-[9px] text-slate-400">Hardcopy Piagam ke Klien</div>
+            </button>
+            <button onclick="seekTo(144.5)" class="cursor-pointer p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-400 text-left transition flex flex-col gap-1 group">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold text-emerald-400">02:24</span>
+                <span class="text-[10px]">🧊</span>
+              </div>
+              <div class="text-[11px] font-bold text-white group-hover:text-emerald-300 leading-tight">14. Serah Terima Sampel</div>
+              <div class="text-[9px] text-slate-400">Cooling Box & Tabung Uap</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-400 flex-wrap gap-2 mt-1">
+        <span class="font-bold text-slate-200 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Navigasi 6 Tahap SOP Laboratorium:
+        </span>
+        <span class="font-mono text-cyan-400 font-bold bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800" id="videoTimer">00:00 / 02:40</span>
+      </div>
+
+      <!-- 6 Flow Stage Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        
+        <!-- Stage 1 -->
+        <button onclick="seekTo(0)" id="card0" class="scene-card cursor-pointer p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-400 text-left transition-all flex flex-col justify-between gap-2 group">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[9px] font-mono font-extrabold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">TAHAP 1 (00:00)</span>
+              <span class="text-[9px] text-slate-400 font-mono">24 dtk</span>
+            </div>
+            <div class="text-xs font-bold text-white group-hover:text-emerald-300 transition line-clamp-1">Register LIMS & Barcode</div>
+            <div class="text-[10px] text-slate-400 mt-1 leading-snug">
+              • Sampel Masuk 3D<br>
+              • Printer & Scanner 3D<br>
+              • Identitas Pengirim
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 text-[10px] text-emerald-400/80 font-mono truncate" id="pic1Display">
+            PIC: Siti Rahmawati
+          </div>
+        </button>
+
+        <!-- Stage 2 -->
+        <button onclick="seekTo(24.4)" id="card1" class="scene-card cursor-pointer p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-sky-400 text-left transition-all flex flex-col justify-between gap-2 group">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[9px] font-mono font-extrabold text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-500/30">TAHAP 2 (00:24)</span>
+              <span class="text-[9px] text-slate-400 font-mono">33 dtk</span>
+            </div>
+            <div class="text-xs font-bold text-white group-hover:text-sky-300 transition line-clamp-1">Perencanaan Pengujian</div>
+            <div class="text-[10px] text-slate-400 mt-1 leading-snug">
+              • Parameter Uji 3D<br>
+              • Robot Pipet Aliquot<br>
+              • Jadwal & Kirim Lab
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 text-[10px] text-sky-400/80 font-mono truncate" id="pic2Display">
+            PIC: Dimas Wicaksono
+          </div>
+        </button>
+
+        <!-- Stage 3 -->
+        <button onclick="seekTo(57.1)" id="card2" class="scene-card cursor-pointer p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-400 text-left transition-all flex flex-col justify-between gap-2 group">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[9px] font-mono font-extrabold text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-500/30">TAHAP 3 (00:57)</span>
+              <span class="text-[9px] text-slate-400 font-mono">20 dtk</span>
+            </div>
+            <div class="text-xs font-bold text-white group-hover:text-indigo-300 transition line-clamp-1">Pelaksanaan Pengujian</div>
+            <div class="text-[10px] text-slate-400 mt-1 leading-snug">
+              • Instrument Interfacing<br>
+              • Osiloskop & Sinyal 3D<br>
+              • Anti Human Error
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 text-[10px] text-indigo-400/80 font-mono truncate" id="pic3Display">
+            PIC: Budi Santoso, S.T.
+          </div>
+        </button>
+
+        <!-- Stage 4 -->
+        <button onclick="seekTo(76.8)" id="card3" class="scene-card cursor-pointer p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-400 text-left transition-all flex flex-col justify-between gap-2 group">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[9px] font-mono font-extrabold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/30">TAHAP 4 (01:17)</span>
+              <span class="text-[9px] text-slate-400 font-mono">27 dtk</span>
+            </div>
+            <div class="text-xs font-bold text-white group-hover:text-amber-300 transition line-clamp-1">Analisa Data 3D</div>
+            <div class="text-[10px] text-slate-400 mt-1 leading-snug">
+              • Komputasi Formula<br>
+              • AI-PQC Tolerance<br>
+              • Arsip Retur Sampel
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 text-[10px] text-amber-400/80 font-mono truncate" id="pic4Display">
+            PIC: Anita Wulandari
+          </div>
+        </button>
+
+        <!-- Stage 5 -->
+        <button onclick="seekTo(103.8)" id="card4" class="scene-card cursor-pointer p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-rose-400 text-left transition-all flex flex-col justify-between gap-2 group">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[9px] font-mono font-extrabold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-500/30">TAHAP 5 (01:44)</span>
+              <span class="text-[9px] text-slate-400 font-mono">25 dtk</span>
+            </div>
+            <div class="text-xs font-bold text-white group-hover:text-rose-300 transition line-clamp-1">Pelaporan & Sertifikasi</div>
+            <div class="text-[10px] text-slate-400 mt-1 leading-snug">
+              • Verifikasi Digital 3D<br>
+              • Penanganan OOS<br>
+              • Stempel Emas ISO 17025
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 text-[10px] text-rose-400/80 font-mono truncate" id="pic5Display">
+            PIC: Ir. Joko Susanto
+          </div>
+        </button>
+
+        <!-- Stage 6 -->
+        <button onclick="seekTo(128.5)" id="card5" class="scene-card cursor-pointer p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-teal-400 text-left transition-all flex flex-col justify-between gap-2 group">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[9px] font-mono font-extrabold text-teal-400 bg-teal-950/60 px-2 py-0.5 rounded border border-teal-500/30">TAHAP 6 (02:08)</span>
+              <span class="text-[9px] text-slate-400 font-mono">32 dtk</span>
+            </div>
+            <div class="text-xs font-bold text-white group-hover:text-teal-300 transition line-clamp-1">Penyerahan Sertifikat</div>
+            <div class="text-[10px] text-slate-400 mt-1 leading-snug">
+              • Serah Sertifikat CoA<br>
+              • Serah Coolbox 4°C<br>
+              • Terdokumentasi ISO
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 text-[10px] text-teal-400/80 font-mono truncate" id="pic6Display">
+            PIC: Maya & Tim Layanan
+          </div>
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Audio Element for Station Synchronizations -->
+  <audio id="stationAudio" preload="auto"></audio>
+
+  <!-- MODAL GANTI NAMA PIC -->
+  <div id="nameModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">⚙️</span>
+          <h2 class="text-base font-bold text-white">Sesuaikan Nama PIC Laboratorium</h2>
+        </div>
+        <button onclick="closeNameModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Ubah nama PIC atau analis yang menangani tiap stasiun laboratorium 3D.
+      </p>
+
+      <div class="flex flex-col gap-3 text-xs">
+        <div class="flex flex-col gap-1">
+          <label class="font-bold text-emerald-400">Tahap 1: Registrasi & Barcode PIC:</label>
+          <input id="inputPic1" type="text" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-emerald-500 font-semibold" placeholder="Nama PIC" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="font-bold text-sky-400">Tahap 2: Perencanaan Pengujian PIC:</label>
+          <input id="inputPic2" type="text" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-sky-500 font-semibold" placeholder="Nama PIC" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="font-bold text-indigo-400">Tahap 3: Pelaksanaan Pengujian PIC:</label>
+          <input id="inputPic3" type="text" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-500 font-semibold" placeholder="Nama PIC" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="font-bold text-amber-400">Tahap 4: Analisa Data & AI-PQC PIC:</label>
+          <input id="inputPic4" type="text" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-500 font-semibold" placeholder="Nama PIC" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="font-bold text-rose-400">Tahap 5: Pelaporan & Sertifikasi PIC:</label>
+          <input id="inputPic5" type="text" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-rose-500 font-semibold" placeholder="Nama PIC" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="font-bold text-teal-400">Tahap 6: Penyerahan Sertifikat & Sample PIC:</label>
+          <input id="inputPic6" type="text" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-teal-500 font-semibold" placeholder="Nama PIC" />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+        <button onclick="saveActorNames()" class="px-5 py-2 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition shadow-lg">
+          Simpan & Terapkan
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('mainVideo');
+    const videoContainer = document.getElementById('videoContainer');
+    const threejsStudioContainer = document.getElementById('threejsStudioContainer');
+    const btn3DToggle = document.getElementById('btn3DToggle');
+    const mode3DIcon = document.getElementById('mode3DIcon');
+    const mode3DText = document.getElementById('mode3DText');
+    const stationAudio = document.getElementById('stationAudio');
+    const voiceStationText = document.getElementById('voiceStationText');
+
+    const lowerThirdBox = document.getElementById('lowerThirdBox');
+    const ltStageNum = document.getElementById('ltStageNum');
+    const ltStageTitle = document.getElementById('ltStageTitle');
+    const ltActorRole = document.getElementById('ltActorRole');
+    const videoTimer = document.getElementById('videoTimer');
+    const nameModal = document.getElementById('nameModal');
+
+    // Default Flow PICs
+    const defaultPics = {
+      p1: "Siti Rahmawati",
+      p2: "Dimas Wicaksono",
+      p3: "Budi Santoso, S.T.",
+      p4: "Anita Wulandari",
+      p5: "Ir. Joko Susanto, M.Eng",
+      p6: "Maya & Tim Layanan Klien"
+    };
+
+    let currentPics = JSON.parse(localStorage.getItem('lims_flow_pics_simple')) || defaultPics;
+
+    function applyPicDisplay() {
+      document.getElementById('pic1Display').textContent = "PIC: " + currentPics.p1;
+      document.getElementById('pic2Display').textContent = "PIC: " + currentPics.p2;
+      document.getElementById('pic3Display').textContent = "PIC: " + currentPics.p3;
+      document.getElementById('pic4Display').textContent = "PIC: " + currentPics.p4;
+      document.getElementById('pic5Display').textContent = "PIC: " + currentPics.p5;
+      document.getElementById('pic6Display').textContent = "PIC: " + currentPics.p6;
+    }
+
+    function openNameModal() {
+      document.getElementById('inputPic1').value = currentPics.p1;
+      document.getElementById('inputPic2').value = currentPics.p2;
+      document.getElementById('inputPic3').value = currentPics.p3;
+      document.getElementById('inputPic4').value = currentPics.p4;
+      document.getElementById('inputPic5').value = currentPics.p5;
+      document.getElementById('inputPic6').value = currentPics.p6;
+      nameModal.classList.remove('hidden');
+    }
+
+    function closeNameModal() {
+      nameModal.classList.add('hidden');
+    }
+
+    function saveActorNames() {
+      currentPics = {
+        p1: document.getElementById('inputPic1').value.trim() || defaultPics.p1,
+        p2: document.getElementById('inputPic2').value.trim() || defaultPics.p2,
+        p3: document.getElementById('inputPic3').value.trim() || defaultPics.p3,
+        p4: document.getElementById('inputPic4').value.trim() || defaultPics.p4,
+        p5: document.getElementById('inputPic5').value.trim() || defaultPics.p5,
+        p6: document.getElementById('inputPic6').value.trim() || defaultPics.p6
+      };
+      localStorage.setItem('lims_flow_pics_simple', JSON.stringify(currentPics));
+      applyPicDisplay();
+      closeNameModal();
+    }
+
+    function seekTo(seconds) {
+      if (is3DStudioMode) {
+        toggle3DStudioMode();
+      }
+      video.currentTime = seconds;
+      video.play();
+    }
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+
+    function updateLowerThird() {
+      const t = video.currentTime;
+      let show = false;
+      let stage = "", title = "", pic = "";
+
+      if (t >= 0.5 && t < 24.0) {
+        show = true;
+        stage = "Tahap 1: Register LIMS & Barcode 3D";
+        title = "Pencatatan Intake, Printer Barcode & Laser Scanner 3D";
+        pic = `PIC: ${currentPics.p1}`;
+      } else if (t >= 24.5 && t < 56.5) {
+        show = true;
+        stage = "Tahap 2: Perencanaan Pengujian 3D";
+        title = "Robot Mikropipet 3D, Tabung Reaksi & Coolbox Transfer";
+        pic = `PIC: ${currentPics.p2}`;
+      } else if (t >= 57.2 && t < 76.2) {
+        show = true;
+        stage = "Tahap 3: Pelaksanaan Pengujian 3D";
+        title = "Osiloskop Sinyal Cyan 3D, Interfacing & Anti Human Error";
+        pic = `PIC: ${currentPics.p3}`;
+      } else if (t >= 77.0 && t < 103.2) {
+        show = true;
+        stage = "Tahap 4: Analisa Data 3D";
+        title = "Komputasi Formula Statistik & Validasi AI-PQC 3D";
+        pic = `PIC: ${currentPics.p4}`;
+      } else if (t >= 104.0 && t < 128.0) {
+        show = true;
+        stage = "Tahap 5: Pelaporan & Sertifikasi 3D";
+        title = "Tanda Tangan Digital & Stempel Emas ISO/IEC 17025 3D";
+        pic = `PIC: ${currentPics.p5}`;
+      } else if (t >= 128.5 && t < 160.0) {
+        show = true;
+        stage = "Tahap 6: Penyerahan Sertifikat & Sample Test 3D";
+        title = "Serah Terima Sertifikat CoA & Coolbox Sampel 4°C";
+        pic = `PIC: ${currentPics.p6}`;
+      }
+
+      if (show) {
+        ltStageNum.textContent = stage;
+        ltStageTitle.textContent = title;
+        ltActorRole.textContent = pic;
+        lowerThirdBox.classList.remove('opacity-0', '-translate-x-10');
+        lowerThirdBox.classList.add('opacity-100', 'translate-x-0');
+      } else {
+        lowerThirdBox.classList.remove('opacity-100', 'translate-x-0');
+        lowerThirdBox.classList.add('opacity-0', '-translate-x-10');
+      }
+    }
+
+    video.addEventListener('timeupdate', () => {
+      const dur = video.duration || 160.39;
+      videoTimer.textContent = `${formatTime(video.currentTime)} / ${formatTime(dur)}`;
+      updateLowerThird();
+
+      const t = video.currentTime;
+      const cards = [
+        { el: document.getElementById('card0'), active: t < 24.4 },
+        { el: document.getElementById('card1'), active: t >= 24.4 && t < 57.1 },
+        { el: document.getElementById('card2'), active: t >= 57.1 && t < 76.8 },
+        { el: document.getElementById('card3'), active: t >= 76.8 && t < 103.8 },
+        { el: document.getElementById('card4'), active: t >= 103.8 && t < 128.5 },
+        { el: document.getElementById('card5'), active: t >= 128.5 }
+      ];
+
+      cards.forEach(c => {
+        if (c.active) {
+          c.el.classList.add('active-stage');
+        } else {
+          c.el.classList.remove('active-stage');
+        }
+      });
+    });
+
+    // ==========================================
+    // THREE.JS 3D LABORATORY STUDIO ENGINE (WebGL)
+    // ==========================================
+    let is3DStudioMode = false;
+    let scene, camera, renderer;
+    let targetCamPos = { x: 0, y: 140, z: 450 };
+    let targetLookAt = { x: 0, y: 60, z: 0 };
+    let curCamPos = { x: 0, y: 140, z: 450 };
+    let curLookAt = { x: 0, y: 60, z: 0 };
+
+    let isDragging = false, prevMouseX = 0, prevMouseY = 0;
+    let rotY = 0, rotX = 0.25, zoomDist = 450;
+    let activeStnIndex = 1;
+
+    const stationData = {
+      1: { title: "Stasiun 1: Meja Intake & Barcode Scanner 3D", audio: "./flow1_audio.mp3", pos: { x: -140, y: 80, z: 120 }, target: { x: -140, y: 40, z: 0 } },
+      2: { title: "Stasiun 2: Meja Robot Pipet & Tabung Aliquot 3D", audio: "./flow2_audio.mp3", pos: { x: 0, y: 90, z: 120 }, target: { x: 0, y: 45, z: 0 } },
+      3: { title: "Stasiun 3: Instrumen Analitik & Osiloskop Sinyal 3D", audio: "./flow3_audio.mp3", pos: { x: 140, y: 80, z: 120 }, target: { x: 140, y: 45, z: 0 } },
+      4: { title: "Stasiun 4: Konsol Server LIMS & AI-PQC 3D", audio: "./flow4_audio.mp3", pos: { x: 140, y: 85, z: -100 }, target: { x: 140, y: 55, z: -200 } },
+      5: { title: "Stasiun 5: Meja Supervisor (Pengesahan Sertifikat 3D)", audio: "./flow5_audio.mp3", pos: { x: 0, y: 80, z: -100 }, target: { x: 0, y: 40, z: -200 } },
+      6: { title: "Stasiun 6: Meja Serah Terima Klien & Coolbox 3D", audio: "./flow6_audio.mp3", pos: { x: -140, y: 80, z: -100 }, target: { x: -140, y: 40, z: -200 } }
+    };
+
+    function initThreeJS() {
+      const container = document.getElementById('threejsMount');
+      const canvas = document.getElementById('threejsCanvas');
+      const w = container.clientWidth || 1000;
+      const h = container.clientHeight || 560;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0a0f1d);
+      scene.fog = new THREE.FogExp2(0x0a0f1d, 0.0018);
+
+      camera = new THREE.PerspectiveCamera(50, w / h, 1, 3000);
+      camera.position.set(0, 140, 450);
+
+      renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      // Lights
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(100, 300, 200);
+      scene.add(dirLight);
+
+      // Cyan Instrument Glow Light
+      const cyanLight = new THREE.PointLight(0x22d3ee, 2.0, 350);
+      cyanLight.position.set(140, 80, 0);
+      scene.add(cyanLight);
+
+      // Emerald Server Glow Light
+      const greenLight = new THREE.PointLight(0x10b981, 2.0, 350);
+      greenLight.position.set(140, 80, -200);
+      scene.add(greenLight);
+
+      // 3D Floor (Cleanroom Epoxy Tiles)
+      const floorGeo = new THREE.PlaneGeometry(800, 800, 40, 40);
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.2, wireframe: false });
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      scene.add(floor);
+
+      const grid = new THREE.GridHelper(800, 30, 0x10b981, 0x1e293b);
+      grid.position.y = 0.5;
+      scene.add(grid);
+
+      // 3D Back Glass Wall
+      const wallGeo = new THREE.PlaneGeometry(800, 300);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 });
+      const wall = new THREE.Mesh(wallGeo, wallMat);
+      wall.position.set(0, 150, -400);
+      scene.add(wall);
+
+      // Ceiling LED Panels
+      for (let lz = -300; lz <= 300; lz += 200) {
+        const ceilGeo = new THREE.BoxGeometry(200, 4, 80);
+        const ceilMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const ceilMesh = new THREE.Mesh(ceilGeo, ceilMat);
+        ceilMesh.position.set(0, 260, lz);
+        scene.add(ceilMesh);
+      }
+
+      // Build 6 Lab Workstations in 3D Space
+      build3DWorkstations();
+
+      // Mouse Drag Controls
+      canvas.addEventListener('mousedown', e => {
+        isDragging = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+      window.addEventListener('mouseup', () => isDragging = false);
+      window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMouseX;
+        const dy = e.clientY - prevMouseY;
+        rotY += dx * 0.006;
+        rotX = Math.max(0.05, Math.min(1.2, rotX + dy * 0.006));
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+        updateOrbitCamera();
+      });
+      canvas.addEventListener('wheel', e => {
+        zoomDist = Math.max(150, Math.min(800, zoomDist + e.deltaY * 0.4));
+        updateOrbitCamera();
+      });
+
+      animate3D();
+    }
+
+    function build3DWorkstations() {
+      // Helper function to make 3D lab table
+      function createTable(x, z, col) {
+        const topGeo = new THREE.BoxGeometry(110, 8, 70);
+        const topMat = new THREE.MeshStandardMaterial({ color: col || 0xf8fafc, roughness: 0.2 });
+        const top = new THREE.Mesh(topGeo, topMat);
+        top.position.set(x, 40, z);
+        scene.add(top);
+
+        const legGeo = new THREE.CylinderGeometry(2, 2, 40);
+        const legMat = new THREE.MeshStandardMaterial({ color: 0x475569 });
+        [[-45, -25], [45, -25], [-45, 25], [45, 25]].forEach(([lx, lz]) => {
+          const leg = new THREE.Mesh(legGeo, legMat);
+          leg.position.set(x + lx, 20, z + lz);
+          scene.add(leg);
+        });
+      }
+
+      // 6 Lab Tables
+      createTable(-140, 0, 0xf1f5f9);  // Stn 1: Intake & Barcode
+      createTable(0, 0, 0xf1f5f9);     // Stn 2: Robot Pipet
+      createTable(140, 0, 0xf1f5f9);    // Stn 3: Instrument & Oscilloscope
+      createTable(140, -200, 0x1e293b); // Stn 4: AI Server Rack
+      createTable(0, -200, 0x451a03);   // Stn 5: Supervisor Desk (Wood)
+      createTable(-140, -200, 0xf1f5f9);// Stn 6: Handover Coolbox
+
+      // --- Stn 1 Equipment: Laptop, Barcode Printer, Laser ---
+      const lapGeo = new THREE.BoxGeometry(30, 20, 2);
+      const lapMat = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
+      const lap = new THREE.Mesh(lapGeo, lapMat);
+      lap.position.set(-140, 56, -10);
+      scene.add(lap);
+
+      const prtGeo = new THREE.BoxGeometry(20, 16, 20);
+      const prtMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+      const prt = new THREE.Mesh(prtGeo, prtMat);
+      prt.position.set(-115, 52, 5);
+      scene.add(prt);
+
+      // --- Stn 2 Equipment: Pipette Gantry & 4 Tubes ---
+      window.pipetteGantry = new THREE.Group();
+      const pipArmGeo = new THREE.BoxGeometry(8, 25, 8);
+      const pipArmMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b });
+      const pipArm = new THREE.Mesh(pipArmGeo, pipArmMat);
+      window.pipetteGantry.add(pipArm);
+      window.pipetteGantry.position.set(0, 68, 0);
+      scene.add(window.pipetteGantry);
+
+      [-20, -7, 7, 20].forEach(tx => {
+        const tubeGeo = new THREE.CylinderGeometry(2.5, 2.5, 18, 12);
+        const tubeMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 });
+        const tube = new THREE.Mesh(tubeGeo, tubeMat);
+        tube.position.set(tx, 52, 0);
+        scene.add(tube);
+      });
+
+      // --- Stn 3 Equipment: Spectrophotometer & Oscilloscope Screen ---
+      const instGeo = new THREE.BoxGeometry(50, 28, 35);
+      const instMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3 });
+      const inst = new THREE.Mesh(instGeo, instMat);
+      inst.position.set(140, 58, 0);
+      scene.add(inst);
+
+      const oscGeo = new THREE.PlaneGeometry(24, 16);
+      const oscMat = new THREE.MeshBasicMaterial({ color: 0x083344 });
+      const osc = new THREE.Mesh(oscGeo, oscMat);
+      osc.position.set(140, 60, 18);
+      scene.add(osc);
+
+      // --- Stn 4 Equipment: AI Server Rack ---
+      const srvGeo = new THREE.BoxGeometry(40, 90, 30);
+      const srvMat = new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.2 });
+      const srv = new THREE.Mesh(srvGeo, srvMat);
+      srv.position.set(140, 85, -200);
+      scene.add(srv);
+
+      // Floating AI Holographic Ring
+      window.holoRing = new THREE.Mesh(
+        new THREE.TorusGeometry(20, 1.5, 16, 50),
+        new THREE.MeshBasicMaterial({ color: 0x10b981, wireframe: true })
+      );
+      window.holoRing.position.set(140, 150, -200);
+      scene.add(window.holoRing);
+
+      // --- Stn 5 Equipment: Certificate of Analysis with Gold Border ---
+      const certGeo = new THREE.BoxGeometry(32, 2, 24);
+      const certMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.2 });
+      const cert = new THREE.Mesh(certGeo, certMat);
+      cert.position.set(0, 45, -200);
+      scene.add(cert);
+
+      // --- Stn 6 Equipment: Coolbox ---
+      const cbGeo = new THREE.BoxGeometry(35, 22, 25);
+      const cbMat = new THREE.MeshStandardMaterial({ color: 0x0284c7 });
+      const cb = new THREE.Mesh(cbGeo, cbMat);
+      cb.position.set(-140, 55, -200);
+      scene.add(cb);
+    }
+
+    function updateOrbitCamera() {
+      targetCamPos.x = targetLookAt.x + Math.sin(rotY) * Math.cos(rotX) * zoomDist;
+      targetCamPos.y = targetLookAt.y + Math.sin(rotX) * zoomDist;
+      targetCamPos.z = targetLookAt.z + Math.cos(rotY) * Math.cos(rotX) * zoomDist;
+    }
+
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+
+      // Smooth Camera Lerp
+      curCamPos.x += (targetCamPos.x - curCamPos.x) * 0.08;
+      curCamPos.y += (targetCamPos.y - curCamPos.y) * 0.08;
+      curCamPos.z += (targetCamPos.z - curCamPos.z) * 0.08;
+      camera.position.set(curCamPos.x, curCamPos.y, curCamPos.z);
+
+      curLookAt.x += (targetLookAt.x - curLookAt.x) * 0.08;
+      curLookAt.y += (targetLookAt.y - curLookAt.y) * 0.08;
+      curLookAt.z += (targetLookAt.z - curLookAt.z) * 0.08;
+      camera.lookAt(curLookAt.x, curLookAt.y, curLookAt.z);
+
+      // Dynamic 3D Animations
+      const time = Date.now() * 0.003;
+      if (window.pipetteGantry) {
+        window.pipetteGantry.position.y = 68 + Math.sin(time * 3) * 8;
+      }
+      if (window.holoRing) {
+        window.holoRing.rotation.x += 0.02;
+        window.holoRing.rotation.y += 0.03;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function toggle3DStudioMode() {
+      is3DStudioMode = !is3DStudioMode;
+      if (is3DStudioMode) {
+        video.pause();
+        videoContainer.classList.add('hidden');
+        threejsStudioContainer.classList.remove('hidden');
+        mode3DIcon.textContent = "🎬";
+        mode3DText.textContent = "Kembali ke Video MP4 3D";
+        btn3DToggle.classList.remove('from-cyan-600', 'to-blue-600');
+        btn3DToggle.classList.add('from-emerald-600', 'to-teal-600');
+        if (!renderer) {
+          setTimeout(initThreeJS, 50);
+        }
+        focusStation(1);
+      } else {
+        stationAudio.pause();
+        voiceStationText.textContent = "Putar Narasi Suara";
+        threejsStudioContainer.classList.add('hidden');
+        videoContainer.classList.remove('hidden');
+        mode3DIcon.textContent = "🌐";
+        mode3DText.textContent = "Jelajahi Lab 3D Interaktif (360°)";
+        btn3DToggle.classList.remove('from-emerald-600', 'to-teal-600');
+        btn3DToggle.classList.add('from-cyan-600', 'to-blue-600');
+      }
+    }
+
+    function focusStation(idx) {
+      activeStnIndex = idx;
+      const stn = stationData[idx];
+      if (!stn) return;
+
+      document.getElementById('stationTitle').textContent = stn.title;
+      targetCamPos = { ...stn.pos };
+      targetLookAt = { ...stn.target };
+
+      document.querySelectorAll('.stn-btn').forEach(btn => {
+        if (btn.getAttribute('data-stn') == idx) {
+          btn.classList.add('bg-cyan-600', 'text-white', 'border-cyan-400');
+          btn.classList.remove('bg-slate-800', 'text-slate-200');
+        } else {
+          btn.classList.remove('bg-cyan-600', 'text-white', 'border-cyan-400');
+          btn.classList.add('bg-slate-800', 'text-slate-200');
+        }
+      });
+
+      stationAudio.src = stn.audio;
+      voiceStationText.textContent = "Putar Narasi Suara";
+    }
+
+    function reset3DCamera() {
+      targetCamPos = { x: 0, y: 180, z: 460 };
+      targetLookAt = { x: 0, y: 50, z: -50 };
+      document.getElementById('stationTitle').textContent = "Ruangan Laboratorium LIMS 3D Interaktif (Pandangan Seluruh Lab)";
+    }
+
+    function playStationVoice() {
+      if (stationAudio.paused) {
+        stationAudio.play();
+        voiceStationText.textContent = "Jeda Narasi Suara";
+      } else {
+        stationAudio.pause();
+        voiceStationText.textContent = "Putar Narasi Suara";
+      }
+    }
+
+    stationAudio.addEventListener('ended', () => {
+      voiceStationText.textContent = "Putar Narasi Suara";
+    });
+
+    // Inisialisasi awal
+    applyPicDisplay();
+  </script>
+</body>
+</html>

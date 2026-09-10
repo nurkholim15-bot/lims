@@ -1646,6 +1646,40 @@ func (HistPackageActiveSubAspect) TableName() string {
 	return "hist_package_active_sub_aspects"
 }
 
+type PackageActiveAspect struct {
+	PackageID   uint           `gorm:"primaryKey;column:package_id" json:"package_id"`
+	Package     TestingPackage `gorm:"foreignKey:PackageID;references:ID" json:"package"`
+	AspectCode  string         `gorm:"primaryKey;column:aspect_code;type:varchar(50)" json:"aspect_code"`
+	Aspect      ScoringAspect  `gorm:"foreignKey:AspectCode;references:Code" json:"aspect"`
+	CreatedAt   time.Time      `json:"created_at"`
+	CreatedUser string         `gorm:"type:varchar(30)" json:"created_user"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	UpdatedUser string         `gorm:"type:varchar(30)" json:"updated_user"`
+	DeletedAt   *time.Time     `json:"deleted_at,omitempty"`
+	DeletedUser string         `gorm:"type:varchar(30)" json:"deleted_user,omitempty"`
+}
+
+func (PackageActiveAspect) TableName() string {
+	return "package_active_aspects"
+}
+
+type PackageActiveSubAspect struct {
+	PackageID     uint             `gorm:"primaryKey;column:package_id" json:"package_id"`
+	Package       TestingPackage   `gorm:"foreignKey:PackageID;references:ID" json:"package"`
+	SubAspectCode string           `gorm:"primaryKey;column:sub_aspect_code;type:varchar(5)" json:"sub_aspect_code"`
+	SubAspect     ScoringSubAspect `gorm:"foreignKey:SubAspectCode;references:Code" json:"sub_aspect"`
+	CreatedAt     time.Time        `json:"created_at"`
+	CreatedUser   string           `gorm:"type:varchar(30)" json:"created_user"`
+	UpdatedAt     time.Time        `json:"updated_at"`
+	UpdatedUser   string           `gorm:"type:varchar(30)" json:"updated_user"`
+	DeletedAt     *time.Time       `json:"deleted_at,omitempty"`
+	DeletedUser   string           `gorm:"type:varchar(30)" json:"deleted_user,omitempty"`
+}
+
+func (PackageActiveSubAspect) TableName() string {
+	return "package_active_sub_aspects"
+}
+
 type Invoice struct {
 	ID             uint64             `gorm:"primaryKey;autoIncrement" json:"id"`
 	ApplicationID  uint64             `gorm:"type:bigint;index" json:"application_id"`

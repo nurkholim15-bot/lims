@@ -18,6 +18,8 @@ import MethodologiesPage from "@pages/MethodologiesPage";
 import ModelsPage from "@pages/ModelsPage";
 import VariantsPage from "@pages/VariantsPage";
 import RolesPage from "@pages/RolesPage";
+import PackageActiveAspectsPage from "@pages/PackageActiveAspectsPage";
+import PackageActiveSubAspectsPage from "@pages/PackageActiveSubAspectsPage";
 import RoleMenusHistPage from "@pages/RoleMenusHistPage";
 import ReportsSummaryPage from "@pages/ReportsSummaryPage";
 import ReportsDetailPage from "@pages/ReportsDetailPage";
@@ -162,6 +164,10 @@ const MainContent = ({
         return <ProvincesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
       case "/role-menus-hist":
         return <RoleMenusHistPage />;
+      case "/package-active-aspects":
+        return <PackageActiveAspectsPage checkPasswordRequirement={checkPasswordRequirement} />;
+      case "/package-active-sub-aspects":
+        return <PackageActiveSubAspectsPage checkPasswordRequirement={checkPasswordRequirement} />;
       default:
         return (
           <MasterDataPage

@@ -162,7 +162,9 @@ func SetupRoutes(r *gin.Engine) {
 			protected.GET("/hist-global-parameters", controllers.GetHistGlobalParameters)
 			protected.GET("/testing-packages", controllers.GetTestingPackages)
 			protected.GET("/hist-testing-packages", controllers.GetHistTestingPackages)
+			protected.GET("/package-active-aspects", controllers.GetPackageActiveAspects)
 			protected.GET("/hist-package-active-aspects", controllers.GetHistPackageActiveAspects)
+			protected.GET("/package-active-sub-aspects", controllers.GetPackageActiveSubAspects)
 			protected.GET("/hist-package-active-sub-aspects", controllers.GetHistPackageActiveSubAspects)
 			protected.GET("/hist-master-testers", controllers.GetHistMasterTesters)
 			protected.GET("/hist-asset-statuses", controllers.GetHistAssetStatuses)
@@ -315,6 +317,14 @@ func SetupRoutes(r *gin.Engine) {
 				mgmt.POST("/testing-packages", controllers.CreateTestingPackage)
 				mgmt.PUT("/testing-packages/:id", controllers.UpdateTestingPackage)
 				mgmt.DELETE("/testing-packages/:id", controllers.DeleteTestingPackage)
+
+				mgmt.POST("/package-active-aspects", controllers.CreatePackageActiveAspect)
+				mgmt.DELETE("/package-active-aspects", controllers.DeletePackageActiveAspect)
+				mgmt.DELETE("/package-active-aspects/:package_id/:aspect_code", controllers.DeletePackageActiveAspect)
+
+				mgmt.POST("/package-active-sub-aspects", controllers.CreatePackageActiveSubAspect)
+				mgmt.DELETE("/package-active-sub-aspects", controllers.DeletePackageActiveSubAspect)
+				mgmt.DELETE("/package-active-sub-aspects/:package_id/:sub_aspect_code", controllers.DeletePackageActiveSubAspect)
 
 				mgmt.POST("/tester-masters", controllers.CreateMasterTester)
 				mgmt.PUT("/tester-masters/:id", controllers.UpdateMasterTester)

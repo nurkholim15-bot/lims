@@ -76,7 +76,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
         const pkgParam = app?.package_id ? `&package_id=${app.package_id}` : "";
         const data = await apiRequest(`/scoring-aspects?methodology_code=${form.lab_methodology_code}${pkgParam}`);
         if (data) {
-          const aspectArray = Array.isArray(data) ? data : (data.data || []);
+          const aspectArray = (Array.isArray(data) ? data : (data.data || [])).sort((a, b) => (a.code || "").localeCompare(b.code || ""));
           setLabParameters(aspectArray);
           // Initialize plans for these aspects if they don't exist
           setLabPlans((prev) => {
@@ -99,6 +99,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
                 existingPlan.is_used = aspect.is_used;
               }
             });
+            newPlans.sort((a, b) => (a.aspect_code || "").localeCompare(b.aspect_code || ""));
             return newPlans;
           });
         }
@@ -116,7 +117,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
         const pkgParam = app?.package_id ? `&package_id=${app.package_id}` : "";
         const data = await apiRequest(`/scoring-aspects?methodology_code=${form.field_methodology_code}${pkgParam}`);
         if (data) {
-          const aspectArray = Array.isArray(data) ? data : (data.data || []);
+          const aspectArray = (Array.isArray(data) ? data : (data.data || [])).sort((a, b) => (a.code || "").localeCompare(b.code || ""));
           setFieldParameters(aspectArray);
           setFieldPlans((prev) => {
             const newPlans = [...prev];
@@ -137,6 +138,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
                 existingPlan.is_used = aspect.is_used;
               }
             });
+            newPlans.sort((a, b) => (a.aspect_code || "").localeCompare(b.aspect_code || ""));
             return newPlans;
           });
         }
@@ -154,7 +156,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
         const pkgParam = app?.package_id ? `&package_id=${app.package_id}` : "";
         const data = await apiRequest(`/scoring-aspects?methodology_code=${form.methodology_code}${pkgParam}`);
         if (data) {
-          const aspectArray = Array.isArray(data) ? data : (data.data || []);
+          const aspectArray = (Array.isArray(data) ? data : (data.data || [])).sort((a, b) => (a.code || "").localeCompare(b.code || ""));
           setManagementParameters(aspectArray);
           setManagementPlans((prev) => {
             const newPlans = [...prev];
@@ -175,6 +177,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
                 existingPlan.is_used = aspect.is_used;
               }
             });
+            newPlans.sort((a, b) => (a.aspect_code || "").localeCompare(b.aspect_code || ""));
             return newPlans;
           });
         }

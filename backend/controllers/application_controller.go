@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -1014,20 +1015,20 @@ func resolveArchivedRelations(app *models.TestingApplication) {
 	}
 
 	// 3. Resolve Results from ARCHIVE
-	database.DB.Table("testing_results_arc").Preload("Aspect").Preload("SubAspect").Where("application_id = ?", app.ID).Find(&app.ExecutionResults)
+	database.DB.Table("testing_results_arc").Preload("Aspect").Preload("SubAspect").Where("application_id = ?", app.ID).Order("aspect_code ASC, sub_aspect_code ASC").Find(&app.ExecutionResults)
 	if len(app.ExecutionResults) == 0 {
-		database.DB.Preload("Aspect").Preload("SubAspect").Where("application_id = ?", app.ID).Find(&app.ExecutionResults)
+		database.DB.Preload("Aspect").Preload("SubAspect").Where("application_id = ?", app.ID).Order("aspect_code ASC, sub_aspect_code ASC").Find(&app.ExecutionResults)
 	}
 
-	database.DB.Table("testing_aspect_scores_arc").Where("application_id = ?", app.ID).Find(&app.AspectScores)
+	database.DB.Table("testing_aspect_scores_arc").Where("application_id = ?", app.ID).Order("aspect_code ASC").Find(&app.AspectScores)
 	if len(app.AspectScores) == 0 {
-		database.DB.Where("application_id = ?", app.ID).Find(&app.AspectScores)
+		database.DB.Where("application_id = ?", app.ID).Order("aspect_code ASC").Find(&app.AspectScores)
 	}
 
 	// 4. Resolve Plans from ARCHIVE
-	database.DB.Table("testing_plans_arc").Preload("Aspect").Preload("Location").Where("application_id = ?", app.ID).Find(&app.TestingPlans)
+	database.DB.Table("testing_plans_arc").Preload("Aspect").Preload("Location").Where("application_id = ?", app.ID).Order("aspect_code ASC").Find(&app.TestingPlans)
 	if len(app.TestingPlans) == 0 {
-		database.DB.Preload("Aspect").Preload("Location").Where("application_id = ?", app.ID).Find(&app.TestingPlans)
+		database.DB.Preload("Aspect").Preload("Location").Where("application_id = ?", app.ID).Order("aspect_code ASC").Find(&app.TestingPlans)
 	}
 }
 
@@ -1283,6 +1284,10 @@ func PlanApplication(c *gin.Context) {
 		b, _ := json.Marshal(req.RelationalPlans)
 		json.Unmarshal(b, &plans)
 
+		sort.SliceStable(plans, func(i, j int) bool {
+			return plans[i].AspectCode < plans[j].AspectCode
+		})
+
 		database.DB.Where("application_id = ?", app.ID).Delete(&models.TestingPlan{})
 		// Delete only aspect-specific team members to keep global teams if needed, 
 		// but usually planning replaces everything.
@@ -1499,6 +1504,7 @@ func GetExecution(c *gin.Context) {
 	
 	database.DB.Table(plansTable).Preload("Aspect.Methodology").Preload("Aspect.TestType").
 		Where("application_id = ?", app.ID).
+		Order("aspect_code ASC").
 		Find(&plans)
 
 	// Jika tidak ada plan sama sekali (misal status masih Registered/Verified), 
@@ -1507,12 +1513,12 @@ func GetExecution(c *gin.Context) {
 		var aspects []models.ScoringAspect
 		if app.LabMethodologyCode != nil {
 			var labAspects []models.ScoringAspect
-			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.LabMethodologyCode).Find(&labAspects)
+			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.LabMethodologyCode).Order("code ASC").Find(&labAspects)
 			aspects = append(aspects, labAspects...)
 		}
 		if app.FieldMethodologyCode != nil {
 			var fieldAspects []models.ScoringAspect
-			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.FieldMethodologyCode).Find(&fieldAspects)
+			database.DB.Preload("Methodology").Where("methodology_code = ?", *app.FieldMethodologyCode).Order("code ASC").Find(&fieldAspects)
 			aspects = append(aspects, fieldAspects...)
 		}
 
@@ -1563,7 +1569,7 @@ func GetExecution(c *gin.Context) {
 	for _, p := range plans {
 		asp := p.Aspect
 		var subAspects []models.ScoringSubAspect
-		database.DB.Where("aspect_code = ?", asp.Code).Find(&subAspects)
+		database.DB.Where("aspect_code = ?", asp.Code).Order("code ASC").Find(&subAspects)
 
 		// Filter template sub-aspects by package active configuration if exists (Option B)
 		if app.PackageID != nil && *app.PackageID != 0 {
@@ -1709,6 +1715,13 @@ func GetExecution(c *gin.Context) {
 		}
 	}
 
+	sort.SliceStable(results, func(i, j int) bool {
+		if results[i].AspectCode != results[j].AspectCode {
+			return results[i].AspectCode < results[j].AspectCode
+		}
+		return results[i].ParamCode < results[j].ParamCode
+	})
+
 	c.JSON(http.StatusOK, results)
 }
 
@@ -1741,6 +1754,13 @@ func ExecuteApplication(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid results JSON format"})
 			return
 		}
+		sort.SliceStable(results, func(i, j int) bool {
+			codeI := results[i].ParamCode
+			if codeI == "" { codeI = results[i].SubAspectCode }
+			codeJ := results[j].ParamCode
+			if codeJ == "" { codeJ = results[j].SubAspectCode }
+			return codeI < codeJ
+		})
 	}
 
 	username, _ := c.Get("username")
@@ -2428,6 +2448,14 @@ func SaveAspectResults(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid results format: " + err.Error()})
 		return
 	}
+
+	sort.SliceStable(reqItems, func(i, j int) bool {
+		codeI := reqItems[i].SubAspectCode
+		if codeI == "" { codeI = reqItems[i].ParamCode }
+		codeJ := reqItems[j].SubAspectCode
+		if codeJ == "" { codeJ = reqItems[j].ParamCode }
+		return codeI < codeJ
+	})
 
 	// AI Anomaly Check
 	isAnomaly, anomalyScore, shapValues, medians, stds, err := checkAnomaly(appID, aspectCode, reqItems)

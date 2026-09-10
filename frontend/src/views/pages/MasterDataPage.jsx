@@ -25,6 +25,39 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
   const [filterMonth, setFilterMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, "0"));
   const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
   const [filterStatus, setFilterStatus] = useState("ALL");
+  const [sortKey, setSortKey] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const handleSort = (key) => {
+    if (!key) return;
+    if (sortKey === key) {
+      if (sortOrder === "asc") {
+        setSortOrder("desc");
+      } else {
+        setSortKey(null);
+        setSortOrder("asc");
+      }
+    } else {
+      setSortKey(key);
+      setSortOrder("asc");
+    }
+  };
+
+  const sortedData = React.useMemo(() => {
+    if (!sortKey || !Array.isArray(data)) return data;
+    return [...data].sort((a, b) => {
+      let aVal = a[sortKey];
+      let bVal = b[sortKey];
+      if (aVal === null || aVal === undefined) aVal = "";
+      if (bVal === null || bVal === undefined) bVal = "";
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+      }
+      return sortOrder === "asc"
+        ? String(aVal).localeCompare(String(bVal), undefined, { numeric: true })
+        : String(bVal).localeCompare(String(aVal), undefined, { numeric: true });
+    });
+  }, [data, sortKey, sortOrder]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -296,7 +329,29 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
             <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: 'white' }}>
               <tr>
                 {columns.map((col, i) => (
-                  <th key={i} style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>{col.header}</th>
+                  <th 
+                    key={i} 
+                    onClick={() => col.key && handleSort(col.key)}
+                    style={{ 
+                      background: 'white', 
+                      borderBottom: '2px solid #f1f5f9',
+                      cursor: col.key ? 'pointer' : 'default',
+                      userSelect: 'none',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title={col.key ? `Klik untuk mengurutkan berdasarkan ${col.header}` : undefined}
+                  >
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span>{col.header}</span>
+                      {col.key && (
+                        sortKey === col.key ? (
+                          <i className={`fas fa-sort-${sortOrder === 'asc' ? 'up' : 'down'}`} style={{ color: '#009688', fontSize: '0.85rem' }}></i>
+                        ) : (
+                          <i className="fas fa-sort" style={{ color: '#cbd5e1', fontSize: '0.75rem', opacity: 0.5 }}></i>
+                        )
+                      )}
+                    </div>
+                  </th>
                 ))}
                 {!hideActions && <th style={{ textAlign: 'center', background: 'white', borderBottom: '2px solid #f1f5f9' }}>Aksi</th>}
               </tr>
@@ -320,8 +375,8 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
                     </div>
                   </td>
                 </tr>
-              ) : data.length > 0 ? (
-                data.map((item, idx) => (
+              ) : sortedData.length > 0 ? (
+                sortedData.map((item, idx) => (
                   <tr 
                     key={item.id || item.code || idx}
                     onClick={(e) => {
@@ -349,10 +404,16 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
                           )}
                           {endpoint && endpoint.includes("/testing-packages") && (
                             <>
-                              <button className="action-btn" onClick={(e) => { e.stopPropagation(); navigate(`/hist-package-active-aspects?package_id=${item.id}`); }} style={{ color: '#059669', background: '#d1fae5' }} title="Riwayat Aspect">
+                              <button className="action-btn" onClick={(e) => { e.stopPropagation(); navigate(`/package-active-aspects?package_id=${item.id}`); }} style={{ color: '#059669', background: '#ecfdf5', fontWeight: 600, padding: '0.2rem 0.5rem' }} title="Kelola Aspek Aktif Paket">
+                                <i className="fas fa-layer-group"></i> Aspek
+                              </button>
+                              <button className="action-btn" onClick={(e) => { e.stopPropagation(); navigate(`/package-active-sub-aspects?package_id=${item.id}`); }} style={{ color: '#0284c7', background: '#e0f2fe', fontWeight: 600, padding: '0.2rem 0.5rem' }} title="Kelola Sub-Aspek Aktif Paket">
+                                <i className="fas fa-list-check"></i> Sub
+                              </button>
+                              <button className="action-btn" onClick={(e) => { e.stopPropagation(); navigate(`/hist-package-active-aspects?package_id=${item.id}`); }} style={{ color: '#d97706', background: '#fef3c7' }} title="Riwayat Audit Aspek">
                                 <i className="fas fa-history"></i> A
                               </button>
-                              <button className="action-btn" onClick={(e) => { e.stopPropagation(); navigate(`/hist-package-active-sub-aspects?package_id=${item.id}`); }} style={{ color: '#0284c7', background: '#e0f2fe' }} title="Riwayat Sub Aspect">
+                              <button className="action-btn" onClick={(e) => { e.stopPropagation(); navigate(`/hist-package-active-sub-aspects?package_id=${item.id}`); }} style={{ color: '#d97706', background: '#fef3c7' }} title="Riwayat Audit Sub-Aspek">
                                 <i className="fas fa-history"></i> SA
                               </button>
                             </>

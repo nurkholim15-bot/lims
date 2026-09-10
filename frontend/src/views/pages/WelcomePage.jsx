@@ -207,6 +207,8 @@ const WelcomePage = ({ user, appConfig, onOpenApp, menus }) => {
           { label: "Level Penilaian", icon: "fas fa-layer-group", path: "/scoring-levels", grad: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" },
           { label: "Testing Tools", icon: "fas fa-wrench", path: "/testing-tools", grad: "linear-gradient(135deg, #64748b 0%, #475569 100%)" },
           { label: "Paket Pengujian", icon: "fas fa-box-open", path: "/testing-packages", grad: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)" },
+          { label: "Aspek Aktif Paket", icon: "fas fa-layer-group", path: "/package-active-aspects", grad: "linear-gradient(135deg, #059669 0%, #047857 100%)" },
+          { label: "Sub-Aspek Aktif Paket", icon: "fas fa-list-check", path: "/package-active-sub-aspects", grad: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)" },
           { label: "Sesi Pengguna", icon: "fas fa-user-clock", path: "/user-sessions", grad: "linear-gradient(135deg, #475569 0%, #334155 100%)" }
         ]
       }

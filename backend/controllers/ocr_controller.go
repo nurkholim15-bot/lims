@@ -1233,15 +1233,23 @@ func isLayoutPreserved(text string) bool {
 		}
 	}
 
-	if codeCount < 10 {
-		// Too few codes detected. The text is either extremely short or highly garbled (e.g. poor built-in PDF OCR).
-		// Fall back to Tesseract OCR to be safe.
-		return false
+	if codeCount >= 10 {
+		ratio := float64(digitsCount) / float64(codeCount)
+		fmt.Printf("DEBUG: isLayoutPreserved: codeCount=%d, digitsCount=%d, ratio=%.2f\n", codeCount, digitsCount, ratio)
+		return ratio >= 0.40
 	}
 
-	ratio := float64(digitsCount) / float64(codeCount)
-	fmt.Printf("DEBUG: isLayoutPreserved: codeCount=%d, digitsCount=%d, ratio=%.2f\n", codeCount, digitsCount, ratio)
-	return ratio >= 0.40
+	// For shorter or single-parameter documents (e.g. 5-frequency test sheet):
+	// If the extracted digital text contains readable lines with digits and sufficient length, preserve it!
+	readableLines := 0
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if len(trimmed) >= 5 && reDigit.MatchString(trimmed) {
+			readableLines++
+		}
+	}
+	fmt.Printf("DEBUG: isLayoutPreserved for short doc: readableLines=%d\n", readableLines)
+	return readableLines >= 2
 }
 
 // parseVerticalColumns parses raw text where all codes are printed first, and all scores are printed sequentially at the bottom.

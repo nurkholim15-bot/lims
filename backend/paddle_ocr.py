@@ -36,6 +36,7 @@ def main():
 
     # Get image dimensions using PIL and resize if too large to speed up inference (avoid timeouts)
     img_width = 1000
+    img_height = 1000
     try:
         with Image.open(img_path) as img:
             img_width, img_height = img.size
@@ -203,9 +204,12 @@ def main():
         return extracted
 
     items = extract_items(filter_cols)
-    if filter_cols and (len(items) == 0 or not any(any(c.isdigit() for c in it['text']) for it in items)):
-        # Fallback if filter dropped everything or dropped all digits
-        items = extract_items(False)
+    if filter_cols:
+        all_items = extract_items(False)
+        digits_filtered = sum(1 for it in items if any(c.isdigit() for c in it['text']))
+        digits_all = sum(1 for it in all_items if any(c.isdigit() for c in it['text']))
+        if not use_smart_header or (digits_all > digits_filtered and (digits_filtered == 0 or digits_all - digits_filtered >= 2)):
+            items = all_items
 
     # Sort items vertically by projected_ymin
     items.sort(key=lambda x: x['projected_ymin'])

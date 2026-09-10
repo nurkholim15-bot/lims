@@ -304,7 +304,11 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         });
         setPersistentSaved(savedMap);
 
-        let initialData = [...data];
+        let initialData = [...data].sort((a, b) => {
+          const aspDiff = (a.aspect_code || "").localeCompare(b.aspect_code || "");
+          if (aspDiff !== 0) return aspDiff;
+          return (a.param_code || a.sub_aspect_code || "").localeCompare(b.param_code || b.sub_aspect_code || "");
+        });
 
         // Fetch dropdown config for parameters with scoring rubric items
         const subCodes = Array.from(new Set(data.map(r => r.param_code || r.sub_aspect_code).filter(Boolean))).join(",");
@@ -388,6 +392,11 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 console.warn("Targeted dropdown fetch failed:", err);
             }
         }
+        initialData.sort((a, b) => {
+          const aspDiff = (a.aspect_code || "").localeCompare(b.aspect_code || "");
+          if (aspDiff !== 0) return aspDiff;
+          return (a.param_code || a.sub_aspect_code || "").localeCompare(b.param_code || b.sub_aspect_code || "");
+        });
         setExecutionData(initialData);
       }
     } catch (err) {
@@ -642,19 +651,59 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
         const resultData = res.data || res;
 
-        // Smart Fallback: if scanning a specific parameter, and no data was found, but raw_text exists
-        if (targetParamCode && Object.keys(resultData).length === 0 && res.raw_text) {
+        // Smart Fallback: if scanning a specific parameter, and no data was found or multi-frequency sheet uploaded
+        let detectedNotes = "";
+        if (targetParamCode && res.raw_text) {
           const rawTextClean = res.raw_text.trim();
-          const rawMatches = rawTextClean.match(/\b\d+(?:[.,]\d+)?\b/g);
-          if (rawMatches && rawMatches.length > 0) {
-            const validMatches = rawMatches.filter(n => !/^(19|20)\d{2}$/.test(n));
-            if (validMatches.length > 0) {
-              resultData[targetParamCode] = validMatches[validMatches.length - 1];
-            } else {
-              resultData[targetParamCode] = rawMatches[rawMatches.length - 1];
+          const targetParam = newData.find(p => p.param_code === targetParamCode || p.sub_aspect_code === targetParamCode);
+          
+          // 1. Check for structured multi-frequency sweep entries (e.g. F1=40.00 MHz ... 0.20 uV ...)
+          const sweepLineRegex = /F\s*([1-5])\s*=\s*(\d+(?:[.,]\d+)?)\s*MHz.*?(\d+(?:[.,]\d+)?)\s*(?:uV|μV|uvolt)/gi;
+          const sweepMatches = [];
+          let sm;
+          while ((sm = sweepLineRegex.exec(rawTextClean)) !== null) {
+            sweepMatches.push({
+              channel: sm[1],
+              freq: sm[2].replace(',', '.'),
+              val: parseFloat(sm[3].replace(',', '.'))
+            });
+          }
+
+          if (sweepMatches.length > 0) {
+            const sweepVals = sweepMatches.map(m => m.val);
+            const isLowerBetter = targetParam?.standard_operator?.includes("<") || targetParamCode === "KESEN" || targetParamCode === "KELCH" || targetParamCode === "KERUS" || targetParamCode === "KENEL";
+            const criticalVal = isLowerBetter ? Math.max(...sweepVals) : Math.min(...sweepVals);
+            
+            resultData[targetParamCode] = criticalVal.toString();
+            detectedNotes = sweepMatches.map(m => `F${m.channel}(${parseFloat(m.freq)}M)=${m.val}`).join(", ") + ` uV. Critical=${criticalVal} uV`;
+          } else if (Object.keys(resultData).length === 0) {
+            // 2. Unit-Aware Extraction: look for numbers explicitly associated with uV, μV, or uvolt
+            const uVRegex = /\b(\d+(?:[.,]\d+)?)\s*(?:uV|μV|uvolt)/gi;
+            const uVMatches = [];
+            let uvMatch;
+            while ((uvMatch = uVRegex.exec(rawTextClean)) !== null) {
+              uVMatches.push(parseFloat(uvMatch[1].replace(',', '.')));
             }
-          } else if (rawTextClean.length > 0 && rawTextClean.length < 20) {
-            resultData[targetParamCode] = rawTextClean;
+
+            if (uVMatches.length > 0) {
+              const isLowerBetter = targetParam?.standard_operator?.includes("<") || targetParamCode === "KESEN" || targetParamCode === "KELCH";
+              const criticalVal = isLowerBetter ? Math.max(...uVMatches) : Math.min(...uVMatches);
+              resultData[targetParamCode] = criticalVal.toString();
+            } else {
+              // 3. Fallback: exclude numbers followed by MHz, KHz, GHz, Hz to avoid taking preset frequencies
+              const textWithoutFreq = rawTextClean.replace(/\b\d+(?:[.,]\d+)?\s*(?:mhz|khz|ghz|hz)\b/gi, '');
+              const rawMatches = textWithoutFreq.match(/\b\d+(?:[.,]\d+)?\b/g);
+              if (rawMatches && rawMatches.length > 0) {
+                const validMatches = rawMatches.filter(n => !/^(19|20)\d{2}$/.test(n));
+                if (validMatches.length > 0) {
+                  resultData[targetParamCode] = validMatches[validMatches.length - 1];
+                } else {
+                  resultData[targetParamCode] = rawMatches[rawMatches.length - 1];
+                }
+              } else if (rawTextClean.length > 0 && rawTextClean.length < 20) {
+                resultData[targetParamCode] = rawTextClean;
+              }
+            }
           }
         }
 
@@ -698,6 +747,9 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               const cleaned = cleanParsedValue(resultData[subAspectCode]);
               const p = { ...newData[paramIdx] };
               p.is_manual_dropdown = false;
+              if (detectedNotes) {
+                p.notes = p.notes ? `${p.notes} | ${detectedNotes}` : detectedNotes;
+              }
               newData[paramIdx] = p;
               applyActualValueLogic(p, cleaned);
               attachFileToParam(subAspectCode);
@@ -1033,6 +1085,12 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     const groups = Object.values(aspectMap);
     if (groups.length === 0) return { finalScore: 0, minAspectScore: 0, allPassed: false };
 
+    groups.sort((a, b) => {
+      const codeA = (a.items[0]?.aspect_code || "").toString().trim();
+      const codeB = (b.items[0]?.aspect_code || "").toString().trim();
+      return codeA.localeCompare(codeB);
+    });
+
     groups.forEach((asp) => {
       const target = localApp || app;
       const aspCode = (asp.items[0]?.aspect_code || "").toString().trim().toUpperCase();
@@ -1094,24 +1152,21 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   };
 
   const getPercentString = (actualValue, p) => {
+    // 1. Jika p memiliki score (dari rubrik dropdown atau kalkulasi skor), tampilkan skor tersebut
+    if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
+      return `${parseFloat(p.score).toFixed(0)}%`;
+    }
+
     const code = p?.param_code || p?.sub_aspect_code;
     const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
     const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
 
-    // Jika tidak punya dropdown, skor sama dengan nilai aktual
+    // Jika tidak punya dropdown, skor sama dengan nilai aktual dan diformat dengan %
     if (!hasDropdown) {
       if (actualValue !== undefined && actualValue !== null && actualValue !== "" && !isNaN(parseFloat(actualValue))) {
-        return `${parseFloat(actualValue)}`;
-      }
-      if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
-        return `${parseFloat(p.score)}`;
+        return `${parseFloat(actualValue).toFixed(0)}%`;
       }
       return "-";
-    }
-
-    // 1. Jika p memiliki score (dari rubrik dropdown atau kalkulasi skor), tampilkan skor tersebut
-    if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
-      return `${parseFloat(p.score).toFixed(0)}%`;
     }
 
     const val = parseFloat(actualValue);
@@ -1134,11 +1189,23 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   };
 
   const getKeterangan = (actualValue, p) => {
+    // 1. Jika p memiliki score (dari rubrik dropdown atau kalkulasi skor), evaluasi skor terhadap standar kelulusan (>= 65%)
+    if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
+      const sc = parseFloat(p.score);
+      const threshold = (p.standard_unit && p.standard_unit !== "") ? 65 : (p.standard_value || 65);
+      const isPassed = sc >= threshold;
+      return isPassed ? (
+        <span style={{ color: "#10b981", fontWeight: 700 }}>Memenuhi</span>
+      ) : (
+        <span style={{ color: "#ef4444", fontWeight: 700 }}>Tidak Memenuhi</span>
+      );
+    }
+
     const val = parseFloat(actualValue);
     const hasActualVal = !isNaN(val) && actualValue !== undefined && actualValue !== null && actualValue !== "";
 
-    // 1. Evaluasi standar spesifikasi jika ada nilai fisik
-    if (hasActualVal && (p.standard_value || p.standard_value_max || p.standard_unit)) {
+    // 2. Jika tidak ada score tapi ada nilai fisik dan standard spesifikasi fisik dengan satuan (standard_unit)
+    if (hasActualVal && p.standard_unit && (p.standard_value || p.standard_value_max)) {
       const op = (p.standard_operator || "").trim().toLowerCase();
       let isPassed = false;
       if (op === "range") {
@@ -1162,11 +1229,10 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       );
     }
 
-    // 2. Jika tidak ada nilai fisik tapi ada skor rubrik (misal opsi kualitatif skor 75)
-    if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
-      const sc = parseFloat(p.score);
+    // 3. Fallback jika ada nilai fisik langsung tanpa dropdown rubrik
+    if (hasActualVal) {
       const threshold = p.standard_value || 65;
-      const isPassed = sc >= threshold;
+      const isPassed = val >= threshold;
       return isPassed ? (
         <span style={{ color: "#10b981", fontWeight: 700 }}>Memenuhi</span>
       ) : (
@@ -1188,7 +1254,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
     const sortedAspectGroups = Object.values(aspectMap).sort((a, b) => a.code.localeCompare(b.code));
     sortedAspectGroups.forEach((asp) => {
-      asp.items.sort((a, b) => (a.param_code || "").localeCompare(b.param_code || ""));
+      asp.items.sort((a, b) => (a.param_code || a.sub_aspect_code || "").localeCompare(b.param_code || b.sub_aspect_code || ""));
     });
 
     return (
@@ -1345,7 +1411,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                           ? "N/A"
                           : (isPreExecution
                               ? "-"
-                              : (hasDropdown ? `${scoreVal}%` : `${scoreVal}`));
+                              : `${scoreVal}%`);
 
                         return (
                           <tr key={res.param_code || i} style={isParamDisabled ? { opacity: 0.6, background: "#f8fafc" } : {}}>
@@ -1563,7 +1629,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
     const sortedAspectGroups = Object.values(aspectMap).sort((a, b) => a.code.localeCompare(b.code));
     sortedAspectGroups.forEach((group) => {
-      group.items.sort((a, b) => (a.param_code || "").localeCompare(b.param_code || ""));
+      group.items.sort((a, b) => (a.param_code || a.sub_aspect_code || "").localeCompare(b.param_code || b.sub_aspect_code || ""));
     });
 
     return (

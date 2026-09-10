@@ -30,8 +30,17 @@ const ItemSubAspectItemsPage = ({ onEdit, onAdd, refreshTrigger }) => {
     ? allSubAspects.filter(sa => sa.aspect_code === aspectFilter)
     : allSubAspects;
 
-  // Build endpoint with sub-aspect filter if selected
-  const filteredEndpoint = subAspectFilter ? `/scoring-sub-aspect-items?sub_aspect_code=${subAspectFilter}` : `/scoring-sub-aspect-items`;
+  // Build endpoint with sub-aspect or aspect filter
+  let filteredEndpoint = "/scoring-sub-aspect-items";
+  const queryParams = [];
+  if (subAspectFilter) {
+    queryParams.push(`sub_aspect_code=${encodeURIComponent(subAspectFilter)}`);
+  } else if (aspectFilter) {
+    queryParams.push(`aspect_code=${encodeURIComponent(aspectFilter)}`);
+  }
+  if (queryParams.length > 0) {
+    filteredEndpoint += `?${queryParams.join("&")}`;
+  }
 
   const cols = [
     { key: "id", header: "ID" },
@@ -149,7 +158,7 @@ const ItemSubAspectItemsPage = ({ onEdit, onAdd, refreshTrigger }) => {
         columns={cols} 
         onAdd={onAdd} 
         onEdit={onEdit} 
-        refreshTrigger={`${refreshTrigger}-${subAspectFilter}`} 
+        refreshTrigger={`${refreshTrigger}-${aspectFilter}-${subAspectFilter}`} 
         predefinedData={{ sub_aspect_code: subAspectFilter }}
         onRowClick={handleRowClick}
         extraHeaderButtons={extraButtons}
