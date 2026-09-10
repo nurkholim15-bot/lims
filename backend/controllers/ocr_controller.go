@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
@@ -2521,10 +2523,13 @@ func getPythonCmd() string {
 
 	// 2. Deteksi otomatis Virtual Environment di direktori saat ini
 	venvPaths := []string{
-		"venv_ocr/bin/python",         // Linux/Mac Venv OCR
-		"venv_ocr/Scripts/python.exe", // Windows Venv OCR
-		"venv/bin/python",             // Linux/Mac Venv umum
-		"venv/Scripts/python.exe",     // Windows Venv umum
+		"venv_ocr/bin/python",             // Linux/Mac Venv OCR lokal
+		"/home/lims/venv_ocr/bin/python",  // Linux VPS Venv OCR di home user
+		"../venv_ocr/bin/python",          // Linux VPS Venv OCR satu level di atas
+		"../../venv_ocr/bin/python",       // Linux VPS Venv OCR dua level di atas
+		"venv_ocr/Scripts/python.exe",     // Windows Venv OCR
+		"venv/bin/python",                 // Linux/Mac Venv umum
+		"venv/Scripts/python.exe",         // Windows Venv umum
 	}
 
 	for _, path := range venvPaths {
@@ -2540,13 +2545,51 @@ func getPythonCmd() string {
 	return "python3"
 }
 
-// runPaddleOCR runs the local PaddleOCR Python wrapper script to extract structured table-like layouts.
+// runPaddleOCR runs the OCR inference via Standby Daemon (Port 8089) or falls back to local Python CLI.
 func runPaddleOCR(imagePath string) (string, error) {
 	codeMin := models.GetGlobalParam("ocr_code_col_min", "0.12")
 	codeMax := models.GetGlobalParam("ocr_code_col_max", "0.28")
 	skorMin := models.GetGlobalParam("ocr_skor_col_min", "0.70")
 	skorMax := models.GetGlobalParam("ocr_skor_col_max", "0.98")
 
+	// 1. Attempt PaddleOCR Standby Daemon (Memory-Resident on Port 8089)
+	daemonURL := models.GetGlobalParam("ocr_daemon_url", "http://127.0.0.1:8089/ocr")
+	if daemonURL != "" && daemonURL != "OFF" && daemonURL != "off" && daemonURL != "disabled" {
+		cMin, _ := strconv.ParseFloat(codeMin, 64)
+		cMax, _ := strconv.ParseFloat(codeMax, 64)
+		sMin, _ := strconv.ParseFloat(skorMin, 64)
+		sMax, _ := strconv.ParseFloat(skorMax, 64)
+
+		payload := map[string]interface{}{
+			"image_path": filepath.Clean(imagePath),
+			"code_min":   cMin,
+			"code_max":   cMax,
+			"skor_min":   sMin,
+			"skor_max":   sMax,
+		}
+		bodyBytes, err := json.Marshal(payload)
+		if err == nil {
+			client := http.Client{Timeout: 30 * time.Second}
+			resp, err := client.Post(daemonURL, "application/json", bytes.NewBuffer(bodyBytes))
+			if err == nil {
+				defer resp.Body.Close()
+				if resp.StatusCode == http.StatusOK {
+					var res struct {
+						Status int    `json:"status"`
+						Text   string `json:"text"`
+						Error  string `json:"error"`
+					}
+					if err := json.NewDecoder(resp.Body).Decode(&res); err == nil && res.Error == "" {
+						return res.Text, nil
+					}
+				}
+			}
+			// Standby daemon failed or unreachable; log and seamlessly fallback to CLI
+			fmt.Printf("[OCR CONTROLLER] Standby daemon (%s) unreachable or returned error: %v. Falling back to CLI.\n", daemonURL, err)
+		}
+	}
+
+	// 2. Fallback to CLI Python execution
 	pythonCmd := getPythonCmd()
 
 	cmd := exec.Command(pythonCmd, "paddle_ocr.py", imagePath, codeMin, codeMax, skorMin, skorMax)

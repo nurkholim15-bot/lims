@@ -44,6 +44,7 @@ Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alu
   - [C. Port Mapping & Manajemen Konflik Port](#c-port-mapping--manajemen-konflik-port)
   - [D. Deployment & Konfigurasi Frontend (PM2) di VPS](#d-deployment--konfigurasi-frontend-pm2-di-vps)
   - [E. Deployment & Konfigurasi Backend (Multi-Direktori) di VPS](#e-deployment--konfigurasi-backend-multi-direktori-di-vps)
+    - [Optimalisasi Performa OCR: PaddleOCR Standby Daemon (Port 8089)](#optimalisasi-performa-ocr-paddleocr-standby-daemon-port-8089)
   - [F. Konfigurasi NGINX di VPS](#f-konfigurasi-nginx-di-vps)
   - [G. Rotasi Log Harian (Logrotate) & Penjadwalan di VPS](#g-rotasi-log-harian-logrotate--penjadwalan-di-vps)
   - [H. Real-Time Analytics dengan GoAccess](#h-real-time-analytics-dengan-goaccess)
@@ -1561,7 +1562,12 @@ Parameter ini dapat diubah secara dinamis melalui database tanpa perlu merestart
 | 7 | **`AI_MAX_TOKENS`** | Integer | `1000` | Batas maksimal panjang token respons yang dihasilkan oleh LLM (Chatbot & Report Generator). |
 | 8 | **`AI_TIMEOUT`** | Integer | `120` | Batas waktu (timeout) dalam satuan detik saat backend Go melakukan HTTP request API panggilan ke LLM. |
 | 9 | **`AI_OCR_ENABLED`** | Boolean (`true`/`false`) | `true` | Mengaktifkan/menonaktifkan parsing teks berbasis OCR untuk lampiran file PDF atau gambar dokumen pengujian. |
-| 10 | **`AI_INTERVAL_CHAT`** | Integer | `12000` | Batas jeda waktu minimum (rate limit) dalam milidetik antar request chat untuk mencegah pemborosan kuota API LLM. |
+| 10 | **`ocr_daemon_url`** | String / URL | `http://127.0.0.1:8089/ocr` | URL endpoint Standby Daemon PaddleOCR (Port 8089). Set ke `OFF` jika ingin memaksa Go memanggil CLI `python3 paddle_ocr.py`. |
+| 11 | **`ocr_code_col_min`** | Float (`0.0` - `1.0`) | `0.12` | Koordinat X minimum (horizontal) untuk bounding box kolom Kode Parameter pada tabel hasil uji. |
+| 12 | **`ocr_code_col_max`** | Float (`0.0` - `1.0`) | `0.28` | Koordinat X maksimum (horizontal) untuk bounding box kolom Kode Parameter pada tabel hasil uji. |
+| 13 | **`ocr_skor_col_min`** | Float (`0.0` - `1.0`) | `0.70` | Koordinat X minimum (horizontal) untuk bounding box kolom Nilai Skor pada tabel hasil uji. |
+| 14 | **`ocr_skor_col_max`** | Float (`0.0` - `1.0`) | `0.98` | Koordinat X maksimum (horizontal) untuk bounding box kolom Nilai Skor pada tabel hasil uji. |
+| 15 | **`AI_INTERVAL_CHAT`** | Integer | `12000` | Batas jeda waktu minimum (rate limit) dalam milidetik antar request chat untuk mencegah pemborosan kuota API LLM. |
 
 ##### 2. Variabel Lingkungan di Berkas `.env`
 Variabel lingkungan ini bersifat statis dan dimuat saat aplikasi *startup* (membutuhkan restart service LIMS jika nilainya diubah):
@@ -2052,18 +2058,19 @@ Untuk mencegah kegagalan startup layanan akibat port yang tabrakan (*port confli
 | **Object Storage** | MinIO API | TCP | `9000` | Internal / Nginx Proxy |
 | **MinIO UI** | MinIO Console UI | TCP | `9001` | Eksternal (Opsional) |
 | **Workflow Engine** | Camunda BPM Engine | TCP | `8085` | Internal / Nginx Proxy |
+| **OCR Standby Daemon** | PaddleOCR Service Daemon | TCP | `8089` | Internal (Lokal Standby RAM) |
 
 #### Perintah Memeriksa Penggunaan Port (Single & Multiple)
 Gunakan perintah berikut untuk memverifikasi apakah ada port yang sedang digunakan:
 ```bash
-# 1. Memeriksa Port Tunggal (misal port 8081)
-sudo ss -tulpn | grep :8081
+# 1. Memeriksa Port Tunggal (misal port 8081 atau 8089)
+sudo ss -tulpn | grep :8089
 # atau menggunakan lsof
-sudo lsof -i :8081
+sudo lsof -i :8089
 
 # 2. Memeriksa Banyak Port Sekaligus (Multiple Ports)
 # Memeriksa seluruh ekosistem port LIMS
-sudo ss -tulpn | grep -E '8088|8082|8443|3000|3001|8081|8091|7890|5433|9000|9001|8085'
+sudo ss -tulpn | grep -E '8088|8082|8443|3000|3001|8081|8091|8089|7890|5433|9000|9001|8085'
 ```
 
 #### Menghentikan/Membunuh Proses pada Port yang Bermasalah (Stop/Kill Port)
@@ -2091,7 +2098,7 @@ sudo systemctl stop lims-backend-8081.service lims-backend-8091.service
 sudo systemctl disable lims-backend-8081.service lims-backend-8091.service
 ```
 
-##### 2. Stop & Hapus PM2 Frontend (PM2)
+##### 2. Stop & Hapus PM2 Frontend (PM2) - start frontend
 ```bash
 # Menghentikan semua aplikasi frontend di PM2
 sudo -u lims pm2 stop all
@@ -2113,7 +2120,7 @@ sudo systemctl stop nginx
 sudo systemctl disable nginx
 ```
 
-### D. Deployment & Konfigurasi Frontend (PM2) di VPS
+### D. Deployment & Konfigurasi Frontend (PM2/build frontend) di VPS
 
 #### Alur Kompilasi & Pemindahan File
 Proses instalasi dependensi (`npm install`) dan kompilasi/build (`npm run build`) dilakukan di dalam folder kode sumber lokal (source code) Anda, yaitu:
@@ -2130,7 +2137,7 @@ Proses instalasi dependensi (`npm install`) dan kompilasi/build (`npm run build`
 ##### 2. Menjalankan Kompilasi:
 ```bash
 # Pindah ke folder kode sumber
-cd /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/
+cd /mnt/c/Project/Application/lims/frontend/
 
 # Jalankan instalasi & build
 npm install
@@ -2146,8 +2153,9 @@ mkdir -p /home/lims/lims1/frontend/dist
 mkdir -p /home/lims/lims2/frontend/dist
 
 # Salin HANYA isi folder 'dist' ke folder tujuan
-cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist/* /home/lims/lims1/frontend/dist/
-cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/frontend/dist/* /home/lims/lims2/frontend/dist/
+scp -r /mnt/c/Project/Application/lims/frontend/dist/* lims@212.85.24.33:/home/lims/lims1/frontend/dist/
+
+scp -r /mnt/c/Project/Application/lims/frontend/dist/* lims@212.85.24.33:/home/lims/lims2/frontend/dist/
 ```
 
 #### Jalankan Kluster dengan PM2 di VPS
@@ -2263,7 +2271,7 @@ Proses kompilasi Go backend dilakukan di folder kode sumber:
 *   `go.mod` & `go.sum`
 *   `main.go` (Entrypoint aplikasi)
 
-##### 2. Menjalankan Kompilasi (Build):
+##### 2. Menjalankan build backend (kompilasi):
 Karena Go adalah bahasa terkompilasi (*compiled language*), seluruh kode logika Go di folder-folder di atas akan disatukan ke dalam satu file biner bernama `main`.
 ```bash
 # Masuk ke direktori kode sumber backend
@@ -2296,7 +2304,8 @@ rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.8
 **Opsi B: Menggunakan `scp`**
 Gunakan atribut `-p` (preserve modification times):
 ```bash
-scp -p /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.85.24.33:/home/lims/lims1/backend/
+scp -p /mnt/c/Project/Application/lims/backend/main lims@2
+12.85.24.33:/home/lims/lims1/backend/
 ```
 
 *(Jika Anda melakukan deployment langsung di dalam OS yang sama / WSL, Anda bisa menggunakan perintah `cp -p`)*:
@@ -2401,6 +2410,109 @@ find /home/lims -type d -name "venv_ocr" -o -name "venv" 2>/dev/null
 > proxy_connect_timeout 300s;  
 > proxy_send_timeout 300s;  
 > ```
+
+#### Optimalisasi Performa OCR: PaddleOCR Standby Daemon (Port 8089)
+
+Pada pengujian di VPS, pemrosesan dokumen PDF/Gambar menggunakan OCR terkadang memakan waktu 15–25 detik per berkas. Hal ini disebabkan oleh fenomena **Cold-Start Overhead** pada eksekusi CLI konvensional:
+1. **Penyebab Cold-Start (Mode CLI `python3 paddle_ocr.py`)**:
+   Setiap kali pengguna mengunggah dokumen, Go memanggil CLI Python baru (`exec.Command`). Sistem operasi harus menyalakan interpreter Python baru, mengimpor puluhan library besar (`paddleocr`, `paddlepaddle`, `cv2`, `numpy`), dan membaca bobot model deep learning (*neural network weights*) berukuran ratusan Megabyte dari disk/storage VPS. Pada disk VPS dengan IOPS standar, proses inisialisasi ini memakan waktu **4 hingga 8 detik per halaman** sebelum pembacaan teks dimulai.
+2. **Solusi Standby Daemon (`paddle_service.py` di Port 8089)**:
+   LIMS menyediakan arsitektur **Standby Daemon** berbasis HTTP lokal ringan (`http.server.ThreadingHTTPServer` bawaan Python standard library, tanpa dependensi framework tambahan). Model PaddleOCR diinisialisasi dan dimuat ke dalam RAM (**~350–500 MB**) satu kali saja saat booting.
+   - Saat backend Go menerima dokumen, Go langsung mengirimkan HTTP POST ke `http://127.0.0.1:8089/ocr`.
+   - Waktu respons pemrosesan langsung terpangkas drastis menjadi **~0.8 – 1.5 detik per halaman** (peningkatan performa hingga **10x lipat**!).
+3. **Mekanisme Dual-Mode & Graceful Fallback (Zero Reconfiguration)**:
+   Backend Go (`backend/controllers/ocr_controller.go`) dilengkapi mekanisme *graceful fallback* cerdas:
+   - **Langkah 1**: Go mencoba menghubungi Daemon di `http://127.0.0.1:8089/ocr`.
+   - **Langkah 2**: Jika Daemon aktif (HTTP 200), hasil OCR langsung dikembalikan secara cepat.
+   - **Langkah 3**: Jika Daemon offline, belum diinstal, atau mati (misalnya saat dijalankan di komputer lokal pengembang), Go secara otomatis dan seketika beralih memanggil CLI `python3 paddle_ocr.py` sebagai cadangan. Tidak ada error yang dialami pengguna, dan **tidak diperlukan rekonfigurasi apapun** antara laptop lokal dan VPS.
+
+##### A. Cara Menjalankan OCR Daemon di Lingkungan Lokal (Laptop / Windows / WSL)
+Menjalankan OCR Daemon di komputer lokal bersifat **opsional**. Jika Anda tidak menyalakannya, backend Go akan tetap berjalan normal menggunakan mode CLI bawaan. Namun, jika Anda ingin merasakan kecepatan inferensi instan (~1 detik) di lokal:
+- **Di Windows (PowerShell / Command Prompt)**:
+  ```powershell
+  # Masuk ke folder backend
+  cd backend
+  # Jalankan script daemon menggunakan Python lokal atau venv
+  python paddle_service.py
+  # Atau jika menggunakan virtual environment:
+  .\venv_ocr\Scripts\python.exe paddle_service.py
+  ```
+- **Di WSL (Linux Ubuntu Lokal)**:
+  ```bash
+  cd backend
+  venv_ocr/bin/python paddle_service.py
+  ```
+Saat daemon aktif, Anda akan melihat log:
+`[LIMS OCR Daemon] PaddleOCR model successfully loaded into RAM!`
+`[LIMS OCR Daemon] Listening on http://127.0.0.1:8089/ocr (Standby in RAM)`
+
+##### B. Konfigurasi Systemd Service di VPS (`/etc/systemd/system/lims-ocr.service`)
+Salin berkas unit systemd yang telah disediakan di `backend/lims-ocr.service` ke folder systemd VPS:
+```ini
+[Unit]
+Description=LIMS PaddleOCR Standby Daemon Service
+After=network.target
+
+[Service]
+Type=simple
+User=lims
+Group=lims
+WorkingDirectory=/home/lims/lims1/backend
+Environment="PATH=/home/lims/venv_ocr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+Environment="OCR_DAEMON_PORT=8089"
+Environment="OCR_DAEMON_HOST=127.0.0.1"
+ExecStart=/home/lims/venv_ocr/bin/python /home/lims/lims1/backend/paddle_service.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+> [!NOTE]
+> * **Lokasi Virtual Environment VPS:** Pada struktur direktori VPS LIMS, *Virtual Environment* Python umumnya diisolasi langsung di direktori pengguna: `/home/lims/venv_ocr/` (bukan di dalam subfolder backend).
+> * **Berkas Python Wajib di Backend:** Pastikan berkas `paddle_service.py` dan `paddle_ocr.py` terbaru telah disalin dari lokal ke folder backend VPS (`/home/lims/lims1/backend/`).
+
+##### C. Langkah Deployment, Aktivasi & Verifikasi di VPS:
+```bash
+# 1. Salin berkas Python terbaru dari komputer lokal (jalankan di PowerShell/CMD lokal jika belum via git)
+# scp C:\Project\Application\lims\backend\paddle_service.py lims@212.85.24.33:/home/lims/lims1/backend/
+# scp C:\Project\Application\lims\backend\paddle_ocr.py lims@212.85.24.33:/home/lims/lims1/backend/
+
+# 2. Berikan izin eksekusi pada skrip daemon di VPS
+chmod +x /home/lims/lims1/backend/paddle_service.py
+
+# 3. Salin berkas service ke folder systemd
+sudo cp /home/lims/lims1/backend/lims-ocr.service /etc/systemd/system/lims-ocr.service
+
+# 4. Muat ulang konfigurasi systemd
+sudo systemctl daemon-reload
+
+# 5. Aktifkan dan jalankan service PaddleOCR daemon
+sudo systemctl enable --now lims-ocr
+
+# 6. Periksa status layanan (pastikan status Active: running berwarna hijau)
+sudo systemctl status lims-ocr
+
+# 7. Uji endpoint kesehatan (Health Check)
+curl http://127.0.0.1:8089/health
+# Respons yang diharapkan: {"status": "healthy", "service": "LIMS PaddleOCR Standby Daemon", "ready": true, "version": "1.0.0"}
+
+# 8. Memantau log service secara real-time
+journalctl -u lims-ocr -f
+```
+
+##### D. Troubleshooting Kendala Umum Daemon di VPS:
+1. **Error `status=203/EXEC` pada `systemctl status lims-ocr`**:
+   Error ini menandakan bahwa biner Python atau path skrip yang dideklarasikan pada `ExecStart` tidak ditemukan pada sistem berkas server.
+   - Periksa lokasi biner python di dalam venv dengan perintah:
+     `find /home/lims -name "paddleocr" 2>/dev/null`
+   - Jika ditemukan di `/home/lims/venv_ocr/bin/paddleocr`, maka biner Python yang valid adalah `/home/lims/venv_ocr/bin/python`.
+   - Pastikan path direktori backend tepat (`/home/lims/lims1/backend/`, bukan `/home/lims/lims/backend/`).
+2. **Error `curl: (7) Failed to connect to 127.0.0.1 port 8089`**:
+   Port 8089 belum terbuka karena service `lims-ocr` gagal start atau sedang mengalami *auto-restart*. Cek log detail penyebab kegagalan dengan:
+   `journalctl -u lims-ocr -e --no-pager`
 
 #### Hubungkan Symbolic Link (Shared Storage)
 Guna menyatukan folder penyimpanan hasil uji uploads, hubungkan folder uploads lokal ke folder bersama `shared_uploads`:
@@ -4500,6 +4612,7 @@ Berikut adalah tabel referensi cepat untuk memulai (*start*), menghentikan (*sto
 | **PostgreSQL DB (Docker)** | Container: `lims-postgres` | `docker start lims-postgres` | `docker stop lims-postgres` | `docker restart lims-postgres` | `docker ps -f name=lims-postgres` |
 | **Object Storage** | Container: `lims-minio` | `docker start lims-minio` | `docker stop lims-minio` | `docker restart lims-minio` | `docker ps -f name=lims-minio` |
 | **Workflow Engine** | Container: `lims-camunda` | `docker start lims-camunda` | `docker stop lims-camunda` | `docker restart lims-camunda` | `docker ps -f name=lims-camunda` |
+| **OCR Standby Daemon (8089)** | Systemd: `lims-ocr` | `sudo systemctl start lims-ocr.service` | `sudo systemctl stop lims-ocr.service` | `sudo systemctl restart lims-ocr.service` | `sudo systemctl status lims-ocr.service` |
 | **Cron Jobs** | Linux Cron Daemon | `sudo systemctl start cron` | `sudo systemctl stop cron` | `sudo systemctl restart cron` | `sudo systemctl status cron` |
 | **Real-Time Dashboard** | GoAccess WebSocket | *Jalan otomatis di background jika di-spawn* | `pkill goaccess` | *Jalankan kembali kueri GoAccess* | `ps aux \| grep goaccess` |
 

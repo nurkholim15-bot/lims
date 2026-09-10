@@ -13,26 +13,9 @@ except ImportError as e:
     print(f"Error importing PaddleOCR: {e}", file=sys.stderr)
     sys.exit(1)
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python3 paddle_ocr.py <image_path> [code_min] [code_max] [skor_min] [skor_max]")
-        sys.exit(1)
-
-    img_path = sys.argv[1]
+def process_image(img_path, code_min=0.12, code_max=0.28, skor_min=0.70, skor_max=0.98, filter_cols=True, ocr_instance=None):
     if not os.path.exists(img_path):
-        print(f"Error: File not found: {img_path}", file=sys.stderr)
-        sys.exit(1)
-
-    # Check if column coordinates are passed
-    filter_cols = len(sys.argv) >= 6
-    if filter_cols:
-        try:
-            code_min = float(sys.argv[2])
-            code_max = float(sys.argv[3])
-            skor_min = float(sys.argv[4])
-            skor_max = float(sys.argv[5])
-        except ValueError:
-            filter_cols = False
+        return ""
 
     # Get image dimensions using PIL and resize if too large to speed up inference (avoid timeouts)
     img_width = 1000
@@ -62,15 +45,18 @@ def main():
     os.dup2(devnull, fd)
 
     try:
-        from paddleocr import PaddleOCR
-        # enable_mkldnn=False avoids C++ crashes on VPS.
-        # use_textline_orientation=False speeds up processing by 30% (assuming documents are mostly upright)
-        ocr = PaddleOCR(use_textline_orientation=False, lang='id', enable_mkldnn=False)
+        if ocr_instance is None:
+            from paddleocr import PaddleOCR
+            # enable_mkldnn=False avoids C++ crashes on VPS.
+            # use_textline_orientation=False speeds up processing by 30% (assuming documents are mostly upright)
+            ocr = PaddleOCR(use_textline_orientation=False, lang='id', enable_mkldnn=False)
+        else:
+            ocr = ocr_instance
         result = ocr.ocr(img_path)
     except Exception as e:
         os.dup2(original_fd, fd)
         print(f"Error running PaddleOCR: {e}", file=sys.stderr)
-        sys.exit(1)
+        return ""
     finally:
         # Restore normal stdout fd
         os.dup2(original_fd, fd)
@@ -78,7 +64,7 @@ def main():
         os.close(devnull)
 
     if not result or not result[0]:
-        return
+        return ""
 
     # Extract box and text info depending on PaddleOCR version
     if isinstance(result[0], dict) and 'rec_texts' in result[0]:
@@ -289,9 +275,36 @@ def main():
     # Sort all lines from top to bottom by projected y
     output_lines.sort(key=lambda x: x[0])
 
-    # Print the aligned lines
-    for _, line_text in output_lines:
-        print(line_text)
+    # Return the aligned lines as newline-separated string
+    return "\n".join(line_text for _, line_text in output_lines)
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python3 paddle_ocr.py <image_path> [code_min] [code_max] [skor_min] [skor_max]")
+        sys.exit(1)
+
+    img_path = sys.argv[1]
+    if not os.path.exists(img_path):
+        print(f"Error: File not found: {img_path}", file=sys.stderr)
+        sys.exit(1)
+
+    filter_cols = len(sys.argv) >= 6
+    code_min = 0.12
+    code_max = 0.28
+    skor_min = 0.70
+    skor_max = 0.98
+    if filter_cols:
+        try:
+            code_min = float(sys.argv[2])
+            code_max = float(sys.argv[3])
+            skor_min = float(sys.argv[4])
+            skor_max = float(sys.argv[5])
+        except ValueError:
+            filter_cols = False
+
+    output = process_image(img_path, code_min, code_max, skor_min, skor_max, filter_cols=filter_cols)
+    if output:
+        print(output)
 
 if __name__ == '__main__':
     main()

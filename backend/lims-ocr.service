@@ -1,0 +1,20 @@
+[Unit]
+Description=LIMS PaddleOCR Standby Daemon Service
+After=network.target
+
+[Service]
+Type=simple
+User=lims
+Group=lims
+WorkingDirectory=/home/lims/lims1/backend
+Environment="PATH=/home/lims/venv_ocr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+Environment="OCR_DAEMON_PORT=8089"
+Environment="OCR_DAEMON_HOST=127.0.0.1"
+ExecStart=/home/lims/venv_ocr/bin/python /home/lims/lims1/backend/paddle_service.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
