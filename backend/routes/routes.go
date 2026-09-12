@@ -43,6 +43,7 @@ func SetupRoutes(r *gin.Engine) {
 
 		// IoT / Hardware Integration Webhook (Uses X-Simulator-Key validation in controller)
 		api.POST("/machine-integration/results", controllers.ReceiveMachineResult)
+		api.POST("/machine-integration/trigger-scpi", controllers.TriggerScpiMeasurement)
 		api.POST("/simulator/proxy-nodered/:action", controllers.ProxyNodeRed)
 
 		// Telegram Bot Webhook

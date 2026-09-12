@@ -56,6 +56,8 @@ const GlobalParametersPage = ({ route, onEdit, refreshTrigger, setEditingItem, s
     <>
       <MasterDataPage
         {...route}
+        defaultSortKey="param_key"
+        defaultSortOrder="asc"
         onAdd={() => {
           setEditingItem(null);
           setEditingCrudEndpoint(route.crudEndpoint);

@@ -158,6 +158,22 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const aiReportEnabled = (appConfig.AI_REPORT_ENABLED || "true").toString().trim().toLowerCase() !== "false";
   const isToggleEnabled = (appConfig.TOGGLE_SUB_ASPECT_ENABLE || "false").toString().trim().toLowerCase() === "true";
 
+  const [currentAppConfig, setCurrentAppConfig] = useState(appConfig || {});
+
+  useEffect(() => {
+    if (appConfig && appConfig.DROPDOWN_PILIHAN) {
+      setCurrentAppConfig(appConfig);
+    } else {
+      apiRequest("/config").then(cfg => {
+        if (cfg) {
+          setCurrentAppConfig(prev => ({ ...prev, ...cfg }));
+        }
+      }).catch(err => console.error("Error fetching config in AppDetail:", err));
+    }
+  }, [appConfig]);
+
+  const dropdownFirstLine = currentAppConfig?.DROPDOWN_PILIHAN || appConfig?.DROPDOWN_PILIHAN || "-- Pilihan Rubrik --";
+
   const [localApp, setLocalApp] = useState(app);
   const [notes, setNotes] = useState(app?.analysis_notes || "");
   const [conclusion, setConclusion] = useState(app?.testing_report_ai?.report_ai || "");
@@ -179,6 +195,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const [aspectEditing, setAspectEditing] = useState({});
   const [invoice, setInvoice] = useState(null);
   const [ocrLoading, setOcrLoading] = useState(null);
+  const [scpiLoading, setScpiLoading] = useState(null);
+  const [batchScpiLoading, setBatchScpiLoading] = useState(null);
   const [isWebcamOpen, setIsWebcamOpen] = useState(false);
   const [webcamContext, setWebcamContext] = useState({ aspectCode: null, targetParamCode: null });
   const [aiGenerating, setAiGenerating] = useState(false);
@@ -787,6 +805,114 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     if (!file) return;
     await processScoringOCR(file, aspectCode, targetParamCode);
     e.target.value = "";
+  };
+
+  const handleTriggerSCPI = async (paramCode, aspectCode) => {
+    if (!localApp?.id) return;
+    setScpiLoading(paramCode);
+    try {
+      showToast(`🔌 Menghubungkan ke alat uji SCPI (${paramCode})...`, 'info');
+      const resp = await apiRequest('/machine-integration/trigger-scpi', 'POST', {
+        application_id: Number(localApp.id),
+        param_code: paramCode
+      });
+
+      if (resp?.success) {
+        const val = resp.actual_value !== undefined ? resp.actual_value : resp.score;
+        const photo = resp.photo_path || "";
+        const noteText = resp.notes || "";
+
+        setExecutionData((prev) => {
+          const newData = [...prev];
+          const targetIdx = newData.findIndex(
+            (item) => item.param_code === paramCode || item.sub_aspect_code === paramCode
+          );
+          if (targetIdx !== -1) {
+            const p = { ...newData[targetIdx] };
+            applyActualValueLogic(p, val.toString());
+            if (noteText) {
+              p.notes = noteText;
+            }
+            if (photo) {
+              p.photo_path = photo;
+            }
+            newData[targetIdx] = p;
+          }
+          return newData;
+        });
+
+        showToast(`✅ Berhasil membaca SCPI alat untuk ${paramCode}: ${val}`, 'success');
+      } else {
+        showToast(`⚠️ Pengukuran SCPI: ${resp?.message || 'Tidak ada respon alat'}`, 'warning');
+      }
+    } catch (err) {
+      console.error("Trigger SCPI error:", err);
+      showToast(`❌ Gagal trigger SCPI: ${err.message}`, 'error');
+    } finally {
+      setScpiLoading(null);
+    }
+  };
+
+  const handleTriggerBatchSCPI = async (aspectCode, items) => {
+    if (!localApp?.id) return;
+    const scpiItems = items.filter(
+      (p) => p.is_simulator === true || ['KEDAI', 'KESEL', 'KESEN', 'KELCH', 'KESUA', 'KOBER'].includes(p.param_code)
+    );
+    if (scpiItems.length === 0) {
+      showToast(`Tidak ada parameter alat uji SCPI pada aspek ${aspectCode}`, 'info');
+      return;
+    }
+
+    setBatchScpiLoading(aspectCode);
+    showToast(`⚡ Memulai Auto-fill SCPI untuk ${scpiItems.length} parameter (${scpiItems.map(s => s.param_code).join(', ')})...`, 'info');
+
+    let successCount = 0;
+    for (const item of scpiItems) {
+      try {
+        setScpiLoading(item.param_code);
+        const resp = await apiRequest('/machine-integration/trigger-scpi', 'POST', {
+          application_id: Number(localApp.id),
+          param_code: item.param_code
+        });
+
+        if (resp?.success) {
+          successCount++;
+          const val = resp.actual_value !== undefined ? resp.actual_value : resp.score;
+          const photo = resp.photo_path || "";
+          const noteText = resp.notes || "";
+
+          setExecutionData((prev) => {
+            const newData = [...prev];
+            const targetIdx = newData.findIndex(
+              (p) => p.param_code === item.param_code || p.sub_aspect_code === item.param_code
+            );
+            if (targetIdx !== -1) {
+              const p = { ...newData[targetIdx] };
+              applyActualValueLogic(p, val.toString());
+              if (noteText) {
+                p.notes = noteText;
+              }
+              if (photo) {
+                p.photo_path = photo;
+              }
+              newData[targetIdx] = p;
+            }
+            return newData;
+          });
+        }
+      } catch (err) {
+        console.error(`Gagal trigger SCPI batch untuk ${item.param_code}:`, err);
+      } finally {
+        setScpiLoading(null);
+      }
+    }
+
+    setBatchScpiLoading(null);
+    if (successCount > 0) {
+      showToast(`🎉 Selesai! Berhasil menarik ${successCount}/${scpiItems.length} parameter SCPI dari alat uji.`, 'success');
+    } else {
+      showToast(`⚠️ Tidak ada data SCPI yang berhasil ditarik. Pastikan simulator / alat aktif.`, 'warning');
+    }
   };
 
   const handleOpenCameraModal = (aspectCode, targetParamCode = null) => {
@@ -1709,34 +1835,63 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     <span style={{ fontWeight: 700, color: "#1e293b", fontSize: "1rem" }}>{group.name}</span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "1rem", position: "relative" }}>
-                    {!isInteractionDisabled && aiOcrEnabled && (
-                      <div style={{ display: "flex", gap: "8px" }}>
-                        <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                    {!isInteractionDisabled && (
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                        {group.items.some(p => p.is_simulator === true || ['KEDAI', 'KESEL', 'KESEN', 'KELCH', 'KESUA', 'KOBER'].includes(p.param_code)) && (
                           <button 
                             type="button"
-                            disabled={(ocrLoading === group.code || ocrLoading === true)}
-                            style={{ border: "1px solid #cbd5e1", background: (ocrLoading === group.code || ocrLoading === true) ? "#f1f5f9" : "white", color: (ocrLoading === group.code || ocrLoading === true) ? "#94a3b8" : "#0284c7", cursor: (ocrLoading === group.code || ocrLoading === true) ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
+                            disabled={batchScpiLoading === group.code}
+                            onClick={() => handleTriggerBatchSCPI(group.code, group.items)}
+                            title="Tarik seluruh data alat uji SCPI untuk aspek ini secara otomatis sekaligus"
+                            style={{ 
+                              border: "1px solid #0284c7", 
+                              background: batchScpiLoading === group.code ? "#f1f5f9" : "#0284c7", 
+                              color: batchScpiLoading === group.code ? "#94a3b8" : "#ffffff", 
+                              cursor: batchScpiLoading === group.code ? "not-allowed" : "pointer", 
+                              fontSize: "0.8rem", 
+                              padding: "6px 12px", 
+                              borderRadius: "6px", 
+                              fontWeight: 600, 
+                              display: "flex", 
+                              alignItems: "center", 
+                              gap: "0.5rem",
+                              boxShadow: batchScpiLoading === group.code ? "none" : "0 1px 2px 0 rgba(2, 132, 199, 0.35)"
+                            }}
                           >
-                            <i className={(ocrLoading === group.code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"}></i> {(ocrLoading === group.code || ocrLoading === true) ? "Sedang proses..." : "Auto-fill OCR (File)"}
+                            <i className={batchScpiLoading === group.code ? "fas fa-spinner fa-spin" : "fas fa-plug"}></i> 
+                            {batchScpiLoading === group.code ? "Mengukur Alat..." : "Auto-fill SCPI (Alat Uji)"}
                           </button>
-                          {!(ocrLoading === group.code || ocrLoading === true) && (
-                            <input 
-                              type="file" 
-                              accept="image/*,.pdf,.txt,.csv,.log"
-                              onChange={(e) => handleScoringOCR(e, group.code)}
-                              style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                            />
-                          )}
-                        </div>
+                        )}
+                        {aiOcrEnabled && (
+                          <>
+                            <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                              <button 
+                                type="button"
+                                disabled={(ocrLoading === group.code || ocrLoading === true)}
+                                style={{ border: "1px solid #cbd5e1", background: (ocrLoading === group.code || ocrLoading === true) ? "#f1f5f9" : "white", color: (ocrLoading === group.code || ocrLoading === true) ? "#94a3b8" : "#0284c7", cursor: (ocrLoading === group.code || ocrLoading === true) ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
+                              >
+                                <i className={(ocrLoading === group.code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"}></i> {(ocrLoading === group.code || ocrLoading === true) ? "Sedang proses..." : "Auto-fill OCR (File)"}
+                              </button>
+                              {!(ocrLoading === group.code || ocrLoading === true) && (
+                                <input 
+                                  type="file" 
+                                  accept="image/*,.pdf,.txt,.csv,.log"
+                                  onChange={(e) => handleScoringOCR(e, group.code)}
+                                  style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                                />
+                              )}
+                            </div>
 
-                        <button 
-                          type="button"
-                          disabled={(ocrLoading === group.code || ocrLoading === true)}
-                          onClick={() => handleOpenCameraModal(group.code)}
-                          style={{ border: "1px solid #cbd5e1", background: (ocrLoading === group.code || ocrLoading === true) ? "#f1f5f9" : "white", color: (ocrLoading === group.code || ocrLoading === true) ? "#94a3b8" : "#0284c7", cursor: (ocrLoading === group.code || ocrLoading === true) ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
-                        >
-                          <i className="fas fa-camera"></i> {(ocrLoading === group.code || ocrLoading === true) ? "Sedang proses..." : "Auto-fill OCR (Kamera)"}
-                        </button>
+                            <button 
+                              type="button"
+                              disabled={(ocrLoading === group.code || ocrLoading === true)}
+                              onClick={() => handleOpenCameraModal(group.code)}
+                              style={{ border: "1px solid #cbd5e1", background: (ocrLoading === group.code || ocrLoading === true) ? "#f1f5f9" : "white", color: (ocrLoading === group.code || ocrLoading === true) ? "#94a3b8" : "#0284c7", cursor: (ocrLoading === group.code || ocrLoading === true) ? "not-allowed" : "pointer", fontSize: "0.8rem", padding: "6px 12px", borderRadius: "6px", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}
+                            >
+                              <i className="fas fa-camera"></i> {(ocrLoading === group.code || ocrLoading === true) ? "Sedang proses..." : "Auto-fill OCR (Kamera)"}
+                            </button>
+                          </>
+                        )}
                       </div>
                     )}
 
@@ -1807,7 +1962,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     <thead style={{ background: "#f8fafc" }}>
                       <tr>
                         <th style={{ paddingLeft: "1.25rem" }}>Parameter</th>
-                        <th style={{ width: "220px", textAlign: "center" }}>Nilai</th>
+                        <th style={{ minWidth: "260px", textAlign: "center" }}>Nilai</th>
                         <th style={{ width: "80px", textAlign: "center" }}>Bobot</th>
                         <th style={{ width: "120px", textAlign: "center" }}>Standard</th>
                         <th style={{ width: "90px", textAlign: "center" }}>Skor</th>
@@ -1822,7 +1977,8 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                         const item = idx !== -1 ? executionData[idx] : p;
                         const isParamDisabled = item?.is_disabled === true;
                         const isSim = p.is_simulator === true;
-                        const isFieldDisabled = isSim || isInteractionDisabled || isParamDisabled;
+                        const isFieldDisabled = isInteractionDisabled || isParamDisabled;
+                        const isInputDisabled = isSim || isFieldDisabled;
 
                         return (
                           <tr key={p.param_code} style={isParamDisabled ? { opacity: 0.6, background: "#f8fafc" } : {}}>
@@ -1863,13 +2019,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                           placeholder="Nilai Fisik"
                                           title="Nilai hasil pengukuran instrumen"
                                           value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
-                                          onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
-                                          readOnly={isFieldDisabled}
-                                          disabled={isFieldDisabled}
+                                          onChange={(e) => !isInputDisabled && handleActualValueChange(idx, e.target.value)}
+                                          readOnly={isInputDisabled}
+                                          disabled={isInputDisabled}
                                           style={{
                                             width: "95px",
                                             textAlign: "center",
-                                            background: isFieldDisabled ? "#f1f5f9" : "white",
+                                            background: isInputDisabled ? "#f1f5f9" : "white",
                                             padding: "5px 4px",
                                             fontSize: "0.85rem",
                                             border: item.validation_error ? "1.5px solid #ef4444" : "1px solid #cbd5e1",
@@ -1878,13 +2034,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                         />
                                         <select
                                           value={selectedVal}
-                                          onChange={(e) => !isFieldDisabled && handleDropdownChange(idx, e.target.value)}
-                                          disabled={isFieldDisabled || item.dropdown_disabled}
+                                          onChange={(e) => !isInputDisabled && handleDropdownChange(idx, e.target.value)}
+                                          disabled={isInputDisabled || item.dropdown_disabled}
                                           title={item.dropdown_disabled ? "Terkunci otomatis berdasarkan Nilai Fisik (Kosongkan nilai fisik untuk memilih manual)" : "Pilih kriteria/rubrik"}
                                           style={{
                                             flex: 1,
                                             textAlign: "left",
-                                            background: (isFieldDisabled || item.dropdown_disabled) ? "#f1f5f9" : "white",
+                                            background: (isInputDisabled || item.dropdown_disabled) ? "#f1f5f9" : "white",
                                             color: item.dropdown_disabled ? "#334155" : "inherit",
                                             fontWeight: item.dropdown_disabled ? 600 : "normal",
                                             padding: "5px",
@@ -1894,42 +2050,71 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                             cursor: item.dropdown_disabled ? "not-allowed" : "pointer"
                                           }}
                                         >
-                                          <option value="">-- Pilihan Rubrik --</option>
+                                          <option value="">{dropdownFirstLine}</option>
                                           {currentOpts.map((opt) => (
                                             <option key={opt.id || opt.value} value={opt.value}>
                                               {opt.label} ({opt.value})
                                             </option>
                                           ))}
                                         </select>
-                                        {!isFieldDisabled && aiOcrEnabled && (
-                                          <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
-                                            <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
-                                              <button
-                                                type="button"
-                                                disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                                title="Upload File OCR parameter ini saja"
-                                                style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                              >
-                                                <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
-                                              </button>
-                                              {!(ocrLoading === p.param_code || ocrLoading === true) && (
-                                                <input 
-                                                  type="file" 
-                                                  accept="image/*,.pdf,.txt,.csv,.log"
-                                                  onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
-                                                  style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                                                />
-                                              )}
-                                            </div>
+                                        {!isFieldDisabled && (
+                                          <div style={{ display: "flex", gap: "4px", flexShrink: 0, alignItems: "center" }}>
                                             <button
                                               type="button"
-                                              disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                              onClick={() => handleOpenCameraModal(group.code, p.param_code)}
-                                              title="Ambil Foto OCR parameter ini saja"
-                                              style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                              disabled={scpiLoading === p.param_code}
+                                              onClick={() => handleTriggerSCPI(p.param_code, group.code)}
+                                              title={`Tarik / Baca data langsung dari Alat Uji SCPI (${p.param_code})`}
+                                              style={{
+                                                background: scpiLoading === p.param_code ? "#f1f5f9" : "#0284c7",
+                                                color: scpiLoading === p.param_code ? "#94a3b8" : "#ffffff",
+                                                border: scpiLoading === p.param_code ? "1px solid #cbd5e1" : "1px solid #0369a1",
+                                                borderRadius: "6px",
+                                                cursor: scpiLoading === p.param_code ? "not-allowed" : "pointer",
+                                                padding: "0 8px",
+                                                height: "28px",
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: "4px",
+                                                fontSize: "0.75rem",
+                                                fontWeight: 700,
+                                                boxShadow: scpiLoading === p.param_code ? "none" : "0 1px 2px 0 rgba(2, 132, 199, 0.35)",
+                                                whiteSpace: "nowrap"
+                                              }}
                                             >
-                                              <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                              <i className={scpiLoading === p.param_code ? "fas fa-spinner fa-spin" : "fas fa-plug"}></i>
+                                              <span>{scpiLoading === p.param_code ? "Ukur..." : "SCPI"}</span>
                                             </button>
+                                            {aiOcrEnabled && (
+                                              <>
+                                                <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                                                  <button
+                                                    type="button"
+                                                    disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                                    title="Upload File OCR parameter ini saja"
+                                                    style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#2563eb", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#ffffff", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #1d4ed8", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (ocrLoading === p.param_code || ocrLoading === true) ? "none" : "0 1px 2px 0 rgba(37, 99, 235, 0.3)" }}
+                                                  >
+                                                    <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                                  </button>
+                                                  {!(ocrLoading === p.param_code || ocrLoading === true) && (
+                                                    <input 
+                                                      type="file" 
+                                                      accept="image/*,.pdf,.txt,.csv,.log"
+                                                      onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
+                                                      style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                                                    />
+                                                  )}
+                                                </div>
+                                                <button
+                                                  type="button"
+                                                  disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                                  onClick={() => handleOpenCameraModal(group.code, p.param_code)}
+                                                  title="Ambil Foto OCR parameter ini saja"
+                                                  style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#2563eb", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#ffffff", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #1d4ed8", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (ocrLoading === p.param_code || ocrLoading === true) ? "none" : "0 1px 2px 0 rgba(37, 99, 235, 0.3)" }}
+                                                >
+                                                  <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                                </button>
+                                              </>
+                                            )}
                                           </div>
                                         )}
                                       </div>
@@ -1948,40 +2133,69 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                       step="any"
                                       placeholder="Nilai Fisik"
                                       value={item.actual_value !== undefined && item.actual_value !== null ? item.actual_value : ""}
-                                      onChange={(e) => !isFieldDisabled && handleActualValueChange(idx, e.target.value)}
-                                      readOnly={isFieldDisabled}
-                                      disabled={isFieldDisabled}
-                                      style={{ flex: 1, textAlign: "center", background: isFieldDisabled ? "#f1f5f9" : "white" }}
+                                      onChange={(e) => !isInputDisabled && handleActualValueChange(idx, e.target.value)}
+                                      readOnly={isInputDisabled}
+                                      disabled={isInputDisabled}
+                                      style={{ flex: 1, textAlign: "center", background: isInputDisabled ? "#f1f5f9" : "white" }}
                                     />
-                                    {!isFieldDisabled && aiOcrEnabled && (
-                                      <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
-                                        <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
-                                          <button
-                                            type="button"
-                                            disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                            title="Upload File OCR parameter ini saja"
-                                            style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                          >
-                                            <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
-                                          </button>
-                                          {!(ocrLoading === p.param_code || ocrLoading === true) && (
-                                            <input 
-                                              type="file" 
-                                              accept="image/*,.pdf,.txt,.csv,.log"
-                                              onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
-                                              style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                                            />
-                                          )}
-                                        </div>
+                                    {!isFieldDisabled && (
+                                      <div style={{ display: "flex", gap: "4px", flexShrink: 0, alignItems: "center" }}>
                                         <button
                                           type="button"
-                                          disabled={(ocrLoading === p.param_code || ocrLoading === true)}
-                                          onClick={() => handleOpenCameraModal(group.code, p.param_code)}
-                                          title="Ambil Foto OCR parameter ini saja"
-                                          style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#f0fdf4", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#166534", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #bbf7d0", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                          disabled={scpiLoading === p.param_code}
+                                          onClick={() => handleTriggerSCPI(p.param_code, group.code)}
+                                          title={`Tarik / Baca data langsung dari Alat Uji SCPI (${p.param_code})`}
+                                          style={{
+                                            background: scpiLoading === p.param_code ? "#f1f5f9" : "#0284c7",
+                                            color: scpiLoading === p.param_code ? "#94a3b8" : "#ffffff",
+                                            border: scpiLoading === p.param_code ? "1px solid #cbd5e1" : "1px solid #0369a1",
+                                            borderRadius: "6px",
+                                            cursor: scpiLoading === p.param_code ? "not-allowed" : "pointer",
+                                            padding: "0 8px",
+                                            height: "28px",
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: "4px",
+                                            fontSize: "0.75rem",
+                                            fontWeight: 700,
+                                            boxShadow: scpiLoading === p.param_code ? "none" : "0 1px 2px 0 rgba(2, 132, 199, 0.35)",
+                                            whiteSpace: "nowrap"
+                                          }}
                                         >
-                                          <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                          <i className={scpiLoading === p.param_code ? "fas fa-spinner fa-spin" : "fas fa-plug"}></i>
+                                          <span>{scpiLoading === p.param_code ? "Ukur..." : "SCPI"}</span>
                                         </button>
+                                        {aiOcrEnabled && (
+                                          <>
+                                            <div style={{ position: "relative", overflow: "hidden", display: "inline-block" }}>
+                                              <button
+                                                type="button"
+                                                disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                                title="Upload File OCR parameter ini saja"
+                                                style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#2563eb", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#ffffff", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #1d4ed8", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (ocrLoading === p.param_code || ocrLoading === true) ? "none" : "0 1px 2px 0 rgba(37, 99, 235, 0.3)" }}
+                                              >
+                                                <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-file-upload"} style={{ fontSize: "0.75rem" }}></i>
+                                              </button>
+                                              {!(ocrLoading === p.param_code || ocrLoading === true) && (
+                                                <input 
+                                                  type="file" 
+                                                  accept="image/*,.pdf,.txt,.csv,.log"
+                                                  onChange={(e) => handleScoringOCR(e, group.code, p.param_code)}
+                                                  style={{ position: "absolute", left: 0, top: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                                                />
+                                              )}
+                                            </div>
+                                            <button
+                                              type="button"
+                                              disabled={(ocrLoading === p.param_code || ocrLoading === true)}
+                                              onClick={() => handleOpenCameraModal(group.code, p.param_code)}
+                                              title="Ambil Foto OCR parameter ini saja"
+                                              style={{ background: (ocrLoading === p.param_code || ocrLoading === true) ? "#f1f5f9" : "#2563eb", color: (ocrLoading === p.param_code || ocrLoading === true) ? "#94a3b8" : "#ffffff", border: (ocrLoading === p.param_code || ocrLoading === true) ? "1px solid #cbd5e1" : "1px solid #1d4ed8", borderRadius: "6px", cursor: (ocrLoading === p.param_code || ocrLoading === true) ? "not-allowed" : "pointer", width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (ocrLoading === p.param_code || ocrLoading === true) ? "none" : "0 1px 2px 0 rgba(37, 99, 235, 0.3)" }}
+                                            >
+                                              <i className={(ocrLoading === p.param_code || ocrLoading === true) ? "fas fa-spinner fa-spin" : "fas fa-camera"} style={{ fontSize: "0.75rem" }}></i>
+                                            </button>
+                                          </>
+                                        )}
                                       </div>
                                     )}
                                   </div>

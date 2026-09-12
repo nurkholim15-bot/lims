@@ -274,6 +274,8 @@ export const getMasterRoutes = (onNavigate) => ({
     crudEndpoint: "/management/global-parameters",
     searchField: "search",
     searchPlaceholder: "Cari Nama atau ID...",
+    defaultSortKey: "param_key",
+    defaultSortOrder: "asc",
     columns: [
       { key: "id", header: "ID" },
       { key: "param_key", header: "Key" },

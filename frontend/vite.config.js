@@ -45,6 +45,9 @@ export default defineConfig(({ mode }) => {
     server: {
       host: '0.0.0.0',
       port: parseInt(env.VITE_PORT) || 5173,
+      watch: {
+        usePolling: true,
+      },
       https: env.VITE_SSL_CERT_PATH && env.VITE_SSL_KEY_PATH && 
              fs.existsSync(path.resolve(env.VITE_SSL_CERT_PATH)) && 
              fs.existsSync(path.resolve(env.VITE_SSL_KEY_PATH)) 

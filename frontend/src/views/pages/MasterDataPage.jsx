@@ -6,7 +6,24 @@ import MasterForm from "@components/MasterForm";
 import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
-const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger, predefinedData, onRowClick, extraHeaderButtons, searchField, searchPlaceholder, forceFilter, checkPasswordRequirement, filterConfig, hideActions }) => {
+const MasterDataPage = ({ 
+  title, 
+  endpoint, 
+  crudEndpoint, 
+  columns, 
+  refreshTrigger, 
+  predefinedData, 
+  onRowClick, 
+  extraHeaderButtons, 
+  searchField, 
+  searchPlaceholder, 
+  forceFilter, 
+  checkPasswordRequirement, 
+  filterConfig, 
+  hideActions,
+  defaultSortKey = null,
+  defaultSortOrder = "asc"
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
@@ -25,8 +42,15 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
   const [filterMonth, setFilterMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, "0"));
   const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
   const [filterStatus, setFilterStatus] = useState("ALL");
-  const [sortKey, setSortKey] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortKey, setSortKey] = useState(defaultSortKey);
+  const [sortOrder, setSortOrder] = useState(defaultSortOrder);
+
+  useEffect(() => {
+    if (defaultSortKey) {
+      setSortKey(defaultSortKey);
+      setSortOrder(defaultSortOrder || "asc");
+    }
+  }, [defaultSortKey, defaultSortOrder]);
 
   const handleSort = (key) => {
     if (!key) return;
@@ -54,8 +78,8 @@ const MasterDataPage = ({ title, endpoint, crudEndpoint, columns, refreshTrigger
         return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
       }
       return sortOrder === "asc"
-        ? String(aVal).localeCompare(String(bVal), undefined, { numeric: true })
-        : String(bVal).localeCompare(String(aVal), undefined, { numeric: true });
+        ? String(aVal).localeCompare(String(bVal), undefined, { numeric: true, sensitivity: 'base' })
+        : String(bVal).localeCompare(String(aVal), undefined, { numeric: true, sensitivity: 'base' });
     });
   }, [data, sortKey, sortOrder]);
 

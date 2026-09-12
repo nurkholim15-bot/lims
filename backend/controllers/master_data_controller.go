@@ -783,7 +783,7 @@ func GetGlobalParametersCRUD(c *gin.Context) {
 	var total int64
 	query.Count(&total)
 
-	err := query.Order("param_key asc").Limit(limit).Offset(offset).Find(&items).Error
+	err := query.Order("LOWER(param_key) ASC, param_key ASC").Limit(limit).Offset(offset).Find(&items).Error
 	if err != nil {
 		views.Error(c, 500, "Gagal memproses data", err.Error())
 		return

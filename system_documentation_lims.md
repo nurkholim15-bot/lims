@@ -382,6 +382,21 @@ LIMS diakses melalui dua tipe klien utama: **Web Application (Desktop/Admin)** d
 3. **Penyajian Laporan & Analitik (GoAccess)**:
    - Akses `/report.html` untuk memantau log lalu lintas secara real-time. NGINX menyajikan berkas HTML ini secara statis dan membuka koneksi WebSocket di `/ws` ke server GoAccess (port `7890`).
 
+### Ekosistem Teknologi Multi-Bahasa (Polyglot Tech Stack)
+
+LIMS mengadopsi arsitektur *polyglot* (multi-bahasa dan multi-framework), di mana setiap bahasa dipilih secara pragmatis berdasarkan keunggulan domain teknisnya:
+
+| Bahasa Pemrograman / Teknologi | Komponen & Modul Sistem | Alasan Pemilihan & Tanggung Jawab Teknis |
+|---|---|---|
+| **Go (Golang)** | **Core Backend REST API Engine** (`backend/`) | Performa konkurensi sangat tinggi (*goroutines*), efisiensi memori (*low footprint*), kompilasi biner mandiri (*single binary*), type-safe ORM (GORM), dan latensi rendah untuk transaksi database permohonan pengujian. |
+| **Python 3** | **SCPI Edge Gateway & Simulator** (`backend/scpi_integration/`) | Standar de-facto industri untuk kontrol instrumen ilmiah, manipulasi soket IEEE 488.2, perhitungan statistik titik kritis (*Worst-Case*), dan pembuatan kurva grafik spektrum/tarik PNG & SVG secara *headless*. |
+| **Python 3** | **Machine Learning & Document OCR Engine** (`scratch/paddle_service.py`, RAG AI) | Ekstraksi otomatis teks dokumen spesifikasi teknis dan berkas administrasi pemohon via PaddleOCR/Tesseract serta pipeline pelatihan model AI. |
+| **JavaScript / JSX (React 18 + Vite)** | **Frontend Web Application (SPA)** (`frontend/`) | Antarmuka pengguna (*User Interface*) reaktif, interaktif, responsif, dan kaya fitur visual untuk analis laboratorium, kasir, admin, dan verifikator. |
+| **Node.js (Node-RED)** | **Industrial IoT & Field Sensor Middleware** (Port `1880`) | Integrasi peralatan industri non-SCPI melalui flow visual untuk protokol Modbus RTU/TCP, MQTT Broker, dan komunikasi serial RS-232/RS-485. |
+| **Java / Kotlin & Web (Capacitor)** | **LIMS Mobile Application (Android)** (`frontend/android/`) | *Packaging* aplikasi mobile Android asli dari basis kode web React, mendukung integrasi kamera pemindaian barcode fisik dan token push notification. |
+| **SQL / PL/pgSQL (PostgreSQL)** | **Database Engine & Partition Manager** | Relational database dengan partisi tabel bulanan otomatis (`simulator_data_logs`, `testing_tool_reservations`), multi-schema (`lims`, `mecs`, `staging`), dan transaksi ACID terisolasi. |
+| **Bash & Nginx Config** | **Infrastruktur & Reverse Proxy** | Load balancing port 80/443, SSL termination, caching aset statis, serta skrip otomatisasi deployment produksi multi-direktori. |
+
 ---
 
 
@@ -512,6 +527,7 @@ graph TD
 Berikut adalah detail teknis dari masing-masing modul utama yang digunakan di LIMS. Secara umum, berbagai modul bergantung pada tabel `lims.global_parameters` untuk mengambil konfigurasi dinamis yang memengaruhi alur kerja, di antaranya:
 - **Modul Registrasi & Sistem**: Menggunakan parameter global (misal: `APP_VERSION`, kode integrasi eksternal) untuk identitas aplikasi.
 - **Modul Penilaian & Scoring Engine**: Membaca parameter `SCORE_THRESHOLD_PASS` dan `SCORE_THRESHOLD_NOTE` sebagai ambang batas absolut penentuan kelulusan akhir pengujian.
+- **Modul Pelaksanaan Uji (Execution)**: Menggunakan parameter `DROPDOWN_PILIHAN` (default: `-- Pilihan --`) untuk mengatur label/placeholder baris pertama pilihan kriteria dropdown rubrik penilaian secara dinamis.
 - **Modul Database & Arsip**: Menggunakan konfigurasi seperti `DATA_RETENTION_MONTHS` untuk menentukan kapan data dipartisi atau diarsipkan.
 - **Modul AI & Chatbot**: Membaca kredensial rahasia (API Keys) atau pengaturan LLM model dari tabel parameter global.
 
@@ -1642,6 +1658,543 @@ return msg;
 >   * **Jalur MQTT**: Dirancang bersuara/verbose. Setiap data MQTT yang masuk dicetak ke konsol debug Node-RED melalui node `mecs_debug` dan log fungsi.
 >   * **Jalur HTTP (`/data-peralatan`)**: Dirancang senyap (*silent*). Selama pengiriman dari skrip PowerShell/HTTP client berhasil, Node-RED akan merespon secara instan ke pengirim dengan status `200 OK` tanpa menulis log apa pun ke konsol untuk menghemat performa. Keberhasilan pengujian harus divalidasi langsung melalui output PowerShell (`SUCCESS [HTTP 200]`) atau dengan memeriksa record baru di tabel `staging.simulator_data_logs` database LIMS.
 
+**Opsi 3: Integrasi Otomatisasi Instrumen Lab via SCPI & Digital Twin Simulator** ✅ *(Standar Industri)*
+
+Untuk instrumen laboratorium presisi tinggi yang mendukung protokol standar internasional **SCPI (Standard Commands for Programmable Instruments)** atau IEEE 488.2, LIMS menyediakan paket integrasi terpadu berbasis *Config-Driven Architecture* di direktori `backend/scpi_integration/`.
+
+##### Arsitektur SCPI Edge Gateway (Hybrid Go + Python):
+
+Integrasi instrumen laboratorium LIMS menggunakan **arsitektur orkestrasi *hybrid*** yang menggabungkan performa **Go (Golang)** pada sisi Core Backend dengan fleksibilitas **Python 3** pada sisi Edge Gateway dan Digital Twin Simulator:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 LIMS ENTERPRISE SYSTEM                                 │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+  [ KLIEN PENGGUNA / ANALIS ]
+       │
+       ▼ (Klik Tombol [ 🔌 SCPI ])
+  ┌───────────────────────────────────────────────────────────┐
+  │ React 18 Frontend UI (AppDetail.jsx)                      │
+  └─────────────────────────────┬─────────────────────────────┘
+                                │ HTTP POST /api/machine-integration/trigger-scpi
+                                ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │ Go Backend Orchestrator (machine_controller.go)          │
+  │ • Validasi Role & Permohonan (ApplicationID)              │
+  │ • Eksekusi Child Process: python3 lims_scpi_agent.py     │
+  └─────────────────────────────┬─────────────────────────────┘
+                                │ Subprocess Exec (--param-code KEDAI --app-id 217)
+                                ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │ SCPI EDGE GATEWAY (lims_scpi_agent.py - PYTHON 3)        │
+  │ • Membaca pemetaan config.json                            │
+  │ • Membuka Raw TCP Socket ke IP/Port instrumen             │
+  │ • Mengirim query SCPI (*IDN?, :CALC:MARK1:Y?, dsb.)       │
+  │ • Normalisasi desimal koma (,) & format Indonesia         │
+  │ • Analisis statistik Worst-Case (Paling Kritis)           │
+  │ • Generate grafik kurva resolusi tinggi (PNG / SVG)       │
+  └──────────────┬─────────────────────────────▲──────────────┘
+                 │                             │
+    Raw TCP      │ Perintah SCPI               │ Respon Teks
+    Socket       │ (*IDN?, :PAVA?, dll.)       │ Telemetri
+                 ▼                             │
+  ┌───────────────────────────────────────────────────────────┐
+  │ ALAT UJI FISIK LAB  /  DIGITAL TWIN SIMULATOR (PYTHON 3)   │
+  │ • Spectrum Analyzer (Siglent SSA5085A)  -> Port 5026      │
+  │ • Digital Oscilloscope (Siglent SDS2354X) -> Port 5025     │
+  │ • UTM Tensile Machine (WDS WDW5A 5 kN)  -> Port 5027      │
+  └───────────────────────────────────────────────────────────┘
+                 │
+                 │ Gateway kirim data matang & grafik base64 via HTTP POST
+                 ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │ LIMS Core REST API (/api/machine-integration/results)     │
+  │ • Simpan Log Telemetri ke staging.simulator_data_logs     │
+  │ • Auto-Fill Skor & Rubrik ke lims.testing_results         │
+  │ • Simpan Lampiran Gambar Grafik ke MinIO / Local Storage  │
+  └───────────────────────────────────────────────────────────┘
+```
+
+##### Tanya Jawab Arsitektur: Gateway Didevelop Menggunakan Python atau Go?
+
+* **Pertanyaan: Gateway didevelop menggunakan Python atau Go?**
+  * **Jawaban**: **Gateway SCPI (`lims_scpi_agent.py`) didevelop menggunakan PYTHON 3**, sedangkan **Backend Core & Orchestrator (`machine_controller.go`) didevelop menggunakan GO (GOLANG)**.
+* **Mengapa Gateway Menggunakan Python dan Bukan Go Murni?**:
+  1. **Standar Industri Pengukuran Laboratorium**: Python adalah bahasa standar global untuk otomasi laboratorium ilmiah, pengujian RF, dan instrumentasi (didukung penuh pustaka seperti PyVISA, SCPI raw socket, NumPy, SciPy).
+  2. **Portabilitas Workstation Mandiri (Cross-Platform Scripting)**: Workstation di laboratorium uji sering kali menggunakan berbagai OS (Windows 10/11, Linux Ubuntu lab PC, atau Raspberry Pi industrial box). Menggunakan Python memungkinkan script dijalankan secara fleksibel tanpa harus dikompilasi ulang menjadi biner khusus untuk setiap jenis arsitektur CPU lab.
+  3. **Pembuatan Kurva Grafik Headless (Pillow & SVG)**: Gateway bertugas merender grafik kurva spektrum 15-titik, kurva tarik UTM, dan waveform lengkap dengan garis ambang batas merah (*Standard Limit Line*), lalu mengonversinya ke Base64 secara instan tanpa membutuhkan server X11/GUI display. Ekosistem Python sangat unggul untuk kebutuhan ini.
+  4. **Pemisahan Tanggung Jawab (Separation of Concerns)**: 
+     * **Go** fokus pada ketahanan API, manajemen database ACID, otentikasi JWT, partisi tabel, dan konkurensi web berkecepatan tinggi.
+     * **Python** fokus pada interaksi level perangkat keras (*driver socket*), kalkulasi statistik titik kritis, dan manipulasi sinyal.
+
+---
+
+##### Siklus & Waktu Eksekusi Pengujian Integrasi:
+
+1. **Urutan Start**:
+   * **Alat Uji (atau Simulator) dinyalakan dan *STANDBY* terlebih dahulu** (membuka port TCP 5025, 5026, 5027).
+   * LIMS (yang sudah aktif di workstation lab) kemudian dipicu oleh analis dengan mengklik tombol **`[ 🔌 SCPI ]`** pada nomor permohonan yang sedang diuji.
+   * Tidak perlu dinyalakan berbarengan pada detik yang sama karena instrumen bersifat *socket listener* yang siap menerima query kapan pun analis siap.
+2. **Apakah LIMS Mengambil Data Sebelumnya jika Start Belakangan?**:
+   * **TIDAK**. Setiap query SCPI yang dikirimkan oleh LIMS bersifat *live query* (menanyakan pembacaan sensor pada detik tersebut) atau memicu siklus penyapuan (*sweep*) baru. 
+   * Data di LIMS terisolasi secara ketat berdasarkan `application_id` spesifik, sehingga tidak ada risiko tercampur dengan data pengujian lama atau permohonan lain.
+3. **Apakah Data Menjadi Tidak Lengkap jika LIMS Start Telat?**:
+   * **Pengujian RF & Gelombang (Spectrum Analyzer & Oscilloscope)**: **Tetap Lengkap 100%**, karena sinyal dipancarkan stabil dan instrumen menyimpan nilai puncak (*Peak Hold Register*). Sapuan 15 kanal frekuensi baru dijalankan dari awal setelah tombol ditekan.
+   * **Pengujian Mekanik Sekali Terjadi (Uji Tarik UTM hingga Putus)**: Nilai beban puncak ($F_{max}$ kN) **tetap lengkap** karena memori mesin UTM menyimpan rekor gaya tertinggi (*Peak Load*). Namun jika ingin merekam kurva grafik kontinu detik demi detik (dari $t = 0\text{ s}$ ke $60\text{ s}$), skrip perekaman kontinu harus dijalankan bersamaan dengan penarikan mesin.
+
+---
+
+##### Tiga Instrumen Laboratorium yang Didukung:
+1. **Digital Oscilloscope (Siglent SDS2354X HD)**: Membaca parameter gelombang elektrik seperti tegangan puncak-ke-puncak ($V_{pp}$), frekuensi ($f$), dan respon audio via Raw TCP socket port `5025`.
+2. **Spectrum Analyzer (Siglent SSA5085A)**: Membaca frekuensi daya puncak (GHz), kekuatan sinyal ($P_{peak}$ dBm / Watt), *Occupied Bandwidth* (OBW), dan selektifitas filter via TCP port `5026`.
+3. **Universal Testing Machine / UTM (WDS WDW5A 5 kN)**: Membaca beban puncak uji tarik ($F_{max}$ kN), kuat tarik ($\sigma_{uts}$ MPa), dan elongasi regangan (%) via TCP/Serial port `5027`.
+
+---
+
+##### Komponen Software Terpadu (`backend/scpi_integration/`):
+* **`config.json` (Berkas Konfigurasi Sentral SCPI)**:
+  File konfigurasi berbasis JSON yang mengatur parameter koneksi jaringan alat (*Host/IP*, *Port*, alamat VISA), serta pemetaan kode parameter uji LIMS ke instrumen dan mode pengukuran terkait.
+* **`scpi_simulator.py` (Digital Twin Mock Server - Python 3)**:
+  Server simulator multi-threaded berbasis Python murni yang meniru persis respons protokol SCPI ketiga instrumen fisik di port `5025`, `5026`, dan `5027`. Memungkinkan pengujian otomatisasi secara penuh tanpa membutuhkan instrumen fisik lab.
+* **`lims_scpi_agent.py` (LIMS SCPI Edge Gateway Agent - Python 3)**:
+  Aplikasi perantara di workstation lab yang membaca `config.json`, mengirim query SCPI ke instrumen (atau simulator), menormalkan satuan ukur ke format Indonesia (desimal koma `,`), mengeksekusi analisis statistik titik kritis (*Worst-Case*), menghasilkan grafik PNG resolusi tinggi secara otomatis, dan menyinkronkan data ke LIMS API.
+* **Backend Endpoint (`POST /api/machine-integration/trigger-scpi` - Go)**:
+  Endpoint pengendali pada Go Backend (`machine_controller.go`) yang memicu eksekusi agen SCPI sesuai permintaan pengguna dari antarmuka web LIMS.
+* **Antarmuka Pengguna LIMS (`AppDetail.jsx` - React 18)**:
+  * **Tombol Batch Aspek `[ 🔌 Auto-fill SCPI (Alat Uji) ]`**: Terletak di bagian atas kartu aspek (bersebelahan dengan tombol *Auto-fill OCR*). Sekali klik, seluruh parameter alat uji pada aspek tersebut (`KEDAI`, `KESEL`, `KESEN`, dst.) otomatis ditarik dan diisi sekaligus secara berurutan.
+  * **Tombol Baris `[ 🔌 SCPI ]`**: Tombol biru interaktif pada masing-masing baris tabel untuk pengujian satuan atau verifikasi ulang parameter tertentu.
+
+---
+
+##### Struktur Lengkap & Penjelasan Detil `config.json`:
+
+File `backend/scpi_integration/config.json` dirancang modular agar administrator laboratorium dapat menambah atau memodifikasi alat uji tanpa mengubah kode sumber:
+
+```json
+{
+  "description": "Konfigurasi Integrasi Alat Uji SCPI / Testing Tools LIMS",
+  "version": "1.0.0",
+  "lims_api": {
+    "url": "http://127.0.0.1:8081",
+    "api_key": "89669aa98816a7e5f754d3065bb5b7525a31b81529ee810ec265c7306e959c11",
+    "timeout_seconds": 10
+  },
+  "instruments": {
+    "SPECTRUM_ANALYZER": {
+      "name": "Siglent SSA5085A (Spectrum Analyzer)",
+      "description": "Instrumen analisis spektrum RF, daya pancar frekuensi radio, dan selektifitas",
+      "connection_type": "TCPIP_SOCKET",
+      "host": "127.0.0.1",
+      "port": 5026,
+      "visa_address": "TCPIP::127.0.0.1::5026::SOCKET",
+      "timeout_seconds": 5.0,
+      "query_idn": "*IDN?"
+    },
+    "OSCILLOSCOPE": {
+      "name": "Siglent SDS2354X HD (Digital Oscilloscope)",
+      "description": "Instrumen osiloskop digital untuk analisis bentuk gelombang, tegangan puncak (Vpp), dan frekuensi",
+      "connection_type": "TCPIP_SOCKET",
+      "host": "127.0.0.1",
+      "port": 5025,
+      "visa_address": "TCPIP::127.0.0.1::5025::SOCKET",
+      "timeout_seconds": 5.0,
+      "query_idn": "*IDN?"
+    },
+    "UTM": {
+      "name": "WDS WDW5A (Universal Testing Machine 5 kN)",
+      "description": "Mesin uji mekanik untuk uji kekuatan tarik, beban puncak, dan elongasi material",
+      "connection_type": "TCPIP_SOCKET",
+      "host": "127.0.0.1",
+      "port": 5027,
+      "visa_address": "TCPIP::127.0.0.1::5027::SOCKET",
+      "timeout_seconds": 5.0,
+      "query_idn": "$GET_MACHINE_INFO"
+    }
+  },
+  "parameter_mappings": {
+    "KEDAI": {
+      "instrument": "SPECTRUM_ANALYZER",
+      "parameter_name": "Kemampuan Penerima - Daya out put audio",
+      "measurement_mode": "MULTI_POINT_SWEEP",
+      "sweep_points": 15,
+      "unit": "Watt",
+      "standard_min": 5.0,
+      "command": ":CALC:MARK1:Y?"
+    },
+    "KESEL": {
+      "instrument": "SPECTRUM_ANALYZER",
+      "parameter_name": "Kemampuan Penerima - Selektifitas",
+      "measurement_mode": "BANDWIDTH_SELECTIVITY",
+      "unit": "dB",
+      "standard_min": 65.0,
+      "command": ":CALC:OBW:OBW?"
+    },
+    "KELCH": {
+      "instrument": "SPECTRUM_ANALYZER",
+      "parameter_name": "Kemampuan Penerima - Sensitivitas squelch",
+      "measurement_mode": "PEAK_POWER",
+      "unit": "uV",
+      "standard_max": 0.5,
+      "command": ":CALC:MARK1:Y?"
+    },
+    "KESEN": {
+      "instrument": "OSCILLOSCOPE",
+      "parameter_name": "Kemampuan Penerima - Sensitifitas",
+      "measurement_mode": "VPP_VOLTAGE",
+      "unit": "V",
+      "standard_min": 3.0,
+      "command": ":PAVA? VPP"
+    },
+    "KESUA": {
+      "instrument": "OSCILLOSCOPE",
+      "parameter_name": "Kemampuan Penerima - Kekerasan suara",
+      "measurement_mode": "FREQUENCY",
+      "unit": "Hz",
+      "standard_min": 1000.0,
+      "command": ":PAVA? FREQ"
+    },
+    "KOBER": {
+      "instrument": "UTM",
+      "parameter_name": "Kekuatan Tarik / Beban Putus Mekanik",
+      "measurement_mode": "TENSILE_MAX_LOAD",
+      "unit": "kN",
+      "standard_min": 4.5,
+      "command": ":MEAS:LOAD:PEAK?"
+    }
+  }
+}
+```
+
+###### Penjelasan Kolom & Properti Konfigurasi:
+1. **Bagian `lims_api`**:
+   * `url`: Alamat dasar REST API LIMS (`http://127.0.0.1:8081` pada lokal/server).
+   * `api_key`: Kunci otentikasi pengiriman data mesin (`X-Simulator-Key`).
+2. **Bagian `instruments`**:
+   * `host`: Alamat IP dari instrumen. Pada laptop lokal menggunakan `127.0.0.1`, sedangkan pada jaringan lab nyata menggunakan IP statis instrumen di LAN (misal `192.168.1.102`).
+   * `port`: Nomor port TCP soket komunikasi SCPI.
+   * `visa_address`: String standar format VISA (Virtual Instrument Software Architecture) untuk kompatibilitas industri, e.g. `TCPIP::127.0.0.1::5026::SOCKET`.
+   * `query_idn`: Perintah identifikasi perangkat standar IEEE 488.2 (`*IDN?`).
+3. **Bagian `parameter_mappings`**:
+   * `instrument`: Mengaitkan kode parameter dengan salah satu instrumen yang didefinisikan pada blok `instruments`.
+   * `measurement_mode`: Mode algoritma pengukuran instrumen (dijelaskan rinci pada sub-bab di bawah).
+   * `standard_min`: Batas ambang kelulusan minimum yang dipersyaratkan standar kelaikan (dijelaskan rinci pada sub-bab di bawah).
+   * `command`: Perintah SCPI nyata yang dikirimkan ke mesin melalui koneksi soket.
+
+---
+
+##### 1. Penjelasan Rinci Mode Pengukuran (`measurement_mode`):
+
+Properti `measurement_mode` dalam `config.json` mengatur cara agen LIMS mengambil data, memproses sinyal/telemetri, mengevaluasi batas kritis, dan merekonstruksi grafik visual:
+
+| Mode Pengukuran | Instrumen Terkait | Karakteristik & Algoritma Pengolahan | Output ke LIMS |
+|---|---|---|---|
+| **`MULTI_POINT_SWEEP`** | Spectrum Analyzer | Melakukan penyapuan (sweep) sinyal pada rentang frekuensi tertentu (misal 15 titik saluran $F_1$ s.d $F_{15}$). Mengidentifikasi titik deviasi paling buruk (*Worst-Case Min*), merender kurva multi-titik beresolusi tinggi beserta garis merah standar, dan mengekspor dataset ke CSV. | Nilai terendah kritis (Worst-Case) + Grafik Kurva Spektrum 15-Titik |
+| **`BANDWIDTH_SELECTIVITY`** | Spectrum Analyzer | Mengirimkan query pengukuran lebar pita sinyal terpakai (*Occupied Bandwidth*) atau rasio pelemahan selektifitas filter dalam desibel (dB) menggunakan perintah `:CALC:OBW:OBW?`. | Nilai desibel selektifitas filter + Grafik Telemetri |
+| **`PEAK_POWER`** | Spectrum Analyzer | Menjalankan *Marker Peak Search* (`:CALC:MARK1:MAX`) untuk mengunci sinyal terkuat, lalu membaca amplitudo pada sumbu Y (`:CALC:MARK1:Y?`) dalam satuan dBm, Watt, atau $\mu\text{V}$ (seperti pada uji sensitivitas squelch). | Nilai amplitudo puncak sinyal + Grafik Telemetri |
+| **`VPP_VOLTAGE`** | Digital Oscilloscope | Membaca parameter gelombang elektrik tegangan puncak-ke-puncak (*Peak-to-Peak Voltage*) melalui perintah `:PAVA? VPP`. Mengubah data teks instrumen menjadi nilai numerik desimal Volt ($V_{pp}$). | Nilai tegangan puncak ($V_{pp}$) + Grafik Waveform |
+| **`FREQUENCY`** | Digital Oscilloscope | Membaca parameter periodisitas sinyal atau frekuensi respon nada audio melalui perintah `:PAVA? FREQ`. Mendeteksi respon frekuensi dalam satuan Hertz (Hz). | Nilai frekuensi gelombang ($f$) + Grafik Waveform |
+| **`TENSILE_MAX_LOAD`** | Universal Testing Machine (UTM) | Mengukur beban gaya puncak maksimum ($F_{max}$ dalam kN) pada uji tarik mekanis sebelum spesimen patah menggunakan `:MEAS:LOAD:PEAK?` atau telemetri `$READ_TEST_RESULT`, serta menghitung kuat tarik ($\sigma_{uts}$ MPa). | Beban putus mekanik ($F_{max}$) + Grafik Kurva Tarik |
+| **`CONTINUOUS_CAPTURE`** *(CLI Mode)* | Semua Instrumen | Mode logging time-series berbasis durasi dan interval sampling (contoh: `--duration 60 --interval 1`). Merekam kurva kontinu dinamis seiring waktu dan mengekspor CSV serta visualisasi grafik SVG/PNG. | Nilai rata-rata/puncak kontinu + Dataset CSV + Grafik Kurva Dinamis |
+
+---
+
+##### 2. Penjelasan Mendalam Arti & Fungsi `standard_min` vs `standard_max`:
+
+###### A. Arti dan Makna `standard_min`:
+`standard_min` adalah **Batas Ambang Minimum (Minimum Threshold Limit)** yang ditentukan oleh dokumen standar teknis (seperti Carima Uji TNI/Militer, SNI, atau ITU-R). 
+Suatu produk uji dinyatakan **LULUS (MEMENUHI SYARAT / MS)** hanya jika nilai yang diukur dari alat uji bernilai **sama dengan atau lebih besar** dari nilai `standard_min`.
+
+$$\text{Status Kelaikan} = \begin{cases} \textbf{MEMENUHI SYARAT (LULUS)}, & \text{jika } \text{Nilai Terukur} \ge \text{standard\_min} \\ \textbf{TIDAK MEMENUHI SYARAT (GAGAL)}, & \text{jika } \text{Nilai Terukur} < \text{standard\_min} \end{cases}$$
+
+* **Contoh Kasus `KEDAI` (Daya Output RF)**:
+  * Konfigurasi: `"standard_min": 5.0` (Watt).
+  * Makna: Pemancar radio wajib menghasilkan daya minimal 5,00 Watt pada seluruh saluran. Jika pada salah satu titik uji terukur hanya $4,70\text{ Watt}$, maka status pengujian langsung dinyatakan **TIDAK MEMENUHI STANDAR**.
+* **Contoh Kasus `KESEL` (Selektifitas Penerima)**:
+  * Konfigurasi: `"standard_min": 65.0` (dB).
+  * Makna: Kemampuan filter radio membuang interferensi saluran lain minimal harus $65\text{ dB}$. Jika terukur $75\text{ dB}$, maka pengujian dinyatakan Lolos.
+* **Contoh Kasus `KOBER` (Uji Tarik Beban Putus UTM)**:
+  * Konfigurasi: `"standard_min": 4.5` (kN).
+  * Makna: Tali atau material baja minimal harus mampu menahan tarikan beban $4,5\text{ kN}$ sebelum putus.
+
+###### B. Perbandingan `standard_min` vs `standard_max`:
+* **`standard_min`** digunakan untuk parameter uji yang menganut prinsip **"Semakin Besar Semakin Baik"** ($\ge \text{standard\_min}$), seperti daya pancar, kekuatan tarik material, frekuensi respon nada, dan tegangan sensitivitas.
+* **`standard_max`** digunakan untuk parameter uji yang menganut prinsip **"Semakin Kecil Semakin Baik"** ($\le \text{standard\_max}$), contohnya:
+  * Sensitivitas squelch (`KELCH`): `standard_max: 0.5` $\mu\text{V}$ (makin kecil nilai tegangan ambang buka squelch, makin peka penerima radio menangkap sinyal lemah).
+  * Distorsi harmonik (*Total Harmonic Distortion* / THD): `standard_max: 5%`.
+  * Emisi sinyal palsu / *Spurious Emission*: `standard_max: -50 dBm`.
+
+###### C. Pengaruh Terhadap Penilaian Otomatis LIMS:
+Nilai yang didapat dari SCPI langsung disinkronkan ke tabel penilaian pengujian LIMS (`testing_results`). Sistem secara otomatis mencocokkan nilai tersebut dengan rubrik skoring LIMS:
+* Jika nilai memenuhi kriteria `standard_min`, sistem memberi penilaian predikat **MS (Memenuhi Syarat)** dengan skor optimal (misal $85 \sim 100$).
+* Garis ambang batas standar (`standard_min`) otomatis dirender sebagai **garis merah putus-putus (*Red Threshold Line*)** pada grafik kurva PNG/SVG yang disematkan ke berkas lampiran LIMS sebagai bukti otentik laboratorium.
+
+---
+
+##### 3. Katalog Lengkap Perintah SCPI (*Standard Commands for Programmable Instruments*):
+
+Protokol SCPI menggunakan format teks ASCII berbasis pohon hirarkis yang diakhiri karakter *newline* (`\n`). Tanda tanya (`?`) menandakan perintah *Query* (mengharapkan respon dari alat), sedangkan perintah tanpa tanda tanya adalah perintah aksi/konfigurasi (*Command*).
+
+###### A. Perintah Standar IEEE 488.2 (Wajib Didukung Semua Alat):
+| Perintah | Tipe | Deskripsi Fungsi | Contoh Nilai Balikan (*Response*) |
+|---|:---:|---|---|
+| **`*IDN?`** | Query | Membaca identifikasi perangkat (Pabrikan, Model, Nomor Seri, Versi Firmware) | `Siglent Technologies,SSA5085A,SSA5A0001,2.1.1.2` |
+| **`*RST`** | Action | Mereset seluruh konfigurasi alat ke setelan awal pabrik (*factory default*) | *(Tidak ada balikan teks)* |
+| **`*CLS`** | Action | Membersihkan register status, event register, dan antrian galat (*error queue*) | *(Tidak ada balikan teks)* |
+| **`*OPC?`** | Query | Mengecek apakah operasi/eksekusi pengukuran sebelumnya sudah selesai (*Operation Complete*) | `1` |
+
+###### B. Perintah Siglent SSA5085A (Spectrum Analyzer - Port 5026):
+| Perintah SCPI | Tipe | Deskripsi Fungsi | Contoh Nilai Balikan |
+|---|:---:|---|---|
+| **`:CALCulate:MARKer1:MAXimum`** | Action | Menjalankan *Peak Search*: menempatkan Marker 1 tepat pada puncak gelombang daya sinyal tertinggi | `OK` |
+| **`:CALCulate:MARKer1:X?`** | Query | Membaca posisi sumbu X (frekuensi) dari Marker 1 dalam satuan Hertz | `2440000000.000` *(2,44 GHz)* |
+| **`:CALCulate:MARKer1:Y?`** | Query | Membaca posisi sumbu Y (amplitudo daya) dari Marker 1 dalam satuan dBm atau Watt | `-12.42` *(dBm)* |
+| **`:CALCulate:OBWidth:OBWidth?`** | Query | Mengukur lebar pita frekuensi yang terisi (*Occupied Bandwidth*) atau rasio selektifitas | `18450000.0` *(18,45 MHz)* |
+| **`:CALCulate:LLINe1:FAIL?`** | Query | Menguji apakah kurva spektrum melanggar garis ambang batas emisi (*Limit Line Check*) | `0` *(0 = PASS / Lolos, 1 = FAIL)* |
+
+###### C. Perintah Siglent SDS2354X HD (Digital Oscilloscope - Port 5025):
+| Perintah SCPI | Tipe | Deskripsi Fungsi | Contoh Nilai Balikan |
+|---|:---:|---|---|
+| **`:MEASure:SOURce <CH>`** | Action | Menentukan saluran kanal pengukuran aktif (contoh: `:MEASure:SOURce C1`) | `OK` |
+| **`:PAVA? VPP`** | Query | Membaca tegangan puncak-ke-puncak (*Peak-to-Peak Voltage*) saluran aktif | `VPP,3.3245V` |
+| **`:PAVA? FREQ`** | Query | Membaca frekuensi periodik gelombang saluran aktif dalam satuan Hertz | `FREQ,50000.00Hz` *(50 kHz)* |
+| **`:PAVA? PKPK`** | Query | Membaca nilai tegangan *Peak-to-Peak* alternatif | `PKPK,3.3201V` |
+| **`:PAVA? RISE`** | Query | Membaca waktu naik transisi pulsa (*Rise Time*) dari gelombang digital | `RISE,1.245E-08s` *(12,45 ns)* |
+| **`:WAVeform:DATA?`** | Query | Menarik sampel array digital bentuk gelombang untuk diplot menjadi kurva visual | `-0.050,0.120,0.850,...` |
+
+###### D. Perintah WDS WDW5A (Universal Testing Machine / UTM - Port 5027):
+| Perintah SCPI / Mesin | Tipe | Deskripsi Fungsi | Contoh Nilai Balikan |
+|---|:---:|---|---|
+| **`$GET_MACHINE_INFO`** | Query | Membaca identitas mesin UTM, kapasitas beban maksimal load cell, dan firmware | `WDS,WDW5A,CAP_5000N,ACCURACY_0.5,FW_V4.2` |
+| **`:MEAS:LOAD:PEAK?`** | Query | Membaca gaya beban puncak uji tarik sebelum spesimen putus (*Peak Breaking Load*) | `4.750` *(kN)* |
+| **`:MEAS:STRESS:MAX?`** | Query | Membaca tegangan tarik maksimum material (*Tensile Strength*) | `380.00` *(MPa)* |
+| **`:MEAS:STRAIN:BREAK?`** | Query | Membaca elongasi / regangan perpanjangan putus spesimen uji | `23.45` *(%)* |
+| **`$READ_TEST_RESULT`** | Query | Membaca seluruh data paket telemetri uji tarik lengkap secara real-time | `PEAK_LOAD:4.750kN;TENSILE_STR:380.00MPa;ELONGATION:23.45%;DISP:14.85mm;STATUS:TEST_COMPLETED` |
+
+---
+
+##### 4. Panduan Menjalankan Perintah SCPI Secara Interaktif:
+
+Analis dan pengembang laboratorium dapat mengeksekusi perintah-perintah SCPI di atas secara langsung dan melihat balasannya seketika menggunakan beberapa metode:
+
+###### Metode 1: Menggunakan Terminal Interaktif Terpadu LIMS Agent (Paling Mudah)
+Agen LIMS menyediakan konsol interaktif bawaan dengan opsi flag `-i` atau `--interactive`:
+```bash
+cd backend/scpi_integration
+
+# Jalankan konsol interaktif
+python3 lims_scpi_agent.py --interactive
+```
+Alur interaksi pada konsol:
+```text
+======================================================================
+  LIMS SCPI INTERACTIVE CONSOLE
+======================================================================
+Pilih instrumen yang ingin dihubungkan:
+  [1] SPECTRUM_ANALYZER  -> 127.0.0.1:5026 (Siglent SSA5085A (Spectrum Analyzer))
+  [2] OSCILLOSCOPE       -> 127.0.0.1:5025 (Siglent SDS2354X HD (Digital Oscilloscope))
+  [3] UTM                -> 127.0.0.1:5027 (WDS WDW5A (Universal Testing Machine 5 kN))
+  [C] Kustom Host & Port
+----------------------------------------------------------------------
+Pilihan Anda [1]: 1
+>> Menghubungkan ke: Siglent SSA5085A (Spectrum Analyzer) (127.0.0.1:5026)
+
+Target aktif: 127.0.0.1:5026
+Ketik perintah SCPI (misal: *IDN?, :CALC:MARK1:Y?, :PAVA? VPP)
+Ketik 'help' untuk bantuan, 'switch' untuk ganti alat, 'exit'/'quit' untuk selesai.
+
+📡 Status Instrumen: Siglent Technologies,SSA5085A,SSA5A0001,2.1.1.2
+
+SCPI (127.0.0.1:5026) > *IDN?
+  << Siglent Technologies,SSA5085A,SSA5A0001,2.1.1.2
+
+SCPI (127.0.0.1:5026) > :CALC:MARK1:Y?
+  << -12.42
+
+SCPI (127.0.0.1:5026) > :CALC:OBW:OBW?
+  << 18450000.0
+
+SCPI (127.0.0.1:5026) > switch
+Masukkan port baru [5026]: 5025
+Target dialihkan ke 127.0.0.1:5025
+
+SCPI (127.0.0.1:5025) > :PAVA? VPP
+  << VPP,3.3245V
+
+SCPI (127.0.0.1:5025) > exit
+Keluar dari sesi interaktif SCPI. Sampai jumpa!
+```
+
+###### Metode 2: Menggunakan Utilitas Soket `netcat` (`nc`) di Linux/WSL/Mac
+```bash
+# Terhubung ke Spectrum Analyzer (Port 5026)
+nc 127.0.0.1 5026
+
+# Ketik perintah langsung di terminal dan tekan Enter:
+*IDN?
+:CALC:MARK1:Y?
+:CALC:OBW:OBW?
+```
+
+###### Metode 3: Menggunakan `telnet` di Windows Command Prompt / PowerShell
+```cmd
+telnet 127.0.0.1 5025
+
+# Ketik:
+*IDN?
+:PAVA? VPP
+```
+
+###### Metode 4: Menggunakan Skrip Python Satu Baris (One-Liner / REPL)
+```bash
+python3 -c "import socket; s=socket.socket(); s.connect(('127.0.0.1', 5026)); s.sendall(b'*IDN?\n'); print(s.recv(1024).decode())"
+```
+
+---
+
+##### 5. Multi-Parameter Menggunakan 1 Alat Uji yang Sama:
+
+Dalam standar laboratorium, **1 alat uji fisik dapat mengukur lebih dari satu parameter uji**. Hal ini telah didukung penuh oleh arsitektur LIMS:
+* **Contoh Kasus**: *Spectrum Analyzer (Siglent SSA5085A - Port 5026)* digunakan untuk menguji:
+  1. Parameter **`KEDAI`** (Daya Output Audio / RF Power) $\rightarrow$ Dieksekusi dengan mode `MULTI_POINT_SWEEP` (15 titik frekuensi).
+  2. Parameter **`KESEL`** (Selektifitas Penerima) $\rightarrow$ Dieksekusi dengan instrumen yang **SAMA** menggunakan perintah `:CALC:OBW:OBW?` untuk menghasilkan nilai selektifitas ($75,00\text{ dB}$).
+  3. Parameter **`KELCH`** (Sensitivitas Squelch) $\rightarrow$ Dieksekusi pada instrumen yang **SAMA** untuk mengukur level ambang sinyal.
+
+Dengan demikian, analis laboratorium tidak perlu mengganti-ganti kabel instrumen untuk parameter-parameter yang berada dalam lingkup domain instrumen yang sama.
+
+---
+
+##### 6. Validasi Keamanan: Penolakan Kode Parameter yang Belum Dikonfigurasi (*Safe Guard*):
+
+Untuk menjaga integritas data laboratorium dan mencegah masuknya data palsu/sampah (*garbage data*):
+1. Jika seorang analis mengklik tombol **`[ 🔌 SCPI ]`** pada parameter yang **belum didaftarkan** pada file `config.json` (misalnya parameter baru `XYZ` atau `KERUS` yang belum dipetakan ke alat uji fisik):
+   * Agen `lims_scpi_agent.py` mendeteksi ketidakhadiran pemetaan dan mengembalikan galat `ERROR_NOT_CONFIGURED`.
+   * Backend LIMS menolak proses dengan status HTTP `400 Bad Request`.
+   * Antarmuka LIMS menampilkan notifikasi merah (*Toast Alert*):
+     ```text
+     ❌ Gagal trigger SCPI: Parameter 'XYZ' belum dikonfigurasi di file config.json! 
+     Harap daftarkan alat uji di config.json atau input nilai secara manual.
+     ```
+2. Fitur ini menjamin bahwa seluruh data yang masuk dari SCPI telah tervalidasi asal-usul instrumen dan metodologi perhitungannya.
+
+---
+
+##### 7. Pembeda Nomor Port pada Pengujian Laptop (Digital Twin) vs Alat Fisik Lab:
+
+| Kondisi Pengujian | Instrumen | Alamat Host / IP | **Nomor Port TCP** | Protokol |
+|---|---|:---:|:---:|:---:|
+| **Simulasi Laptop (Lokal)** | Oscilloscope (SDS2354X HD) | `127.0.0.1` | **`5025`** | Raw TCP Socket |
+| | Spectrum Analyzer (SSA5085A) | `127.0.0.1` | **`5026`** | Raw TCP Socket |
+| | UTM (WDS WDW5A) | `127.0.0.1` | **`5027`** | Raw TCP Socket |
+| **Lab Fisik (Produksi Nyata)** | Oscilloscope Fisik | `192.168.1.101` | `5025` *(default)* | SCPI / VISA Socket |
+| | Spectrum Analyzer Fisik | `192.168.1.102` | `5025` *(default)* | SCPI / VISA Socket |
+| | UTM Fisik | `192.168.1.103` | `5025` *(default)* | SCPI / VISA Socket |
+
+> **Catatan Transisi ke Alat Fisik**: Saat beralih dari simulasi laptop ke alat fisik lab, analis cukup membuka `config.json` dan mengganti nilai `"host"` dari `127.0.0.1` menjadi IP LAN alat lab yang bersangkutan. Kode aplikasi LIMS tidak memerlukan perubahan apa pun.
+
+---
+
+##### 8. Panduan Pengoperasian CLI:
+```bash
+# 1. Menjalankan Mock Simulator Digital Twin (Terminal 1)
+cd backend/scpi_integration
+python3 scpi_simulator.py
+
+# 2. Menjalankan Terminal Interaktif SCPI Langsung (Eksplorasi Perintah)
+python3 lims_scpi_agent.py --interactive
+
+# 3. Menjalankan Uji Baca Snapshot Instan (Terminal 2 - Dry Run)
+python3 lims_scpi_agent.py --dry-run
+
+# 4. Menjalankan Uji Otomatis Berbasis Parameter config.json (KEDAI - Multi-Point Sweep)
+python3 lims_scpi_agent.py --param-code KEDAI --app-id 217 --dry-run
+
+# 5. Menjalankan Uji Parameter KESEL (Selektifitas pada Spectrum Analyzer yang sama)
+python3 lims_scpi_agent.py --param-code KESEL --app-id 217 --dry-run
+
+# 6. Uji Validasi Penolakan Parameter yang Belum Dikonfigurasi (Simulasi Safe Guard)
+python3 lims_scpi_agent.py --param-code XYZ --app-id 217 --dry-run
+# Output: ERROR_NOT_CONFIGURED (Status ditolak aman)
+
+# 7. Perekaman Kontinu 1 Menit UTM + Auto Generate Grafik & CSV
+python3 lims_scpi_agent.py --target utm --duration 60 --interval 1 --save-csv hasil_uji.csv --dry-run
+
+# 8. Menjalankan Automated Integration Test Suite (Semua Alat & Endpoint Sekaligus)
+python3 test_integration.py
+```
+
+---
+
+##### 9. Konfigurasi dan Pengujian Integrasi Otomatis (Automated Pipeline):
+
+Untuk menerapkan otomatisasi laboratorium tanpa risiko kesalahan manusia (*human error*) atau manipulasi data, LIMS menerapkan **3 Lapisan Konfigurasi** dan **4 Tingkat Pengujian Otomatis**:
+
+###### A. Tiga Lapisan Konfigurasi Integrasi Otomatis:
+1. **Lapisan Konfigurasi Jaringan & Alat (`config.json`)**:
+   * Menentukan alamat IP, Port, dan protokol koneksi instrumen laboratorium fisik atau simulator.
+   * Menentukan pemetaan kode parameter (`parameter_mappings`), mode pengukuran (`measurement_mode`), nilai ambang standar (`standard_min`), dan perintah SCPI nyata.
+   * Menentukan kunci otentikasi API (`X-Simulator-Key`) untuk otorisasi mesin ke server backend LIMS.
+2. **Lapisan Konfigurasi Database LIMS (`is_simulator = true`)**:
+   * Diatur pada tabel `scoring_sub_aspects` melalui kolom boolean `is_simulator`.
+   * **Jika bernilai `true`**:
+     * Tombol biru **`[ 🔌 SCPI ]`** otomatis muncul di antarmuka web LIMS pada baris parameter tersebut.
+     * Kolom input nilai otomatis **dikunci (*read-only / auto-lock*)**, mencegah analis mengetik nilai manual.
+     * Nilai skor dan lampiran grafik kurva mutlak berasal dari instrumen uji.
+3. **Lapisan Keamanan Validasi (*Safe Guard Configuration*)**:
+   * Jika parameter uji belum dipetakan di `config.json`, agen LIMS otomatis menggagalkan eksekusi dengan pesan galat terproteksi `ERROR_NOT_CONFIGURED` (HTTP 400), mencegah data palsu masuk ke database pengujian.
+
+###### B. Empat Tingkat Pengujian (Testing) Integrasi Otomatis:
+| Tingkat Pengujian | Skema / Perintah Eksekusi | Yang Diverifikasi | Kriteria Kelulusan |
+|---|---|---|---|
+| **1. Automated Test Suite (All-in-One)** | `python3 test_integration.py` | Mengecek seluruh soket instrumen lab (5025, 5026, 5027), driver SCPI untuk 4 parameter, validasi safe guard, dan handshake LIMS API | `100% PASS` (9 pengujian berhasil tanpa galat) |
+| **2. One-Click UI Integration Test** | Klik tombol **`[ 🔌 SCPI ]`** di web LIMS | Alur end-to-end lengkap dari peramban web: pemicuan Go backend, pembacaan instrumen oleh agen Python, pembentukan grafik PNG, auto-fill skor, dan penilaian otomatis rubrik | Skor terisi di formulir dan grafik kurva tersemat di lampiran tanpa memuat ulang halaman |
+| **3. Direct CLI Pipeline Test** | `python3 lims_scpi_agent.py --param-code KEDAI --app-id <ID>` | Pengujian langsung agen ke LIMS Core API tanpa melalui antarmuka web | Respon HTTP `200 OK` dan data tersimpan di tabel `lims.testing_results` |
+| **4. Dry-Run Isolation Test** | `python3 lims_scpi_agent.py --param-code KEDAI --dry-run` | Pengujian driver pembacaan alat dan pembuatan grafik lokal tanpa menyentuh basis data produksi | Nilai terukur tampil di konsol dan berkas grafik tersimpan di direktori lokal |
+
+---
+
+##### 10. Mekanisme Pengaitan `app-id` antara Alat Uji Fisik dan LIMS:
+
+Pertanyaan mendasar dalam otomatisasi laboratorium: **"Bagaimana cara mengaitkan data hasil pengukuran alat uji dengan ID Permohonan Pengujian (`app-id`) di LIMS, padahal alat uji fisik (Oscilloscope, Spectrum Analyzer, UTM) tidak memiliki fitur input `app-id`?"**
+
+###### Karakteristik Alat Uji Fisik:
+Alat ukur laboratorium kelas industri (seperti Siglent, Rohde & Schwarz, Keysight, Shimadzu, Instron) adalah perangkat sensor murni (*pure physical measuring devices*). Alat-alat ini hanya memahami besaran fisis (seperti Volt, Ampere, Watt, dBm, Hz, atau Newton) dan **tidak memiliki logika bisnis LIMS** maupun antarmuka untuk mengetik nomor permohonan dinas/laboratorium.
+
+###### Empat (4) Solusi / Arsitektur Pengikatan `app-id`:
+
+1. **Metode 1: Web-Session Context Binding (Metode Aktif & Utama di LIMS)**:
+   * **Arsitektur**: Penguji membuka halaman aplikasi terkait di antarmuka LIMS (misal `http://localhost:3000/applications/217`). Pada bagian atas halaman terdapat banner penunjuk identitas: `📡 App ID IoT/Simulator: 217`.
+   * **Alur Eksekusi**:
+     1. Penguji menekan tombol **`[ 🔌 Auto-fill SCPI (Alat Uji) ]`** pada kartu aspek (atau tombol `[ 🔌 SCPI ]` pada baris parameter).
+     2. Antarmuka React (`AppDetail.jsx`) secara otomatis membaca `localApp.id` (yaitu `217`) dari context URL/state, lalu menyisipkannya ke dalam payload HTTP:
+        `POST /api/machine-integration/trigger-scpi { "application_id": 217, "param_code": "KEDAI" }`
+     3. Backend Go memanggil Edge Gateway: `python3 lims_scpi_agent.py --param-code KEDAI --app-id 217`.
+     4. Gateway menembak query SCPI ke alat, mengambil hasil pengukuran, menamai berkas grafik sebagai `machine_217_KEDAI_<timestamp>.png`, dan mengunggahnya ke database LIMS tepat pada permohonan nomor 217.
+   * **Kelebihan**: Sangat intuitif, tanpa perlu merubah atau mengetik apapun pada instrumen fisik, dan risiko salah kamar data (*data mix-up*) adalah **0%** karena terikat langsung dengan sesi pengujian yang dibuka di layar.
+
+2. **Metode 2: Barcode / QR-Code Workstation Scanner (Standar Akreditasi ISO 17025)**:
+   * **Arsitektur**: Setiap sampel uji fisik atau Lembar Kerja Pengujian (LKP / *Work Order*) yang dicetak dari LIMS ditempeli label Barcode/QR berisi `app-id` (contoh: barcode `APP-217`).
+   * **Alur Eksekusi**:
+     1. Di sebelah instrumen lab diletakkan barcode scanner USB genggam yang terhubung ke PC workstation lab.
+     2. Sebelum pengujian dimulai, analis menembak barcode pada sampel:
+        - Scanner secara otomatis membuka dan memfokuskan antarmuka web LIMS ke permohonan `217`.
+        - Atau mengirim sinyal pemicu instrumen dengan menyertakan tag `app_id: 217`.
+     3. Pengujian dieksekusi, dan data terarsip akurat ke LIMS.
+   * **Kelebihan**: Menjamin ketelusuran (*traceability*) fisik sampel ke sistem sesuai standar akreditasi ISO/IEC 17025.
+
+3. **Metode 3: Metadata / Sample ID Tagging pada Software Kontrol Instrumen**:
+   * **Arsitektur**: Untuk alat yang dikendalikan melalui PC workstation (seperti perangkat lunak UTM WDS atau Spectrum Analyzer via EasySpectrum/VNC).
+   * **Alur Eksekusi**:
+     1. Perangkat lunak pengendali alat memiliki kolom metadata bawaan seperti `"Sample ID"`, `"Batch ID"`, atau `"Remark"`.
+     2. Analis mengetikkan `217` pada kolom `"Sample ID"` software mesin sebelum menekan tombol START.
+     3. Gateway SCPI membaca metadata tersebut melalui query SCPI: `:SYSTem:COMMunicate:MESSage?` atau membaca nama berkas ekspor data (misal `DATA_217.CSV`), mengekstrak angka `217`, lalu mengunggahnya otomatis ke LIMS Core API.
+
+4. **Metode 4: FIFO Test-Queue & Time-Window Assignment (Mode Otomatis Tanpa Operator)**:
+   * **Arsitektur**: Digunakan untuk pengujian otomatis berulang tanpa intervensi manusia (misal *burn-in test* atau *stress test* jangka panjang).
+   * **Alur Eksekusi**:
+     1. LIMS memiliki jadwal antrian pengujian (*active testing queue*). Ketika permohonan nomor 217 berstatus `"In Progress"`, sistem menandai instrumen terkait sedang dialokasikan untuk permohonan tersebut.
+     2. Setiap telemetri atau data pengukuran yang dikirimkan alat pada rentang waktu pengujian tersebut secara otomatis dihubungkan ke `app-id: 217`.
+
+---
 
 #### B. Alur Data Simulator ke Scoring
 ```

@@ -1,0 +1,98 @@
+{
+  "description": "Konfigurasi Integrasi Alat Uji SCPI / Testing Tools LIMS",
+  "version": "1.0.0",
+  "lims_api": {
+    "url": "http://127.0.0.1:8081",
+    "api_key": "89669aa98816a7e5f754d3065bb5b7525a31b81529ee810ec265c7306e959c11",
+    "timeout_seconds": 10
+  },
+  "instruments": {
+    "SPECTRUM_ANALYZER": {
+      "name": "Siglent SSA5085A (Spectrum Analyzer)",
+      "description": "Instrumen analisis spektrum RF, daya pancar frekuensi radio, dan selektifitas",
+      "connection_type": "TCPIP_SOCKET",
+      "host": "127.0.0.1",
+      "port": 5026,
+      "visa_address": "TCPIP::127.0.0.1::5026::SOCKET",
+      "timeout_seconds": 5.0,
+      "query_idn": "*IDN?"
+    },
+    "OSCILLOSCOPE": {
+      "name": "Siglent SDS2354X HD (Digital Oscilloscope)",
+      "description": "Instrumen osiloskop digital untuk analisis bentuk gelombang, tegangan puncak (Vpp), dan frekuensi sinyal",
+      "connection_type": "TCPIP_SOCKET",
+      "host": "127.0.0.1",
+      "port": 5025,
+      "visa_address": "TCPIP::127.0.0.1::5025::SOCKET",
+      "timeout_seconds": 5.0,
+      "query_idn": "*IDN?"
+    },
+    "UTM": {
+      "name": "WDS WDW5A (Universal Testing Machine 5 kN)",
+      "description": "Mesin uji mekanik untuk uji kekuatan tarik, beban puncak, dan elongasi material",
+      "connection_type": "TCPIP_SOCKET",
+      "host": "127.0.0.1",
+      "port": 5027,
+      "visa_address": "TCPIP::127.0.0.1::5027::SOCKET",
+      "timeout_seconds": 5.0,
+      "query_idn": "$GET_MACHINE_INFO"
+    }
+  },
+  "parameter_mappings": {
+    "KEDAI": {
+      "instrument": "SPECTRUM_ANALYZER",
+      "parameter_name": "Kemampuan Penerima - Daya out put audio",
+      "measurement_mode": "MULTI_POINT_SWEEP",
+      "sweep_points": 15,
+      "unit": "Watt",
+      "standard_min": 5.0,
+      "command": ":CALC:MARK1:Y?",
+      "notes": "Membaca sweep 15 titik frekuensi, mengambil titik terburuk (worst-case min)"
+    },
+    "KESEL": {
+      "instrument": "SPECTRUM_ANALYZER",
+      "parameter_name": "Kemampuan Penerima - Selektifitas",
+      "measurement_mode": "BANDWIDTH_SELECTIVITY",
+      "unit": "dB",
+      "standard_min": 65.0,
+      "command": ":CALC:OBW:OBW?",
+      "notes": "Menggunakan alat yang SAMA (Spectrum Analyzer) untuk parameter Selektifitas"
+    },
+    "KELCH": {
+      "instrument": "SPECTRUM_ANALYZER",
+      "parameter_name": "Kemampuan Penerima - Sensitivitas squelch",
+      "measurement_mode": "PEAK_POWER",
+      "unit": "uV",
+      "standard_max": 0.5,
+      "command": ":CALC:MARK1:Y?",
+      "notes": "Menggunakan Spectrum Analyzer untuk mengukur level daya ambang squelch"
+    },
+    "KESEN": {
+      "instrument": "OSCILLOSCOPE",
+      "parameter_name": "Kemampuan Penerima - Sensitifitas",
+      "measurement_mode": "VPP_VOLTAGE",
+      "unit": "V",
+      "standard_min": 3.0,
+      "command": ":PAVA? VPP",
+      "notes": "Membaca tegangan puncak ke puncak (Vpp) gelombang uji"
+    },
+    "KESUA": {
+      "instrument": "OSCILLOSCOPE",
+      "parameter_name": "Kemampuan Penerima - Kekerasan suara",
+      "measurement_mode": "FREQUENCY",
+      "unit": "Hz",
+      "standard_min": 1000.0,
+      "command": ":PAVA? FREQ",
+      "notes": "Menggunakan Oscilloscope untuk mengukur respon nada frekuensi audio"
+    },
+    "KOBER": {
+      "instrument": "UTM",
+      "parameter_name": "Kekuatan Tarik / Beban Putus Mekanik",
+      "measurement_mode": "TENSILE_MAX_LOAD",
+      "unit": "kN",
+      "standard_min": 4.5,
+      "command": ":MEAS:LOAD:PEAK?",
+      "notes": "Membaca beban puncak mekanik dari mesin uji tarik WDS WDW5A"
+    }
+  }
+}

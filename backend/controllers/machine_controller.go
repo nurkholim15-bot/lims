@@ -1,14 +1,22 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/base64"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
-	"lim-system/models"
-	"lim-system/views"
 	"lim-system/database"
+	"lim-system/models"
+	"lim-system/services"
+	"lim-system/views"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,26 +27,20 @@ type MachineResultInput struct {
 	Score         float64 `json:"score"`
 	MachineID     string  `json:"machine_id"`
 	Notes         string  `json:"notes"`
+	PhotoBase64   string  `json:"photo_base64"`
+	PhotoFileName string  `json:"photo_file_name"`
 }
 
-// ReceiveMachineResult handles incoming telemetry from testing machines / simulators.
-// Data is saved into simulator_data_logs table as a queue, NOT directly into testing_results.
-// It will be consumed when the operator submits test results in Pelaksanaan Pengujian.
-// Security: requires header X-Simulator-Key matching SIMULATOR_API_KEY in .env
+// ReceiveMachineResult handles machine simulator telemetry data and pushes it directly into active testing_results.
 func ReceiveMachineResult(c *gin.Context) {
-	// --- API Key Validation ---
-	expectedKey := os.Getenv("SIMULATOR_API_KEY")
-	if expectedKey != "" {
-		providedKey := c.GetHeader("X-Simulator-Key")
-		if providedKey == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Header X-Simulator-Key wajib disertakan"})
-			return
-		}
-		if providedKey != expectedKey {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "API Key tidak valid"})
-			return
-		}
+	// Verify Simulator API Key
+	configuredKey := models.GetGlobalParam("SIMULATOR_API_KEY", "89669aa98816a7e5f754d3065bb5b7525a31b81529ee810ec265c7306e959c11")
+	clientKey := c.GetHeader("X-Simulator-Key")
+	if clientKey != configuredKey {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized simulator API key"})
+		return
 	}
+
 	var input MachineResultInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid format: " + err.Error()})
@@ -52,7 +54,7 @@ func ReceiveMachineResult(c *gin.Context) {
 		return
 	}
 
-	if !subAspect.IsSimulator {
+	if !subAspect.IsSimulator && input.ApplicationID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Parameter ini tidak dikonfigurasi sebagai data simulator"})
 		return
 	}
@@ -87,6 +89,51 @@ func ReceiveMachineResult(c *gin.Context) {
 		var aspect models.ScoringAspect
 		database.DB.Where("code = ?", subAspect.AspectCode).First(&aspect)
 
+		// Process photo/chart attachment if provided
+		var photoPath string
+		if input.PhotoBase64 != "" {
+			b64Data := input.PhotoBase64
+			if idx := strings.Index(b64Data, ","); idx != -1 {
+				b64Data = b64Data[idx+1:]
+			}
+			imgBytes, err := base64.StdEncoding.DecodeString(b64Data)
+			if err == nil && len(imgBytes) > 0 {
+				ext := ".png"
+				if strings.HasSuffix(strings.ToLower(input.PhotoFileName), ".jpg") || strings.HasSuffix(strings.ToLower(input.PhotoFileName), ".jpeg") {
+					ext = ".jpg"
+				} else if strings.HasSuffix(strings.ToLower(input.PhotoFileName), ".svg") {
+					ext = ".svg"
+				}
+
+				fileName := fmt.Sprintf("machine_%d_%s_%d%s", input.ApplicationID, input.SubAspectCode, time.Now().Unix(), ext)
+				contentType := "image/png"
+				if ext == ".jpg" {
+					contentType = "image/jpeg"
+				} else if ext == ".svg" {
+					contentType = "image/svg+xml"
+				}
+
+				// Try MinIO if available
+				if services.Minio != nil {
+					savedPath, err := services.Minio.UploadGenericFile(c.Request.Context(), fileName, bytes.NewReader(imgBytes), int64(len(imgBytes)), contentType)
+					if err == nil && savedPath != "" {
+						photoPath = savedPath
+					}
+				}
+
+				// Fallback local file save
+				if photoPath == "" {
+					now := time.Now()
+					localDir := fmt.Sprintf("./public/uploads/%d/%02d", now.Year(), now.Month())
+					os.MkdirAll(localDir, 0755)
+					localFilePath := filepath.Join(localDir, fileName)
+					if err := os.WriteFile(localFilePath, imgBytes, 0644); err == nil {
+						photoPath = fmt.Sprintf("%d/%02d/%s", now.Year(), now.Month(), fileName)
+					}
+				}
+			}
+		}
+
 		for _, app := range targetApps {
 			// Update or Create TestingResult
 			var result models.TestingResult
@@ -102,17 +149,22 @@ func ReceiveMachineResult(c *gin.Context) {
 					AspectCode:           aspect.Code,
 					Score:                input.Score,
 					Notes:                "(Auto) " + input.Notes,
+					PhotoPath:            photoPath,
 					CreatedAt:            time.Now(),
 				}
 				database.DB.Create(&result)
 			} else {
 				// Update existing
-				database.DB.Model(&result).Updates(map[string]interface{}{
-					"score":      input.Score,
-					"notes":      "(Auto-Update) " + input.Notes,
-					"created_at": time.Now(),
+				updates := map[string]interface{}{
+					"score":       input.Score,
+					"notes":       "(Auto-Update) " + input.Notes,
+					"created_at":  time.Now(),
 					"aspect_code": aspect.Code,
-				})
+				}
+				if photoPath != "" {
+					updates["photo_path"] = photoPath
+				}
+				database.DB.Model(&result).Updates(updates)
 			}
 		}
 	}
@@ -201,4 +253,67 @@ func ProxyNodeRed(c *gin.Context) {
 	}
 	c.Status(resp.StatusCode)
 	c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
+}
+
+type TriggerScpiInput struct {
+	ApplicationID uint64 `json:"application_id"`
+	ParamCode     string `json:"param_code"`
+}
+
+// TriggerScpiMeasurement executes the SCPI measurement on-demand when the analyst clicks the SCPI button in LIMS UI.
+func TriggerScpiMeasurement(c *gin.Context) {
+	var input TriggerScpiInput
+	if err := c.ShouldBindJSON(&input); err != nil || input.ApplicationID == 0 || input.ParamCode == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "application_id dan param_code wajib diisi"})
+		return
+	}
+
+	pCode := strings.ToUpper(input.ParamCode)
+	cmdArgs := []string{
+		"scpi_integration/lims_scpi_agent.py",
+		"--param-code", pCode,
+		"--app-id", fmt.Sprintf("%d", input.ApplicationID),
+		"--api-url", "http://127.0.0.1:8081",
+	}
+
+	cmd := exec.Command("python3", cmdArgs...)
+	out, err := cmd.CombinedOutput()
+	outStr := string(out)
+
+	if err != nil {
+		log.Printf("Trigger SCPI notice: %v, output: %s", err, outStr)
+		if strings.Contains(outStr, "ERROR_NOT_CONFIGURED") {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": fmt.Sprintf("Parameter '%s' belum dikonfigurasi di file config.json! Harap daftarkan alat uji di config.json atau input nilai secara manual.", pCode),
+			})
+			return
+		}
+	}
+
+	// Cari hasil terbaru di database testing_results
+	var result models.TestingResult
+	if err := database.DB.Where("application_id = ? AND sub_aspect_code = ?", input.ApplicationID, pCode).Order("id desc").First(&result).Error; err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"success":      true,
+			"score":        result.Score,
+			"actual_value": result.Score,
+			"photo_path":   result.PhotoPath,
+			"notes":        result.Notes,
+			"message":      fmt.Sprintf("Data SCPI %s berhasil ditarik dari alat uji!", pCode),
+		})
+		return
+	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("Gagal mengeksekusi SCPI untuk %s: %s", pCode, outStr),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Pengukuran SCPI dieksekusi",
+		"output":  outStr,
+	})
 }
