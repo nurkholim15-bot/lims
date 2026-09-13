@@ -828,8 +828,40 @@ func UpdateGlobalParameter(c *gin.Context) {
 // --- Application Status ---
 func GetStatusApplications(c *gin.Context) {
 	var items []models.ApplicationStatus
-	database.DB.Order("status_code asc").Find(&items)
-	views.Success(c, items, "Retrieved")
+
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" {
+		if err := database.DB.Order("status_code asc").Find(&items).Error; err != nil {
+			views.Error(c, 500, "Gagal memproses data", err.Error())
+			return
+		}
+		views.Success(c, items, "Retrieved")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	query := database.DB.Model(&models.ApplicationStatus{})
+	search := c.Query("search")
+	if search != "" {
+		query = query.Where("status_code ILIKE ? OR \"desc\" ILIKE ?", "%"+search+"%", "%"+search+"%")
+	}
+
+	var total int64
+	query.Count(&total)
+
+	err := query.Order("status_code asc").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Gagal memproses data", err.Error())
+		return
+	}
+
+	views.SuccessWithPaging(c, items, "Retrieved", total, page, limit)
 }
 
 func CreateStatusApplication(c *gin.Context) {
@@ -993,15 +1025,41 @@ func GetHistGlobalParameters(c *gin.Context) {
 // --- Master Asset Statuses ---
 func GetAssetStatuses(c *gin.Context) {
 	var items []models.MasterAssetStatus
-	query := database.DB.Model(&models.MasterAssetStatus{})
 
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" {
+		query := database.DB.Model(&models.MasterAssetStatus{})
+		if search := c.Query("search"); search != "" {
+			query = query.Where("asset_status_code ILIKE ? OR asset_status_name ILIKE ?", "%"+search+"%", "%"+search+"%")
+		}
+		query.Order("asset_status_code asc").Find(&items)
+		views.Success(c, items, "Retrieved")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	query := database.DB.Model(&models.MasterAssetStatus{})
 	search := c.Query("search")
 	if search != "" {
 		query = query.Where("asset_status_code ILIKE ? OR asset_status_name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 
-	query.Find(&items)
-	views.Success(c, items, "Retrieved")
+	var total int64
+	query.Count(&total)
+
+	err := query.Order("asset_status_code asc").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Gagal memproses data", err.Error())
+		return
+	}
+
+	views.SuccessWithPaging(c, items, "Retrieved", total, page, limit)
 }
 
 func CreateAssetStatus(c *gin.Context) {
@@ -1993,8 +2051,40 @@ func GetScoringAspects(c *gin.Context) {
 			return aspects[k].SubAspects[i].Code < aspects[k].SubAspects[j].Code
 		})
 	}
-	
-	views.Success(c, aspects, "Retrieved")
+
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" || (packageIDStr != "" && packageIDStr != "0" && c.Query("page") == "" && c.Query("limit") == "") {
+		views.Success(c, aspects, "Retrieved")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	if limit <= 0 {
+		limit = 10
+	}
+	if page <= 0 {
+		page = 1
+	}
+
+	total := int64(len(aspects))
+	offset := (page - 1) * limit
+
+	var pagedAspects []models.ScoringAspect
+	if offset < len(aspects) {
+		end := offset + limit
+		if end > len(aspects) {
+			end = len(aspects)
+		}
+		pagedAspects = aspects[offset:end]
+	} else {
+		pagedAspects = []models.ScoringAspect{}
+	}
+
+	views.SuccessWithPaging(c, pagedAspects, "Retrieved", total, page, limit)
 }
 
 func CreateScoringAspect(c *gin.Context) {
@@ -2115,8 +2205,8 @@ func GetHistScoringAspects(c *gin.Context) {
 func GetScoringSubAspects(c *gin.Context) {
 	aspectCode := c.Query("aspect_code")
 	var items []models.ScoringSubAspect
-	
-	query := database.DB
+
+	query := database.DB.Model(&models.ScoringSubAspect{})
 	if aspectCode != "" {
 		query = query.Where("aspect_code = ?", aspectCode)
 	}
@@ -2125,14 +2215,34 @@ func GetScoringSubAspects(c *gin.Context) {
 	if search != "" {
 		query = query.Where("code ILIKE ? OR name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
-	
-	query = query.Order("code ASC")
 
-	if err := query.Find(&items).Error; err != nil {
-		views.Error(c, http.StatusInternalServerError, "Gagal memproses data", err.Error())
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" || (c.Query("page") == "" && c.Query("limit") == "" && aspectCode != "" && c.Query("dropdown") != "1") {
+		if err := query.Order("code ASC").Find(&items).Error; err != nil {
+			views.Error(c, http.StatusInternalServerError, "Gagal memproses data", err.Error())
+			return
+		}
+		views.Success(c, items, "Retrieved")
 		return
 	}
-	views.Success(c, items, "Retrieved")
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	var total int64
+	query.Count(&total)
+
+	err := query.Order("code ASC").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Gagal memproses data", err.Error())
+		return
+	}
+
+	views.SuccessWithPaging(c, items, "Retrieved", total, page, limit)
 }
 
 func CreateScoringSubAspect(c *gin.Context) {
@@ -2249,7 +2359,7 @@ func GetHistScoringSubAspects(c *gin.Context) {
 }
 func GetScoringSubAspectItems(c *gin.Context) {
 	var items []models.ScoringSubAspectItem
-	q := database.DB.Preload("SubAspect")
+	q := database.DB.Model(&models.ScoringSubAspectItem{}).Preload("SubAspect")
 
 	if subCodes := c.Query("sub_aspect_codes"); subCodes != "" {
 		codes := strings.Split(subCodes, ",")
@@ -2265,13 +2375,33 @@ func GetScoringSubAspectItems(c *gin.Context) {
 		q = q.Where("sub_aspect_code ILIKE ? OR name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 
-	q = q.Order("sub_aspect_code ASC, id ASC")
-
-	if err := q.Find(&items).Error; err != nil {
-		views.Error(c, http.StatusInternalServerError, "Failed to fetch items", err.Error())
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" || (c.Query("page") == "" && c.Query("limit") == "" && (c.Query("sub_aspect_code") != "" || c.Query("sub_aspect_codes") != "") && c.Query("dropdown") != "1") {
+		if err := q.Order("sub_aspect_code ASC, id ASC").Find(&items).Error; err != nil {
+			views.Error(c, http.StatusInternalServerError, "Failed to fetch items", err.Error())
+			return
+		}
+		views.Success(c, items, "Success")
 		return
 	}
-	views.Success(c, items, "Success")
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	var total int64
+	q.Count(&total)
+
+	err := q.Order("sub_aspect_code ASC, id ASC").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Failed to fetch items", err.Error())
+		return
+	}
+
+	views.SuccessWithPaging(c, items, "Success", total, page, limit)
 }
 
 func CreateScoringSubAspectItem(c *gin.Context) {
@@ -2388,7 +2518,7 @@ func GetHistScoringSubAspectItems(c *gin.Context) {
 }
 func GetScoringLevels(c *gin.Context) {
 	var items []models.ScoringLevel
-	db := database.DB
+	db := database.DB.Model(&models.ScoringLevel{})
 
 	if groupCode := c.Query("level_group_code"); groupCode != "" {
 		db = db.Where("level_group_code = ?", groupCode)
@@ -2399,11 +2529,33 @@ func GetScoringLevels(c *gin.Context) {
 		db = db.Where("level_group_code ILIKE ? OR label ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 
-	if err := db.Order("min_score desc").Find(&items).Error; err != nil {
-		views.Error(c, http.StatusInternalServerError, "Gagal memproses data", err.Error())
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" {
+		if err := db.Order("min_score desc").Find(&items).Error; err != nil {
+			views.Error(c, http.StatusInternalServerError, "Gagal memproses data", err.Error())
+			return
+		}
+		views.Success(c, items, "Retrieved")
 		return
 	}
-	views.Success(c, items, "Retrieved")
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	var total int64
+	db.Count(&total)
+
+	err := db.Order("min_score desc").Limit(limit).Offset(offset).Find(&items).Error
+	if err != nil {
+		views.Error(c, 500, "Gagal memproses data", err.Error())
+		return
+	}
+
+	views.SuccessWithPaging(c, items, "Retrieved", total, page, limit)
 }
 
 func CreateScoringLevel(c *gin.Context) {

@@ -13,7 +13,7 @@ import (
 
 func GetMasterTesters(c *gin.Context) {
 	var testers []models.MasterTester
-	query := database.DB.Preload("Methodology")
+	query := database.DB.Model(&models.MasterTester{}).Preload("Methodology")
 
 	if methodologyCode := c.Query("methodology_code"); methodologyCode != "" {
 		query = query.Where("methodology_code = ?", methodologyCode)
@@ -24,11 +24,33 @@ func GetMasterTesters(c *gin.Context) {
 		query = query.Where("tester_id ILIKE ? OR name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 
-	if err := query.Find(&testers).Error; err != nil {
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" {
+		if err := query.Order("tester_id asc").Find(&testers).Error; err != nil {
+			views.Error(c, http.StatusInternalServerError, "Gagal mengambil data", err.Error())
+			return
+		}
+		views.Success(c, testers, "Data tim penguji retrieved")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	var total int64
+	query.Count(&total)
+
+	err := query.Order("tester_id asc").Limit(limit).Offset(offset).Find(&testers).Error
+	if err != nil {
 		views.Error(c, http.StatusInternalServerError, "Gagal mengambil data", err.Error())
 		return
 	}
-	views.Success(c, testers, "Data tim penguji retrieved")
+
+	views.SuccessWithPaging(c, testers, "Data tim penguji retrieved", total, page, limit)
 }
 
 func GetMasterTester(c *gin.Context) {

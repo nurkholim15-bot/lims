@@ -138,6 +138,7 @@ func InitDB() {
 	// Refresh global parameter cache in models
 	models.RefreshParamCache(DB)
 	models.RefreshRoleMenuCache(DB)
+	fmt.Printf("[CACHE] Loaded %d global parameters into memory cache at startup\n", len(models.GetAllGlobalParamsList()))
 
 	// Initialize log paths in utils
 	// Priority: 1. ENV, 2. Database, 3. Default (logs/...)

@@ -194,7 +194,7 @@ const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
                     })}
                 </select>
             </div>
-            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+            <button className="btn btn-primary btn-button-bg" onClick={() => setShowForm(true)}>
                 <i className="fas fa-plus"></i> Ajukan Kasbon
             </button>
           </div>
@@ -346,10 +346,10 @@ const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
                 <textarea placeholder="Catatan tambahan..." value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} style={{ flex: 1, padding: "0.5rem", borderRadius: "8px", border: "1px solid #cbd5e1", minHeight: "80px", resize: "vertical" }}></textarea>
            </div>
            
-           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
-             <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)} style={{ padding: "0.6rem 1.5rem", borderRadius: "8px", fontWeight: 600 }}>Batal</button>
-             <button type="submit" className="btn btn-primary" style={{ padding: "0.6rem 1.5rem", borderRadius: "8px", fontWeight: 600 }}>Ajukan Kasbon</button>
-           </div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
+              <button type="button" className="btn btn-secondary btn-cancel-bg" onClick={() => setShowForm(false)} style={{ padding: "0.6rem 1.5rem", borderRadius: "8px", fontWeight: 600 }}>Batal</button>
+              <button type="submit" className="btn btn-primary btn-button-bg" style={{ padding: "0.6rem 1.5rem", borderRadius: "8px", fontWeight: 600 }}>Ajukan Kasbon</button>
+            </div>
         </form>
       </Modal>
 
@@ -440,7 +440,7 @@ const CashAdvancePage = ({ user, checkPasswordRequirement }) => {
                     Tandai Ditransfer
                   </button>
                 )}
-                <button className="btn btn-secondary" onClick={() => setShowDetail(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px' }}>Tutup</button>
+                <button className="btn btn-secondary btn-closed-bg" onClick={() => setShowDetail(false)} style={{ padding: '0.5rem 1rem', borderRadius: '6px' }}>Tutup</button>
               </div>
             </div>
           </div>

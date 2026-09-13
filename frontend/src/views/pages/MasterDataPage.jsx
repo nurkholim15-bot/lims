@@ -22,7 +22,8 @@ const MasterDataPage = ({
   filterConfig, 
   hideActions,
   defaultSortKey = null,
-  defaultSortOrder = "asc"
+  defaultSortOrder = "asc",
+  appConfig = null
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,19 +31,43 @@ const MasterDataPage = ({
   const searchParams = new URLSearchParams(location.search);
   const initialSearch = (searchField && searchParams.get(searchField)) ? searchParams.get(searchField) : "";
 
+  const getInitialLimit = () => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem("app_config") || "{}");
+      if (stored.PAGINATION_LIMIT) {
+        const parsed = parseInt(stored.PAGINATION_LIMIT, 10);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    } catch (_) {}
+    return 10;
+  };
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(getInitialLimit);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [isFiltered, setIsFiltered] = useState(!!initialSearch);
   const [filterMonth, setFilterMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, "0"));
   const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [sortKey, setSortKey] = useState(defaultSortKey);
+
+  useEffect(() => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        setLimit(parsed);
+      }
+    }
+  }, [appConfig?.PAGINATION_LIMIT]);
   const [sortOrder, setSortOrder] = useState(defaultSortOrder);
 
   useEffect(() => {
@@ -117,7 +142,7 @@ const MasterDataPage = ({
 
     setLoading(true);
     try {
-      let queryEndpoint = endpoint.includes("?") ? `${endpoint}&page=${page}` : `${endpoint}?page=${page}`;
+      let queryEndpoint = endpoint.includes("?") ? `${endpoint}&page=${page}&limit=${limit}` : `${endpoint}?page=${page}&limit=${limit}`;
       
       if (searchField && searchQuery) {
         const joinChar = queryEndpoint.includes("?") ? "&" : "?";
@@ -142,7 +167,9 @@ const MasterDataPage = ({
         if (result && !Array.isArray(result) && result.metadata) {
           rawData = result.data || [];
           setTotal(result.metadata.total || 0);
-          setLimit(result.metadata.limit || 10);
+          if (result.metadata.limit) {
+            setLimit(result.metadata.limit);
+          }
         } else {
           if (!Array.isArray(rawData)) rawData = rawData.data || [rawData];
           setTotal(rawData.length);
@@ -165,7 +192,7 @@ const MasterDataPage = ({
 
   useEffect(() => {
     fetchData();
-  }, [endpoint, refreshTrigger, page]);
+  }, [endpoint, refreshTrigger, page, limit]);
 
   const handleDelete = async (item) => {
     const id = item.id || item.status_code || item.code || item.tester_id || item.city_code || item.province_code || item.asset_status_code;
@@ -260,7 +287,8 @@ const MasterDataPage = ({
                 )}
                 <button 
                   onClick={handleFilter}
-                  style={{ background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                  className="btn btn-primary btn-button-bg"
+                  style={{ border: 'none', borderRadius: '6px', padding: '4px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                 >
                   Tampilkan
                 </button>
@@ -288,9 +316,8 @@ const MasterDataPage = ({
                 />
                 <button 
                   onClick={handleFilter}
+                  className="btn btn-primary btn-button-bg"
                   style={{ 
-                    background: '#10b981', 
-                    color: 'white', 
                     border: 'none', 
                     borderRadius: '8px', 
                     padding: '6px 16px', 
@@ -300,8 +327,6 @@ const MasterDataPage = ({
                     boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     transition: 'all 0.2s'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#059669'}
-                  onMouseOut={(e) => e.currentTarget.style.background = '#10b981'}
                 >
                   Filter
                 </button>
@@ -309,22 +334,19 @@ const MasterDataPage = ({
             )}
             {extraHeaderButtons}
             {filterConfig?.showPrint && (
-              <button className="btn btn-primary" style={{ background: '#f59e0b', borderColor: '#f59e0b' }} onClick={handlePrint}>
+              <button className="btn btn-primary btn-report-bg" onClick={handlePrint}>
                 <i className="fas fa-print"></i> Cetak PDF
               </button>
             )}
             {endpoint !== "/user-sessions" && !hideActions && (
-              <button className="btn btn-primary" onClick={handleOpenAdd}>
+              <button className="btn btn-primary btn-button-bg" onClick={handleOpenAdd}>
                 <i className="fas fa-plus"></i> Tambah Data
               </button>
             )}
             <button 
-              className="btn btn-secondary" 
+              className="btn btn-secondary btn-closed-bg" 
               onClick={() => navigate("/welcome")}
               style={{
-                background: '#475569',
-                color: 'white',
-                border: 'none',
                 borderRadius: '8px',
                 padding: '6px 16px',
                 fontSize: '0.875rem',

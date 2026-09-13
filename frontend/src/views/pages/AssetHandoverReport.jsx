@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import './AssetHandoverReport.css';
 
 const AssetHandoverReport = () => {
+  const navigate = useNavigate();
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState({
@@ -83,11 +85,18 @@ const AssetHandoverReport = () => {
               {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
             </select>
           </div>
-          <button className="btn btn-primary" onClick={fetchReport} disabled={loading}>
+          <button className="btn btn-primary btn-button-bg" onClick={fetchReport} disabled={loading}>
             <i className="fas fa-search"></i> Tampilkan
           </button>
-          <button className="btn btn-secondary" onClick={handlePrint} disabled={reportData.length === 0}>
+          <button className="btn btn-report-bg" onClick={handlePrint} disabled={reportData.length === 0}>
             <i className="fas fa-print"></i> Cetak Laporan
+          </button>
+          <button 
+            className="btn btn-secondary btn-closed-bg" 
+            onClick={() => navigate("/welcome")}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <i className="fas fa-times"></i> Tutup
           </button>
         </div>
       </div>

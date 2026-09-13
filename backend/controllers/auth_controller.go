@@ -133,22 +133,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// 2. Cek Single Session Mode secara real-time dari database (bypass cache VPS multi-node)
-	var singleSessionParam models.GlobalParameter
-	singleSessionStr := "false"
-	if err := database.DB.Where("param_key = ?", "SINGLE_SESSION_MODE").First(&singleSessionParam).Error; err == nil {
-		singleSessionStr = singleSessionParam.ParamValue
-	}
+	// 2. Cek Single Session Mode dari cache memori
+	singleSessionStr := models.GetGlobalParam("SINGLE_SESSION_MODE", "false")
 
 	if strings.ToLower(singleSessionStr) == "true" {
 		var activeSession models.UserSession
 		err := database.DB.Where("user_id = ? AND expires_at > ?", user.ID, time.Now()).First(&activeSession).Error
 		if err == nil { // Sesi aktif lain ditemukan
-			var allowTakeoverParam models.GlobalParameter
-			allowTakeoverStr := "true"
-			if err := database.DB.Where("param_key = ?", "ALLOW_SESSION_TAKEOVER").First(&allowTakeoverParam).Error; err == nil {
-				allowTakeoverStr = allowTakeoverParam.ParamValue
-			}
+			allowTakeoverStr := models.GetGlobalParam("ALLOW_SESSION_TAKEOVER", "true")
 			allowTakeover := strings.ToLower(allowTakeoverStr) == "true"
 
 			if req.ForceLogin && allowTakeover {
@@ -318,16 +310,10 @@ func GetSidebarMenus(c *gin.Context) {
 }
 
 func GetConfig(c *gin.Context) {
-	var g models.GlobalParameter
-	params, err := g.GetAll(database.DB)
-	if err != nil {
-		views.InternalError(c, "Failed to fetch config", err.Error())
-		return
-	}
-	
-	config := make(map[string]string)
-	for _, p := range params {
-		config[p.ParamKey] = p.ParamValue
+	config := models.GetAllGlobalParamsMap()
+	if len(config) == 0 {
+		models.RefreshParamCache(database.DB)
+		config = models.GetAllGlobalParamsMap()
 	}
 	
 	// Environment Variable Overlays
@@ -339,6 +325,13 @@ func GetConfig(c *gin.Context) {
 	}
 	
 	config["SYSTEM_BOOT_TIME"] = BootTime.Format(time.RFC3339)
+	if config["BUTTON_REPORT_BG"] == "" {
+		if config["BUTTON_BG"] != "" {
+			config["BUTTON_REPORT_BG"] = config["BUTTON_BG"]
+		} else {
+			config["BUTTON_REPORT_BG"] = "#0078D4"
+		}
+	}
 	
 	views.Success(c, config, "Config retrieved successfully")
 }

@@ -442,18 +442,11 @@ func GenerateReport(c *gin.Context) {
 
 	userPrompt.WriteString("\nTulis laporan persis dengan struktur A, C, dan D secara ringkas dalam Bahasa Indonesia.\n")
 
-	// Get max tokens from database or fallback to cache/default (1000)
+	// Get max tokens from memory cache or default (1000)
 	maxTokens := 1000
-	var gpMax models.GlobalParameter
-	if err := database.DB.Where("param_key = ?", "AI_MAX_TOKENS").First(&gpMax).Error; err == nil {
-		if val, err := strconv.Atoi(gpMax.ParamValue); err == nil && val > 0 {
-			maxTokens = val
-		}
-	} else {
-		cacheVal := models.GetGlobalParam("AI_MAX_TOKENS", "1000")
-		if val, err := strconv.Atoi(cacheVal); err == nil && val > 0 {
-			maxTokens = val
-		}
+	cacheVal := models.GetGlobalParam("AI_MAX_TOKENS", "1000")
+	if val, err := strconv.Atoi(cacheVal); err == nil && val > 0 {
+		maxTokens = val
 	}
 
 	numCtx := 512

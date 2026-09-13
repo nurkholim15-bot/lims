@@ -82,13 +82,13 @@ const ReportsDetailPage = () => {
           <p style={{ margin: "5px 0 0 0", color: "#64748b" }}>Rincian Data Parameter Uji per Aplikasi</p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button className="btn btn-outline-success" onClick={handlePrint} disabled={!hasSearched || data.length === 0}>
+          <button className="btn btn-report-bg" onClick={handlePrint} disabled={!hasSearched || data.length === 0} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <i className="fas fa-print"></i> Cetak PDF
           </button>
           <button
             onClick={() => navigate("/welcome")}
+            className="btn btn-secondary btn-closed-bg"
             style={{
-              background: "#475569",
               color: "white",
               border: "none",
               padding: "0.5rem 1rem",
@@ -155,7 +155,7 @@ const ReportsDetailPage = () => {
             </select>
           </div>
           <div>
-            <button className="btn btn-primary" onClick={handleApply}>Terapkan</button>
+            <button className="btn btn-primary btn-button-bg" onClick={handleApply}>Terapkan</button>
           </div>
         </div>
       </div>

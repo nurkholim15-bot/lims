@@ -197,7 +197,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
     setLoading(true);
     try {
       const [testerData, locData, methodData] = await Promise.all([
-        apiRequest("/tester-masters"),
+        apiRequest("/tester-masters?nopaging=1"),
         apiRequest("/locations"),
         apiRequest("/methodologies"),
       ]);
@@ -219,7 +219,7 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
       if (!fetchedLocationsRef.current.has(locCode)) {
         fetchedLocationsRef.current.add(locCode);
         try {
-          const data = await apiRequest(`/testing-tools?location_code=${locCode}`);
+          const data = await apiRequest(`/testing-tools?location_code=${locCode}&nopaging=1`);
           if (data) {
             const tools = Array.isArray(data) ? data : (data.data || []);
             setTestingTools(prev => {
@@ -859,10 +859,13 @@ const PlanningForm = ({ app, appConfig = {}, onCancel, onSuccess, checkPasswordR
           zIndex: 10,
         }}
       >
-        <button type="button" className="btn btn-secondary" onClick={onCancel} style={{ padding: "10px 25px" }}>
-          Batal
+        <button type="button" className="btn btn-secondary btn-closed-bg" onClick={onCancel} style={{ padding: "10px 25px" }}>
+          Tutup
         </button>
-        <button type="submit" className="btn btn-primary" disabled={submitting} style={{ padding: "10px 30px", fontWeight: 700 }}>
+        <button type="button" className="btn btn-danger btn-cancel-bg" onClick={onCancel} style={{ padding: "10px 25px" }}>
+          Cancel
+        </button>
+        <button type="submit" className="btn btn-primary btn-button-bg" disabled={submitting} style={{ padding: "10px 30px", fontWeight: 700 }}>
           {submitting ? "Menyimpan..." : "Finalisasi & Simpan Semua Rencana"}
         </button>
       </div>

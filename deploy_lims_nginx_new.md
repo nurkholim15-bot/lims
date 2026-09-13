@@ -284,11 +284,12 @@ GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o main .
 
 #### 3. Berkas yang Dicopy ke `/home/lims/`:
 Anda **TIDAK perlu menyalin folder kode sumber `.go`** (seperti `controllers`, `models`, dll). Cukup salin berkas-berkas berikut:
-1.  Biner hasil build (`main`)
+1.  Biner hasil build (`main` atau `lim_app`)
 2.  File `.env` produksi (Pastikan `MINIO_*` variables sudah diatur untuk modul SPD/Reimbursement)
 3.  Folder `lib/` (untuk AI ONNX)
 4.  Folder `ai_service/` (jika berisi file model `.onnx`)
 5.  Script `paddle_ocr.py` (untuk OCR)
+6.  Folder `scpi_integration/` (untuk integrasi instrumen lab SCPI & Digital Twin Simulator)
 
 ```bash
 # Buat direktori backend tujuan
@@ -307,6 +308,14 @@ cp -r /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/ai_service /home/li
 
 cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/paddle_ocr.py /home/lims/lims1/backend/
 cp /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/paddle_ocr.py /home/lims/lims2/backend/
+
+# Salin folder modul SCPI (dari mesin lokal menggunakan rsync atau scp -r)
+# Dari lokal ke lims1:
+rsync -avz --exclude '__pycache__' --exclude '*.png' --exclude '*.csv' --exclude '*.svg' \
+  scpi_integration lims@212.85.24.33:/home/lims/lims1/backend/
+
+# Di VPS, hubungkan symbolic link untuk lims2 (agar berbagi konfigurasi SCPI yang sama):
+ln -s /home/lims/lims1/backend/scpi_integration /home/lims/lims2/backend/scpi_integration
 ```
 
 ### B. Hubungkan Symbolic Link (Shared Storage)
@@ -1241,8 +1250,9 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
 
 1. **Buat Folder Penyimpanan Data (Jika menggunakan Tablespace Kustom - Opsional):**
    ```bash
-   sudo mkdir -p /var/lib/postgresql/lims_data
-   sudo chown -R postgres:postgres /var/lib/postgresql/lims_data
+   sudo mkdir -p /var/lib/postgresql/tablespaces/ts_data_lims
+   sudo chown -R postgres:postgres /var/lib/postgresql/tablespaces/ts_data_lims
+   sudo chmod 700 /var/lib/postgresql/tablespaces/ts_data_lims
    ```
 2. **Buat User (Role) LIMS:**
    Buka terminal psql sebagai user `postgres`:
@@ -1252,13 +1262,14 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
    ```
 3. **Buat Tablespace Khusus LIMS (Opsional tapi Best Practice di Prod):**
    ```sql
-   -- Memisahkan penyimpanan fisik data LIMS ke folder khusus
-   CREATE TABLESPACE lims_tblspace LOCATION '/var/lib/postgresql/lims_data';
+   -- Memisahkan penyimpanan fisik data LIMS ke tablespace khusus ts_data_lims
+   CREATE TABLESPACE ts_data_lims OWNER lims_app LOCATION '/var/lib/postgresql/tablespaces/ts_data_lims';
+   GRANT CREATE ON TABLESPACE ts_data_lims TO lims_app;
    ```
 4. **Buat Database dengan Owner dan Tablespace Terkait:**
    ```sql
-   -- Membuat database utama LIMS
-   CREATE DATABASE lims_prod_db OWNER lims_app TABLESPACE lims_tblspace;
+   -- Membuat database utama LIMS yang terikat ke tablespace ts_data_lims
+   CREATE DATABASE lims_prod_db OWNER lims_app TABLESPACE ts_data_lims;
    
    -- Memberikan seluruh hak akses database ke user lims
    GRANT ALL PRIVILEGES ON DATABASE lims_prod_db TO lims_app;
@@ -1280,6 +1291,19 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
    -- Mengaktifkan generator UUID
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
    ```
+
+7. **Restore Database dari File Dump (`lims_clean.dump`):**
+   Saat merestore ke database yang menggunakan tablespace kustom seperti `ts_data_lims`, gunakan parameter `--no-tablespaces` untuk mencegah galat `ERROR: cannot specify default tablespace for partitioned relations` pada tabel terpartisi:
+   ```bash
+   pg_restore -h 127.0.0.1 -p 5432 -U admin_lims -d lims_prod_db \
+     --no-owner \
+     --no-privileges \
+     --no-tablespaces \
+     --clean \
+     --if-exists \
+     lims_clean.dump
+   ```
+   *(Seluruh tabel data dan partisi anak secara otomatis tetap disimpan di dalam `ts_data_lims` karena mewarisi tablespace default dari database `lims_prod_db`)*.
 
 ---
 

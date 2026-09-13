@@ -112,62 +112,62 @@ const MainContent = ({
   const renderMasterPage = (path, route) => {
     const onEdit = (item) => handleEditMaster(item, route);
     switch (path) {
-      case "/roles": return <RolesPage onChangeRole={() => refreshData()} checkPasswordRequirement={checkPasswordRequirement} />;
-      case "/user-sessions": return <UserSessionsPage refreshTrigger={refreshUserSessions} checkPasswordRequirement={checkPasswordRequirement} />;
+      case "/roles": return <RolesPage onChangeRole={() => refreshData()} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
+      case "/user-sessions": return <UserSessionsPage refreshTrigger={refreshUserSessions} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/tester-masters": 
-        return <TesterMastersPage onEdit={(item) => handleEditMaster(item, { endpoint: "/tester-masters", crudEndpoint: "/management/tester-masters" })} refreshTrigger={refreshTesterMasters} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <TesterMastersPage onEdit={(item) => handleEditMaster(item, { endpoint: "/tester-masters", crudEndpoint: "/management/tester-masters" })} refreshTrigger={refreshTesterMasters} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/scoring-aspects": 
-        return <ScoringAspectsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <ScoringAspectsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/scoring-sub-aspects":
-        return <ScoringSubAspectsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <ScoringSubAspectsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/scoring-sub-aspect-items":
-        return <ItemSubAspectItemsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <ItemSubAspectItemsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/methodologies":
-        return <MethodologiesPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <MethodologiesPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/models":
-        return <ModelsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <ModelsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/variants":
-        return <VariantsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <VariantsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/brands":
-        return <BrandsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <BrandsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/cities":
-        return <CitiesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <CitiesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/locations":
-        return <LocationsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <LocationsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/scoring-levels":
-        return <ScoringLevelsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <ScoringLevelsPage onEdit={onEdit} onAdd={() => { setEditingItem(null); setEditingEndpoint(route.endpoint); setEditingCrudEndpoint(route.crudEndpoint); setModalType("edit-master"); }} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/testing-tools":
-        return <TestingToolsPage title={route.title} refreshTrigger={refreshMaster} setSelectedApp={setSelectedApp} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <TestingToolsPage title={route.title} refreshTrigger={refreshMaster} setSelectedApp={setSelectedApp} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/global-params":
-        return <GlobalParametersPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <GlobalParametersPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/asset-status-mgmt":
-        return <MasterAssetStatusesPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <MasterAssetStatusesPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/standards":
-        return <TestStandardsPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <TestStandardsPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/test-types":
-        return <TestTypesPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <TestTypesPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/status-app-mgmt":
-        return <StatusApplicationsPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <StatusApplicationsPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/users":
-        return <UsersPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <UsersPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/menus":
-        return <MenusPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <MenusPage route={route} onEdit={onEdit} refreshTrigger={refreshMaster} setEditingItem={setEditingItem} setEditingEndpoint={setEditingEndpoint} setEditingCrudEndpoint={setEditingCrudEndpoint} setModalType={setModalType} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/partner-types":
-        return <PartnerTypesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <PartnerTypesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/mat-cats":
-        return <MaterialCategoriesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <MaterialCategoriesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/origins":
-        return <OriginsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <OriginsPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/partners":
-        return <PartnersPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <PartnersPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/provinces":
-        return <ProvincesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} />;
+        return <ProvincesPage route={route} refreshTrigger={refreshMaster} checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/role-menus-hist":
         return <RoleMenusHistPage />;
       case "/package-active-aspects":
-        return <PackageActiveAspectsPage checkPasswordRequirement={checkPasswordRequirement} />;
+        return <PackageActiveAspectsPage checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       case "/package-active-sub-aspects":
-        return <PackageActiveSubAspectsPage checkPasswordRequirement={checkPasswordRequirement} />;
+        return <PackageActiveSubAspectsPage checkPasswordRequirement={checkPasswordRequirement} appConfig={appConfig} />;
       default:
         return (
           <MasterDataPage
@@ -189,6 +189,7 @@ const MainContent = ({
             forceFilter={route.forceFilter}
             hideActions={route.hideActions}
             checkPasswordRequirement={checkPasswordRequirement}
+            appConfig={appConfig}
           />
         );
     }
@@ -210,14 +211,14 @@ const MainContent = ({
       <Route path="/assets" element={<AssetManagementPage user={user} checkPasswordRequirement={checkPasswordRequirement} />} />
 
       {/* 3. Reports */}
-      <Route path="/reports-summary" element={<ReportsSummaryPage />} />
-      <Route path="/reports-detail" element={<ReportsDetailPage />} />
-      <Route path="/reports/asset-list" element={<AssetListReport />} />
-      <Route path="/reports/asset-handover" element={<AssetHandoverReport />} />
-      <Route path="/reports-finance" element={<FinanceReportPage user={user} />} />
-      <Route path="/reports-finance/spd" element={<FinanceReportPage user={user} reportType="spd" />} />
-      <Route path="/reports-finance/cash-advance" element={<FinanceReportPage user={user} reportType="cash_advance" />} />
-      <Route path="/reports-finance/reimbursement" element={<FinanceReportPage user={user} reportType="reimbursement" />} />
+      <Route path="/reports-summary" element={<ReportsSummaryPage appConfig={appConfig} />} />
+      <Route path="/reports-detail" element={<ReportsDetailPage appConfig={appConfig} />} />
+      <Route path="/reports/asset-list" element={<AssetListReport appConfig={appConfig} />} />
+      <Route path="/reports/asset-handover" element={<AssetHandoverReport appConfig={appConfig} />} />
+      <Route path="/reports-finance" element={<FinanceReportPage user={user} appConfig={appConfig} />} />
+      <Route path="/reports-finance/spd" element={<FinanceReportPage user={user} reportType="spd" appConfig={appConfig} />} />
+      <Route path="/reports-finance/cash-advance" element={<FinanceReportPage user={user} reportType="cash_advance" appConfig={appConfig} />} />
+      <Route path="/reports-finance/reimbursement" element={<FinanceReportPage user={user} reportType="reimbursement" appConfig={appConfig} />} />
 
       {/* 4. Master Routes */}
       {Object.entries(masterRoutes).map(([path, route]) => (

@@ -142,7 +142,7 @@ const AuditHistoryModal = ({
         )}
 
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem" }}>
-          <button className="btn btn-secondary" onClick={onClose} style={{ minWidth: "100px" }}>
+          <button className="btn btn-secondary btn-closed-bg" onClick={onClose} style={{ minWidth: "100px" }}>
             Tutup
           </button>
         </div>

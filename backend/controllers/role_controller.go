@@ -15,9 +15,29 @@ import (
 func GetRoles(c *gin.Context) {
 	var roles []models.Role
 	
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" {
+		query := database.DB.Model(&models.Role{})
+		if search := c.Query("search"); search != "" {
+			if id, err := strconv.Atoi(search); err == nil {
+				query = query.Where("id = ? OR name ILIKE ?", id, "%"+search+"%")
+			} else {
+				query = query.Where("name ILIKE ?", "%"+search+"%")
+			}
+		}
+		if err := query.Order("id asc").Find(&roles).Error; err != nil {
+			views.InternalError(c, "Failed to fetch roles", err.Error())
+			return
+		}
+		views.Success(c, roles, "Roles retrieved")
+		return
+	}
+
 	// Pagination parameters
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
 	offset := (page - 1) * limit
 

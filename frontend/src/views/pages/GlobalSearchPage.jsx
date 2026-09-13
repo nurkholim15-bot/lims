@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { apiRequest } from "@models/api";
 import WorkflowPage from "./WorkflowPage";
 import { useToast } from '@context/ToastContext';
@@ -9,6 +9,22 @@ const GlobalSearchPage = ({ appConfig = {}, onAction, user }) => {
   const [loading, setLoading] = useState(false);
   const [sourceTable, setSourceTable] = useState("");
   const [regNumber, setRegNumber] = useState("");
+
+  const [currentAppConfig, setCurrentAppConfig] = useState(appConfig || {});
+
+  useEffect(() => {
+    if (appConfig && (appConfig.BUTTON_BG || Object.keys(appConfig).length > 0)) {
+      setCurrentAppConfig(appConfig);
+    } else {
+      apiRequest("/config").then(cfg => {
+        if (cfg) {
+          setCurrentAppConfig(prev => ({ ...prev, ...cfg }));
+        }
+      }).catch(e => console.error("Error fetching config in GlobalSearchPage:", e));
+    }
+  }, [appConfig]);
+
+  const buttonBg = currentAppConfig?.BUTTON_BG || appConfig?.BUTTON_BG;
 
   const handleSearch = async () => {
     if (!regNumber) {
@@ -62,12 +78,18 @@ const GlobalSearchPage = ({ appConfig = {}, onAction, user }) => {
               />
             </div>
             <button 
-              className="btn btn-primary" 
+              className={`btn btn-primary ${buttonBg ? "btn-button-bg" : ""}`} 
               onClick={handleSearch}
               disabled={loading}
-              style={{ padding: '6px 16px', fontSize: '0.85rem', borderRadius: '6px', minWidth: '80px' }}
+              style={{ 
+                padding: '6px 16px', 
+                fontSize: '0.85rem', 
+                borderRadius: '6px', 
+                minWidth: '80px',
+                ...(buttonBg ? { backgroundColor: buttonBg, borderColor: buttonBg, color: "#ffffff" } : {})
+              }}
             >
-              {loading ? <i className="fas fa-spinner fa-spin"></i> : "Cari"}
+              {loading ? <i className="fas fa-spinner fa-spin"></i> : "Cari Data"}
             </button>
           </div>
         </div>
@@ -88,7 +110,7 @@ const GlobalSearchPage = ({ appConfig = {}, onAction, user }) => {
           title="" 
           apps={results}
           setApps={setResults}
-          appConfig={appConfig}
+          appConfig={currentAppConfig}
           currentUser={user}
           onAction={onAction}
           actionLabel="Lihat Detail"

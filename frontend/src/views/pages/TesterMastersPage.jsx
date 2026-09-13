@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import AuditHistoryModal from "@components/AuditHistoryModal";
+import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
-const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
+const TesterMastersPage = ({ onEdit, refreshTrigger, appConfig }) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [allData, setAllData] = useState([]);
@@ -14,6 +15,34 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const getInitialLimit = () => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem("app_config") || "{}");
+      if (stored.PAGINATION_LIMIT) {
+        const parsed = parseInt(stored.PAGINATION_LIMIT, 10);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    } catch (_) {}
+    return 10;
+  };
+
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(getInitialLimit);
+
+  useEffect(() => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        setLimit(parsed);
+      }
+    }
+  }, [appConfig?.PAGINATION_LIMIT]);
+
   // History State
   const [isHistModalOpen, setIsHistModalOpen] = useState(false);
   const [selectedTesterId, setSelectedTesterId] = useState(null);
@@ -22,12 +51,27 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      let endpoint = "/tester-masters";
+      let endpoint = `/tester-masters?page=${page}&limit=${limit}`;
       if (searchQuery) {
-        endpoint += `?search=${encodeURIComponent(searchQuery)}`;
+        endpoint += `&search=${encodeURIComponent(searchQuery)}`;
       }
-      const [testerData, methodData] = await Promise.all([apiRequest(endpoint), apiRequest("/methodologies")]);
-      if (testerData) setAllData(Array.isArray(testerData) ? testerData : (testerData.data || []));
+      if (selectedMethodology) {
+        endpoint += `&methodology_code=${encodeURIComponent(selectedMethodology)}`;
+      }
+      const [testerData, methodData] = await Promise.all([apiRequest(endpoint), apiRequest("/methodologies?dropdown=1")]);
+      if (testerData) {
+        if (testerData.metadata) {
+          setAllData(testerData.data || []);
+          setTotal(testerData.metadata.total || 0);
+          if (testerData.metadata.limit) {
+            setLimit(testerData.metadata.limit);
+          }
+        } else {
+          const raw = Array.isArray(testerData) ? testerData : (testerData.data || []);
+          setAllData(raw);
+          setTotal(raw.length);
+        }
+      }
       if (methodData) setMethodologies(Array.isArray(methodData) ? methodData : (methodData.data || []));
     } catch (err) {
       console.error("Fetch error:", err);
@@ -50,7 +94,7 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
 
   useEffect(() => {
     fetchData();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, page, limit, selectedMethodology]);
 
   useEffect(() => {
     if (selectedMethodology) {
@@ -80,13 +124,13 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
             <button className="btn btn-secondary" onClick={handleShowAllHistory}>
               <i className="fas fa-history"></i> Riwayat Keseluruhan
             </button>
-            <button className="btn btn-primary" onClick={() => onEdit(null)}>
+            <button className="btn btn-primary btn-button-bg" onClick={() => onEdit(null)}>
               <i className="fas fa-plus"></i> Tambah Penguji
             </button>
             <button
+              className="btn btn-secondary btn-closed-bg"
               onClick={() => navigate("/welcome")}
               style={{
-                background: "#475569",
                 color: "white",
                 border: "none",
                 padding: "0.5rem 1rem",
@@ -116,7 +160,7 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
                 onKeyPress={(e) => e.key === 'Enter' && fetchData()}
                 style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "0.875rem", minWidth: "250px" }}
               />
-              <button className="btn btn-primary" onClick={fetchData} style={{ padding: "0.5rem 1rem" }}>Filter</button>
+              <button className="btn btn-primary btn-button-bg" onClick={fetchData} style={{ padding: "0.5rem 1rem" }}>Filter</button>
             </div>
           </div>
           <div>
@@ -177,6 +221,7 @@ const TesterMastersPage = ({ onEdit, refreshTrigger }) => {
             )}
           </tbody>
         </table>
+        <Pagination current={page} total={total} limit={limit} onPageChange={setPage} />
       </div>
 
       <AuditHistoryModal

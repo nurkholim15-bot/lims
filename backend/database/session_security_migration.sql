@@ -66,3 +66,21 @@ VALUES (
     'Durasi waktu (dalam menit) akun dikunci akibat salah password berturut-turut.', 
     NOW(), NOW(), 'SYSTEM', 'SYSTEM'
 ) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+-- F. Parameter BUTTON_BG untuk background tombol Cari Data dan Lihat Detail
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'BUTTON_BG', 
+    '#0078D4', 
+    'Warna background tombol Cari Data dan Lihat Detail', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;
+
+-- G. Parameter BUTTON_REPORT_BG untuk background tombol Cetak Laporan dan Cetak PDF
+INSERT INTO lims.global_parameters (param_key, param_value, description, created_at, updated_at, created_user, updated_user)
+VALUES (
+    'BUTTON_REPORT_BG', 
+    '#0078D4', 
+    'Warna background tombol Cetak Laporan dan Cetak PDF', 
+    NOW(), NOW(), 'SYSTEM', 'SYSTEM'
+) ON CONFLICT (param_key) DO UPDATE SET description = EXCLUDED.description;

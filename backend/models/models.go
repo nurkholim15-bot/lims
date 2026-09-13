@@ -2,37 +2,74 @@ package models
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
-var globalParamCache map[string]string = make(map[string]string)
-var roleCache map[uint]string = make(map[uint]string)
-var menuCache map[uint][]Menu = make(map[uint][]Menu) // roleID -> menus
+var (
+	paramCacheMutex  sync.RWMutex
+	globalParamCache = make(map[string]string)
+	globalParamsList []GlobalParameter
+
+	roleCacheMutex sync.RWMutex
+	roleCache      = make(map[uint]string)
+	menuCache      = make(map[uint][]Menu) // roleID -> menus
+)
 
 // RefreshParamCache loads all global parameters into memory for fast access
 func RefreshParamCache(db *gorm.DB) {
+	if db == nil {
+		return
+	}
 	var params []GlobalParameter
 	if err := db.Find(&params).Error; err != nil {
 		return
 	}
 
-	newCache := make(map[string]string)
+	newCache := make(map[string]string, len(params))
 	for _, p := range params {
 		newCache[strings.TrimSpace(p.ParamKey)] = p.ParamValue
 	}
+
+	paramCacheMutex.Lock()
 	globalParamCache = newCache
+	globalParamsList = params
+	paramCacheMutex.Unlock()
 }
 
 // GetGlobalParam retrieves a parameter value from the cache or returns a default
 func GetGlobalParam(key string, defaultValue string) string {
 	cleanKey := strings.TrimSpace(key)
-	if val, ok := globalParamCache[cleanKey]; ok && val != "" {
+	paramCacheMutex.RLock()
+	val, ok := globalParamCache[cleanKey]
+	paramCacheMutex.RUnlock()
+	if ok && val != "" {
 		return val
 	}
 	return defaultValue
+}
+
+// GetAllGlobalParamsMap returns a copy of all global parameters as a key-value map from memory cache
+func GetAllGlobalParamsMap() map[string]string {
+	paramCacheMutex.RLock()
+	defer paramCacheMutex.RUnlock()
+	res := make(map[string]string, len(globalParamCache))
+	for k, v := range globalParamCache {
+		res[k] = v
+	}
+	return res
+}
+
+// GetAllGlobalParamsList returns a copy of all GlobalParameter records from memory cache
+func GetAllGlobalParamsList() []GlobalParameter {
+	paramCacheMutex.RLock()
+	defer paramCacheMutex.RUnlock()
+	res := make([]GlobalParameter, len(globalParamsList))
+	copy(res, globalParamsList)
+	return res
 }
 
 // RefreshRoleMenuCache loads all roles and their menus into memory
@@ -162,8 +199,20 @@ func (m *Menu) GetByRoleID(db *gorm.DB, roleID uint) ([]Menu, error) {
 }
 
 func (g *GlobalParameter) GetAll(db *gorm.DB) ([]GlobalParameter, error) {
+	paramCacheMutex.RLock()
+	cachedCount := len(globalParamsList)
+	paramCacheMutex.RUnlock()
+
+	if cachedCount > 0 {
+		return GetAllGlobalParamsList(), nil
+	}
+
+	// Fallback only if cache has not been initialized yet
 	var params []GlobalParameter
 	err := db.Find(&params).Error
+	if err == nil {
+		RefreshParamCache(db)
+	}
 	return params, err
 }
 

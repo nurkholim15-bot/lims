@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest, getDownloadUrl, viewDocument } from "@models/api";
 import Modal from "@components/Modal";
 import Pagination from "@components/Pagination";
 import TravelRequestSearchModal from "@components/TravelRequestSearchModal";
 import { useToast } from '@context/ToastContext';
 
-const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
+const ReimbursementPage = ({ user, checkPasswordRequirement, onClose }) => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -223,7 +225,10 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
                 <i className="fas fa-database"></i> Querying on: <code style={{ color: '#3b82f6', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px', border: '1px solid #bfdbfe' }}>{sourceTable}</code>
             </p>
           </div>
-          <button className="btn btn-secondary" onClick={() => window.location.href='/welcome'} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.45rem 0.9rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>
+          <button className="btn btn-secondary btn-closed-bg" onClick={() => {
+              if (onClose) onClose();
+              else navigate('/welcome');
+          }} style={{ color: 'white', border: 'none', padding: '0.45rem 0.9rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', fontWeight: 600 }}>
               <i className="fas fa-times"></i> Tutup
           </button>
         </div>
@@ -323,9 +328,8 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
                 />
                 <button 
                     onClick={handleFilter}
+                    className="btn btn-primary btn-button-bg"
                     style={{ 
-                        background: '#10b981', 
-                        color: 'white', 
                         border: 'none', 
                         borderRadius: '6px', 
                         padding: '4px 12px', 
@@ -342,7 +346,7 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
             </div>
           </div>
           <div>
-            <button className="btn btn-primary" onClick={handleOpenForm} style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '36px', padding: '0 16px', fontSize: '0.85rem', fontWeight: 700 }}>
+            <button className="btn btn-primary btn-button-bg" onClick={handleOpenForm} style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '36px', padding: '0 16px', fontSize: '0.85rem', fontWeight: 700 }}>
               <i className="fas fa-plus"></i> Ajukan Reimbursement
             </button>
           </div>
@@ -623,8 +627,8 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
            </div>
 
            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: "1rem" }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Batal</button>
-                <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>Ajukan Reimbursement</button>
+                <button type="button" className="btn btn-secondary btn-cancel-bg" onClick={() => setShowForm(false)}>Batal</button>
+                <button type="submit" className="btn btn-primary btn-button-bg" style={{ fontWeight: 700 }}>Ajukan Reimbursement</button>
            </div>
         </form>
       </Modal>
@@ -746,8 +750,8 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
                                   Tolak
                               </button>
                               <button 
-                                  className="btn" 
-                                  style={{ backgroundColor: '#eab308', color: 'white', fontWeight: 600, padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '0.85rem' }} 
+                                  className="btn btn-closed-bg" 
+                                  style={{ color: 'white', fontWeight: 600, padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '0.85rem' }} 
                                   onClick={() => setShowDetail(false)}
                               >
                                   Closed
@@ -757,8 +761,8 @@ const ReimbursementPage = ({ user, checkPasswordRequirement }) => {
                   ) : (
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px', borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem' }}>
                           <button 
-                              className="btn" 
-                              style={{ backgroundColor: '#eab308', color: 'white', fontWeight: 600, padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '0.85rem' }} 
+                              className="btn btn-closed-bg" 
+                              style={{ color: 'white', fontWeight: 600, padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '0.85rem' }} 
                               onClick={() => setShowDetail(false)}
                           >
                               Closed

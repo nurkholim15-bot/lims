@@ -125,7 +125,7 @@ const MaterialCategoriesPage = ({ route, refreshTrigger }) => {
             </table>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-            <button className="btn btn-secondary" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>

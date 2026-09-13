@@ -447,7 +447,7 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
         <h5 style={{ color: "#5b21b6", margin: 0 }}><i className="fas fa-tools"></i> Daftar Perlengkapan ({equipments.length})</h5>
         {!editingApp && (
-          <button type="button" className="btn btn-sm" style={{ backgroundColor: "#7c3aed", color: "white" }} onClick={addEquipment}>
+          <button type="button" className="btn btn-sm btn-button-bg" onClick={addEquipment}>
             <i className="fas fa-plus"></i> Tambah Item
           </button>
         )}
@@ -583,8 +583,8 @@ const SubmissionForm = ({ currentUser, appConfig, onSuccess, onCancel, editingAp
       })}
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "2rem" }}>
-        <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={submitting}>Cancel</button>
-        <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? "Mengirim..." : editingApp ? "Update" : "Kirim Batch"}</button>
+        <button type="button" className="btn btn-secondary btn-cancel-bg" onClick={onCancel} disabled={submitting}>Cancel</button>
+        <button type="submit" className="btn btn-primary btn-button-bg" disabled={submitting}>{submitting ? "Mengirim..." : editingApp ? "Update" : "Kirim Batch"}</button>
       </div>
 
       <BarcodeScannerModal

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
 import MasterForm from "@components/MasterForm";
+import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
 const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) => {
@@ -13,6 +14,34 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
   const [searchQuery, setSearchQuery] = useState("");
   const [isMasterModalOpen, setIsMasterModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+
+  const getInitialLimit = () => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem("app_config") || "{}");
+      if (stored.PAGINATION_LIMIT) {
+        const parsed = parseInt(stored.PAGINATION_LIMIT, 10);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    } catch (_) {}
+    return 10;
+  };
+
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(getInitialLimit);
+
+  useEffect(() => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        setLimit(parsed);
+      }
+    }
+  }, [appConfig?.PAGINATION_LIMIT]);
   
   // Stock Transaction State
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
@@ -42,12 +71,24 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
   const fetchData = async () => {
     setLoading(true);
     try {
-      let endpoint = "/testing-tools";
+      let endpoint = `/testing-tools?page=${page}&limit=${limit}`;
       if (searchQuery) {
-        endpoint += `?search=${encodeURIComponent(searchQuery)}`;
+        endpoint += `&search=${encodeURIComponent(searchQuery)}`;
       }
       const result = await apiRequest(endpoint);
-      if (result) setData(result);
+      if (result) {
+        if (result.metadata) {
+          setData(result.data || []);
+          setTotal(result.metadata.total || 0);
+          if (result.metadata.limit) {
+            setLimit(result.metadata.limit);
+          }
+        } else {
+          const raw = Array.isArray(result) ? result : (result.data || []);
+          setData(raw);
+          setTotal(raw.length);
+        }
+      }
     } catch (err) {
       console.error("Fetch tools error:", err);
     } finally {
@@ -57,7 +98,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page, limit]);
 
   const handleDelete = async (item) => {
     const confirmed = window.confirmAsync ? await window.confirmAsync(`Apakah Anda yakin ingin menghapus alat "${item.name}"?`) : confirm(`Apakah Anda yakin ingin menghapus alat "${item.name}"?`);
@@ -194,13 +235,13 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             <button className="btn btn-secondary" onClick={() => { setIsReportModalOpen(true); handleFetchReport(); }}>
               <i className="fas fa-file-alt"></i> Laporan Transaksi
             </button>
-            <button className="btn btn-primary" onClick={() => { setEditingItem(null); setIsMasterModalOpen(true); }}>
+            <button className="btn btn-primary btn-button-bg" onClick={() => { setEditingItem(null); setIsMasterModalOpen(true); }}>
               <i className="fas fa-plus"></i> Tambah Alat Baru
             </button>
             <button
+              className="btn btn-secondary btn-closed-bg"
               onClick={() => navigate("/welcome")}
               style={{
-                background: "#475569",
                 color: "white",
                 border: "none",
                 padding: "0.5rem 1rem",
@@ -229,7 +270,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
               onKeyPress={(e) => e.key === 'Enter' && fetchData()}
               style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "0.875rem", minWidth: "250px" }}
             />
-            <button className="btn btn-primary" onClick={fetchData} style={{ padding: "0.5rem 1rem" }}>Filter</button>
+            <button className="btn btn-primary btn-button-bg" onClick={fetchData} style={{ padding: "0.5rem 1rem" }}>Filter</button>
           </div>
         </div>
 
@@ -294,6 +335,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             </tbody>
           </table>
         </div>
+        <Pagination current={page} total={total} limit={limit} onPageChange={setPage} />
       </div>
 
       {/* Modal Master Data */}
@@ -321,8 +363,8 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             <textarea className="form-control" value={stockNotes} onChange={(e) => setStockNotes(e.target.value)} placeholder="Contoh: Pembelian PO-2026-001" rows="3"></textarea>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
-            <button type="button" className="btn btn-secondary" onClick={() => setIsStockModalOpen(false)}>Batal</button>
-            <button type="submit" className="btn btn-primary" disabled={submittingStock}>
+            <button type="button" className="btn btn-secondary btn-cancel-bg" onClick={() => setIsStockModalOpen(false)}>Batal</button>
+            <button type="submit" className="btn btn-primary btn-button-bg" disabled={submittingStock}>
                 {submittingStock ? "Menyimpan..." : "Simpan Stok"}
             </button>
           </div>
@@ -388,7 +430,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             <p style={{ textAlign: "center", padding: "2rem", color: "#94a3b8" }}>Belum ada riwayat transaksi.</p>
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-            <button className="btn btn-secondary" onClick={() => setIsHistoryModalOpen(false)}>Tutup</button>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsHistoryModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>
@@ -405,7 +447,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
               <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b' }}>Tanggal Selesai</label>
               <input type="date" className="form-control" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ width: '160px' }} />
             </div>
-            <button className="btn btn-primary" onClick={handleFetchReport} disabled={reportLoading}>
+            <button className="btn btn-primary btn-button-bg" onClick={handleFetchReport} disabled={reportLoading}>
               {reportLoading ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-search"></i>} Filter
             </button>
           </div>
@@ -475,7 +517,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             )}
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-            <button className="btn btn-secondary" onClick={() => setIsReportModalOpen(false)}>Tutup</button>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsReportModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>
@@ -537,7 +579,7 @@ const TestingToolsPage = ({ title, appConfig, setSelectedApp, setModalType }) =>
             </table>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-            <button className="btn btn-secondary" onClick={() => setIsAuditModalOpen(false)}>Tutup</button>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsAuditModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>

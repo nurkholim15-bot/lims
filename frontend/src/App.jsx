@@ -56,6 +56,24 @@ function App() {
   const [user, setUser] = useState(null);
   const [appConfig, setAppConfig] = useState({});
 
+  useEffect(() => {
+    if (appConfig?.BUTTON_BG) {
+      document.documentElement.style.setProperty('--button-bg', appConfig.BUTTON_BG);
+    }
+    if (appConfig?.BUTTON_CANCEL_BG) {
+      document.documentElement.style.setProperty('--button-cancel-bg', appConfig.BUTTON_CANCEL_BG);
+    }
+    if (appConfig?.BUTTON_CLOSED_BG) {
+      document.documentElement.style.setProperty('--button-closed-bg', appConfig.BUTTON_CLOSED_BG);
+    }
+    if (appConfig?.BUTTON_REVISI_BG) {
+      document.documentElement.style.setProperty('--button-revisi-bg', appConfig.BUTTON_REVISI_BG);
+    }
+    if (appConfig?.BUTTON_REPORT_BG) {
+      document.documentElement.style.setProperty('--button-report-bg', appConfig.BUTTON_REPORT_BG);
+    }
+  }, [appConfig]);
+
   // Bootstrap session check on app load
   useEffect(() => {
     const bootstrapSession = async () => {
@@ -69,6 +87,7 @@ function App() {
             document.cookie = `auth_token=${activeToken}; path=/; SameSite=Lax`;
           }
           setToken(activeToken);
+          setUser(res.user);
         } else {
           localStorage.removeItem("is_logged_in");
           localStorage.removeItem("user");
@@ -248,6 +267,9 @@ function App() {
         const configData = await apiRequest("/config");
         if (configData) {
           setAppConfig(configData);
+          try {
+            localStorage.setItem("app_config", JSON.stringify(configData));
+          } catch (_) {}
           if (configData.MAX_PASSWORD_ATTEMPTS) {
             setMaxPasswordAttempts(parseInt(configData.MAX_PASSWORD_ATTEMPTS) || 3);
           }
@@ -361,6 +383,9 @@ function App() {
         const configData = await apiRequest("/config");
         if (configData) {
           setAppConfig(configData);
+          try {
+            localStorage.setItem("app_config", JSON.stringify(configData));
+          } catch (_) {}
         }
       } catch (err) {
         console.error("Failed to refetch config after master update:", err);

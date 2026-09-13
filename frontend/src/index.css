@@ -14,6 +14,10 @@
 
   --primary-color: #10b981;
   --primary-hover: #059669;
+  --button-bg: #0078d4;
+  --button-cancel-bg: #0078d4;
+  --button-closed-bg: #0078d4;
+  --button-revisi-bg: #0078d4;
   --bg-dark: var(--content-bg);
   --card-bg: #ffffff;
   --text-main: var(--content-text);
@@ -477,6 +481,56 @@ td {
 
 .btn-primary:hover {
   background: var(--primary-hover);
+}
+
+.btn-button-bg {
+  background-color: var(--button-bg, #0078d4) !important;
+  border-color: var(--button-bg, #0078d4) !important;
+  color: #ffffff !important;
+}
+
+.btn-button-bg:hover {
+  filter: brightness(0.9);
+}
+
+.btn-cancel-bg {
+  background-color: var(--button-cancel-bg, #0078d4) !important;
+  border-color: var(--button-cancel-bg, #0078d4) !important;
+  color: #ffffff !important;
+}
+
+.btn-cancel-bg:hover {
+  filter: brightness(0.9);
+}
+
+.btn-closed-bg {
+  background-color: var(--button-closed-bg, #0078d4) !important;
+  border-color: var(--button-closed-bg, #0078d4) !important;
+  color: #ffffff !important;
+}
+
+.btn-closed-bg:hover {
+  filter: brightness(0.9);
+}
+
+.btn-revisi-bg {
+  background-color: var(--button-revisi-bg, #0078d4) !important;
+  border-color: var(--button-revisi-bg, #0078d4) !important;
+  color: #ffffff !important;
+}
+
+.btn-revisi-bg:hover {
+  filter: brightness(0.9);
+}
+
+.btn-report-bg {
+  background-color: var(--button-report-bg, #0078d4) !important;
+  border-color: var(--button-report-bg, #0078d4) !important;
+  color: #ffffff !important;
+}
+
+.btn-report-bg:hover {
+  filter: brightness(0.9);
 }
 
 .btn-secondary {

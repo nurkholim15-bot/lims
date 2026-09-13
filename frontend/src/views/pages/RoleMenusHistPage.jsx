@@ -91,9 +91,9 @@ const RoleMenusHistPage = () => {
               <i className="fas fa-history"></i> Riwayat Seluruh Role
             </button>
             <button
+              className="btn btn-secondary btn-closed-bg"
               onClick={() => navigate("/welcome")}
               style={{
-                background: "#475569",
                 color: "white",
                 border: "none",
                 padding: "0.5rem 1rem",
@@ -211,7 +211,7 @@ const RoleMenusHistPage = () => {
             </table>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-            <button className="btn btn-secondary" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>

@@ -967,13 +967,27 @@ const AsistenLab = ({ user: rawUser = {}, appConfig = {} }) => {
                 </button>
               )}
 
+              <button
+                type="button"
+                className="btn btn-primary btn-button-bg"
+                onClick={() => {
+                  fetchSops();
+                  if (activeTab === "chat") fetchSessions();
+                }}
+                style={{ padding: "6px 12px", fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.3rem", borderRadius: "8px" }}
+                title="Segarkan Data"
+              >
+                <i className={`fas fa-sync-alt ${loadingSops ? "fa-spin" : ""}`}></i>
+                Refresh Data
+              </button>
+
               {messages.length > 0 && !isAgentChatActive && !selectedOperator && (
                 <button
-                  className="btn btn-secondary"
+                  className="btn btn-secondary btn-button-bg"
                   onClick={handleResetChat}
                   style={{ padding: "6px 12px", fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.3rem", borderRadius: "8px" }}
                 >
-                  <i className="fas fa-sync-alt"></i>
+                  <i className="fas fa-trash-alt"></i>
                   Reset
                 </button>
               )}
@@ -1125,7 +1139,7 @@ const AsistenLab = ({ user: rawUser = {}, appConfig = {} }) => {
               />
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-primary btn-button-bg"
                 disabled={loadingChat || !input.trim()}
                 style={{ 
                   padding: "0 1rem", 

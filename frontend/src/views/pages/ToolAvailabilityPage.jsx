@@ -21,12 +21,17 @@ const ToolAvailabilityPage = ({ setSelectedApp, setModalType }) => {
 
   const fetchData = async () => {
     setLoading(true);
-    const data = await apiRequest("/testing-tools");
-    if (data) {
-      setTools(data);
-      if (data.length > 0 && !selectedTool) setSelectedTool(data[0]);
+    try {
+      const data = await apiRequest("/testing-tools?nopaging=1");
+      const toolList = Array.isArray(data) ? data : (data?.data || []);
+      setTools(toolList);
+      if (toolList.length > 0 && !selectedTool) setSelectedTool(toolList[0]);
+    } catch (err) {
+      console.error("Failed to fetch testing tools:", err);
+      setTools([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -36,10 +41,16 @@ const ToolAvailabilityPage = ({ setSelectedApp, setModalType }) => {
   useEffect(() => {
     if (selectedTool && viewMode === "list") {
         const fetchReservations = async () => {
-            const res = await apiRequest(`/management/testing-tools/${selectedTool.code}/transactions`);
-            if (res) {
-                const filtered = selectedTool.type === 'STOCK' ? res : res.filter(h => h.reference_type === 'PLANNING');
-                setReservations(filtered);
+            try {
+              const res = await apiRequest(`/management/testing-tools/${selectedTool.code}/transactions`);
+              if (res) {
+                  const list = Array.isArray(res) ? res : (res?.data || []);
+                  const filtered = selectedTool.type === 'STOCK' ? list : list.filter(h => h.reference_type === 'PLANNING');
+                  setReservations(filtered);
+              }
+            } catch (err) {
+              console.error("Failed to fetch transactions:", err);
+              setReservations([]);
             }
         };
         fetchReservations();
@@ -146,7 +157,7 @@ const ToolAvailabilityPage = ({ setSelectedApp, setModalType }) => {
               <select
                 value={selectedTool?.code || ""}
                 onChange={(e) => {
-                  const tool = tools.find(t => t.code === e.target.value);
+                  const tool = Array.isArray(tools) ? tools.find(t => t.code === e.target.value) : null;
                   if (tool) setSelectedTool(tool);
                 }}
                 style={{
@@ -161,7 +172,7 @@ const ToolAvailabilityPage = ({ setSelectedApp, setModalType }) => {
                   background: '#f8fafc'
                 }}
               >
-                {tools.map(t => (
+                {(Array.isArray(tools) ? tools : []).map(t => (
                   <option key={t.code} value={t.code}>
                     {t.name} ({t.type})
                   </option>
@@ -170,7 +181,7 @@ const ToolAvailabilityPage = ({ setSelectedApp, setModalType }) => {
             ) : (
               <div className="table-container" style={{ maxHeight: '500px', overflowY: "auto", display: 'flex', flexDirection: 'column', paddingRight: '5px' }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", paddingBottom: '1rem' }}>
-                  {tools.map((t) => (
+                  {(Array.isArray(tools) ? tools : []).map((t) => (
                     <div
                       key={t.code}
                       onClick={() => setSelectedTool(t)}

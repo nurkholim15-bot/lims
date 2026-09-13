@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '@models/api';
 import html2pdf from 'html2pdf.js';
 import { useToast } from '@context/ToastContext';
@@ -13,6 +14,7 @@ const escapeHtml = (str) => {
 };
 
 const FinanceReportPage = ({ user, reportType = 'all' }) => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
@@ -228,13 +230,13 @@ const FinanceReportPage = ({ user, reportType = 'all' }) => {
                     <option key={y} value={y}>{y}</option>
                 ))}
             </select>
-            <button className="btn btn-secondary" onClick={handlePrint} style={{ background: '#475569', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}>
-                <i className="fas fa-print"></i> Print
+            <button className="btn btn-secondary btn-report-bg" onClick={handlePrint} style={{ color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <i className="fas fa-print"></i> Cetak Laporan
             </button>
-            <button className="btn btn-primary" onClick={fetchReport}>
+            <button className="btn btn-primary btn-button-bg" onClick={fetchReport}>
                 <i className="fas fa-sync-alt"></i> Refresh
             </button>
-            <button className="btn btn-secondary" onClick={() => window.location.href='/welcome'} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => navigate('/welcome')} style={{ color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <i className="fas fa-times"></i> Tutup
             </button>
         </div>

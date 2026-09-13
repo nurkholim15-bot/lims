@@ -5,7 +5,7 @@ import Modal from "@components/Modal";
 import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
-const RolesPage = ({ onChangeRole }) => {
+const RolesPage = ({ onChangeRole, checkPasswordRequirement, appConfig }) => {
   const navigate = useNavigate();
   console.log("RolesPage rendering...");
   const { showToast } = useToast();
@@ -23,10 +23,34 @@ const RolesPage = ({ onChangeRole }) => {
   const [histLoading, setHistLoading] = useState(false);
   const [selectedRoleId, setSelectedRoleId] = useState(null);
   
+  const getInitialLimit = () => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem("app_config") || "{}");
+      if (stored.PAGINATION_LIMIT) {
+        const parsed = parseInt(stored.PAGINATION_LIMIT, 10);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    } catch (_) {}
+    return 10;
+  };
+
   // Pagination State
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(getInitialLimit);
+
+  useEffect(() => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        setLimit(parsed);
+      }
+    }
+  }, [appConfig?.PAGINATION_LIMIT]);
 
   const fetchHistory = async (roleId = null) => {
     setHistLoading(true);
@@ -69,7 +93,7 @@ const RolesPage = ({ onChangeRole }) => {
     setLoading(true);
     try {
       const [roleData, menuData] = await Promise.all([
-        apiRequest(`/roles?page=${page}&search=${encodeURIComponent(searchQuery)}`), 
+        apiRequest(`/roles?page=${page}&limit=${limit}&search=${encodeURIComponent(searchQuery)}`), 
         apiRequest("/all-menus?nopaging=1")
       ]);
       
@@ -78,7 +102,9 @@ const RolesPage = ({ onChangeRole }) => {
         if (roleData && !Array.isArray(roleData) && roleData.metadata) {
           rawRoleData = roleData.data || [];
           setTotal(roleData.metadata.total || 0);
-          setLimit(roleData.metadata.limit || 10);
+          if (roleData.metadata.limit) {
+            setLimit(roleData.metadata.limit);
+          }
         } else if (roleData && !Array.isArray(roleData) && roleData.data) {
           rawRoleData = roleData.data;
           setTotal(rawRoleData.length);
@@ -100,7 +126,7 @@ const RolesPage = ({ onChangeRole }) => {
 
   useEffect(() => {
     fetchData();
-  }, [page, triggerSearch]);
+  }, [page, limit, triggerSearch]);
 
   const handleDelete = async (id) => {
     const confirmed = window.confirmAsync ? await window.confirmAsync("Apakah Anda yakin ingin menghapus role ini?") : confirm("Apakah Anda yakin ingin menghapus role ini?");
@@ -194,10 +220,10 @@ const RolesPage = ({ onChangeRole }) => {
             </div>
 
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "1rem" }}>
-              <button type="button" className="btn btn-secondary" onClick={closeForm}>
+              <button type="button" className="btn btn-secondary btn-cancel-bg" onClick={closeForm}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" className="btn btn-primary btn-button-bg">
                 Save Role & Menus
               </button>
             </div>
@@ -237,13 +263,13 @@ const RolesPage = ({ onChangeRole }) => {
             <button className="btn btn-secondary" onClick={handleShowAllHistory}>
               <i className="fas fa-history"></i> Riwayat Keseluruhan
             </button>
-            <button className="btn btn-primary" onClick={() => openForm(null)}>
+            <button className="btn btn-primary btn-button-bg" onClick={() => openForm(null)}>
               <i className="fas fa-plus"></i> Tambah Role
             </button>
             <button
+              className="btn btn-secondary btn-closed-bg"
               onClick={() => navigate("/welcome")}
               style={{
-                background: "#475569",
                 color: "white",
                 border: "none",
                 padding: "0.5rem 1rem",
@@ -376,7 +402,7 @@ const RolesPage = ({ onChangeRole }) => {
             </table>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-            <button className="btn btn-secondary" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsHistModalOpen(false)}>Tutup</button>
           </div>
         </div>
       </Modal>

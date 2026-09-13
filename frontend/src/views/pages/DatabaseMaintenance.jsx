@@ -642,11 +642,11 @@ const DatabaseMaintenance = ({ user }) => {
               ))}
             </div>
             <button
+              className="btn btn-secondary btn-closed-bg"
               onClick={() => navigate("/welcome")}
               style={{
-                background: "#0f766e",
                 color: "white",
-                border: "1px solid #14b8a6",
+                border: "none",
                 padding: "0.5rem 1rem",
                 borderRadius: "6px",
                 cursor: "pointer",

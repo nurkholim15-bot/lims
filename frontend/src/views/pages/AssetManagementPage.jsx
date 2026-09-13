@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
 import Modal from "@components/Modal";
 import BarcodeScannerModal from "@components/BarcodeScannerModal";
@@ -7,7 +8,8 @@ import { printAssetLabel, printAssetHandover } from "@utils/print";
 import { QRCodeSVG } from "qrcode.react";
 import { useToast } from '@context/ToastContext';
 
-const AssetManagementPage = ({ currentUser, appConfig }) => {
+const AssetManagementPage = ({ currentUser, user, appConfig, onClose }) => {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [assets, setAssets] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -389,10 +391,17 @@ const AssetManagementPage = ({ currentUser, appConfig }) => {
                   fontSize: "0.9rem"
                 }}
               />
-              <button className="btn" style={{ backgroundColor: "#1e293b", color: "white" }} onClick={() => startScanner("search")}>
+              <button className="btn btn-primary btn-button-bg" onClick={() => startScanner("search")}>
                 <i className="fas fa-barcode"></i> Scan
               </button>
-              <button className="btn btn-secondary" onClick={() => window.location.href='/welcome'} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', height: '38px' }}>
+              <button 
+                className="btn btn-secondary btn-closed-bg" 
+                onClick={() => {
+                  if (onClose) onClose();
+                  else navigate("/welcome");
+                }} 
+                style={{ color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', height: '38px' }}
+              >
                 <i className="fas fa-times"></i> Tutup
               </button>
             </div>
@@ -683,8 +692,8 @@ const AssetManagementPage = ({ currentUser, appConfig }) => {
            </div>
 
            <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "1.5rem" }}>
-              <button className="btn btn-secondary" disabled={isSubmitting} onClick={() => setShowMoveModal(false)}>Batal</button>
-              <button className="btn btn-primary" disabled={isSubmitting} onClick={submitActivity}>
+              <button className="btn btn-secondary btn-cancel-bg" disabled={isSubmitting} onClick={() => setShowMoveModal(false)}>Batal</button>
+              <button className="btn btn-primary btn-button-bg" disabled={isSubmitting} onClick={submitActivity}>
                 {isSubmitting ? <><i className="fas fa-spinner fa-spin"></i> Memproses...</> : "Simpan Perubahan"}
               </button>
            </div>

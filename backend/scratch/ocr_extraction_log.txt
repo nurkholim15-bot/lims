@@ -5,4 +5,10 @@ Total parameter diekstrak: 0
 [EXTRACTION PROCESS DETAILS]
 
 === RAW OCR TEXT ===
-170
+      Frekuensi Preset      Sinyal Masukan RF Evaluasi Parsial
+F1=40.00 MHzF 1=40.00 MHz   0.20 μV0.20 μ V    Sangat Peka
+F2=51.00 MHzF 2=51.00 MHz   0.24 μV0.24 μ V    Peka
+F3=54.00 MHzF 3=54.00 MHz   0.26 μV0.26 μ V    Peka
+F4=66.00 MHzF 4=66.00 MHz   0.31 μV0.31 μ V    Sedang (Mulai Menurun)
+F5=75.00 MHzF 5=75.00 MHz   0.34 μV0.34 μ V    Paling Kritis (maxmax)
+

@@ -232,7 +232,7 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
                 </select>
             </div>
 
-            <button className="btn btn-primary" onClick={handleCreate}>
+            <button className="btn btn-primary btn-button-bg" onClick={handleCreate}>
               <i className="fas fa-plus"></i> Buat SPD Baru
             </button>
           </div>
@@ -406,8 +406,8 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
                   </div>
 
                   <div className="travel-form-span-3 travel-form-buttons">
-                      <button type="button" className="btn btn-secondary" style={{ padding: '8px 20px' }} onClick={() => setShowForm(false)}>Batal</button>
-                      <button type="submit" className="btn btn-primary" style={{ padding: '8px 25px' }}>Simpan Pengajuan</button>
+                      <button type="button" className="btn btn-secondary btn-cancel-bg" style={{ padding: '8px 20px' }} onClick={() => setShowForm(false)}>Batal</button>
+                      <button type="submit" className="btn btn-primary btn-button-bg" style={{ padding: '8px 25px' }}>Simpan Pengajuan</button>
                   </div>
               </form>
           </Modal>
@@ -491,7 +491,7 @@ const TravelPage = ({ user, checkPasswordRequirement }) => {
                       </div>
                     )}
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                      <button className="btn btn-secondary" style={{ padding: '6px 15px' }} onClick={() => setShowDetail(false)}>Tutup</button>
+                      <button className="btn btn-secondary btn-closed-bg" style={{ padding: '6px 15px' }} onClick={() => setShowDetail(false)}>Tutup</button>
                       {isSupervisor && selectedReq.status === 'PENDING' && (
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button className="btn btn-danger" style={{ padding: '6px 15px' }} onClick={() => handleApprove(selectedReq, 'CANCELED')}>Reject</button>

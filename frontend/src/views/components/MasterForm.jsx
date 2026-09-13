@@ -948,10 +948,10 @@ const MasterForm = ({ item, initialData, endpoint, crudEndpoint, onSuccess, onCa
         paddingTop: "1.5rem",
         borderTop: "1px solid #f1f5f9"
       }}>
-        <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={loading} style={{ padding: "0.625rem 1.5rem", borderRadius: "8px", fontWeight: 600 }}>
+        <button type="button" className="btn btn-secondary btn-cancel-bg" onClick={onCancel} disabled={loading} style={{ padding: "0.625rem 1.5rem", borderRadius: "8px", fontWeight: 600 }}>
           Batal
         </button>
-        <button type="submit" className="btn btn-primary" disabled={loading} style={{ padding: "0.625rem 2rem", borderRadius: "8px", fontWeight: 700, backgroundColor: "#10b981", borderColor: "#10b981" }}>
+        <button type="submit" className="btn btn-primary btn-button-bg" disabled={loading} style={{ padding: "0.625rem 2rem", borderRadius: "8px", fontWeight: 700 }}>
           {loading ? "Menyimpan..." : "Simpan Data"}
         </button>
       </div>

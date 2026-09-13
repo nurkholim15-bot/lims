@@ -12,6 +12,22 @@ const WorkflowPage = ({ appConfig, apps = [], setApps, fetchApplications, stage,
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  const [currentAppConfig, setCurrentAppConfig] = useState(appConfig || {});
+
+  useEffect(() => {
+    if (appConfig && (appConfig.BUTTON_BG || Object.keys(appConfig).length > 0)) {
+      setCurrentAppConfig(appConfig);
+    } else {
+      apiRequest("/config").then(cfg => {
+        if (cfg) {
+          setCurrentAppConfig(prev => ({ ...prev, ...cfg }));
+        }
+      }).catch(e => console.error("Error fetching config in WorkflowPage:", e));
+    }
+  }, [appConfig]);
+
+  const buttonBg = currentAppConfig?.BUTTON_BG || appConfig?.BUTTON_BG;
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -216,12 +232,18 @@ const WorkflowPage = ({ appConfig, apps = [], setApps, fetchApplications, stage,
                 )}
                 <button 
                   type="button"
-                  className="btn btn-primary" 
+                  className={`btn btn-primary ${buttonBg ? "btn-button-bg" : ""}`} 
                   onClick={(e) => {
                       e.preventDefault();
                       handleSearch();
                   }} 
-                  style={{ height: "38px", width: isMobile ? "100%" : "auto", marginLeft: isMobile ? "0" : "auto", marginTop: isMobile ? "0.5rem" : "0" }}
+                  style={{ 
+                    height: "38px", 
+                    width: isMobile ? "100%" : "auto", 
+                    marginLeft: isMobile ? "0" : "auto", 
+                    marginTop: isMobile ? "0.5rem" : "0",
+                    ...(buttonBg ? { backgroundColor: buttonBg, borderColor: buttonBg, color: "#ffffff" } : {})
+                  }}
                   disabled={loading}
                 >
                   <i className={loading ? "fas fa-spinner fa-spin" : "fas fa-search"}></i> {stage === "query" ? "Cari Data" : "Filter"}
@@ -272,7 +294,15 @@ const WorkflowPage = ({ appConfig, apps = [], setApps, fetchApplications, stage,
                   </td>
                   {onAction && (
                     <td>
-                      <button className="btn btn-primary btn-sm" onClick={() => onAction(a)} style={{ fontSize: '0.75rem', padding: '4px 12px' }}>
+                      <button 
+                        className={`btn btn-primary btn-sm ${buttonBg ? "btn-button-bg" : ""}`} 
+                        onClick={() => onAction(a)} 
+                        style={{ 
+                          fontSize: '0.75rem', 
+                          padding: '4px 12px',
+                          ...(buttonBg ? { backgroundColor: buttonBg, borderColor: buttonBg, color: "#ffffff" } : {})
+                        }}
+                      >
                         <i className="fas fa-check-square"></i> {actionLabel}
                       </button>
                     </td>

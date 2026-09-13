@@ -356,14 +356,11 @@ func DeleteUserSession(c *gin.Context) {
 }
 
 func CleanupExpiredSessions(c *gin.Context) {
-	// Get cleanup hours from global parameters (default 1 hour)
-	var param models.GlobalParameter
-	cleanupHours := 1 // default
-	
-	if err := database.DB.Where("param_key = ?", "SESSION_CLEANUP_HOURS").First(&param).Error; err == nil {
-		if hours, err := strconv.Atoi(param.ParamValue); err == nil {
-			cleanupHours = hours
-		}
+	// Get cleanup hours from memory cache (default 1 hour)
+	cleanupHoursStr := models.GetGlobalParam("SESSION_CLEANUP_HOURS", "1")
+	cleanupHours, err := strconv.Atoi(cleanupHoursStr)
+	if err != nil || cleanupHours <= 0 {
+		cleanupHours = 1
 	}
 	
 	// Calculate the cutoff time (now - X hours)

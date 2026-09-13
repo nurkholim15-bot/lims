@@ -1,20 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@models/api";
+import Pagination from "@components/Pagination";
 import { useToast } from '@context/ToastContext';
 
-const UserSessionsPage = ({ refreshTrigger }) => {
+const UserSessionsPage = ({ refreshTrigger, appConfig }) => {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const getInitialLimit = () => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    try {
+      const stored = JSON.parse(localStorage.getItem("app_config") || "{}");
+      if (stored.PAGINATION_LIMIT) {
+        const parsed = parseInt(stored.PAGINATION_LIMIT, 10);
+        if (!isNaN(parsed) && parsed > 0) return parsed;
+      }
+    } catch (_) {}
+    return 10;
+  };
+
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(getInitialLimit);
+
+  useEffect(() => {
+    if (appConfig?.PAGINATION_LIMIT) {
+      const parsed = parseInt(appConfig.PAGINATION_LIMIT, 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        setLimit(parsed);
+      }
+    }
+  }, [appConfig?.PAGINATION_LIMIT]);
+
   const fetchSessions = async () => {
     setLoading(true);
     try {
-      const data = await apiRequest("/user-sessions");
+      const data = await apiRequest(`/user-sessions?page=${page}&limit=${limit}`);
       if (data) {
-        setSessions(Array.isArray(data) ? data : (data.data || []));
+        if (data.metadata) {
+          setSessions(data.data || []);
+          setTotal(data.metadata.total || 0);
+          if (data.metadata.limit) {
+            setLimit(data.metadata.limit);
+          }
+        } else {
+          const raw = Array.isArray(data) ? data : (data.data || []);
+          setSessions(raw);
+          setTotal(raw.length);
+        }
       }
     } catch (err) {
       console.error("Error fetching sessions:", err);
@@ -26,7 +65,7 @@ const UserSessionsPage = ({ refreshTrigger }) => {
 
   useEffect(() => {
     fetchSessions();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, page, limit]);
 
   const handleDelete = async (id) => {
     const confirmed = window.confirmAsync ? await window.confirmAsync("Apakah Anda yakin ingin menghapus sesi ini?") : confirm("Apakah Anda yakin ingin menghapus sesi ini?");
@@ -120,9 +159,9 @@ const UserSessionsPage = ({ refreshTrigger }) => {
               {loading ? "Memproses..." : "Bersihkan Sesi Kadaluarsa"}
             </button>
             <button
+              className="btn btn-secondary btn-closed-bg"
               onClick={() => navigate("/welcome")}
               style={{
-                background: "#475569",
                 color: "white",
                 border: "none",
                 padding: "0.6rem 1.2rem",
@@ -150,7 +189,8 @@ const UserSessionsPage = ({ refreshTrigger }) => {
             <p>Tidak ada data sesi</p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto", maxHeight: "65vh", overflowY: "auto", borderBottom: "1px solid #e5e7eb" }}>
+          <>
+            <div style={{ overflowX: "auto", maxHeight: "65vh", overflowY: "auto", borderBottom: "1px solid #e5e7eb" }}>
             <table
               style={{
                 width: "100%",
@@ -242,6 +282,8 @@ const UserSessionsPage = ({ refreshTrigger }) => {
               </tbody>
             </table>
           </div>
+            <Pagination current={page} total={total} limit={limit} onPageChange={setPage} />
+          </>
         )}
       </div>
     </div>

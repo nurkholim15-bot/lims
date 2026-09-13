@@ -17,7 +17,7 @@ import (
 
 func GetTestingTools(c *gin.Context) {
 	var tools []models.TestingTool
-	query := database.DB.Preload("Location.City")
+	query := database.DB.Model(&models.TestingTool{}).Preload("Location.City")
 
 	if locationCode := c.Query("location_code"); locationCode != "" {
 		query = query.Where("location_code = ?", locationCode)
@@ -28,8 +28,33 @@ func GetTestingTools(c *gin.Context) {
 		query = query.Where("code ILIKE ? OR name ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 
-	query.Find(&tools)
-	c.JSON(http.StatusOK, tools)
+	if c.Query("nopaging") == "1" || c.Query("all") == "1" {
+		if err := query.Order("code asc").Find(&tools).Error; err != nil {
+			views.Error(c, http.StatusInternalServerError, "Gagal mengambil data", err.Error())
+			return
+		}
+		views.Success(c, tools, "Data alat pengujian retrieved")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	defaultLimit := models.GetGlobalParam("PAGINATION_LIMIT", "10")
+	if c.Query("dropdown") == "1" {
+		defaultLimit = models.GetGlobalParam("PAGINATION_DROPDOWN_LIMIT", "50")
+	}
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", defaultLimit))
+	offset := (page - 1) * limit
+
+	var total int64
+	query.Count(&total)
+
+	err := query.Order("code asc").Limit(limit).Offset(offset).Find(&tools).Error
+	if err != nil {
+		views.Error(c, http.StatusInternalServerError, "Gagal mengambil data", err.Error())
+		return
+	}
+
+	views.SuccessWithPaging(c, tools, "Data alat pengujian retrieved", total, page, limit)
 }
 
 func CreateTestingTool(c *gin.Context) {

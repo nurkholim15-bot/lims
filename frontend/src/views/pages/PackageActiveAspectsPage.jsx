@@ -271,8 +271,8 @@ const PackageActiveAspectsPage = ({ checkPasswordRequirement }) => {
           </button>
           <button
             onClick={handleOpenAddModal}
-            className="btn"
-            style={{ background: "#ffffff", color: "#065f46", fontWeight: 600, border: "none" }}
+            className="btn btn-button-bg"
+            style={{ color: "#fff", fontWeight: 600, border: "none" }}
           >
             <i className="fas fa-plus-circle" style={{ marginRight: "0.5rem" }}></i> Tambah Aspek
           </button>
@@ -567,7 +567,7 @@ const PackageActiveAspectsPage = ({ checkPasswordRequirement }) => {
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.5rem" }}>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-cancel-bg"
               onClick={() => setIsAddModalOpen(false)}
               disabled={submitting}
             >
@@ -575,9 +575,8 @@ const PackageActiveAspectsPage = ({ checkPasswordRequirement }) => {
             </button>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary btn-button-bg"
               disabled={submitting || selectedAspectsToAdd.length === 0}
-              style={{ background: "#059669" }}
             >
               {submitting ? (
                 <span><i className="fas fa-spinner fa-spin"></i> Menyimpan...</span>
@@ -606,7 +605,7 @@ const PackageActiveAspectsPage = ({ checkPasswordRequirement }) => {
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-cancel-bg"
               onClick={() => setDeleteConfirmItem(null)}
               disabled={deleting}
             >
@@ -709,7 +708,7 @@ const PackageActiveAspectsPage = ({ checkPasswordRequirement }) => {
           </div>
 
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-            <button className="btn btn-secondary" onClick={() => setIsHistModalOpen(false)}>
+            <button className="btn btn-secondary btn-closed-bg" onClick={() => setIsHistModalOpen(false)}>
               Tutup
             </button>
           </div>

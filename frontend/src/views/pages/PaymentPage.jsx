@@ -222,7 +222,7 @@ const PaymentPage = ({ currentUser, appConfig }) => {
                   disabled={loading}
                   style={{ height: '50px', fontSize: '1.1rem', flex: 1 }}
                 />
-                <button type="submit" className="btn btn-primary" disabled={loading || !searchQuery} style={{ height: '50px', borderRadius: '10px', padding: '0 16px', fontSize: '1.1rem', flexShrink: 0, width: 'auto' }}>
+                <button type="submit" className="btn btn-primary btn-button-bg" disabled={loading || !searchQuery} style={{ height: '50px', borderRadius: '10px', padding: '0 16px', fontSize: '1.1rem', flexShrink: 0, width: 'auto' }}>
                   {loading ? <i className="fas fa-spinner fa-spin"></i> : <><i className="fas fa-search"></i><span className="btn-cari-text" style={{ marginLeft: '4px' }}>Cari</span></>}
                 </button>
               </div>
@@ -417,7 +417,7 @@ const PaymentPage = ({ currentUser, appConfig }) => {
                         onChange={(e) => setPaymentForm(prev => ({ ...prev, reference_no: e.target.value }))}
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary w-full" disabled={submitting}>
+                    <button type="submit" className="btn btn-primary btn-button-bg w-full" disabled={submitting}>
                       {submitting ? 'Memproses...' : 'Konfirmasi Pembayaran'}
                     </button>
                   </form>

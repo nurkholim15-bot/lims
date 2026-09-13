@@ -161,7 +161,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const [currentAppConfig, setCurrentAppConfig] = useState(appConfig || {});
 
   useEffect(() => {
-    if (appConfig && appConfig.DROPDOWN_PILIHAN) {
+    if (appConfig && (appConfig.DROPDOWN_PILIHAN || Object.keys(appConfig).length > 0)) {
       setCurrentAppConfig(appConfig);
     } else {
       apiRequest("/config").then(cfg => {
@@ -1919,7 +1919,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                       title={(!isReady && isCheckingEnabled) ? `Lokasi asset (${assetLoc}) tidak sesuai dengan target (${targetLocForAspect}) atau status bukan ${checkinCode}` : ""}
                       disabled={isActuallyDisabled || (isSaved && !isActuallyDisabled && !isEditing)}
                       style={{ 
-                        background: (isSaved && !isEditing) ? "#10b981" : (!isReady && isCheckingEnabled) ? "#f1f5f9" : color, 
+                        background: (isSaved && !isEditing) ? "#10b981" : (!isReady && isCheckingEnabled) ? "#f1f5f9" : (appConfig?.BUTTON_BG || "var(--button-bg, #0078d4)"), 
                         color: (!isReady && isCheckingEnabled && !isSaved) ? "#64748b" : "white", 
                         border: (!isReady && isCheckingEnabled && !isSaved) ? `1px dashed ${color}` : "none", 
                         borderRadius: "8px", 
@@ -2548,12 +2548,15 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
 
               {stage === "analysis" && (
                 <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <button className="btn btn-secondary btn-sm" onClick={onCancel}>
+                  <button className="btn btn-secondary btn-sm btn-closed-bg" onClick={onCancel}>
+                    Tutup
+                  </button>
+                  <button className="btn btn-danger btn-sm btn-cancel-bg" onClick={onCancel}>
                     Batal
                   </button>
                   {aiReportEnabled && (
                     <button
-                      className="btn btn-outline-info btn-sm"
+                      className="btn btn-primary btn-sm btn-button-bg"
                       disabled={aiGenerating}
                       onClick={handleGenerateAIReport}
                     >
@@ -2561,7 +2564,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     </button>
                   )}
                   <button
-                    className="btn btn-outline-success btn-sm"
+                    className="btn btn-primary btn-sm btn-button-bg"
                     onClick={() => printTechnicalReport({ ...localApp, testing_report_ai: { report_ai: conclusion } }, executionData, locations, {
                       appConfig: appConfig,
                       headerTitle: appConfig.REPORT_HEADER_TITLE
@@ -2570,7 +2573,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     <i className="fas fa-print"></i> Print Laporan
                   </button>
                   <button
-                    className="btn btn-danger btn-sm"
+                    className="btn btn-danger btn-sm btn-revisi-bg"
                     onClick={() => {
                       if (!notes || !notes.trim()) {
                         alert("Catatan revisi wajib diisi!");
@@ -2582,7 +2585,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                     Revisi
                   </button>
                   <button
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-primary btn-sm btn-button-bg"
                     onClick={() => {
                       // Blokade jika user overide tetapi diam
                       if (overrideStatus && (!notes || !notes.trim())) {
@@ -2645,14 +2648,14 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           {renderAspectGroups("Pengujian Lapangan", fieldTests, "fas fa-mountain", "#92400e", "#fffbeb")}
           {renderAspectGroups("Pengujian Lainnya / Umum", otherTests, "fas fa-clipboard-check", "#475569", "#f1f5f9")}
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2.5rem", gap: "1rem" }}>
-            <button className="btn btn-outline-primary" onClick={fetchAppDetail} disabled={loading} style={{ padding: "10px 20px" }}>
+            <button className="btn btn-primary btn-button-bg" onClick={fetchAppDetail} disabled={loading} style={{ padding: "10px 20px" }}>
               <i className={`fas fa-sync-alt ${loading ? "fa-spin" : ""}`}></i> {loading ? "Refreshing..." : "Refresh Data"}
             </button>
-            <button className="btn btn-secondary" onClick={onCancel} style={{ padding: "10px 20px" }}>
+            <button className="btn btn-secondary btn-closed-bg" onClick={onCancel} style={{ padding: "10px 20px" }}>
               Tutup
             </button>
             <button 
-              className="btn btn-primary" 
+              className="btn btn-primary btn-button-bg" 
               onClick={() => {
                 // Get all unique aspect codes
                 const allAspects = Array.from(new Set(executionData.map(r => r.aspect_code)));
@@ -2703,13 +2706,24 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               placeholder="Tambahkan catatan di sini..."
             ></textarea>
             <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", marginTop: "0.25rem" }}>
-              <button className="btn btn-secondary btn-sm" onClick={onCancel} style={{ padding: "6px 16px", borderRadius: "6px" }}>
+              <button className="btn btn-secondary btn-sm btn-closed-bg" onClick={onCancel} style={{ padding: "6px 16px", borderRadius: "6px" }}>
                 Tutup
               </button>
-              <button className="btn btn-danger btn-sm" onClick={() => handleAction("REVISI")} style={{ padding: "6px 16px", borderRadius: "6px" }}>
+              <button 
+                className="btn btn-danger btn-sm btn-cancel-bg" 
+                onClick={() => {
+                  if (window.confirm("Apakah Anda yakin ingin membatalkan (Cancel) pengajuan ini?")) {
+                    handleAction("REJECT");
+                  }
+                }} 
+                style={{ padding: "6px 16px", borderRadius: "6px" }}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-danger btn-sm btn-revisi-bg" onClick={() => handleAction("REVISI")} style={{ padding: "6px 16px", borderRadius: "6px" }}>
                 Revisi
               </button>
-              <button className="btn btn-primary btn-sm" onClick={() => handleAction("VERIFY")} style={{ padding: "6px 20px", borderRadius: "6px", fontWeight: 700 }}>
+              <button className="btn btn-primary btn-sm btn-button-bg" onClick={() => handleAction("VERIFY")} style={{ padding: "6px 20px", borderRadius: "6px", fontWeight: 700 }}>
                 Terima
               </button>
             </div>
@@ -2726,13 +2740,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           </h4>
           {renderAnalysisView()}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.5rem" }}>
-            <button className="btn btn-secondary" onClick={onCancel}>
+            <button className="btn btn-secondary btn-closed-bg" onClick={onCancel}>
               Tutup
             </button>
              {isAlreadyCertified ? (
               <>
                 <button 
-                  className="btn btn-primary" 
+                  className="btn btn-primary btn-button-bg" 
                   onClick={() => {
                     printTechnicalReport({ ...localApp, testing_report_ai: { report_ai: conclusion } }, executionData, locations, {
                       appConfig: appConfig,
@@ -2747,14 +2761,14 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               </>
             ) : (
               <>
-                <button className="btn btn-outline-success" onClick={() => printTechnicalReport({ ...localApp, testing_report_ai: { report_ai: conclusion } }, executionData, locations, {
+                <button className="btn btn-outline-success btn-button-bg" onClick={() => printTechnicalReport({ ...localApp, testing_report_ai: { report_ai: conclusion } }, executionData, locations, {
                   appConfig: appConfig,
                   headerTitle: appConfig.REPORT_HEADER_TITLE
                 })} style={{ padding: "10px 25px" }}>
-                  <i className="fas fa-file-alt"></i> Pratinjau Laporan
+                  <i className="fas fa-file-alt"></i> Pratinjau
                 </button>
                 <button
-                  className="btn btn-success"
+                  className="btn btn-success btn-button-bg"
                   onClick={() => {
                     if (overrideStatus && (!notes || !notes.trim())) {
                       alert("PERINTAH OVERRIDE DITOLAK: Anda wajib mengisi rincian catatan dengan detail mengapa hasil akhir diubah.");
@@ -2777,7 +2791,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       const statusUpper = (localApp.status || "").toUpperCase();
       return (
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.5rem" }}>
-          <button className="btn btn-secondary" onClick={onCancel}>
+          <button className="btn btn-secondary btn-closed-bg" onClick={onCancel}>
             Tutup
           </button>
           {(["REGISTERED", "VERIFIED", "APPROVED"].includes(statusUpper) || ["EXECUTED", "ANALYZED", "REPORTING", "CERTIFIED", "FINALIZED"].includes(statusUpper)) && (
@@ -2792,7 +2806,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                 </button>
               )}
               <button 
-                className="btn btn-outline-success" 
+                className={`btn ${["REGISTERED", "VERIFIED", "APPROVED"].includes(statusUpper) ? "btn-outline-success" : "btn-report-bg"}`}
                 onClick={() => {
                   if (["REGISTERED", "VERIFIED", "APPROVED"].includes(statusUpper)) {
                     printRegistrationProof(localApp, appConfig);

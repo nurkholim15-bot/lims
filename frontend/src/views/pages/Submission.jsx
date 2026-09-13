@@ -86,7 +86,7 @@ const Submission = ({ currentUser, onOpenModal, applications = [], appConfig = {
       <div className="card">
         <div className="card-title" style={{ marginBottom: "0.25rem" }}>
           <span>Registrasi & Pengajuan Uji</span>
-          <button className="btn btn-primary" onClick={() => onOpenModal()}>
+          <button className="btn btn-primary btn-button-bg" onClick={() => onOpenModal()}>
             <i className="fas fa-plus"></i> Buat Pengajuan Baru
           </button>
         </div>
@@ -132,7 +132,7 @@ const Submission = ({ currentUser, onOpenModal, applications = [], appConfig = {
                       <button className="btn btn-secondary" style={{ fontSize: "0.7rem", padding: "4px 8px" }} onClick={() => printRegistrationProof(a, appConfig)}>
                         <i className="fas fa-print"></i> Bukti
                       </button>
-                      <button className="btn" style={{ fontSize: "0.7rem", padding: "4px 8px", backgroundColor: "#8b5cf6", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }} onClick={() => handleShowAuditHistory(a)}>
+                      <button className="btn btn-button-bg" style={{ fontSize: "0.7rem", padding: "4px 8px", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }} onClick={() => handleShowAuditHistory(a)}>
                         <i className="fas fa-history"></i> History
                       </button>
                       {(currentUser?.role === "OPERATOR_REG" || currentUser?.role === "OPERATOR" || currentUser?.role === "ADMIN") && 
@@ -141,7 +141,7 @@ const Submission = ({ currentUser, onOpenModal, applications = [], appConfig = {
                           <button className="btn btn-primary" style={{ fontSize: "0.7rem", padding: "4px 8px" }} onClick={() => onOpenModal(a)}>
                             Edit
                           </button>
-                          <button className="btn btn-danger" style={{ fontSize: "0.7rem", padding: "4px 8px" }} onClick={() => handleCancel(a)}>
+                          <button className="btn btn-danger btn-cancel-bg" style={{ fontSize: "0.7rem", padding: "4px 8px" }} onClick={() => handleCancel(a)}>
                             Cancel
                           </button>
                         </>

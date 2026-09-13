@@ -51,6 +51,9 @@ Dokumen ini menyajikan prasyarat perangkat lunak, arsitektur teknis lengkap, alu
   - [I. Pemantauan & Pemeliharaan (Checklist)](#i-pemantauan--pemeliharaan-checklist)
   - [J. Pelatihan Model AI (PQC) & Penjadwalan Otomatis (Crontab)](#j-pelatihan-model-ai-pqc--penjadwalan-otomatis-crontab)
   - [K. Administrasi & Pemeliharaan Modul Pendukung (PostgreSQL, MinIO, Camunda)](#k-administrasi--pemeliharaan-modul-pendukung-postgresql-minio-camunda)
+    - [Panduan Lengkap Konfigurasi Tablespace PostgreSQL & Linux OS (From Scratch)](#6-panduan-lengkap-konfigurasi-tablespace-postgresql--linux-os-from-scratch)
+    - [Panduan Inisialisasi Database LIMS (User, Owner, Schema, & Extension)](#7-panduan-inisialisasi-database-lims-user-owner-schema--extension)
+    - [Backup & Restore Database PostgreSQL (Web UI, CLI, & Windows/Linux)](#8-backup--restore-database-postgresql-web-ui-cli--windowslinux)
   - [L. Akses LIMS dari Internet (Ngrok Dev & Produksi Asli)](#l-akses-lims-dari-internet-ngrok-dev-amp-produksi-asli)
   - [M. Ringkasan Lokasi Berkas Log LIMS](#m-ringkasan-lokasi-berkas-log-lims)
   - [N. Ringkasan Perintah Manajemen Modul LIMS (Start, Stop, Status)](#n-ringkasan-perintah-manajemen-modul-lims-start-stop-status)
@@ -205,6 +208,10 @@ sudo npm install -g pm2 pm2-logrotate
 sudo apt install postgresql postgresql-contrib -y
 sudo apt install postgresql-$(pgcode=$(psql --version | egrep -o '[0-9]+' | head -n1); echo $pgcode)-pgvector -y
 ```
+
+> [!TIP]
+> Untuk deployment lingkungan produksi dengan skalabilitas tinggi, sangat disarankan menyiapkan **PostgreSQL Tablespace** pada partisi disk/NVMe terpisah dari awal instalasi (panduan lengkap konfigurasi Linux OS & Tablespace tersedia di [Bagian 8.K.6](#6-panduan-lengkap-konfigurasi-tablespace-postgresql--linux-os-from-scratch)).
+
 
 ##### 5. Pasang Utilitas PDF Parser (Untuk RAG Chatbot)
 ```bash
@@ -518,6 +525,8 @@ graph TD
     ) PARTITION BY RANGE (created_at);
     ```
   - Untuk setiap bulan baru, database membuat tabel partisi turunan seperti `lims.testing_applications_YYYYMM` secara dinamis.
+  - **Dukungan Tablespace Multi-Tier (Storage Tiering)**: Setiap tabel partisi bulanan dapat diarahkan ke Tablespace fisik tertentu. Partisi bulan berjalan yang memerlukan performa I/O tinggi dialokasikan pada tablespace utama berbasis SSD/NVMe (misal `TABLESPACE ts_data_lims`), sedangkan partisi historis lama dapat direlokasi ke tablespace berbasis cold-storage/HDD (misal `TABLESPACE ts_archive_lims`) menggunakan perintah `ALTER TABLE lims.testing_applications_YYYYMM SET TABLESPACE ts_archive_lims;` (panduan komprehensif konfigurasi OS Linux & PostgreSQL Tablespace dapat dipelajari di [Bagian 8.K.6](#6-panduan-lengkap-konfigurasi-tablespace-postgresql--linux-os-from-scratch)).
+
 
 ---
 
@@ -666,6 +675,292 @@ Untuk mencegah penyalahgunaan sesi dan mengamankan LIMS dari ancaman luar (seper
   - `POST /api/applications/:id/plan` - Menyimpan plot jadwal dan tester.
   - `PUT /api/applications/:id/execute` - Menyimpan nilai aktual hasil uji per sub-aspek.
 * **Tabel Terkait**: `lims.testing_plans`, `lims.tester_applications`, `lims.master_testers`, `lims.testing_results`.
+
+---
+
+#### A. Dokumen Spesifikasi & Petunjuk Pengujian Radio Carima (Studi Kasus Referensi Pengujian Dinas)
+
+Panduan operasional pengujian dinas dan konfigurasi sistem LIMS (*Laboratory Information Management System*) untuk pengujian perangkat **Radio Komunikasi Carima**.
+
+Pengujian dibagi menjadi dua kelompok utama:
+1. **Butir 15. Kemampuan**:
+   - a. Penerimaan (*Receive Characteristics*)
+   - b. Pemancaran (*Transmitter Characteristics*)
+   - c. Jarak Capai (*Operational Range & Coverage*)
+2. **Butir 16. Kelancaran Kerja**:
+   - Ketahanan fisik, mekanik, lingkungan (*Environmental & Ruggedness Tests*), serta ketahanan beban transmisi.
+
+---
+
+##### 1. Pemetaan Parameter ke Sistem LIMS
+
+Hierarki data di LIMS:
+$$\text{Metodologi Uji} \longrightarrow \text{Aspek Scoring} \longrightarrow \text{Sub-Aspek Scoring} \longrightarrow \text{Item Rubrik Penilaian}$$
+
+###### a. Aspek Penerimaan (`KEPEN`) — Metodologi: `AKLAP` / `ALKOM`
+*Standar Kelulusan Skor: $\ge 65\%$*
+
+| No | Kode Sub-Aspek | Parameter Uji | Satuan | Standar Acuan | Tipe Batas Kritis | Alat Uji yang Digunakan |
+| :---: | :---: | :--- | :---: | :---: | :---: | :--- |
+| 1 | `KESEN` | Sensitifitas Penerima | $\mu\text{V}$ | $\le 0.35\ \mu\text{V}$ (Normal: $0 - 0.30\ \mu\text{V}$) | **Maksimum ($\max$)** | Generator FM, Distortion Analyzer, VTVM |
+| 2 | `KESEL` | Selektifitas Penerima | $\text{dB}$ | $\le 8\ \text{dB}$ | **Maksimum ($\max$)** | Generator FM, Signal Generator, Frekuensi Counter |
+| 3 | `KEDAI` | Daya Output Audio | $\text{mW}$ | $\ge 160\ \text{mW}$ | **Minimum ($\min$)** | Generator FM, Distortion Analyzer, Beban Dummy Handset |
+| 4 | `KELCH` | Sensitifitas Squelch | $\mu\text{V}$ | $\le 0.35\ \mu\text{V}$ (Normal: $\le 0.30\ \mu\text{V}$) | **Maksimum ($\max$)** | Signal Generator, Audio Generator, Oscilloscope |
+| 5 | `KERUS` | Pemakaian Arus Penerima | $\text{mA}$ | $\le 150\ \text{mA}$ (Toleransi: $150 - 200\ \text{mA}$) | **Maksimum ($\max$)** | Ampere Meter DC, Catu Daya 12.5 V |
+| 6 | `KESUA` | Kekerasan Suara Audio | $\text{dB}$ | $17 - 25\ \text{dB}$ | **Rentang (*Range*)** | Audio Meter, Radio Pemancar Referensi |
+
+###### b. Aspek Pemancaran (`KOCAR`) — Metodologi: `AKLAP`
+*Standar Kelulusan Skor: $\ge 65\%$*
+
+| No | Kode Sub-Aspek | Parameter Uji | Satuan | Standar Acuan | Tipe Batas Kritis | Alat Uji yang Digunakan |
+| :---: | :---: | :--- | :---: | :---: | :---: | :--- |
+| 1 | `KEDRF` | Daya Keluar RF (*RF Output Power*) | $\text{Watt}$ | $\ge 5\ \text{W}$ (Normal: $5 - 7\ \text{W}$) | **Minimum ($\min$)** | RF Watt Meter, Dummy Load 50 $\Omega$ |
+| 2 | `KENEL` | SWR untuk Semua Channel | Ratio | $\le 1.5$ (Toleransi: $\le 2.0$) | **Maksimum ($\max$)** | SWR Meter, Berbagai Macam Antena Uji |
+| 3 | `KERAN` | Tipe Pancaran | Kualitatif | Telephony (FM / F3E) | Kualitatif | Oscilloscope RF, Modulation Meter |
+| 4 | `KERJA` | Frekuensi Kerja | $\text{MHz}$ | $30.00 - 88.00\ \text{MHz}$ | Batas Rentang | Frekuensi Counter, Signal Generator |
+| 5 | `KEJUM` | Jumlah Kanal (*Channel Capacity*) | Kanal | Sesuai formula rentang frekuensi | Nilai Nominal | Analisis Matematis & Uji Penalaan |
+| 6 | `KERAK` | Jarak Antar Kanal (*Channel Spacing*) | $\text{KHz}$ | $25\ \text{KHz}$ atau $50\ \text{KHz}$ | Nilai Nominal | Signal Generator, Frekuensi Counter |
+| 7 | `KENAL` | Preset Kanal | Kualitatif | Min. 4 kanal preset tersimpan | Kualitatif | Panel Operasi Carima |
+| 8 | `KETER` | Pengaman Transmisi / Frekuensi | Kualitatif | Proteksi aktif & stabil | Kualitatif | Panel Uji Carima |
+| 9 | `KETEL` | Ketelitian Frekuensi (*Stability*) | $\text{ppm} / \text{Hz}$ | $\Delta f \le \pm 1\ \text{KHz}$ | **Deviasi Absolut** | Frekuensi Counter Presisi |
+| 10 | `KEPAN` | Pemakaian Arus Pancar | $\text{Ampere}$ | Sesuai spesifikasi manual | **Maksimum ($\max$)** | Ampere Meter DC, Catu Daya 12.5 V, Dummy 50 $\Omega$ |
+| 11 | `KEAAN` | Sistem Penalaan | Kualitatif | Cepat, presisi, tanpa selip | Kualitatif | Panel Pelayanan Radio |
+| 12 | `KENAG` | Karakteristik Sumber Tenaga | $\text{Volt}$ | Stabil pada $11 - 14\ \text{V}$ | Rentang Tegangan | Catu Daya DC Variabel, Watt Meter |
+
+###### c. Aspek Jarak Capai (`KOJAR`) — Metodologi: `AKLAP`
+*Standar Kelulusan Skor: $\ge 65\%$*
+
+| No | Kode Sub-Aspek | Medan Pengujian | Jarak Acuan Minimal | Tipe Batas Kritis | Kondisi Operasi |
+| :---: | :---: | :--- | :---: | :---: | :--- |
+| 1 | `KETAN` | Medan Tanpa Hambatan (*Line of Sight*) | $\ge 4\ \text{km}$ | **Minimum ($\min$)** | Medan terbuka datar |
+| 2 | `KETUP` | Medan Tertutup (Hutan / Gunung) | $\ge 2\ \text{km}$ | **Minimum ($\min$)** | Kanopi lebat / punggungan bukit |
+| 3 | `KEANG` | Medan Pantai (Siang Hari) | $\ge 3\ \text{km}$ | **Minimum ($\min$)** | Siang hari (panas, salinitas laut) |
+| 4 | `KELAM` | Medan Pantai (Malam Hari) | $\ge 4\ \text{km}$ | **Minimum ($\min$)** | Malam hari |
+| 5 | `KEKOS` | Medan Perkotaan (Siang Hari) | $\ge 1\ \text{km}$ | **Minimum ($\min$)** | Halangan gedung, interferensi RF perkotaan |
+| 6 | `KEKOM` | Medan Perkotaan (Malam Hari) | $\ge 2\ \text{km}$ | **Minimum ($\min$)** | Malam hari |
+| 7 | `KEPUR` | Medan Gunung Kapur / Karst | $\ge 3\ \text{km}$ | **Minimum ($\min$)** | Pantulan karst/kapur |
+| 8 | `KERET` | Medan Hutan Karet | $\ge 2\ \text{km}$ | **Minimum ($\min$)** | Pola kerapatan pohon karet |
+
+###### d. Aspek Kelancaran Kerja & Lingkungan (`KEKER`) — Metodologi: `MANAG`
+*Standar Kelulusan Skor: $\ge 65\%$ (Kriteria: Normal / Tahan = 100%, Malfungsi = 20%)*
+
+| No | Kode Sub-Aspek | Jenis Uji | Parameter Teknis Uji | Alat yang Dibutuhkan |
+| :---: | :---: | :--- | :--- | :--- |
+| 1 | `KEBAN` | Memancar Tanpa Beban | Lepas antena 1 menit saat memancar, lalu receive 10 menit | Watt Meter, Catu Daya |
+| 2 | `KEANT` | Antena Hubung Singkat | Hubungkan pin antena ke bodi 1 menit saat memancar, lalu receive 10 menit | Watt Meter, Catu Daya |
+| 3 | `KEHAN` | Uji Goncangan (*Jolting*) | Amplitudo 3 cm, frekuensi 50–120 siklus/menit, 3 sumbu @20 menit (total 1 jam) | Meja Goncang (*Jolting Table*) |
+| 4 | `KEGET` | Uji Getaran (*Vibration*) | Frekuensi 10–15 Hz (langkah 1 Hz), amplitudo $\ge 0.8\text{ mm}$, 3 sumbu | Meja Getar (*Vibration Table*) |
+| 5 | `KETUR` | Uji Benturan (*Impact*) | Kemiringan 60° terhadap daun meja jati 5 cm, 4x pembenturan tiap sisi | Meja Kayu Jati Tebal 5 cm |
+| 6 | `KEDAP` | Uji Penjatuhan (*Drop*) | Ketinggian 120 cm pada papan jati bertulang beton (26 kali jatuhan) | Landasan Uji Jatuh 120 cm |
+| 7 | `KEACA` | Uji Suhu / Cuaca Ekstrim | Oven $+50^\circ\text{C}$ selama 1 jam, dilanjutkan Freezer $-20^\circ\text{C}$ selama 1 jam | Chamber Oven & Freezer |
+| 8 | `KEAIR` | Uji Kedap Air (*Immersion*) | Rendam air tawar kedalaman 1 meter selama 2 jam, suhu air $26^\circ\text{C}$ | Bak Perendam 1 m |
+| 9 | `KEOPE` | Ketahanan Operasi Kontinu | Operasi menyala dan berkomunikasi terus-menerus selama $1 \times 24$ jam | Catu Daya DC 12.5 V |
+
+---
+
+##### 2. Formula Perhitungan & Cara Kerja Sistem LIMS
+
+###### a. Formula Rasio Gelombang Tegak (SWR - Standing Wave Ratio)
+Berdasarkan dokumen teknis dinas:
+$$\text{SWR} = \frac{P_{\text{pancar}} + P_{\text{refleksi}}}{P_{\text{pancar}} - P_{\text{refleksi}}}$$
+
+Secara teori saluran transmisi RF presisi menggunakan koefisien refleksi ($\Gamma$):
+$$\Gamma = \sqrt{\frac{P_{\text{refleksi}}}{P_{\text{pancar}}}}, \quad \text{SWR} = \frac{1 + \Gamma}{1 - \Gamma}$$
+
+*Contoh Perhitungan:*
+- Daya Pancar Maju ($P_{\text{pancar}}$) = $5.0\text{ Watt}$
+- Daya Pantul Refleksi ($P_{\text{refleksi}}$) = $0.2\text{ Watt}$
+$$\text{SWR} = \frac{5.0 + 0.2}{5.0 - 0.2} = \frac{5.2}{4.8} = 1.083 \approx 1.08$$
+
+**Penanganannya di LIMS:**
+1. **Pembacaan Instrumen Langsung**: Pada pengujian nyata, instrumen *SWR Meter* (seperti *Bird Model 43*, *Daiwa*, *Diamond SX-400*, atau *Rohde & Schwarz Power Sensor*) **sudah otomatis menghitung** dan langsung menampilkan angka SWR pada jarum/layar digital.
+2. **Input LIMS**: Penguji menginput angka hasil baca instrumen (misal `1.08`) ke kolom **Nilai Fisik** sub-aspek `KENEL`.
+3. **Pencocokan Rubrik Otomatis**: LIMS mengevaluasi:
+   - $1.00 - 1.50 \implies \text{Skor } 100\%$ (**Memenuhi**)
+   - $1.51 - 2.00 \implies \text{Skor } 60\%$ (**Tidak Memenuhi**)
+   - $> 2.00 \implies \text{Skor } 20\%$ (**Kritis / Gagal**)
+4. **Dokumentasi Komponen Daya**: Penguji dapat mencatat rincian $P_{\text{pancar}}$ dan $P_{\text{refl}}$ pada kolom Catatan: `Pf=5W, Pr=0.2W -> SWR=1.08`.
+
+###### b. Formula Jumlah Kanal & Jarak Kanal
+Berdasarkan dokumen teknis:
+$$\text{Jumlah Kanal} = \frac{\text{Lebar Band}}{\text{Lebar Frekuensi Antar Kanal}} + 1$$
+
+*Contoh Kasus Radio Carima (30.00 s.d 88.00 MHz dengan spasi kanal 25 KHz):*
+- Rentang frekuensi = $88.00 - 30.00 = 58.00\text{ MHz} = 58.000\text{ KHz}$.
+- Jarak antar kanal = $25\text{ KHz}$.
+$$\text{Jumlah Kanal} = \frac{58.000}{25} = 2.320\text{ Kanal}$$
+
+Penguji menginput angka `2320` ke kolom Nilai Fisik `KEJUM`.
+
+---
+
+##### 3. Pengujian Multi-Frekuensi (5 Titik Preset: 40, 51, 54, 66, 75 MHz) & Deteksi Nilai Kritis
+
+Dokumen pengujian mensyaratkan sampling pengukuran dilakukan pada 5 frekuensi preset:
+$$F_1 = 40.00\text{ MHz}, \quad F_2 = 51.00\text{ MHz}, \quad F_3 = 54.00\text{ MHz}, \quad F_4 = 66.00\text{ MHz}, \quad F_5 = 75.00\text{ MHz}$$
+
+```mermaid
+flowchart TD
+    A["Instrumen Uji / Lembar Uji<br/>Sweep 5 Frekuensi (40, 51, 54, 66, 75 MHz)"] --> B{"Tipe Parameter Uji"}
+    
+    B -->|Lower is Better: <= 0.35 uV<br/>Contoh: KESEN, KELCH, KERUS, KENEL| C["Ambil Nilai Maksimum:<br/>Worst-Case = max(F1..F5)"]
+    B -->|Higher is Better: >= 5.0 W<br/>Contoh: KEDRF, KEDAI, KETAN| D["Ambil Nilai Minimum:<br/>Worst-Case = min(F1..F5)"]
+    
+    C --> E["Evaluasi Nilai Kritis ke Tabel Rubrik scoring_sub_aspect_items"]
+    D --> E
+    
+    E --> F{"Bandingkan Skor vs Standar KKM >= 65%"}
+    F -->|Skor >= 65%| G["Status: MEMENUHI (Hijau)"]
+    F -->|Skor < 65%| H["Status: TIDAK MEMENUHI (Merah)"]
+    
+    C -.-> I["Simpan Semua 5 Titik Ukur Mentah<br/>ke Kolom Catatan (Notes) & Log IoT"]
+    D -.-> I
+```
+
+###### a. Penentuan Nilai Tunggal Terkritis (*Worst-Case Value*)
+1. **Di Lapangan & Laboratorium:** Penguji mengukur dan mencatat ke-5 frekuensi pada lembar kerja (*log sheet*) atau instrumen otomatis (*spectrum analyzer / radio test set*).
+2. **Di Sistem LIMS:** Parameter penilaian akhir membutuhkan **1 nilai representatif (*Single Evaluated Value*)** agar dapat dinilai lulus/gagal secara objektif dan dikalikan dengan bobot aspek.
+3. **Nilai yang Direkam:**
+   - Kolom **Nilai Fisik (*Actual Value*)**: Berisi **Nilai Terkritis (*Worst-Case Value*)**.
+   - Kolom **Catatan (*Notes*)**: Menyimpan **seluruh rincian 5 titik frekuensi**:
+     `F1(40M)=0.20, F2(51M)=0.24, F3(54M)=0.26, F4(66M)=0.31, F5(75M)=0.34 uV. Critical Max=0.34 uV`
+   - **Tabel Log Telemetri IoT (`simulator_data_logs`)**: Menyimpan rekaman transmisi mentah dari alat uji.
+   - **Dokumentasi Audit**: Foto/scan lembar kerja asli terlampir di sistem LIMS.
+
+> [!NOTE]
+> **Prinsip Pengujian Kelaikan Militer & Laboratorium:**
+> *"Jika pada titik frekuensi paling kritis (kondisi terburuk) saja perangkat masih memenuhi spesifikasi, maka seluruh spektrum frekuensi operasional lainnya dijamin aman dan laik operasi."*
+
+###### b. Logika Deteksi Nilai Kritis (Batas Maksimum vs Batas Minimum)
+Logika deteksi nilai kritis ditentukan oleh **arah batas spesifikasi (*Critical Direction*)**:
+
+* **Kasus A: Parameter "Semakin Kecil Semakin Baik" (*Lower is Better* / Operator $\le$)**:
+  *Contoh:* **Sensitifitas Penerima (`KESEN`)** dan **Sensitifitas Squelch (`KELCH`)** dengan batas $\le 0.35\ \mu\text{V}$.
+  - Tegangan sinyal masukan yang lebih kecil menandakan penerima yang lebih peka (lebih bagus).
+  - Tegangan input yang membesar mendekati atau melampaui $0.35\ \mu\text{V}$ adalah kondisi yang **paling berisiko gagal**.
+  - **Logika Penentuan Nilai Kritis:**
+    $$\text{Nilai Kritis} = \mathbf{\max}(F_1, F_2, F_3, F_4, F_5)$$
+
+  *Simulasi Contoh Data Sensitifitas (`KESEN`):*
+  | Frekuensi Preset | Sinyal Masukan RF | Evaluasi Parsial |
+  | :---: | :---: | :--- |
+  | $F_1 = 40.00\text{ MHz}$ | $0.20\ \mu\text{V}$ | Sangat Peka |
+  | $F_2 = 51.00\text{ MHz}$ | $0.24\ \mu\text{V}$ | Peka |
+  | $F_3 = 54.00\text{ MHz}$ | $0.26\ \mu\text{V}$ | Peka |
+  | $F_4 = 66.00\text{ MHz}$ | $0.31\ \mu\text{V}$ | Sedang (Mulai Menurun) |
+  | $F_5 = 75.00\text{ MHz}$ | $\mathbf{0.34\ \mu\text{V}}$ | **Paling Kritis ($\max$)** |
+
+  *Alur Pemrosesan di LIMS:*
+  1. Dari kelima angka $\{0.20, 0.24, 0.26, 0.31, 0.34\}$, sistem mengambil nilai maksimum: **$0.34\ \mu\text{V}$**.
+  2. Angka $0.34\ \mu\text{V}$ dicocokkan ke tabel rubrik `scoring_sub_aspect_items`:
+     - $0.00 - 0.30\ \mu\text{V} \implies \text{Skor } 100\%$ (Normal)
+     - $0.31 - 0.35\ \mu\text{V} \implies \text{Skor } 60\%$ (Sedang)
+     - $> 0.35\ \mu\text{V} \implies \text{Skor } 20\%$ (Abnormal / Gagal)
+  3. Nilai $0.34$ masuk ke rentang Sedang $\implies$ **Skor 60%**.
+  4. Sistem membandingkan terhadap passing grade KKM $\ge 65\%$:
+     $$60\% < 65\% \implies \mathbf{Tidak\ Memenuhi\ (Merah)}$$
+  5. Jika nilai terburuknya adalah $0.28\ \mu\text{V}$ (masuk rentang normal), maka Skor 100% $\implies$ **Memenuhi (Hijau)**.
+
+* **Kasus B: Parameter "Semakin Besar Semakin Baik" (*Higher is Better* / Operator $\ge$)**:
+  *Contoh:* **Daya Keluar RF (`KEDRF`)** dengan standar $\ge 5.0\text{ Watt}$, atau **Jarak Capai (`KETAN`)** $\ge 4.0\text{ km}$.
+  - Daya atau jarak yang lebih besar lebih baik.
+  - Daya yang mengecil adalah kondisi yang **paling kritis**.
+  - **Logika Penentuan Nilai Kritis:**
+    $$\text{Nilai Kritis} = \mathbf{\min}(F_1, F_2, F_3, F_4, F_5)$$
+
+  *Simulasi Contoh Daya RF (`KEDRF`):*
+  | Frekuensi Preset | Daya Pancar Terukur | Evaluasi Parsial |
+  | :---: | :---: | :--- |
+  | $F_1 = 40.00\text{ MHz}$ | $5.5\text{ Watt}$ | Memenuhi Standar |
+  | $F_2 = 51.00\text{ MHz}$ | $5.8\text{ Watt}$ | Memenuhi Standar |
+  | $F_3 = 54.00\text{ MHz}$ | $5.6\text{ Watt}$ | Memenuhi Standar |
+  | $F_4 = 66.00\text{ MHz}$ | $5.2\text{ Watt}$ | Memenuhi Standar |
+  | $F_5 = 75.00\text{ MHz}$ | $\mathbf{4.7\text{ Watt}}$ | **Paling Kritis ($\min$)** |
+
+  *Alur Pemrosesan di LIMS:*
+  1. LIMS mengambil nilai minimum: **$4.7\text{ Watt}$**.
+  2. Angka $4.7\text{ W}$ berada di bawah standar minimum $5.0\text{ W}$, sehingga LIMS otomatis memberikan evaluasi **Tidak Memenuhi** (karena pada frekuensi 75 MHz daya pemancar mengalami pelemahan di bawah ambang kelaikan dinas).
+
+###### c. Implementasi Teknis pada Fitur OCR dan IoT
+1. **Pada Modul OCR (Scan File / Foto Kamera):**
+   - **Template Lembar Uji (Log Sheet):** Pada formulir lembar kerja laboratorium, terdapat tabel frekuensi yang dilengkapi kolom **"Nilai Terkritis (*Worst-Case*)"** atau **"Kesimpulan Akhir"**.
+   - **Algoritma OCR Parser LIMS (`ocr_controller.go`):**
+     - OCR memindai baris parameter (misal baris `KESEN` atau kata kunci `Sensitifitas`).
+     - Jika ditemukan beberapa angka dalam baris/tabel:
+       - Untuk parameter dengan operator spesifikasi `"<="` (seperti $\le 0.35\ \mu\text{V}$), algoritma menyaring angka dan memilih nilai terbesar ($\max$) yang masih dalam batas logika satuan $\mu\text{V}$.
+       - Untuk operator `">="` (seperti $\ge 5\text{ W}$), algoritma memilih nilai terkecil ($\min$).
+   - **Penyimpanan Rincian:** Seluruh teks baris pembacaan ($F_1$ s.d $F_5$) otomatis disimpan ke string `notes`.
+
+2. **Pada Modul IoT / Mesin Integrasi (`machine_controller.go`):**
+   - Instrumen uji (*Radio Communication Test Set*) mengirimkan data telemetri ke endpoint:
+     `POST /api/machine-integration/results`
+   - Gateway / Node-RED yang membaca instrumen mengemas payload JSON:
+     ```json
+     {
+       "application_id": 105,
+       "scoring_parameter_code": "KESEN",
+       "score": 0.34,
+       "machine_id": "COMM_TEST_SET_01",
+       "notes": "F1(40M)=0.20, F2(51M)=0.24, F3(54M)=0.26, F4(66M)=0.31, F5(75M)=0.34. Critical Max=0.34 uV."
+     }
+     ```
+   - LIMS menerima payload tersebut, mencatat log lengkap di tabel `simulator_data_logs`, dan mengisikan nilai $0.34$ beserta catatan rincian frekuensi ke dalam lembar pengujian secara real-time.
+
+###### d. Tanya-Jawab Teknis Pengujian OCR untuk Tabel KESEN
+
+* **Pertanyaan 1: Jika ingin testing OCR untuk KESEN, apakah bisa langsung meng-capture tabel tersebut?**
+  * **Jawaban**: **BISA, dengan 1 SYARAT WAJIB, yaitu harus menyertakan KODE PARAMETER (`KESEN`) atau NAMA PARAMETER (`Sensitifitas`).**
+  * *Penjelasan Teknis*:
+    - Engine OCR LIMS (`OCRExtractTestResults` pada `ocr_controller.go`) bekerja mencocokkan teks hasil scan dengan daftar sub-aspek yang aktif di database (`scoring_sub_aspects`).
+    - Jika Anda **hanya meng-capture tabel angka polos** tanpa ada kata `KESEN` atau `Sensitifitas`, maka OCR **tidak mengetahui parameter apa yang sedang diuji** (sistem tidak tahu angka tersebut milik Sensitifitas, Daya Pancar, Arus, atau SWR).
+  * *Format Capture yang Direkomendasikan (100% Terbaca oleh OCR):*
+    ```text
+    ========================================================================
+    PARAMETER: KESEN - SENSITIFITAS PENERIMA (Standar: <= 0.35 uV)
+    ========================================================================
+    | No | Frekuensi Preset | Sinyal Masukan RF | Evaluasi Parsial         |
+    |----|------------------|-------------------|--------------------------|
+    | 1  | 40.00 MHz        | 0.20 uV           | Sangat Peka              |
+    | 2  | 51.00 MHz        | 0.24 uV           | Peka                     |
+    | 3  | 54.00 MHz        | 0.26 uV           | Peka                     |
+    | 4  | 66.00 MHz        | 0.31 uV           | Sedang                   |
+    | 5  | 75.00 MHz        | 0.34 uV           | Paling Kritis (Worst-Case)|
+    ------------------------------------------------------------------------
+    KESIMPULAN AKHIR KESEN : 0.34 uV (TIDAK MEMENUHI)
+    ========================================================================
+    ```
+  > [!TIP]
+  > Cukup sertakan minimal 1 baris judul atau label bertuliskan `KESEN` atau `Sensitifitas` pada gambar yang Anda screenshot/capture, maka OCR LIMS langsung otomatis mengenali dan memasukkan hasilnya ke form penilaian.
+
+* **Pertanyaan 2: Bagaimana LIMS bisa mendeteksi kolom ke-2 (Sinyal Masukan RF) dan bukan kolom ke-1 (Frekuensi)?**
+  Ada 3 filter cerdas yang berjalan secara berurutan di dalam sistem:
+  1. **Filter Besaran Angka & Rentang Logika (*Magnitude & Range Filtering*):**
+     - Angka di **Kolom 1** bernilai puluhan: `40.00`, `51.00`, `54.00`, `66.00`, `75.00` (satuan MHz).
+     - Angka di **Kolom 2** bernilai desimal kecil: `0.20`, `0.24`, `0.26`, `0.31`, `0.34` (satuan $\mu\text{V}$).
+     - Standar acuan `KESEN` di database LIMS adalah $\le 0.35\ \mu\text{V}$ dengan rentang fisik normal $0.00 - 1.00\ \mu\text{V}$.
+     - Algoritma verifikasi kandidat nilai (`isValidScoreCandidate` pada LIMS) secara otomatis **mengeliminasi angka 40 s.d 75** karena mustahil sebuah radio militer memiliki sensitifitas 40 Volt! Sistem hanya meloloskan angka desimal yang rasional ($0.20 - 0.34$).
+  2. **Filter Satuan Fisik (*Unit-Aware Tokenizer*):**
+     - Token yang berakhiran/berdampingan dengan `MHz` diabaikan sebagai variabel uji frekuensi.
+     - Token yang berakhiran/berdampingan dengan `uV`, `μV`, atau `microvolt` langsung diklasifikasikan sebagai nilai ukur tegangan kepekaan penerima.
+  3. **Segmentasi Kolom Spasial (*Spatial Bounding-Box Segmentation*):**
+     - Engine PaddleOCR membaca teks dalam bentuk koordinat bounding box $(X_{\min}, Y_{\min}, X_{\max}, Y_{\max})$.
+     - Posisi Kolom 1 berada di koordinat kiri ($X \approx 10\% - 35\%$).
+     - Posisi Kolom 2 berada di koordinat tengah ($X \approx 36\% - 65\%$).
+     - Header `"Sinyal Masukan RF"` memetakan seluruh baris di bawahnya sebagai nilai pengukuran.
+     - Dari seluruh nilai Kolom 2 yang terkumpul $\{0.20, 0.24, 0.26, 0.31, 0.34\}$, fungsi batas kritis $\max()$ memilih **$0.34$** untuk diisikan ke kolom skor, dan seluruh teks baris disimpan ke kolom Catatan.
+
+---
+
+##### 4. Rangkuman Siklus Pengujian & Validasi di LIMS
+1. **Perencanaan (`/planning`)**: Jadwalkan pengujian radio Carima dan alokasikan instrumen (Signal Generator, Distortion Analyzer, Wattmeter, SWR meter, Meja Getar/Goncang).
+2. **Pelaksanaan (`/testing`)**:
+   - Lakukan sweep 5 frekuensi preset (40, 51, 54, 66, 75 MHz).
+   - Masukkan nilai kritis ke kolom Nilai Fisik (atau gunakan Auto-fill SCPI / OCR).
+   - Sistem memvalidasi kesesuaian nilai terhadap standar kelulusan ($\ge 65\%$).
+   - Ambil foto instrumen sebagai bukti audit fisik.
+3. **Analisis & Sertifikasi (`/analysis` & `/reporting`)**: Rekapitulasi bobot, skor akhir paket, serta penerbitan Sertifikat Kelaikan Teknis Radio Carima.
+
+---
 
 
 ### 4. Modul Analisa Data & Scoring (Scoring Engine)
@@ -2093,32 +2388,101 @@ Untuk menjaga integritas data laboratorium dan mencegah masuknya data palsu/samp
 
 ---
 
-##### 8. Panduan Pengoperasian CLI:
+##### 8. Panduan Operasional & Pengoperasian CLI Simulator SCPI:
+
+Pengelola laboratorium dan pengembang sistem dapat mengelola daur hidup (*lifecycle*) Simulator SCPI melalui dua cara utama:
+
+###### A. Manajemen Praktis via Script Service (`scpi_service.sh`):
+Telah disediakan skrip otomasi [`backend/scpi_integration/scpi_service.sh`](file:///c:/Project/Application/lims/backend/scpi_integration/scpi_service.sh) untuk kemudahan operasional:
+
 ```bash
-# 1. Menjalankan Mock Simulator Digital Twin (Terminal 1)
+cd backend/scpi_integration
+
+# 1. Cek Status Proses, Port Listening, dan Uji Probe Respon (*IDN?)
+./scpi_service.sh status
+
+# 2. Menjalankan Simulator di Latar Belakang (Daemon Mode)
+./scpi_service.sh start
+
+# 3. Menghentikan Seluruh Proses Simulator
+./scpi_service.sh stop
+
+# 4. Memulai Ulang Simulator
+./scpi_service.sh restart
+```
+
+*Contoh Tampilan Output `./scpi_service.sh status`:*
+```text
+==================================================
+  STATUS SCPI SIMULATOR: AKTIF (ONLINE)
+==================================================
+PID Process   : 5089
+Port Aktif    :
+  - 0.0.0.0:5025
+  - 0.0.0.0:5026
+  - 0.0.0.0:5027
+
+Uji Respon Alat (SCPI *IDN?):
+  - Port 5025 (Oscilloscope)      : Siglent Technologies,SDS2354X HD,SDS2HD0001,1.2.1.8
+  - Port 5026 (Spectrum Analyzer) : Siglent Technologies,SSA5085A,SSA5A0001,2.1.1.2
+  - Port 5027 (UTM 5 kN)          : WDS,WDW5A,CAP_5000N,ACCURACY_0.5,FW_V4.2
+==================================================
+```
+
+###### B. Perintah Manual Linux / WSL (Tanpa Skrip Helper):
+```bash
+# 1. Melihat Status Proses & Port
+ps aux | grep scpi_simulator.py
+ss -tlpn | grep -E '5025|5026|5027'
+
+# 2. Start di Layar Depan / Foreground (Bagus untuk debugging & melihat lalu-lintas query SCPI)
 cd backend/scpi_integration
 python3 scpi_simulator.py
+# (Tekan Ctrl+C untuk menghentikan)
 
-# 2. Menjalankan Terminal Interaktif SCPI Langsung (Eksplorasi Perintah)
+# 3. Start di Latar Belakang / Background (Daemon)
+cd backend/scpi_integration
+nohup python3 scpi_simulator.py > simulator.log 2>&1 &
+
+# 4. Stop Proses Simulator di Latar Belakang
+pkill -f scpi_simulator.py
+```
+
+###### C. Uji Respon Cepat Soket SCPI (*Quick Socket Probe*):
+Untuk menguji secara langsung apakah port simulator/alat lab fisik merespons perintah teks ASCII:
+```bash
+# Uji Digital Oscilloscope (Port 5025)
+echo "*IDN?" | nc -w 1 127.0.0.1 5025
+
+# Uji Spectrum Analyzer (Port 5026)
+echo "*IDN?" | nc -w 1 127.0.0.1 5026
+
+# Uji Universal Testing Machine (Port 5027)
+echo "$GET_MACHINE_INFO" | nc -w 1 127.0.0.1 5027
+```
+
+###### D. Eksekusi Pengujian Otomatis & Analisa Data LIMS:
+```bash
+# 1. Menjalankan Terminal Interaktif SCPI Langsung (Eksplorasi Perintah)
 python3 lims_scpi_agent.py --interactive
 
-# 3. Menjalankan Uji Baca Snapshot Instan (Terminal 2 - Dry Run)
+# 2. Menjalankan Uji Baca Snapshot Instan (Dry Run)
 python3 lims_scpi_agent.py --dry-run
 
-# 4. Menjalankan Uji Otomatis Berbasis Parameter config.json (KEDAI - Multi-Point Sweep)
+# 3. Menjalankan Uji Otomatis Berbasis Parameter config.json (KEDAI - Multi-Point Sweep)
 python3 lims_scpi_agent.py --param-code KEDAI --app-id 217 --dry-run
 
-# 5. Menjalankan Uji Parameter KESEL (Selektifitas pada Spectrum Analyzer yang sama)
+# 4. Menjalankan Uji Parameter KESEL (Selektifitas pada Spectrum Analyzer yang sama)
 python3 lims_scpi_agent.py --param-code KESEL --app-id 217 --dry-run
 
-# 6. Uji Validasi Penolakan Parameter yang Belum Dikonfigurasi (Simulasi Safe Guard)
+# 5. Uji Validasi Penolakan Parameter yang Belum Dikonfigurasi (Simulasi Safe Guard)
 python3 lims_scpi_agent.py --param-code XYZ --app-id 217 --dry-run
 # Output: ERROR_NOT_CONFIGURED (Status ditolak aman)
 
-# 7. Perekaman Kontinu 1 Menit UTM + Auto Generate Grafik & CSV
+# 6. Perekaman Kontinu 1 Menit UTM + Auto Generate Grafik & CSV
 python3 lims_scpi_agent.py --target utm --duration 60 --interval 1 --save-csv hasil_uji.csv --dry-run
 
-# 8. Menjalankan Automated Integration Test Suite (Semua Alat & Endpoint Sekaligus)
+# 7. Menjalankan Automated Integration Test Suite (Semua Alat & Endpoint Sekaligus)
 python3 test_integration.py
 ```
 
@@ -2193,6 +2557,92 @@ Alat ukur laboratorium kelas industri (seperti Siglent, Rohde & Schwarz, Keysigh
    * **Alur Eksekusi**:
      1. LIMS memiliki jadwal antrian pengujian (*active testing queue*). Ketika permohonan nomor 217 berstatus `"In Progress"`, sistem menandai instrumen terkait sedang dialokasikan untuk permohonan tersebut.
      2. Setiap telemetri atau data pengukuran yang dikirimkan alat pada rentang waktu pengujian tersebut secara otomatis dihubungkan ke `app-id: 217`.
+
+##### 11. Panduan Deployment Modul SCPI ke Server Baru / VPS:
+
+Saat memindahkan atau men-deploy aplikasi LIMS ke server baru (atau VPS produksi baru), integrasi SCPI memerlukan pemindahan modul dan penyesuaian dependensi berikut:
+
+###### A. Berkas dan Modul yang Wajib Disalin
+Anda **TIDAK** perlu menyalin seluruh berkas riwayat pengujian. Cukup salin direktori `backend/scpi_integration/` beserta berkas-berkas esensial berikut:
+
+| Berkas | Status | Fungsi & Keterangan |
+| :--- | :---: | :--- |
+| **`config.json`** | **Wajib** | Konfigurasi sentral pemetaan parameter uji, host/IP alat, port TCP (5025, 5026, 5027), dan format perintah SCPI. |
+| **`lims_scpi_agent.py`** | **Wajib** | Script Python Edge Gateway yang dipanggil oleh backend Go (`machine_controller.go`) saat analis mengklik tombol `[ 🔌 SCPI ]`. |
+| **`scpi_simulator.py`** | **Wajib** *(Digital Twin)* | Server mock multi-threaded untuk mengemulasikan respons instrumen lab via socket TCP. |
+| **`scpi_service.sh`** | *Helper* | Skrip otomasi shell Linux untuk mengontrol daur hidup simulator (`start`, `stop`, `status`, `restart`). |
+
+> **Abaikan Berkas Output**: Folder `__pycache__`, file log `*.log`, serta berkas hasil uji lama (`*.png`, `*.csv`, `*.svg`) **tidak perlu dicopy** ke server baru.
+
+###### B. Penempatan Direktori di Server Baru (Working Directory)
+Backend Golang LIMS mengeksekusi agen SCPI dengan path relatif:  
+`exec.Command("python3", "scpi_integration/lims_scpi_agent.py", ...)`  
+Artinya, direktori `scpi_integration` **harus berada tepat di dalam working directory proses backend**.
+- Jika backend berjalan di `/home/lims/lims1/backend/`, maka letaknya adalah:  
+  `/home/lims/lims1/backend/scpi_integration/`
+- Jika menggunakan arsitektur multi-backend (`lims1` & `lims2`), hubungkan via symbolic link:
+  ```bash
+  ln -s /home/lims/lims1/backend/scpi_integration /home/lims/lims2/backend/scpi_integration
+  ```
+
+###### C. Perintah Salin (Transfer) dari Mesin Lokal ke VPS
+
+1. **Menggunakan `rsync` (Sangat Disarankan — Otomatis Filter Cache & Berkas Uji)**:
+   Jalankan dari direktori `backend` di mesin lokal:
+   ```bash
+   rsync -avz --exclude '__pycache__' --exclude '*.png' --exclude '*.csv' --exclude '*.svg' \
+     scpi_integration lims@<IP_VPS>:/home/lims/lims1/backend/
+   ```
+
+2. **Menggunakan `scp` (Wajib Menggunakan Flag `-r` / Recursive)**:
+   ```bash
+   scp -r scpi_integration lims@<IP_VPS>:/home/lims/lims1/backend/
+   ```
+
+> [!WARNING]
+> **Catatan Troubleshooting Kesalahan Transfer**:
+> - Jika muncul error `scp: local "scpi_integration" is not a regular file`: pastikan menambahkan flag `-r` pada `scp`.
+> - Jika muncul error `change_dir ".../backend/backend/scpi_integration" failed`: periksa path asal, jangan menulis `backend/scpi_integration/` jika posisi terminal Anda sudah berada di dalam folder `backend/`.
+> - Jika muncul error `mkdir "... failed: No such file or directory`: pastikan path tujuan di VPS sesuai dengan struktur folder aktif Anda (misalnya `/home/lims/lims1/backend/`).
+
+###### D. Instalasi Dependensi Python di Server Baru
+Masuk ke terminal VPS baru dan jalankan instalasi dependensi sistem serta pustaka Python:
+```bash
+# 1. Pastikan Python 3, Pip, dan Netcat terpasang
+sudo apt update && sudo apt install python3 python3-pip netcat-openbsd -y
+
+# 2. Pasang library Python untuk Gateway SCPI
+pip3 install requests pillow
+```
+
+###### E. Verifikasi & Menjalankan Simulator di Server Baru
+```bash
+# 1. Cek isi direktori
+ls -la /home/lims/lims1/backend/scpi_integration
+
+# 2. Beri hak eksekusi pada skrip helper
+chmod +x /home/lims/lims1/backend/scpi_integration/scpi_service.sh
+
+# 3. Jalankan simulator di latar belakang (daemon)
+cd /home/lims/lims1/backend/scpi_integration
+./scpi_service.sh start
+
+# 4. Periksa status layanan dan port 5025, 5026, 5027
+./scpi_service.sh status
+```
+
+---
+
+##### 12. Konfigurasi Dinamis UI Pelaksana Uji & Parameter Global:
+
+1. **Placeholder Dinamis Dropdown Rubrik (`DROPDOWN_PILIHAN`)**:
+   * **Latar Belakang**: Sebelumnya baris pertama opsi pilihan rubrik pada dropdown di formulir pengujian tertulis statis sebagai `"-- Pilihan Rubrik --"`.
+   * **Implementasi**: Komponen `AppDetail.jsx` kini secara reaktif membaca parameter global `DROPDOWN_PILIHAN` dari tabel `lims.global_parameters` (melalui hook `/api/config`).
+   * **Fleksibilitas**: Administrator sistem dapat dengan mudah mengubah label baris pertama pilihan (misal menjadi `"-- Pilihan --"`, `"-- Pilih Rubrik --"`, dsb.) cukup melalui menu **Master Data > Parameter Global**, tanpa perlu mengubah kode sumber atau mengompilasi ulang aplikasi.
+
+2. **Pengurutan Deterministik Alfabetis pada Master Parameter Global**:
+   * **Frontend**: Halaman `GlobalParametersPage.jsx` dan `MasterDataPage.jsx` secara default mengaktifkan `defaultSortKey="param_key"` dan `defaultSortOrder="asc"`. Saat dibuka, header kolom **Key** langsung memiliki indikator sort aktif (`fas fa-sort-up`), dan data terurut rapi secara alfabetis A–Z.
+   * **Backend**: Endpoint `GetGlobalParametersCRUD` pada `master_data_controller.go` menggunakan query `.Order("LOWER(param_key) ASC, param_key ASC")`. Hal ini memastikan bahwa nama parameter yang menggunakan huruf kecil (seperti `ocr_code_col_max`) tidak terlempar ke halaman akhir akibat perbandingan nilai ASCII standar PostgreSQL, melainkan terurut secara alami bersama huruf 'O'.
 
 ---
 
@@ -2857,8 +3307,7 @@ rsync -av /mnt/d/Data_NK/Project5/AI/LIM_System_Linux_OK/backend/main lims@212.8
 **Opsi B: Menggunakan `scp`**
 Gunakan atribut `-p` (preserve modification times):
 ```bash
-scp -p /mnt/c/Project/Application/lims/backend/main lims@2
-12.85.24.33:/home/lims/lims1/backend/
+scp -p /mnt/c/Project/Application/lims/backend/main lims@212.85.24.33:/home/lims/lims1/backend/
 ```
 
 *(Jika Anda melakukan deployment langsung di dalam OS yang sama / WSL, Anda bisa menggunakan perintah `cp -p`)*:
@@ -4259,35 +4708,373 @@ Berkas konfigurasi utama terletak di `/etc/postgresql/[versi]/main/postgresql.co
     *   *Standalone*: `/var/log/postgresql/postgresql-[versi]-main.log`
     *   *Docker*: `docker logs -f lims-postgres`
 
-##### 6. Panduan Inisialisasi Database LIMS (Tablespace, User, Owner, Schema, & Extension)
+##### 6. Panduan Lengkap Konfigurasi Tablespace PostgreSQL & Linux OS (From Scratch)
 
-Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan dan keselarasan dengan arsitektur LIMS:
+Tablespace pada PostgreSQL merupakan abstraksi lokasi penyimpanan fisik di dalam sistem berkas (*filesystem*) sistem operasi Linux tempat berkas-berkas data (*data files / relfilenode*) yang menyusun objek basis data—seperti database, tabel, indeks, hingga partisi bulanan—disimpan secara fisik.
 
-1. **Buat Folder Penyimpanan Data (Jika menggunakan Tablespace Kustom - Opsional):**
+Secara bawaan (*default*), PostgreSQL mengalokasikan seluruh data di dalam satu direktori tunggal (`$PGDATA`, misalnya `/var/lib/postgresql/[versi]/main` pada instalasi Debian/Ubuntu) di bawah tablespace bawaan bernama `pg_default` (untuk objek pengguna) dan `pg_global` (untuk katalog bersama).
+
+###### Mengapa Sistem LIMS Membutuhkan Tablespace Khusus?
+1. **Pemisahan Beban I/O & Storage Tiering (Hierarki Penyimpanan)**:
+   - **Hot Storage (SSD NVMe Cepat)**: Menempatkan tabel dan partisi yang menerima beban I/O baca-tulis tinggi—seperti data log simulator IoT (`mecs.simulator_data_logs`), hasil uji fisik (`lims.testing_results`), transaksi pemakaian alat uji (`lims.testing_tool_transactions`), dan representasi vektor embedding dokumen RAG AI (`chat_sch.document_chunks`)—pada tablespace berkecepatan tinggi (`lims_fast_tblspace`).
+   - **Cold Storage (HDD Berkapasitas Besar)**: Merelokasi partisi bulanan data historis yang sudah lampau (`lims.testing_applications_YYYYMM` lama) dan tabel audit log (`hist_*`, `*_arc`) ke disk penyimpanan sekunder yang lebih hemat biaya (`lims_archive_tblspace`).
+2. **Pencegahan Kehabisan Ruang Disk Root OS (`/`)**:
+   - Menghindari server *crash* atau terkunci akibat partisi sistem operasi utama (`/`) penuh dengan mengarahkan basis data ke partisi/mount point disk terdedikasi (misalnya `/data/pg_tablespaces` atau `/mnt/nvme/pg_lims`).
+3. **Isolasi Berkas Pemrosesan Sementara (Temporary Sorting & Hash Aggregation)**:
+   - Menyediakan `temp_tablespaces` terpisah untuk menampung tabel temporer, operasi pengurutan memori besar (*external merge sort*), dan pemrosesan kueri analitik berat agar tidak mengganggu kecepatan I/O operasi transaksi harian.
+
+---
+
+###### A. Tahap 1: Konfigurasi Lengkap di Tingkat Sistem Operasi Linux (OS-Level Setup)
+
+Sebelum perintah SQL dijalankan di PostgreSQL, sistem operasi Linux harus dipersiapkan dengan benar. Tahapan ini merupakan prasyarat mutlak:
+
+###### 1. Pemilihan dan Pembuatan Direktori Fisik di Linux
+Tentukan lokasi direktori penyimpanan pada server Linux:
+- **Skenario 1 (Standar Server / Single Disk VPS)**: Menggunakan subdirektori di bawah `/var/lib/postgresql/tablespaces/`.
+- **Skenario 2 (Dedicated Storage / Multi-Disk NVMe & HDD)**: Menggunakan mount point disk terpisah di `/data/pg_tablespaces/`.
+
+Jalankan perintah pembuatan direktori di terminal Linux:
+```bash
+# Skenario 1: Direktori standar PostgreSQL di Linux
+sudo mkdir -p /var/lib/postgresql/tablespaces/ts_data_lims
+
+# Skenario 2: Direktori terpisah untuk Storage Tiering (Cepat, Arsip, & Temporary)
+sudo mkdir -p /data/pg_tablespaces/lims_fast_tblspace
+sudo mkdir -p /data/pg_tablespaces/lims_archive_tblspace
+sudo mkdir -p /data/pg_tablespaces/lims_temp_tblspace
+```
+
+###### 2. Penetapan Kepemilikan Pengguna & Grup Linux (`chown`)
+Direktori tablespace **WAJIB** dimiliki secara eksklusif oleh akun pengguna sistem `postgres` dan grup `postgres`:
+```bash
+# Skenario 1:
+sudo chown -R postgres:postgres /var/lib/postgresql/tablespaces/ts_data_lims
+
+# Skenario 2:
+sudo chown -R postgres:postgres /data/pg_tablespaces
+```
+
+###### 3. Penegakan Izin Hak Akses Direktori Linux (`chmod 700`) — Syarat Mutlak Keamanan
+PostgreSQL memberlakukan aturan keamanan yang sangat ketat: **direktori tablespace hanya boleh dibaca, ditulis, dan dieksekusi oleh user `postgres` (permission mode `0700` atau `drwx------`)**.
+
+Jika izin direktori adalah `755`, `775`, atau memberi izin akses kepada grup/user lain (*world/group accessible*), PostgreSQL akan membatalkan pembuatan tablespace dan melempar error:
+`ERROR: could not set permissions on directory "...": Permission denied` atau `ERROR: directory "..." has group or world access`.
+
+Eksekusi perintah pengetatan izin di Linux:
+```bash
+# Terapkan mode 0700 secara rekursif
+sudo chmod 700 /var/lib/postgresql/tablespaces/ts_data_lims
+
+# Untuk skenario direktori /data:
+sudo chmod -R 700 /data/pg_tablespaces
+```
+
+###### 4. Syarat Mutlak: Direktori Harus Bersih & Kosong (*Empty Directory*)
+PostgreSQL mewajibkan direktori target **benar-benar kosong** saat perintah `CREATE TABLESPACE` dieksekusi. Jika di dalam folder terdapat berkas apa pun (termasuk berkas tersembunyi atau folder `lost+found` bawaan partisi baru ext4/xfs), proses pembuatan akan gagal dengan pesan:
+`ERROR: directory "..." is not empty`.
+
+Periksa kebersihan direktori:
+```bash
+ls -la /var/lib/postgresql/tablespaces/ts_data_lims
+# Output hanya boleh menampilkan entri '.' dan '..'
+```
+
+> [!IMPORTANT]
+> Jika Anda memasang disk partisi fisik baru yang di-mount langsung ke `/data`, filesystem `ext4` secara otomatis membuat folder sistem `/data/lost+found`. **Jangan pernah mengarahkan LOCATION tablespace langsung ke root mount point (`/data`)**. Selalu buat sub-folder khusus di dalamnya (misal: `/data/pg_tablespaces/ts_data_lims`) agar direktori tersebut 100% steril dan kosong.
+
+###### 5. Konfigurasi Mount Partisi Otomatis di `/etc/fstab` (Untuk Dedicated Disk/NVMe)
+Jika tablespace diletakkan pada disk fisik atau volume cloud terpisah (misalnya `/dev/sdb1`), lakukan konfigurasi *auto-mount* permanen:
+1. Dapatkan UUID partisi:
    ```bash
-   sudo mkdir -p /var/lib/postgresql/lims_data
-   sudo chown -R postgres:postgres /var/lib/postgresql/lims_data
+   sudo blkid /dev/sdb1
+   # Contoh output: /dev/sdb1: UUID="e4d5f6a7-1234-4567-89ab-cdef01234567" TYPE="ext4"
    ```
-2. **Buat User (Role) LIMS:**
-   Buka terminal psql sebagai user `postgres`:
+2. Tambahkan entri ke `/etc/fstab` menggunakan opsi performa optimal database:
+   ```text
+   UUID=e4d5f6a7-1234-4567-89ab-cdef01234567  /data/pg_tablespaces  ext4  defaults,noatime,nodiratime,errors=remount-ro  0  2
+   ```
+   *(Opsi `noatime,nodiratime` menghilangkan overhead penulisan timestamp akses berkas oleh kernel Linux setiap kali kueri membaca data, meningkatkan performa I/O secara signifikan).*
+3. Mount dan verifikasi:
+   ```bash
+   sudo mount -a
+   df -h /data/pg_tablespaces
+   ```
+
+###### 6. Penyesuaian Modul Keamanan Linux: SELinux & AppArmor
+- **Ubuntu / Debian (AppArmor)**:
+  Secara default, profil AppArmor untuk PostgreSQL (`usr.lib.postgresql.bin.postgres`) membatasi akses proses database hanya ke `/var/lib/postgresql/`. Jika Anda meletakkan tablespace di luar jalur tersebut (misalnya di `/data/...`), tambahkan pengecualian:
+  ```bash
+  echo "/data/pg_tablespaces/** rwk," | sudo tee -a /etc/apparmor.d/local/usr.lib.postgresql.bin.postgres
+  sudo systemctl reload apparmor
+  ```
+- **RHEL / Rocky Linux / AlmaLinux / CentOS (SELinux)**:
+  Beri label konteks keamanan basis data (`postgresql_db_t`) pada direktori tablespace baru:
+  ```bash
+  sudo semanage fcontext -a -t postgresql_db_t "/data/pg_tablespaces(/.*)?"
+  sudo restorecon -Rv /data/pg_tablespaces
+  ```
+
+###### 7. Verifikasi Akhir Status Direktori di Linux OS
+Sebelum beralih ke PostgreSQL, verifikasi kepemilikan dan hak akses direktori:
+```bash
+ls -ld /var/lib/postgresql/tablespaces/ts_data_lims
+# Output wajib:
+# drwx------ 2 postgres postgres 4096 Sep 13 16:00 /var/lib/postgresql/tablespaces/ts_data_lims
+```
+
+---
+
+###### B. Tahap 2: Konfigurasi Lengkap di Tingkat PostgreSQL (RDBMS-Level Setup)
+
+Setelah direktori di tingkat sistem operasi Linux siap, masuk ke terminal PostgreSQL menggunakan superuser `postgres`:
+```bash
+sudo -u postgres psql
+# Atau jika menggunakan port khusus (misal 5433):
+# sudo -u postgres psql -p 5433
+```
+
+###### 1. Sintaks Lengkap `CREATE TABLESPACE`
+Sintaks umum pembuatan tablespace di PostgreSQL:
+```sql
+CREATE TABLESPACE tablespace_name
+    [ OWNER user_name ]
+    LOCATION 'directory_path'
+    [ WITH ( tablespace_option = value [, ... ] ) ];
+```
+
+###### 2. Eksekusi Pembuatan Tablespace
+```sql
+-- 1. Membuat tablespace utama LIMS
+CREATE TABLESPACE ts_data_lims LOCATION '/var/lib/postgresql/tablespaces/ts_data_lims';
+
+-- 2. Atau membuat tablespace sekaligus menetapkan pemiliknya (Owner) ke user aplikasi LIMS:
+-- (Pastikan user lims_app telah dibuat terlebih dahulu)
+CREATE TABLESPACE ts_data_lims OWNER lims_app LOCATION '/var/lib/postgresql/tablespaces/ts_data_lims';
+
+-- 3. Membuat tablespace tiering (Cepat & Arsip) pada skenario multi-disk:
+CREATE TABLESPACE lims_fast_tblspace OWNER lims_app LOCATION '/data/pg_tablespaces/lims_fast_tblspace';
+CREATE TABLESPACE lims_archive_tblspace OWNER lims_app LOCATION '/data/pg_tablespaces/lims_archive_tblspace';
+```
+
+###### 3. Pemberian Hak Akses Tablespace ke User Aplikasi
+Jika tablespace dibuat oleh superuser `postgres` tanpa klausul `OWNER lims_app`, berikan izin hak cipta objek (`CREATE`) kepada user aplikasi:
+```sql
+GRANT CREATE ON TABLESPACE ts_data_lims TO lims_app;
+GRANT CREATE ON TABLESPACE lims_fast_tblspace TO lims_app;
+GRANT CREATE ON TABLESPACE lims_archive_tblspace TO lims_app;
+```
+
+###### 4. Pembuatan Database Baru Menggunakan Tablespace Default
+Saat membuat database produksi LIMS baru, kaitkan langsung dengan tablespace tersebut:
+```sql
+CREATE DATABASE lims_prod_db 
+    WITH 
+    OWNER = lims_app 
+    ENCODING = 'UTF8' 
+    LC_COLLATE = 'en_US.UTF-8' 
+    LC_CTYPE = 'en_US.UTF-8' 
+    TABLESPACE = ts_data_lims;
+
+-- Berikan hak penuh database ke user aplikasi
+GRANT ALL PRIVILEGES ON DATABASE lims_prod_db TO lims_app;
+```
+
+###### 5. Relokasi & Pemindahan Objek ke Tablespace (*Live Migration*)
+Jika basis data atau tabel telah terlanjur dibuat di tablespace bawaan (`pg_default`), Anda dapat memindahkannya secara aman tanpa kehilangan data:
+
+* **Memindahkan Default Tablespace Seluruh Database**:
+  ```sql
+  -- Catatan: Perintah ini memindahkan seluruh objek sistem dan tabel bawaan database
+  ALTER DATABASE lims_prod_db SET TABLESPACE ts_data_lims;
+
+  -- Mengatur agar semua tabel/indeks baru yang dibuat ke depan otomatis masuk ke ts_data_lims:
+  ALTER DATABASE lims_prod_db SET default_tablespace = 'ts_data_lims';
+  ALTER USER lims_app SET default_tablespace = 'ts_data_lims';
+  ```
+
+* **Memindahkan Tabel Spesifik (Beban I/O Tinggi)**:
+  ```sql
+  -- Memindahkan tabel transaksi beban tinggi ke SSD Cepat
+  ALTER TABLE mecs.simulator_data_logs SET TABLESPACE lims_fast_tblspace;
+  ALTER TABLE lims.testing_results SET TABLESPACE lims_fast_tblspace;
+  ALTER TABLE chat_sch.document_chunks SET TABLESPACE lims_fast_tblspace;
+  ```
+
+* **Memindahkan Indeks Spesifik**:
+  ```sql
+  -- Memindahkan indeks untuk mempercepat pencarian data
+  ALTER INDEX mecs.idx_simulator_logs_created SET TABLESPACE lims_fast_tblspace;
+  ALTER INDEX lims.idx_testing_results_app_id SET TABLESPACE lims_fast_tblspace;
+  ```
+
+* **Memindahkan Seluruh Tabel Sekaligus (*Batch Migration*)**:
+  ```sql
+  -- Memindahkan semua tabel milik lims_app yang ada di pg_default ke ts_data_lims
+  ALTER TABLE ALL IN TABLESPACE pg_default OWNED BY lims_app SET TABLESPACE ts_data_lims;
+
+  -- Memindahkan semua indeks milik lims_app dari pg_default ke ts_data_lims
+  ALTER INDEX ALL IN TABLESPACE pg_default OWNED BY lims_app SET TABLESPACE ts_data_lims;
+  ```
+
+###### 6. Penerapan Tablespace pada Skema Partisi Bulanan LIMS (Storage Tiering)
+Pada arsitektur LIMS, partisi bulanan dapat didistribusikan ke tablespace yang berbeda secara dinamis:
+- **Partisi Bulan Aktif (Transaksi Berjalan)**: Dibuat di `lims_fast_tblspace` (SSD NVMe):
+  ```sql
+  CREATE TABLE lims.testing_applications_202609 
+      PARTITION OF lims.testing_applications 
+      FOR VALUES FROM ('2026-09-01 00:00:00') TO ('2026-10-01 00:00:00')
+      TABLESPACE lims_fast_tblspace;
+  ```
+- **Partisi Bulan Lampau (Data Arsip/Historis)**: Direlokasi ke `lims_archive_tblspace` (HDD Ekonomis):
+  ```sql
+  ALTER TABLE lims.testing_applications_202401 SET TABLESPACE lims_archive_tblspace;
+  ALTER TABLE lims.testing_results_202401 SET TABLESPACE lims_archive_tblspace;
+  ```
+
+###### 7. Konfigurasi Temporary Tablespace (`temp_tablespaces`)
+Untuk mengoptimalkan kueri analitik, operasi pengurutan memori besar (*external merge sort*), dan *hash joins*, pisahkan file sementara (*temporary files*) ke tablespace khusus:
+```sql
+-- Daftarkan tablespace sementara
+CREATE TABLESPACE lims_temp_tblspace LOCATION '/data/pg_tablespaces/lims_temp_tblspace';
+
+-- Konfigurasikan PostgreSQL agar menggunakan tablespace ini untuk temporary storage
+ALTER SYSTEM SET temp_tablespaces = 'lims_temp_tblspace';
+
+-- Muat ulang konfigurasi tanpa restart database
+SELECT pg_reload_conf();
+```
+
+---
+
+###### C. Tahap 3: Pemantauan, Audit, & Verifikasi Tablespace
+
+###### 1. Memeriksa Daftar Tablespace melalui Meta-Commands psql
+```text
+\db        -- Menampilkan daftar tablespace, pemilik (owner), dan lokasi fisik
+\db+       -- Menampilkan daftar tablespace lengkap dengan ukuran total penggunaan disk dan deskripsi
+```
+
+###### 2. Kueri SQL Audit Lokasi dan Ukuran Disk Tablespace
+Jalankan kueri berikut untuk memeriksa pemetaan direktori fisik dan konsumsi kapasitas penyimpanan:
+```sql
+SELECT 
+    spcname AS tablespace_name,
+    pg_get_userbyid(spcowner) AS owner_name,
+    pg_tablespace_location(oid) AS physical_location,
+    pg_size_pretty(pg_tablespace_size(spcname)) AS disk_usage
+FROM pg_tablespace
+ORDER BY pg_tablespace_size(spcname) DESC;
+```
+
+###### 3. Kueri Melihat Tabel dan Indeks di dalam Tablespace Tertentu
+Untuk memverifikasi objek apa saja yang telah dialokasikan ke dalam tablespace `ts_data_lims`:
+```sql
+SELECT 
+    n.nspname AS schema_name,
+    c.relname AS relation_name,
+    CASE c.relkind 
+        WHEN 'r' THEN 'Table' 
+        WHEN 'i' THEN 'Index' 
+        WHEN 'p' THEN 'Partitioned Table'
+        WHEN 'm' THEN 'Materialized View'
+        ELSE c.relkind::text 
+    END AS relation_type,
+    t.spcname AS tablespace_name,
+    pg_size_pretty(pg_relation_size(c.oid)) AS size_on_disk
+FROM pg_class c
+JOIN pg_namespace n ON n.oid = c.relnamespace
+JOIN pg_tablespace t ON t.oid = c.reltablespace
+WHERE t.spcname = 'ts_data_lims'
+ORDER BY pg_relation_size(c.oid) DESC;
+```
+
+---
+
+###### D. Tahap 4: Prosedur Penghapusan Tablespace yang Aman (Decommissioning)
+
+PostgreSQL **melarang** penghapusan tablespace jika masih terdapat objek basis data (database, tabel, indeks, atau partisi) yang tersimpan di dalamnya. Jika dipaksakan, akan muncul error:
+`ERROR: tablespace "ts_data_lims" is not empty`.
+
+Ikuti prosedur aman berikut:
+1. Pindahkan semua tabel dan indeks keluar dari tablespace tersebut ke tablespace lain (misalnya `pg_default`):
+   ```sql
+   \c lims_prod_db
+   ALTER TABLE ALL IN TABLESPACE ts_data_lims OWNED BY lims_app SET TABLESPACE pg_default;
+   ALTER INDEX ALL IN TABLESPACE ts_data_lims OWNED BY lims_app SET TABLESPACE pg_default;
+   ```
+2. Pastikan tidak ada database yang menggunakan tablespace tersebut sebagai default:
+   ```sql
+   ALTER DATABASE lims_prod_db SET TABLESPACE pg_default;
+   ```
+3. Hapus tablespace dari PostgreSQL:
+   ```sql
+   DROP TABLESPACE ts_data_lims;
+   ```
+4. Hapus direktori kosong di tingkat Linux OS:
+   ```bash
+   sudo rmdir /var/lib/postgresql/tablespaces/ts_data_lims
+   ```
+
+---
+
+###### E. Tahap 5: Perbedaan Konfigurasi Lingkungan (Linux VPS Standalone vs Docker Container)
+
+* **Linux Standalone (Native Host / VPS)**:
+  - Jalur direktori pada `LOCATION` mengacu langsung pada filesystem server lokal (misalnya `/var/lib/postgresql/tablespaces/ts_data_lims`).
+* **Docker Container**:
+  - Jalur direktori pada `LOCATION` mengacu pada struktur filesystem **di dalam container**.
+  - Oleh karena itu, direktori host Linux **wajib di-mount** ke dalam kontainer melalui volume saat menjalankan container:
+    ```yaml
+    # Contoh docker-compose.yml
+    services:
+      postgres:
+        image: postgres:15-alpine
+        volumes:
+          - /data/pg_tablespaces/ts_data_lims:/var/lib/postgresql/tablespaces/ts_data_lims
+    ```
+  - Di dalam container, perintah SQL menggunakan jalur mount tersebut:
+    ```sql
+    CREATE TABLESPACE ts_data_lims LOCATION '/var/lib/postgresql/tablespaces/ts_data_lims';
+    ```
+
+---
+
+###### F. Panduan Troubleshooting Error Umum Tablespace (Cheat Sheet)
+
+| Pesan Kesalahan (*Error Message*) | Akar Penyebab (*Root Cause*) | Solusi Perbaikan (*Resolution*) |
+| :--- | :--- | :--- |
+| `ERROR: directory "..." does not exist` | Direktori fisik di Linux belum dibuat. | Buat direktori di terminal Linux: `sudo mkdir -p <path>` |
+| `ERROR: could not set permissions on directory "...": Permission denied` | User `postgres` tidak memiliki hak akses/kepemilikan pada folder Linux. | Jalankan `sudo chown -R postgres:postgres <path>` dan `sudo chmod 700 <path>` |
+| `ERROR: directory "..." has group or world access` | Hak akses direktori di Linux terlalu terbuka (misal 755 atau 777). | Perketat izin direktori ke mode 0700: `sudo chmod 700 <path>` |
+| `ERROR: directory "..." is not empty` | Terdapat berkas atau folder (misal `lost+found`) di dalam direktori target. | Pastikan direktori kosong dengan `ls -la <path>`. Buat sub-folder baru jika berada di root partisi. |
+| `ERROR: cannot create tablespace within data directory` | Lokasi tablespace diarahkan ke dalam folder `$PGDATA`. | Pindahkan lokasi tablespace ke luar `$PGDATA` (misal `/var/lib/postgresql/tablespaces/...`). |
+| `ERROR: permission denied for tablespace ...` | User aplikasi tidak memiliki hak `CREATE` pada tablespace. | Berikan izin sebagai superuser: `GRANT CREATE ON TABLESPACE <name> TO lims_app;` |
+| `ERROR: tablespace "..." is not empty` | Masih ada tabel/indeks/database yang tersimpan saat menjalankan `DROP TABLESPACE`. | Relokasi seluruh objek dengan `ALTER TABLE ... SET TABLESPACE pg_default;` sebelum menghapus tablespace. |
+| `ERROR: cannot specify default tablespace for partitioned relations` | Tabel induk terpartisi (`PARTITION BY`) dilarang memiliki tablespace saat `default_tablespace` bernilai non-kosong pada file dump / sesi. | Tambahkan parameter `--no-tablespaces` pada perintah `pg_restore`. Seluruh tabel biasa dan partisi data anak tetap otomatis tersimpan di tablespace database (`ts_data_lims`). |
+
+
+---
+
+##### 7. Panduan Inisialisasi Database LIMS (User, Owner, Schema, & Extension)
+
+Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan dan keselarasan dengan arsitektur LIMS (setelah Tablespace disiapkan):
+
+1. **Buat User (Role) LIMS:**
+   Buka terminal psql sebagai superuser `postgres`:
    ```sql
    -- Membuat user/role baru untuk aplikasi LIMS
    CREATE USER lims_app WITH PASSWORD 'Nkl@130200';
    ```
-3. **Buat Tablespace Khusus LIMS (Opsional tapi Best Practice di Prod):**
+2. **Buat Database dengan Owner dan Tablespace Terkait:**
    ```sql
-   -- Memisahkan penyimpanan fisik data LIMS ke folder khusus
-   CREATE TABLESPACE lims_tblspace LOCATION '/var/lib/postgresql/lims_data';
-   ```
-4. **Buat Database dengan Owner dan Tablespace Terkait:**
-   ```sql
-   -- Membuat database utama LIMS
-   CREATE DATABASE lims_prod_db OWNER lims_app TABLESPACE lims_tblspace;
+   -- Membuat database utama LIMS yang terikat ke tablespace
+   CREATE DATABASE lims_prod_db OWNER lims_app TABLESPACE ts_data_lims;
    
    -- Memberikan seluruh hak akses database ke user lims
    GRANT ALL PRIVILEGES ON DATABASE lims_prod_db TO lims_app;
    ```
-5. **Buat Schema Khusus LIMS:**
+3. **Buat Schema Khusus LIMS:**
    Hubungkan ke database baru tersebut (`\c lims_prod_db`) sebagai user `lims_app` (atau `postgres` lalu set schema owner):
    ```sql
    \c lims_prod_db
@@ -4295,7 +5082,7 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
    -- Membuat schema lims agar seluruh tabel rapi terkelompok
    CREATE SCHEMA lims AUTHORIZATION lims_app;
    ```
-6. **Aktifkan Ekstensi Chatbot (pgvector) & UUID:**
+4. **Aktifkan Ekstensi Chatbot (pgvector) & UUID:**
    Di dalam database `lims_prod_db`, aktifkan ekstensi berikut (harus dijalankan oleh superuser `postgres`):
    ```sql
    -- Mengaktifkan ekstensi pencarian vektor untuk RAG Chatbot
@@ -4305,7 +5092,7 @@ Ikuti urutan inisialisasi database PostgreSQL berikut untuk menjamin keamanan da
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;
    ```
 
-##### 7. Backup & Restore Database PostgreSQL (Web UI, CLI, & Windows/Linux)
+##### 8. Backup & Restore Database PostgreSQL (Web UI, CLI, & Windows/Linux)
 LIMS menyediakan dua metode pencadangan (*backup*) dan pemulihan (*restore*) data: secara native melalui Web UI Admin (halaman *Database Maintenance*) serta secara langsung menggunakan utilitas bawaan PostgreSQL (`pg_dump`, `pg_restore`, dan `psql`) di lingkungan **Linux** maupun **Windows**.
 
 ###### Format File Backup yang Didukung
@@ -4326,25 +5113,36 @@ Saat memindahkan atau memulihkan database ke lingkungan/server baru, sering kali
 
 Berikut adalah standar prosedur LIMS untuk mengabaikan owner & role non-database owner:
 
-1. **Backup Bersih (Tanpa Perintah Owner & ACL Role Luar)**:
-   Gunakan flag `--no-owner` (`-O`) dan `--no-acl` / `--no-privileges` (`-x`) saat melakukan dump:
+1. **Backup Bersih (Tanpa Perintah Owner, ACL Role Luar, & Tablespace Tertanam)**:
+   Gunakan flag `--no-owner` (`-O`), `--no-acl` / `--no-privileges` (`-x`), serta `--no-tablespaces` saat melakukan dump:
    ```bash
    # Format Custom Binary (.dump) - Contoh Utama
-   pg_dump -h localhost -p 5432 -U admin_lims -d lims_prod_db -F c --no-owner --no-acl -f lims_clean.dump
+   pg_dump -h localhost -p 5432 -U admin_lims -d lims_prod_db -F c --no-owner --no-acl --no-tablespaces -f lims_clean.dump
 
    # Format Plain Text SQL (.sql)
-   pg_dump -h localhost -p 5432 -U admin_lims -d lims_prod_db -F p --no-owner --no-acl -f lims_clean.sql
+   pg_dump -h localhost -p 5432 -U admin_lims -d lims_prod_db -F p --no-owner --no-acl --no-tablespaces -f lims_clean.sql
    ```
 
-2. **Restore Bersih (Mengabaikan Owner & Hak Akses Lama ke Database Tujuan / Backup DB)**:
-   Saat memulihkan file `.dump`, sertakan parameter `--no-owner` dan `--no-privileges`:
+2. **Restore Bersih (Mengabaikan Owner, Hak Akses Lama, & Mengatasi Error Tablespace Partisi)**:
+   Saat memulihkan file `.dump` ke database produksi baru (yang dibuat dengan `TABLESPACE ts_data_lims`), **WAJIB sertakan flag `--no-tablespaces`**:
    ```bash
-   # Contoh Restore ke Database Cadangan (lims_bck_db) atau Database Produksi (lims_prod_db)
-   pg_restore -h localhost -p 5432 -U admin_lims -d lims_bck_db --no-owner --no-privileges lims_clean.dump
-
-   # Opsi tambahan menimpa tabel lama jika sudah ada (--clean --if-exists)
-   pg_restore -h localhost -p 5432 -U admin_lims -d lims_prod_db --clean --if-exists --no-owner --no-privileges -v lims_clean.dump
+   # Restore Bersih & Aman dari Error Partisi Tablespace
+   pg_restore -h 212.85.24.33 -p 5432 -U admin_lims -d lims_prod_db \
+     --no-owner \
+     --no-privileges \
+     --no-tablespaces \
+     --clean \
+     --if-exists \
+     -v lims_clean.dump
    ```
+
+   > [!IMPORTANT]
+   > **Mengapa flag `--no-tablespaces` sangat penting saat restore?**
+   > - Jika file dump memuat perintah `SET default_tablespace = ts_data_lims;`, PostgreSQL akan gagal mengeksekusi pembuatan tabel induk terpartisi (`PARTITION BY RANGE`) dengan pesan:  
+   >   `ERROR: cannot specify default tablespace for partitioned relations` (seperti pada tabel `lims.asset_activity_logs`, `lims.testing_applications`, dan `lims.testing_results`).
+   > - Menambahkan `--no-tablespaces` akan menghapus penetapan tablespace eksplisit yang memicu error tersebut.
+   > - **Apakah data tetap masuk ke `ts_data_lims`?** **YA, 100%!** Karena database target (`lims_prod_db`) telah dibuat dengan `TABLESPACE ts_data_lims`, seluruh tabel biasa dan partisi data anak (*leaf partitions*) secara otomatis tetap dialokasikan ke dalam `ts_data_lims` sebagai tablespace bawaan database.
+
 
 3. **Penanganan Terpisah: Trik Dummy Role (Jika Dump Lama Memuat Role `mecs_app`)**:
    Jika Anda harus merestore file dump lama yang memicu error `role "mecs_app" does not exist`:
@@ -6934,4 +7732,9 @@ ssh lims@212.85.24.33
 
 # Cek apakah port PostgreSQL dan MinIO aktif mendengarkan:
 ss -tulpn | grep -E '5432|9000|9001|80'
+
+# Cek izin direktori dan status Tablespace PostgreSQL di Linux:
+ls -ld /var/lib/postgresql/tablespaces/* /data/pg_tablespaces/* 2>/dev/null
+sudo -u postgres psql -c "\db+"
 ```
+
