@@ -39,9 +39,18 @@ def train_models_job():
         except Exception as e_folder:
             print(f"Error checking AI_METADATA_FOLDER in global_parameters: {e_folder}. Using default: {output_dir}")
         
-        # 1. Fetch historical testing results
+        # 1. Fetch unit mapping from scoring_sub_aspects
+        unit_map = {}
+        try:
+            u_query = text("SELECT code, standard_unit FROM lims.scoring_sub_aspects WHERE standard_unit IS NOT NULL AND standard_unit != ''")
+            for u_row in db.execute(u_query).fetchall():
+                unit_map[u_row[0]] = u_row[1].strip()
+        except Exception as e_unit:
+            print(f"Warning fetching units: {e_unit}")
+
+        # 2. Fetch historical testing results (actual_value and score)
         query = text("""
-            SELECT application_id, aspect_code, sub_aspect_code, score
+            SELECT application_id, aspect_code, sub_aspect_code, actual_value, score
             FROM lims.testing_results
             WHERE sub_aspect_code IS NOT NULL
         """)
@@ -54,10 +63,36 @@ def train_models_job():
             return {"status": "skipped", "message": "No training data found in database"}
             
         # Convert to pandas DataFrame
-        df_raw = pd.DataFrame(rows, columns=["application_id", "aspect_code", "sub_aspect_code", "score"])
-        # PostgreSQL NUMERIC returns Python Decimal — convert to float64 for pandas operations
+        df_raw = pd.DataFrame(rows, columns=["application_id", "aspect_code", "sub_aspect_code", "actual_value", "score"])
+        df_raw["actual_value"] = pd.to_numeric(df_raw["actual_value"], errors="coerce")
         df_raw["score"] = pd.to_numeric(df_raw["score"], errors="coerce").astype(float)
         
+        # Filter out legacy dummy inputs on physical parameters (e.g. KESEN > 5.0 µV or KESEL > 50.0 dB from old manual tests)
+        PHYSICAL_SANITY_MAX = {
+            "KESEN": 2.0,     # µV (normal 0.2)
+            "KESEL": 30.0,    # dB (normal 5)
+            "KESUA": 150.0,   # dB (normal 85-100)
+            "KEDRF": 100.0,   # W (normal 25)
+            "KEPAN": 20.0,    # A (normal 4)
+            "KENEL": 5.0,     # SWR (normal 1.2)
+            "KEDAI": 1000.0,  # mW (normal 185)
+            "KERUS": 800.0,   # mA (normal 125)
+            "SUHU1": 300.0,   # °C (normal 96)
+        }
+        for code, max_val in PHYSICAL_SANITY_MAX.items():
+            mask = (df_raw["sub_aspect_code"] == code) & (df_raw["actual_value"] > max_val)
+            df_raw.loc[mask, "actual_value"] = np.nan
+
+        # Feature value:
+        # - For physical parameters: keep physical actual_value (do NOT fallback to 0-100 score; NaNs will be imputed with median)
+        # - For qualitative parameters: fallback to score
+        is_phys = df_raw["sub_aspect_code"].isin(PHYSICAL_SANITY_MAX.keys())
+        df_raw["feature_val"] = np.where(
+            is_phys,
+            df_raw["actual_value"],
+            df_raw["actual_value"].where(df_raw["actual_value"].notna(), df_raw["score"])
+        )
+
         # Find unique aspects
         aspects = df_raw["aspect_code"].unique()
         trained_aspects = []
@@ -66,23 +101,20 @@ def train_models_job():
             print(f"Processing aspect: {aspect}")
             df_aspect = df_raw[df_raw["aspect_code"] == aspect]
             
-            # Pivot table: rows = applications, columns = sub-aspect codes, values = score
+            # Pivot table: rows = applications, columns = sub-aspect codes, values = feature_val
             df_pivoted = df_aspect.pivot_table(
                 index="application_id", 
                 columns="sub_aspect_code", 
-                values="score"
+                values="feature_val"
             )
             
             # Handle missing values by filling with column median
-            medians = df_pivoted.median()
-            # If median is empty or NaN (all values NaN), fill with 0.0
-            medians = medians.fillna(0.0)
+            medians = df_pivoted.median().fillna(0.0)
             
-            # Calculate standard deviation, then clip to minimum 2.0
-            # This prevents "zero deviation" when all training values are identical,
-            # which would make the tolerance range collapse to a single point.
-            # With std >= 2.0, the tolerance range is at least Median ± 3.0 (1.5 * 2.0)
-            stds = df_pivoted.std().fillna(0.0).clip(lower=2.0)
+            # Scale-aware minimum standard deviation (at least 5% of median or 0.001)
+            raw_stds = df_pivoted.std().fillna(0.0)
+            min_stds = np.maximum(0.05 * medians.abs(), 0.001)
+            stds = np.maximum(raw_stds, min_stds)
             
             df_pivoted = df_pivoted.fillna(medians)
             
@@ -94,7 +126,6 @@ def train_models_job():
                 continue
                 
             # Train Isolation Forest
-            # contamination=0.05 means we assume ~5% anomaly rate
             clf = IsolationForest(
                 n_estimators=100, 
                 contamination=0.05, 
@@ -118,6 +149,7 @@ def train_models_job():
                     "features": list(df_pivoted.columns),
                     "medians": medians.to_dict(),
                     "stds": stds.to_dict(),
+                    "units": {feat: unit_map.get(feat, "") for feat in df_pivoted.columns},
                     "trained_at": datetime.datetime.now().isoformat(),
                     "num_samples": num_samples,
                     "num_features": num_features

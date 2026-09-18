@@ -2436,6 +2436,7 @@ type AspectMetadata struct {
 	Features    []string           `json:"features"`
 	Medians     map[string]float64 `json:"medians"`
 	Stds        map[string]float64 `json:"stds"`
+	Units       map[string]string  `json:"units"`
 	NumFeatures int                `json:"num_features"`
 }
 
@@ -2520,7 +2521,7 @@ func SaveAspectResults(c *gin.Context) {
 	})
 
 	// AI Anomaly Check
-	isAnomaly, anomalyScore, shapValues, medians, stds, err := checkAnomaly(appID, aspectCode, reqItems)
+	isAnomaly, anomalyScore, shapValues, medians, stds, units, err := checkAnomaly(appID, aspectCode, reqItems)
 	if err == nil && isAnomaly {
 		override := c.PostForm("override") == "true"
 		overrideReason := c.PostForm("override_reason")
@@ -2595,6 +2596,7 @@ func SaveAspectResults(c *gin.Context) {
 				"shap_values":   shapValues,
 				"medians":       medians,
 				"stds":          stds,
+				"units":         units,
 			})
 			return
 		}

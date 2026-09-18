@@ -225,6 +225,7 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
       err.shap_values = data.shap_values;
       err.medians = data.medians;
       err.stds = data.stds;
+      err.units = data.units;
       throw err;
     }
 

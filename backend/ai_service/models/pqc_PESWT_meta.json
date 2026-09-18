@@ -10,11 +10,16 @@
         "PEEAR": 98.5
     },
     "stds": {
-        "PEANT": 2.0,
-        "PEBAT": 2.0,
-        "PEEAR": 2.0
+        "PEANT": 20.155419306463333,
+        "PEBAT": 19.79000134476515,
+        "PEEAR": 22.065495433134455
     },
-    "trained_at": "2026-09-05T10:16:15.949192",
-    "num_samples": 6,
+    "units": {
+        "PEANT": "",
+        "PEBAT": "",
+        "PEEAR": ""
+    },
+    "trained_at": "2026-09-18T18:36:14.522748",
+    "num_samples": 32,
     "num_features": 3
 }

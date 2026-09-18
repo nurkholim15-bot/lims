@@ -7,33 +7,62 @@ import (
 	"log"
 	"math"
 	"os"
+	"strconv"
+	"strings"
 
 	"lim-system/models"
 	ort "github.com/yalue/onnxruntime_go"
 )
 
-func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) (bool, float64, map[string]float64, map[string]float64, map[string]float64, error) {
+func parseActualValue(val interface{}) (float64, bool) {
+	if val == nil {
+		return 0, false
+	}
+	switch v := val.(type) {
+	case float64:
+		return v, true
+	case float32:
+		return float64(v), true
+	case int:
+		return float64(v), true
+	case int64:
+		return float64(v), true
+	case string:
+		clean := strings.TrimSpace(v)
+		clean = strings.ReplaceAll(clean, ",", ".")
+		if f, err := strconv.ParseFloat(clean, 64); err == nil {
+			return f, true
+		}
+	}
+	return 0, false
+}
+
+func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) (bool, float64, map[string]float64, map[string]float64, map[string]float64, map[string]string, error) {
 	if models.GetGlobalParam("AI_PQC_ENABLED", "true") != "true" {
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 
 	// 1. Find and Load Metadata
 	metaPath := findModelFile(aspectCode, "json")
 	if metaPath == "" {
 		log.Printf("AI PQC warning: metadata file not found for aspect '%s', soft-bypassing check", aspectCode)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 
 	metaBytes, err := os.ReadFile(metaPath)
 	if err != nil {
 		log.Printf("AI PQC warning: failed to read metadata for aspect '%s', soft-bypassing: %v", aspectCode, err)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 
 	var metadata AspectMetadata
 	if err := json.Unmarshal(metaBytes, &metadata); err != nil {
 		log.Printf("AI PQC warning: failed to parse metadata for aspect '%s', soft-bypassing: %v", aspectCode, err)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
+	}
+
+	if metadata.Units == nil {
+		metadata.Units = make(map[string]string)
 	}
 
 	// Sanitize medians and stds
@@ -48,14 +77,12 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 
 	cleanStds := make(map[string]float64)
 	for k, v := range metadata.Stds {
-		if math.IsNaN(v) {
-			cleanStds[k] = 2.0
+		med := math.Abs(cleanMedians[k])
+		minStd := math.Max(0.05*med, 0.001)
+		if math.IsNaN(v) || v < minStd {
+			cleanStds[k] = minStd
 		} else {
-			if v < 2.0 {
-				cleanStds[k] = 2.0
-			} else {
-				cleanStds[k] = v
-			}
+			cleanStds[k] = v
 		}
 	}
 
@@ -67,7 +94,19 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 			code = item.ParamCode
 		}
 		if code != "" {
-			featuresMap[code] = item.Score
+			unit := metadata.Units[code]
+			if unit != "" {
+				// Quantitative / physical parameter: use actual_value
+				if numVal, ok := parseActualValue(item.ActualValue); ok {
+					featuresMap[code] = numVal
+				} else {
+					// Fallback to median if actual_value not parsable, NOT score!
+					featuresMap[code] = cleanMedians[code]
+				}
+			} else {
+				// Qualitative parameter: use score
+				featuresMap[code] = item.Score
+			}
 		}
 	}
 
@@ -84,7 +123,7 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 	onnxPath := findModelFile(aspectCode, "onnx")
 	if onnxPath == "" {
 		log.Printf("AI PQC warning: ONNX model file not found for aspect '%s', soft-bypassing check", aspectCode)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 
 	inputNames := []string{"float_input"}
@@ -92,7 +131,7 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 	session, err := ort.NewDynamicAdvancedSession(onnxPath, inputNames, outputNames, nil)
 	if err != nil {
 		log.Printf("AI PQC warning: failed to create ONNX session for aspect '%s', soft-bypassing: %v", aspectCode, err)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 	defer session.Destroy()
 
@@ -100,7 +139,7 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 	inputTensor, err := ort.NewTensor(inputShape, inputData)
 	if err != nil {
 		log.Printf("AI PQC warning: failed to create input tensor, soft-bypassing: %v", err)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 	defer inputTensor.Destroy()
 
@@ -108,7 +147,7 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 	err = session.Run([]ort.Value{inputTensor}, outputs)
 	if err != nil {
 		log.Printf("AI PQC warning: failed to execute ONNX session, soft-bypassing: %v", err)
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 	defer outputs[0].Destroy()
 	defer outputs[1].Destroy()
@@ -117,7 +156,7 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 	scoresTensor, ok2 := outputs[1].(*ort.Tensor[float32])
 	if !ok1 || !ok2 {
 		log.Printf("AI PQC warning: invalid ONNX output tensor types, soft-bypassing")
-		return false, 0.0, nil, nil, nil, nil
+		return false, 0.0, nil, nil, nil, nil, nil
 	}
 
 	labels := labelTensor.GetData()
@@ -137,12 +176,16 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 		med := cleanMedians[featName]
 		margin := cleanStds[featName] * 1.5
 		lo := med - margin
-		if lo < 0 {
-			lo = 0
-		}
 		hi := med + margin
-		if hi > 100.0 {
-			hi = 100.0
+
+		// For qualitative parameters (0 - 100 scale), clamp bounds
+		if metadata.Units[featName] == "" {
+			if lo < 0 {
+				lo = 0
+			}
+			if hi > 100.0 {
+				hi = 100.0
+			}
 		}
 
 		if val < lo || val > hi {
@@ -179,7 +222,7 @@ func checkAnomaly(appID uint64, aspectCode string, reqItems []AspectResultItem) 
 		shapValues = explainAnomaly(session, inputData, metadata.Features, cleanMedians, rawScore)
 	}
 
-	return isAnomaly, math.Round(anomalyScore*10000)/10000, shapValues, cleanMedians, cleanStds, nil
+	return isAnomaly, math.Round(anomalyScore*10000)/10000, shapValues, cleanMedians, cleanStds, metadata.Units, nil
 }
 
 func explainAnomaly(session *ort.DynamicAdvancedSession, inputData []float32, features []string, medians map[string]float64, rawScore float64) map[string]float64 {

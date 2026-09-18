@@ -1,0 +1,17 @@
+{
+    "features": [
+        "SUHU1"
+    ],
+    "medians": {
+        "SUHU1": 97.84
+    },
+    "stds": {
+        "SUHU1": 26.912192543712994
+    },
+    "units": {
+        "SUHU1": "\u00b0C"
+    },
+    "trained_at": "2026-09-18T18:36:52.303626",
+    "num_samples": 23,
+    "num_features": 1
+}

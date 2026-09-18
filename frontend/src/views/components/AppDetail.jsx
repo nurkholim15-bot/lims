@@ -1717,6 +1717,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
           },
           medians: err.response?.medians || err.medians || {},
           stds: err.response?.stds || err.stds || {},
+          units: err.response?.units || err.units || {},
           message: errorMsg
         });
         showToast(errorMsg, 'error');
@@ -3125,15 +3126,42 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                       const rawStd = anomalyBlock.stds?.[key];
                       const stdVal = (rawStd !== undefined && rawStd !== null && !isNaN(rawStd)) ? parseFloat(rawStd) : 2.0;
                       const rangeMargin = stdVal * 1.5;
-                      const lowerBound = Math.max(0.0, medianVal - rangeMargin);
-                      const upperBound = Math.min(100.0, medianVal + rangeMargin);
+                      const unit = anomalyBlock.units?.[key] || "";
+                      const isPhysical = Boolean(unit);
 
-                      // Find actual test score from aspectItems for this sub_aspect_code
+                      const lowerBound = isPhysical ? (medianVal - rangeMargin) : Math.max(0.0, medianVal - rangeMargin);
+                      const upperBound = isPhysical ? (medianVal + rangeMargin) : Math.min(100.0, medianVal + rangeMargin);
+
+                      // Find actual test score/value from aspectItems for this sub_aspect_code
                       const matchedItem = anomalyBlock.aspectItems?.find(
                         (p) => p.sub_aspect_code === key || p.param_code === key
                       );
-                      const actualScore = matchedItem ? parseFloat(matchedItem.actual_value) : null;
-                      const isOutOfRange = actualScore !== null && (actualScore < lowerBound || actualScore > upperBound);
+                      let actualVal = null;
+                      if (matchedItem) {
+                        if (isPhysical) {
+                          const parsed = parseFloat(String(matchedItem.actual_value || "").replace(",", "."));
+                          actualVal = !isNaN(parsed) ? parsed : null;
+                        } else {
+                          const parsedScore = typeof matchedItem.score === "number" ? matchedItem.score : parseFloat(matchedItem.score);
+                          if (!isNaN(parsedScore)) {
+                            actualVal = parsedScore;
+                          } else {
+                            const parsedAct = parseFloat(String(matchedItem.actual_value || "").replace(",", "."));
+                            actualVal = !isNaN(parsedAct) ? parsedAct : null;
+                          }
+                        }
+                      }
+
+                      const isOutOfRange = actualVal !== null && (actualVal < lowerBound || actualVal > upperBound);
+
+                      // Helper to format floats nicely based on magnitude
+                      const formatNum = (num) => {
+                        if (num === null || num === undefined || isNaN(num)) return "-";
+                        if (Math.abs(num) > 0 && Math.abs(num) < 1) {
+                          return Number(num.toFixed(3)).toString();
+                        }
+                        return Number(num.toFixed(2)).toString();
+                      };
 
                       return (
                         <div key={key} style={{ marginBottom: "1rem", background: isOutOfRange ? "#fff5f5" : "#f8fafc", padding: "0.6rem 0.75rem", borderRadius: "8px", border: isOutOfRange ? "1px solid #fecaca" : "1px solid #e2e8f0" }}>
@@ -3145,21 +3173,21 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                             </span>
                             <span style={{ fontWeight: 600, color: "#64748b", fontSize: "0.75rem", background: "#e2e8f0", padding: "2px 8px", borderRadius: "999px" }}>Kontribusi: {val}%</span>
                           </div>
-                          {/* Actual score vs normal range */}
+                          {/* Actual score/value vs normal range */}
                           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", fontSize: "0.75rem", marginBottom: "0.4rem" }}>
-                            {actualScore !== null && (
+                            {actualVal !== null && (
                               <span style={{ background: isOutOfRange ? "#b91c1c" : "#1d4ed8", color: "#fff", padding: "2px 8px", borderRadius: "4px", fontWeight: 700 }}>
-                                Skor Input: {actualScore.toFixed(1)}
+                                {isPhysical ? `Nilai Input: ${formatNum(actualVal)} ${unit}` : `Skor Input: ${formatNum(actualVal)} poin`}
                               </span>
                             )}
                             {anomalyBlock.medians && anomalyBlock.medians[key] !== undefined && (
                               <span style={{ background: "#f1f5f9", color: "#475569", padding: "2px 8px", borderRadius: "4px" }}>
-                                Normal: {medianVal.toFixed(1)} &plusmn; {rangeMargin.toFixed(1)} <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>(σ={stdVal.toFixed(1)} poin)</span>
+                                Normal: {formatNum(medianVal)} &plusmn; {formatNum(rangeMargin)} {unit || "poin"} <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>(σ={formatNum(stdVal)} {unit || "poin"})</span>
                               </span>
                             )}
                             {anomalyBlock.medians && anomalyBlock.medians[key] !== undefined && (
                               <span style={{ background: "#f1f5f9", color: "#475569", padding: "2px 8px", borderRadius: "4px" }}>
-                                Batas: {lowerBound.toFixed(1)} &ndash; {upperBound.toFixed(1)}
+                                Batas: {formatNum(lowerBound)} &ndash; {formatNum(upperBound)} {unit || "poin"}
                               </span>
                             )}
                           </div>

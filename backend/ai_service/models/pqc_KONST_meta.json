@@ -1,0 +1,41 @@
+{
+    "features": [
+        "APK",
+        "APW",
+        "KOBER",
+        "KOCAD",
+        "KODIM",
+        "KOPER",
+        "KOTEG"
+    ],
+    "medians": {
+        "APK": 100.0,
+        "APW": 100.0,
+        "KOBER": 100.0,
+        "KOCAD": 100.0,
+        "KODIM": 100.0,
+        "KOPER": 100.0,
+        "KOTEG": 100.0
+    },
+    "stds": {
+        "APK": 21.735474000801677,
+        "APW": 16.511464456492753,
+        "KOBER": 20.723094371164876,
+        "KOCAD": 18.99396617318622,
+        "KODIM": 15.543512811260975,
+        "KOPER": 14.319201293776814,
+        "KOTEG": 18.726764258801975
+    },
+    "units": {
+        "APK": "",
+        "APW": "",
+        "KOBER": "",
+        "KOCAD": "",
+        "KODIM": "",
+        "KOPER": "",
+        "KOTEG": ""
+    },
+    "trained_at": "2026-09-18T18:36:57.622651",
+    "num_samples": 23,
+    "num_features": 7
+}

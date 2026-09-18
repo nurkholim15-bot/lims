@@ -172,7 +172,8 @@ Sebelum melakukan deployment LIMS, sistem server harus terpasang perangkat lunak
 | **Utilitas Backup MinIO** | MinIO Client (`mc`) | Latest Stable | Alat untuk backup sinkronisasi file (inkremental) |
 | **Container Engine** | Docker & Docker Compose | v20+ / v2+ | Menjalankan infrastruktur pendukung (Postgres, MinIO, Camunda) |
 | **Web Server** | NGINX | 1.18+ | Reverse proxy & load balancing |
-| **OCR Engine** | Python & PaddleOCR | Python 3.8+ | Pengenal dokumen/hasil uji |
+| **OCR Engine** | Python & PaddleOCR (`/home/lims/venv_ocr`) | Python 3.10 – 3.12 | Ekstraksi teks dokumen/hasil uji (Standby Daemon Port 8089 & CLI) |
+| **AI PQC Retraining** | Python Scikit-Learn & ONNX (`/home/lims/lims-ai-env`) | Python 3.10 – 3.12 | Pelatihan model deteksi anomali *Isolation Forest* & konversi ONNX |
 | **AI LLM Runner** | Ollama | Latest Stable | Runner model AI lokal (jika tidak via Groq Cloud) |
 | **Broker Pesan (MQTT)** | Mosquitto Broker | 2.0+ | Broker pesan untuk telemetri sensor IoT |
 | **Middleware Integrasi** | Node-RED | 3.0+ | Penerjemah protokol & data pipeline peralatan |
@@ -233,22 +234,75 @@ chmod +x mc
 sudo mv mc /usr/local/bin/
 ```
 
-##### 8. Pasang Python Virtual Environment & Library AI Retraining
+##### 8. Pasang Python Virtual Environment Terisolasi (Arsitektur Dual Venv)
+
+Sistem LIMS menggunakan **dua (2) Virtual Environment Python terpisah** di server VPS guna mencegah bentrok versi pustaka (*dependency collision*) dan mengisolasi beban kerja:
+
+| Parameter | Virtual Environment 1: `venv_ocr` | Virtual Environment 2: `lims-ai-env` |
+| :--- | :--- | :--- |
+| **Lokasi Direktori VPS** | `/home/lims/venv_ocr/` | `/home/lims/lims-ai-env/` |
+| **Peruntukan & Fungsi** | Layanan OCR (*Optical Character Recognition*) untuk mengekstrak data teks dari formulir, dokumen gambar, dan PDF hasil uji. | Modul AI PQC (*Predictive Quality Control*) untuk pelatihan model anomali (*Isolation Forest*) & ekspor format biner ONNX. |
+| **Layanan / Modul Pemanggil** | 1. Standby Daemon HTTP: `lims-ocr.service` (Port 8089)<br>2. CLI Fallback Go: `backend/controllers/ocr_controller.go` (`paddle_ocr.py`) | 1. Crontab Penjadwalan Retraining Mingguan (`backend/ai_service/train.py`)<br>2. Eksekusi manual pelatihan model PQC |
+| **Pustaka Utama** | `paddlepaddle`, `paddleocr`, `Pillow`, `numpy` | `scikit-learn==1.4.1.post1`, `skl2onnx`, `onnx`, `pandas`, `numpy`, `sqlalchemy`, `psycopg2-binary`, `cryptography`, `ml_dtypes` |
+| **Versi Python yang Didukung** | Python 3.10 – 3.12 (Disarankan Python 3.12) | Python 3.10 – 3.12 |
+| **Alasan Isolasi Terpisah** | Engine PaddleOCR membutuhkan dependensi C++, `protobuf`, dan versi internal OpenCV tertentu yang **tidak kompatibel** bila dicampur dengan `onnx`/`skl2onnx`. Selain itu, daemon OCR harus selalu *standby* di RAM. | Menjamin proses *heavy batch processing* (retraining mingguan) tidak memengaruhi ketersediaan memori atau merusak integritas pustaka daemon OCR. |
+
+---
+
+###### 8.A. Instalasi Virtual Environment OCR (`/home/lims/venv_ocr`)
+Virtual environment ini wajib dipasang untuk menjalankan layanan OCR Standby Daemon (Port 8089) maupun fallback CLI Go.
+
 ```bash
+# 1. Pasang pustaka sistem OS Ubuntu (OpenCV, Poppler PDF, C++ Compiler, Tesseract)
+sudo apt update
+sudo apt install -y software-properties-common poppler-utils tesseract-ocr tesseract-ocr-ind tesseract-ocr-eng libgl1 libglib2.0-0 build-essential ccache ninja-build
+
+# 2. Pasang Python 3.12 jika OS menggunakan versi yang belum didukung
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt update
+sudo apt install -y python3.12 python3.12-venv python3-pip
+
+# 3. Buat direktori virtual environment venv_ocr di /home/lims/
+# (PENTING: Eksekusi sebagai user lims biasa, JANGAN gunakan sudo!)
+python3.12 -m venv /home/lims/venv_ocr
+
+# 4. Pasang dan perbarui pustaka PaddleOCR
+/home/lims/venv_ocr/bin/pip install --upgrade pip
+/home/lims/venv_ocr/bin/pip install Pillow numpy paddlepaddle paddleocr
+```
+> [!TIP]
+> Panduan konfigurasi unit systemd `lims-ocr.service` (Port 8089) agar OCR selalu *standby* di RAM dan merespons dalam ~1 detik dijelaskan secara detail pada [Bagian 8.E: Optimalisasi Performa OCR](#optimalisasi-performa-ocr-paddleocr-standby-daemon-port-8089).
+
+---
+
+###### 8.B. Instalasi Virtual Environment AI Retraining PQC (`/home/lims/lims-ai-env`)
+Virtual environment ini digunakan khusus untuk modul *Predictive Quality Control* (PQC) dan skrip retraining model mingguan.
+
+```bash
+# 1. Pastikan modul venv Python tersedia
 sudo apt install python3-venv python3-pip -y
+
+# 2. Buat direktori virtual environment lims-ai-env di /home/lims/
+# (Eksekusi sebagai user lims biasa, JANGAN gunakan sudo!)
 python3 -m venv /home/lims/lims-ai-env
+
+# 3. Pasang paket data science, Scikit-Learn, dan konversi ONNX
 /home/lims/lims-ai-env/bin/pip install --upgrade pip
 /home/lims/lims-ai-env/bin/pip install pandas numpy scikit-learn==1.4.1.post1 sqlalchemy skl2onnx onnx cryptography psycopg2-binary ml_dtypes
 ```
+> [!TIP]
+> Panduan konfigurasi crontab mingguan untuk skrip `train.py` dijelaskan secara detail pada [Bagian 8.J: Pelatihan Model AI (PQC) & Penjadwalan Otomatis](#j-pelatihan-model-ai-pqc--penjadwalan-otomatis-crontab).
 
-##### 7. Pasang MinIO (Object Storage)
+---
+
+##### 9. Pasang MinIO (Object Storage)
 ```bash
 wget https://dl.min.io/server/minio/release/linux-amd64/minio
 chmod +x minio
 sudo mv minio /usr/local/bin/
 ```
 
-##### 8. Pasang Nginx Web Server & GoAccess (Monitoring)
+##### 10. Pasang Nginx Web Server & GoAccess (Monitoring)
 ```bash
 sudo apt install nginx -y
 wget -O - https://deb.goaccess.io/gnugpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/goaccess.gpg >/dev/null
@@ -257,13 +311,13 @@ sudo apt update
 sudo apt install goaccess -y
 ```
 
-##### 9. Pasang MQTT Broker (Mosquitto) & Node-RED
+##### 11. Pasang MQTT Broker (Mosquitto) & Node-RED
 ```bash
 sudo apt install mosquitto mosquitto-clients -y
 sudo npm install -g --unsafe-perm node-red
 ```
 
-##### 10. Pasang Ollama AI Engine Lokal di Ubuntu (Embedding & LLM)
+##### 12. Pasang Ollama AI Engine Lokal di Ubuntu (Embedding & LLM)
 ```bash
 # 1. Pasang Ollama secara native di Ubuntu (Laptop WSL2 atau VPS)
 curl -fsSL https://ollama.com/install.sh | sh
@@ -1646,10 +1700,11 @@ Sistem LIMS menggunakan berbagai algoritma Machine Learning sesuai kebutuhan:
 *   **Threshold Sistem**: Jika tingkat anomali $\ge 50\%$ (`0.5`), data dianggap sebagai **anomali**.
 
 **5.2. Batas Toleransi Individual (Secondary Boundary Check)**
-Karena Isolation Forest mengevaluasi pola gabungan (*multivariate*), dilakukan pemeriksaan batas toleransi individu:
+Karena Isolation Forest mengevaluasi pola gabungan (*multivariate*), dilakukan pemeriksaan batas toleransi individu pada setiap parameter:
     $$\text{Batas} = \text{Median} \pm (1.5 \times \text{Std})$$
-*   Batas atas dibatasi maksimal `100.0` dan batas bawah minimal `0.0`.
-*   Jika terdapat minimal 1 sub-aspek yang nilainya di luar batas toleransi, sistem secara otomatis menetapkan `is_anomaly = true` dan tingkat anomali minimal `55%` (`0.55`).
+*   **Parameter Kuantitatif / Fisik (Memiliki Satuan seperti `mW`, `mA`, `dB`, `µV`, `°C`, `W`)**: Dievaluasi langsung menggunakan nilai uji fisik aktual (*actual value*). Batas atas tidak dikunci pada `100.0` sehingga besaran fisik di atas 100 (seperti daya $180\text{ mW}$ atau arus $130\text{ mA}$) tidak dianggap anomali. Nilai deviasi standar minimum dihitung secara proporsional terhadap skala parameter: $\text{MinStd} = \max(0.05 \times |\text{Median}|, 0.001)$.
+*   **Parameter Kualitatif / Checklist (Tanpa Satuan)**: Menggunakan nilai skor ($0 - 100$), di mana batas atas dibatasi maksimal `100.0` dan batas bawah minimal `0.0`.
+*   Jika terdapat minimal 1 parameter yang nilainya berada di luar batas toleransi ($\text{val} < \text{Batas Bawah}$ atau $\text{val} > \text{Batas Atas}$), sistem secara otomatis menandai `is_anomaly = true` dan menetapkan tingkat anomali minimal `55%` (`0.55`).
 
 **5.3. Pseudo-SHAP (Leave-One-Out Permutation)**
 Untuk mengurai kontribusi kesalahan dari masing-masing variabel:
@@ -1674,6 +1729,89 @@ Untuk mengurai kontribusi kesalahan dari masing-masing variabel:
 | 8 | `psycopg2-binary` | Python (Retrain) | `2.9.9` | Driver PostgreSQL untuk Python |
 | 9 | `cryptography` | Python (Retrain) | `42.0.5` | Mendekripsi password database yang terenkripsi AES-CFB |
 
+**5.5. Penanganan Tahap Tanpa Data Historis (Cold-Start Problem & Konfigurasi Manual PQC)**
+
+Dalam tahap awal operasional laboratorium baru, pembukaan cabang baru, atau penambahan metode/instrumen uji yang belum memiliki riwayat pengujian pada tabel basis data `lims.testing_results`, sistem LIMS belum memiliki dataset transaksi untuk melatih model Machine Learning (*Cold-Start Problem*).
+
+LIMS menyediakan **3 mekanisme fleksibel** agar modul PQC dapat langsung aktif menjaga kualitas data sejak hari pertama:
+
+1. **Metode 1: Pembuatan / Konfigurasi Berkas Metadata JSON Manual (`pqc_<ASPECT>_meta.json`)**
+   Sistem runtime Go Backend membaca nilai acuan langsung dari berkas metadata JSON di direktori model (`backend/ai_service/models/pqc_<ASPECT>_meta.json`). Administrator atau teknisi lab dapat membuat berkas ini secara manual berdasarkan spesifikasi teknis peralatan uji (datasheet pabrikan / standar regulasi seperti SDPPI/SNI/ITU):
+   ```json
+   {
+       "features": [
+           "KEDAI",
+           "KELCH",
+           "KERUS",
+           "KESEL",
+           "KESEN",
+           "KESUA"
+       ],
+       "medians": {
+           "KEDAI": 181.69,
+           "KELCH": 100.0,
+           "KERUS": 122.19,
+           "KESEL": 5.47,
+           "KESEN": 0.22,
+           "KESUA": 89.45
+       },
+       "stds": {
+           "KEDAI": 67.95,
+           "KELCH": 17.22,
+           "KERUS": 49.53,
+           "KESEL": 2.73,
+           "KESEN": 0.20,
+           "KESUA": 18.98
+       },
+       "units": {
+           "KEDAI": "mW",
+           "KELCH": "",
+           "KERUS": "mA",
+           "KESEL": "dB",
+           "KESEN": "µV",
+           "KESUA": "dB"
+       },
+       "trained_at": "2026-09-18T00:00:00",
+       "num_samples": 0,
+       "num_features": 6
+   }
+   ```
+   * **Mekanisme Toleransi Otomatis**:
+     $$\text{Batas Normal} = \text{Median} \pm (1.5 \times \text{Std})$$
+     *Contoh*: Untuk parameter `KESUA` (*Kekerasan Suara*) dengan target nilai tengah $89.45\text{ dB}$ dan toleransi $\pm 28.47\text{ dB}$, teknisi cukup mengisi `median = 89.45` dan `std = 18.98` (karena $1.5 \times 18.98 = 28.47\text{ dB}$, menghasilkan rentang aman $60.98 - 117.91\text{ dB}$).
+   * **Bypass Cerdas**: Jika berkas metadata untuk aspek tertentu belum tersedia sama sekali, backend secara otomatis melakukan *soft-bypass* (tidak memblokir transaksi simpan aspek dan mencatat info ke log sistem).
+
+2. **Metode 2: Cold-Start Seeder Sintetis Berbasis Spesifikasi Instrumen (`seed_pqc_data.py`)**
+   Jika diinginkan model *Isolation Forest* ONNX juga otomatis terbentuk sejak awal:
+   * Teknisi mendefinisikan sebaran nominal fisik pada kamus `PHYSICAL_SPECS` di berkas `backend/ai_service/seed_pqc_data.py`:
+     ```python
+     PHYSICAL_SPECS = {
+         "KEDAI": {"unit": "mW", "mean": 185.0, "std": 12.0, "min": 60.0, "max": 300.0},
+         "KERUS": {"unit": "mA", "mean": 125.0, "std": 10.0, "min": 50.0, "max": 250.0},
+         "KESEL": {"unit": "dB", "mean": 5.5,   "std": 1.1,  "min": 1.0,  "max": 18.0},
+         "KESEN": {"unit": "µV", "mean": 0.22,  "std": 0.03, "min": 0.05, "max": 0.8},
+         "KESUA": {"unit": "dB", "mean": 88.0,  "std": 8.0,  "min": 25.0, "max": 105.0},
+     }
+     ```
+   * Eksekusi perintah pembentukan dataset sintetis dan retraining:
+     ```bash
+     /home/lims/lims-ai-env/bin/python backend/ai_service/seed_pqc_data.py
+     /home/lims/lims-ai-env/bin/python backend/ai_service/train.py
+     ```
+   * Sistem akan membentuk data sintetis sebanyak 150 sampel pengujian yang konsisten dengan batas toleransi fisik, melatih graf model ONNX, dan menyimpannya ke `lims.ai_model_registry`.
+
+3. **Metode 3: Antarmuka Master Data Database (Tabel `lims.scoring_sub_aspects`)**
+   Untuk kemudahan administrasi di masa depan tanpa menyentuh terminal/berkas:
+   * Parameter nominal fisik dan toleransi disimpan pada tabel `scoring_sub_aspects` (`pqc_nominal_value`, `pqc_tolerance`).
+   * Operator lab / supervisor dapat mengubah nilai acuan langsung dari antarmuka Web LIMS pada menu Master Data Penilaian.
+
+**Siklus Transisi Data-Driven (Lifecycle Roadmap):**
+```mermaid
+flowchart LR
+    A["Fase 1: Cold-Start<br/>(Input Nilai Acuan Manual / Seeder Spesifikasi)"] --> B["Fase 2: Operasional Harian<br/>(PQC Aktif Memvalidasi Input Penguji)"]
+    B --> C["Fase 3: Data-Driven Retraining<br/>(Terkumpul >= 30 Sampel Riil, Cron Mingguan Melatih Ulang Otomatis)"]
+```
+
 ##### 6. Studi Kasus Perhitungan Matematis AI PQC (Aspek: KEPEN)
 
 Bagian ini menyajikan simulasi perhitungan keputusan anomali dan kontribusi SHAP menggunakan profil data statistik riil dari database LIMS Anda (berdasarkan seeder dataset transaksi).
@@ -1681,17 +1819,17 @@ Bagian ini menyajikan simulasi perhitungan keputusan anomali dan kontribusi SHAP
 **6.1. Profil Statistik Riil Database (Aspek: KEPEN)**
 Berikut adalah nilai statistik riil untuk 6 sub-aspek `KEPEN`:
 
-| Sub-Aspect Code | Parameter Name | Median (Nilai Tengah) | Standard Deviation ($\sigma$) | Rentang Batas Toleransi ($1.5 \times \sigma$) |
-| :--- | :--- | :---: | :---: | :---: |
-| **KEDAI** | Daya output audio | 90.00 | 18.23 | 62.65 - 100.0 |
-| **KELCH** | Threshold/Squelch | 85.44 | 19.51 | 56.17 - 100.0 |
-| **KERUS** | Kerusakan fisik | 86.72 | 11.73 | 69.12 - 98.31 |
-| **KESEL** | Keselamatan kerja | 87.05 | 18.21 | 59.73 - 100.0 |
-| **KESEN** | Sensitivitas | 86.66 | 17.40 | 60.56 - 100.0 |
-| **KESUA** | Kualitas suara | 85.73 | 13.91 | 64.86 - 100.0 |
+| Sub-Aspect Code | Parameter Name | Satuan | Median (Nilai Tengah) | Standard Deviation ($\sigma$) | Rentang Batas Toleransi ($1.5 \times \sigma$) |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **KEDAI** | Daya output audio | mW | 181.69 | 67.95 | 79.75 - 283.62 mW |
+| **KELCH** | Sensitivitas squelch | poin | 100.00 | 17.22 | 74.17 - 100.00 poin |
+| **KERUS** | Pemakaian arus penerima | mA | 122.19 | 49.53 | 47.90 - 196.48 mA |
+| **KESEL** | Selektifitas penerima | dB | 5.47 | 2.73 | 1.37 - 9.57 dB |
+| **KESEN** | Sensitifitas penerima | µV | 0.22 | 0.20 | -0.08 - 0.51 µV |
+| **KESUA** | Kekerasan suara | dB | 89.45 | 18.98 | 60.98 - 117.91 dB |
 
 > [!NOTE]
-> **Imputasi Nilai Kosong**: Jika operator mengosongkan parameter tertentu saat input (misal `KERUS`), sistem AI akan otomatis mengisi kolom kosong tersebut dengan nilai median historisnya (`86.72`) sebelum melakukan evaluasi model.
+> **Imputasi Nilai Kosong**: Jika operator mengosongkan parameter tertentu saat input (misal `KERUS`), sistem AI akan otomatis mengisi kolom kosong tersebut dengan nilai median historisnya (`122.19`) sebelum melakukan evaluasi model.
 
 **6.2. Simulasi Kasus 1: Input Data Normal**
 *   **Data Input Aktual**:
@@ -3351,20 +3489,28 @@ sudo add-apt-repository ppa:deadsnakes/ppa -y
 sudo apt update
 sudo apt install python3.12 python3.12-venv -y
 
-# 3. Buat Kotak Isolasi (Venv) khusus AI di dalam folder backend LIMS
-# (PENTING: Pastikan Anda menjalankan ini DENGAN AKUN BIASA, JANGAN GUNAKAN SUDO!)
-python3.12 -m venv venv_ocr
+# 3. Buat Kotak Isolasi Virtual Environment venv_ocr di /home/lims/venv_ocr
+# (PENTING: Pastikan Anda menjalankan ini DENGAN AKUN BIASA lims, JANGAN GUNAKAN SUDO!)
+python3.12 -m venv /home/lims/venv_ocr
+
+# Catatan: Jika ingin membuat venv di dalam folder backend, Anda juga dapat menjalankan:
+# cd /home/lims/lims1/backend && python3.12 -m venv venv_ocr
+# Namun path terpusat /home/lims/venv_ocr adalah standar yang digunakan oleh systemd daemon lims-ocr.service.
 
 # 3.1. [TROUBLESHOOTING] Jika Anda tidak sengaja menggunakan sudo di atas, 
 # kembalikan hak milik folder venv ke akun Anda agar pip tidak error "Permission denied"
-# sudo chown -R lims:lims venv_ocr
+# sudo chown -R lims:lims /home/lims/venv_ocr
 
 # 4. Masuk ke dalam Venv tersebut dan pasang semua library yang dibutuhkan
 # (SEKALI LAGI: JANGAN GUNAKAN SUDO SAAT MENJALANKAN PIP DI DALAM VENV)
-source venv_ocr/bin/activate
+source /home/lims/venv_ocr/bin/activate
 pip install --upgrade pip
 pip install Pillow numpy paddlepaddle paddleocr
 deactivate
+```
+> [!NOTE]
+> **Pembedaan Virtual Environment di Server:**  
+> Folder `/home/lims/venv_ocr/` dikhususkan untuk mesin OCR (PaddleOCR Standby Daemon port 8089 dan CLI Go). Jangan gunakan venv ini untuk retraining AI PQC (`train.py`), karena retraining AI PQC memiliki virtual environment terpisah di `/home/lims/lims-ai-env/` (lihat [Bagian 8.J](#j-pelatihan-model-ai-pqc--penjadwalan-otomatis-crontab)).
 ```
 > **Info - Fitur Pencarian Otomatis & Format File (Update Terbaru):**
 > *   **Format File yang Didukung OCR:** Sistem kini mendukung unggahan multi-format. 
@@ -4304,19 +4450,26 @@ location = /api/auth/check-report-access {
 LIMS mengintegrasikan modul *Predictive Quality Control* (PQC) berbasis AI (Isolation Forest) yang melatih model di latar belakang menggunakan skrip Python (`train.py`) dan mengekspor hasilnya dalam format ONNX.
 
 #### Prasyarat Virtual Environment Python di Server
-Sangat disarankan menggunakan virtual environment terisolasi (`/home/lims/lims-ai-env`) demi keamanan paket dependency:
+Pelatihan model PQC menggunakan virtual environment terisolasi (`/home/lims/lims-ai-env`) demi keamanan paket dependensi data science dan ONNX.
+
+> [!IMPORTANT]
+> **Pemisahan dari `venv_ocr` (Dual Virtual Environment):**  
+> Direktori `/home/lims/lims-ai-env/` ini **berbeda dan terpisah** dari virtual environment OCR (`/home/lims/venv_ocr/`).  
+> *   `/home/lims/lims-ai-env/`: Digunakan untuk eksekusi skrip `train.py` via cron job mingguan (Scikit-Learn, ONNX, Pandas).
+> *   `/home/lims/venv_ocr/`: Digunakan untuk daemon OCR `lims-ocr.service` di Port 8089 (PaddlePaddle, PaddleOCR).  
+> Jangan menyatukan kedua environment ini untuk menghindari inkompatibilitas versi pustaka (`protobuf`, `numpy`, compiler C++).
+
 ```bash
 # 1. Pastikan paket pendukung venv & pip sudah terpasang di VPS
 sudo apt update && sudo apt install python3-venv python3-pip -y
 
-# 2. Buat virtual environment
+# 2. Buat virtual environment lims-ai-env di /home/lims/
+# (Eksekusi sebagai user lims biasa, JANGAN gunakan sudo)
 python3 -m venv /home/lims/lims-ai-env
 
-# Aktifkan virtual environment
-source /home/lims/lims-ai-env/bin/activate
-
-# Install dependensi pustaka pendukung manipulasi data, database, AI, dan enkripsi
-pip install pandas numpy scikit-learn==1.4.1.post1 sqlalchemy skl2onnx onnx cryptography psycopg2-binary
+# 3. Install dependensi pustaka pendukung manipulasi data, database, AI, dan enkripsi
+/home/lims/lims-ai-env/bin/pip install --upgrade pip
+/home/lims/lims-ai-env/bin/pip install pandas numpy scikit-learn==1.4.1.post1 sqlalchemy skl2onnx onnx cryptography psycopg2-binary ml_dtypes
 ```
 
 #### Kebijakan Latihan Ulang (Retraining) & Data Flow Diagram (DFD) Level 1
@@ -4341,6 +4494,20 @@ Anda dapat memicu pelatihan ulang (*offline retraining*) secara manual kapan saj
 ```bash
 /home/lims/lims-ai-env/bin/python /home/lims/lims1/backend/ai_service/train.py
 ```
+
+#### Inisialisasi Awal Saat Belum Ada Data Pengujian (Cold-Start Seeding & Manual Setup)
+Pada instalasi sistem LIMS baru di mana tabel `lims.testing_results` masih kosong, menjalankan `train.py` akan menghasilkan pesan `"No training data found in database"`. Agar proteksi PQC dapat langsung aktif menjaga input operator:
+
+*   **Pilihan A: Eksekusi Seeder Sintetis Berbasis Lembar Spesifikasi**:
+    Jalankan generator data sintetis dari lembar spesifikasi teknis laboratorium:
+    ```bash
+    /home/lims/lims-ai-env/bin/python /home/lims/lims1/backend/ai_service/seed_pqc_data.py
+    /home/lims/lims-ai-env/bin/python /home/lims/lims1/backend/ai_service/train.py
+    ```
+    Perintah di atas akan membentuk 150 sampel baseline sesuai rentang fisik nominal, melatih 9 model ONNX, dan menyimpannya ke folder model.
+*   **Pilihan B: Salin Berkas Metadata JSON Manual**:
+    Buat atau salin berkas `pqc_<ASPECT>_meta.json` ke `/home/lims/lims1/backend/ai_service/models/` dengan parameter `medians`, `stds`, dan `units` yang ditentukan secara manual berdasarkan spesifikasi teknis peralatan uji. Backend Go akan langsung memvalidasi input teknisi menggunakan toleransi $\text{Median} \pm (1.5 \times \text{Std})$ tanpa membutuhkan runtime model ONNX.
+
 
 #### Penjadwalan Otomatis Menggunakan Crontab (Cron Job)
 Untuk menjamin akurasi model selalu ter-update berdasarkan data baru, pelatihan diatur agar berjalan otomatis secara berkala (setiap hari Senin pukul 02:00 dini hari).

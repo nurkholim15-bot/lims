@@ -5,16 +5,42 @@ import numpy as np
 from sqlalchemy import text
 from db import SessionLocal
 
+PHYSICAL_SPECS = {
+    # KEPEN (Penerima)
+    "KEDAI": {"unit": "mW", "mean": 185.0, "std": 12.0, "min": 60.0, "max": 300.0, "score_calc": lambda v: 100.0 if v >= 160.0 else (60.0 if v >= 100.0 else 20.0)},
+    "KERUS": {"unit": "mA", "mean": 125.0, "std": 10.0, "min": 50.0, "max": 250.0, "score_calc": lambda v: 100.0 if v <= 150.0 else (60.0 if v <= 200.0 else 20.0)},
+    "KESEL": {"unit": "dB", "mean": 5.5, "std": 1.1, "min": 1.0, "max": 18.0, "score_calc": lambda v: 100.0 if v <= 8.0 else (60.0 if v <= 10.0 else 20.0)},
+    "KESEN": {"unit": "µV", "mean": 0.22, "std": 0.03, "min": 0.05, "max": 0.8, "score_calc": lambda v: 100.0 if v <= 0.30 else (60.0 if v <= 0.35 else 20.0)},
+    "KESUA": {"unit": "dB", "mean": 88.0, "std": 8.0, "min": 25.0, "max": 105.0, "score_calc": lambda v: 100.0 if v >= 25.0 else (60.0 if v >= 17.0 else 20.0)},
+    # KOCAR (Pemancar)
+    "KEDRF": {"unit": "W", "mean": 25.0, "std": 1.8, "min": 5.0, "max": 50.0, "score_calc": lambda v: 100.0 if v >= 20.0 else (60.0 if v >= 15.0 else 20.0)},
+    "KEPAN": {"unit": "A", "mean": 4.2, "std": 0.3, "min": 1.0, "max": 10.0, "score_calc": lambda v: 100.0 if v <= 5.0 else (60.0 if v <= 6.5 else 20.0)},
+    "KETEL": {"unit": "Hz", "mean": 12.0, "std": 2.5, "min": 0.0, "max": 50.0, "score_calc": lambda v: 100.0 if v <= 20.0 else (60.0 if v <= 35.0 else 20.0)},
+    "KENEL": {"unit": "SWR", "mean": 1.25, "std": 0.08, "min": 1.0, "max": 3.0, "score_calc": lambda v: 100.0 if v <= 1.5 else (60.0 if v <= 2.0 else 20.0)},
+    # OPR
+    "SUHU1": {"unit": "°C", "mean": 96.0, "std": 7.5, "min": 50.0, "max": 160.0, "score_calc": lambda v: 100.0 if 80.0 <= v <= 120.0 else (75.0 if 120.0 < v <= 140.0 else (50.0 if v < 80.0 else 30.0))},
+}
+
 def seed_data():
     db = SessionLocal()
     try:
-        print("Starting sample data seeding...")
-        
+        print("Cleaning up old SEED data...")
+        db.execute(text("""
+            DELETE FROM lims.testing_results 
+            WHERE application_id IN (
+                SELECT id FROM lims.testing_applications WHERE reg_number LIKE 'SEED%'
+            )
+        """))
+        db.execute(text("DELETE FROM lims.testing_applications WHERE reg_number LIKE 'SEED%'"))
+        db.commit()
+        print("Old SEED data cleaned up successfully.")
+
         # 1. Fetch target aspects and their sub-aspects
         q = text("""
-            SELECT aspect_code, code 
+            SELECT DISTINCT aspect_code, code 
             FROM lims.scoring_sub_aspects 
-            WHERE aspect_code IN ('KONPE', 'KEPEN', 'KOCAR')
+            WHERE is_active = true
+            ORDER BY aspect_code, code
         """)
         rows = db.execute(q).fetchall()
         
@@ -25,19 +51,8 @@ def seed_data():
                 aspect_to_subs[aspect] = []
             aspect_to_subs[aspect].append(sub)
             
-        print(f"Target aspects and sub-aspects: {aspect_to_subs}")
+        print(f"Target aspects count: {len(aspect_to_subs)}")
         
-        # Ensure we have some targets
-        if not aspect_to_subs:
-            print("No target aspects found in scoring_sub_aspects. Querying all...")
-            q_all = text("SELECT aspect_code, code FROM lims.scoring_sub_aspects LIMIT 30")
-            rows = db.execute(q_all).fetchall()
-            for row in rows:
-                aspect, sub = row[0], row[1]
-                if aspect not in aspect_to_subs:
-                    aspect_to_subs[aspect] = []
-                aspect_to_subs[aspect].append(sub)
-                
         # 2. Generate Applications
         num_apps = 150
         app_ids = []
@@ -47,7 +62,6 @@ def seed_data():
             timestamp_suffix = datetime.datetime.now().strftime("%H%M%S")
             reg_num = f"SEED-2026-{timestamp_suffix}-{i:05d}"
             
-            # Insert application
             q_insert_app = text("""
                 INSERT INTO lims.testing_applications (reg_number, status, created_at)
                 VALUES (:reg_num, 'APPROVED', :created_at)
@@ -60,48 +74,58 @@ def seed_data():
             app_id = res.scalar()
             app_ids.append(app_id)
             
-        print(f"Applications created successfully. IDs: {app_ids[:10]}... (total: {len(app_ids)})")
-        
-        # 3. Generate Testing Results
+        # 3. Generate Testing Results with realistic physical actual_value & score
         total_inserted = 0
-        
-        # Define realistic distributions (mean, std) for sub-aspects to mimic real testing results
-        sub_distributions = {
-            "KONSI": (82.0, 3.5),
-            "KEDAI": (90.0, 5.0),
-            "KERJA": (75.0, 4.0),
-        }
-        
-        print("Generating and inserting scores into testing_results...")
+        print("Generating realistic physical actual_value and scores into testing_results...")
         for app_id in app_ids:
-            # Select 1 to 3 aspects for this application
-            num_aspects_for_app = random.randint(1, len(aspect_to_subs))
-            selected_aspects = random.sample(list(aspect_to_subs.keys()), k=num_aspects_for_app)
+            # Select 2 to 4 aspects for each application
+            aspect_keys = list(aspect_to_subs.keys())
+            num_aspects_for_app = random.randint(2, min(4, len(aspect_keys)))
+            # Prioritize KEPEN, KONPE, KOCAR so they have plenty of training data
+            selected_aspects = set(random.sample(["KEPEN", "KONPE", "KOCAR"], k=random.randint(1, 3)))
+            other_aspects = [a for a in aspect_keys if a not in selected_aspects]
+            if other_aspects and len(selected_aspects) < num_aspects_for_app:
+                selected_aspects.update(random.sample(other_aspects, k=num_aspects_for_app - len(selected_aspects)))
+            
+            created_at = datetime.datetime.now() - datetime.timedelta(days=random.randint(1, 90))
             
             for aspect in selected_aspects:
                 subs = aspect_to_subs[aspect]
                 for sub in subs:
-                    mean, std = sub_distributions.get(sub, (85.0, 6.0))
+                    is_anomaly = random.random() < 0.04  # 4% chance of anomaly
                     
-                    # Generate score: 96% chance normal, 4% chance extreme anomaly
-                    if random.random() < 0.04:
-                        # Anomaly (outlier)
-                        score = random.choice([random.uniform(5.0, 35.0), random.uniform(130.0, 180.0)])
+                    if sub in PHYSICAL_SPECS:
+                        spec = PHYSICAL_SPECS[sub]
+                        if is_anomaly:
+                            # Extreme outlier
+                            if random.random() < 0.5:
+                                val = spec["min"] * random.uniform(0.3, 0.7)
+                            else:
+                                val = spec["max"] * random.uniform(1.3, 2.0)
+                        else:
+                            val = np.random.normal(spec["mean"], spec["std"])
+                            val = max(spec["min"] * 0.8, min(spec["max"] * 1.2, val))
+                        
+                        actual_val = round(float(val), 3 if spec["unit"] == "µV" else 2)
+                        score = float(spec["score_calc"](actual_val))
                     else:
-                        score = np.random.normal(mean, std)
-                        # Bound score
-                        score = max(0.0, min(100.0, score))
+                        # Qualitative / discrete checklist parameter
+                        if is_anomaly:
+                            score = random.choice([20.0, 30.0, 50.0])
+                        else:
+                            score = random.choice([100.0, 100.0, 100.0, 75.0, 60.0])
+                        actual_val = None  # Qualitative parameters have no physical unit
                         
                     q_insert_res = text("""
-                        INSERT INTO lims.testing_results (application_id, aspect_code, sub_aspect_code, score, created_at)
-                        VALUES (:app_id, :aspect, :sub, :score, :created_at)
+                        INSERT INTO lims.testing_results (application_id, aspect_code, sub_aspect_code, actual_value, score, created_at)
+                        VALUES (:app_id, :aspect, :sub, :actual_value, :score, :created_at)
                     """)
-                    created_at = datetime.datetime.now() - datetime.timedelta(days=random.randint(1, 90))
                     db.execute(q_insert_res, {
                         "app_id": app_id,
                         "aspect": aspect,
                         "sub": sub,
-                        "score": round(float(score), 2),
+                        "actual_value": actual_val,
+                        "score": score,
                         "created_at": created_at
                     })
                     total_inserted += 1

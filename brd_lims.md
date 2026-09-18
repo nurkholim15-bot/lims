@@ -138,7 +138,7 @@ Modul ini memberikan fleksibilitas komersial dan operasional bagi laboratorium u
 ```mermaid
 erDiagram
     testing_packages ||--o{ package_methodologies : "mengaitkan metodologi"
-    package_methodologies }|--|| methodologies : "mereferensikan SOP"
+    package_methodologies }|--|| methodologies : "mengaktifkan methodologies_code"
     methodologies ||--o{ scoring_aspects : "memiliki aspek"
     scoring_aspects ||--o{ scoring_sub_aspects : "memiliki parameter fisik"
 
@@ -197,7 +197,7 @@ graph TD
 3. **Level 3 (`scoring_aspects`)**: Kelompok aspek penilaian utama (misal: *Konstruksi & Perlengkapan*, *Unjuk Kerja Teknis*, *Keselamatan Operasional*) yang memiliki bobot aspek persentase dan batas kelulusan (*Aspect Threshold*).
 4. **Level 4 (`scoring_sub_aspects`)**: Parameter pengujian fisik terperinci yang diuji dan diukur (memiliki standar spesifikasi, operator pembanding, satuan, dan bobot internal).
 5. **Level 5 (`scoring_levels`)**: Tingkatan predikat kelulusan akhir (*Lulus Memenuhi Standar*, *Lulus Bersyarat*, *Tidak Lulus*) berdasarkan rentang skor akhir gabungan (`min_score` s.d `max_score`).
-6. **Level 6 (`level_groups`)**: Grup klasifikasi standar kelulusan (misal: Standar SNI, Regulasi Kominfo, atau Alat Komunikaso, atau General).
+6. **Level 6 (`level_groups`)**: Grup klasifikasi standar kelulusan (misal: Standar SNI, Regulasi Kominfo, atau Alat Komunikasi, atau General).
 
 #### B. Pemisahan Nilai Fisik (`actual_value`) dan Skor Dropdown List (`score`)
 
@@ -208,7 +208,7 @@ Untuk menjamin integritas data teknis dan menghindari kesalahan fatal kalkulasi 
 
 #### C. Batas Numerik Terstruktur (`test_result_low` & `test_result_high`)
 
-Pencocokan kriteria dropdown tmenggunakan batas numerik matematis terstruktur pada tabel `lims.scoring_sub_aspect_items`:
+Pencocokan kriteria dropdown menggunakan batas numerik matematis terstruktur pada tabel `lims.scoring_sub_aspect_items`:
 
 | Tipe Aturan Evaluasi | `test_result_low` | `test_result_high` | Logika Evaluasi Sistem | Kasus Penggunaan Riil |
 | :--- | :---: | :---: | :--- | :--- |
@@ -266,7 +266,7 @@ Pada pengujian riil (terekam pada antarmuka Analisa Uji Lapangan dan database LI
 
 | No | Kode Sub-Aspek | Nama Parameter Sub-Aspek | Nilai Fisik (`actual_value`) | Skor Parameter ($S_i$) | Bobot ($W_i$) | Hasil / Kontribusi ($S_i \times W_i\%$) | Standar Acuan | Keterangan Evaluasi |
 | :-: | :--- | :--- | :-: | :-: | :-: | :-: | :-: | :--- |
-| 1 | `KEDAI` | Kemampuan - Penerima - Daya out put audio | **170** | **100** | **20%** | $100.00 \times 20\% = \mathbf{20.00}$ | $\ge 65$ | **Memenuhi** *(> 160 mW)* |
+| 1 | `KEDAI` | Kemampuan - Penerima - Daya output audio | **170** | **100** | **20%** | $100.00 \times 20\% = \mathbf{20.00}$ | $\ge 65$ | **Memenuhi** *(> 160 mW)* |
 | 2 | `KELCH` | Kemampuan - Sensitivitas squelch | **100** | **100** | **25%** | $100.00 \times 25\% = \mathbf{25.00}$ | $\ge 65$ | **Memenuhi** *(Opsi: "Dapat diatur")* |
 | 3 | `KERUS` | Kemampuan - Pemakaian arus penerima | **130** | **100** | **20%** | $100.00 \times 20\% = \mathbf{20.00}$ | $\ge 65$ | **Memenuhi** *(0 - 150 mA)* |
 | 4 | `KESEL` | Kemampuan - Penerima - Selektifitas | **100** | **20** | **20%** | $20.00 \times 20\% = \mathbf{4.00}$ | $\ge 65$ | <span style="color:red">**Tidak Memenuhi**</span> *(> 10 dB)* |
