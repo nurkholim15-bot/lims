@@ -26,6 +26,17 @@ const getApiUrl = () => {
 
 export const API_URL = getApiUrl();
 
+// In-memory token storage (OWASP compliance: No JWT in localStorage)
+let inMemoryToken = null;
+
+export const setAuthToken = (token) => {
+  inMemoryToken = token || null;
+};
+
+export const getAuthToken = () => {
+  return inMemoryToken;
+};
+
 export const getDownloadUrl = (path) => {
   if (!path) return "";
   const base = API_URL.startsWith("http") ? API_URL : `${window.location.origin}${API_URL}`;
@@ -57,13 +68,13 @@ export const viewDocument = async (path, customTitle = "Dokumen") => {
 
   try {
     const downloadUrl = getDownloadUrl(path);
-    const storedToken = localStorage.getItem("token") || localStorage.getItem("auth_token");
+    const activeToken = getAuthToken();
     const headers = {
       "ngrok-skip-browser-warning": "true",
     };
-    if (storedToken) {
-      headers["Authorization"] = `Bearer ${storedToken}`;
-      headers["X-Access-Token"] = storedToken;
+    if (activeToken) {
+      headers["Authorization"] = `Bearer ${activeToken}`;
+      headers["X-Access-Token"] = activeToken;
     }
 
     const controller = new AbortController();
@@ -150,10 +161,10 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
     "X-App-Platform": appPlatform,
   };
 
-  const storedToken = localStorage.getItem("token") || localStorage.getItem("auth_token");
-  if (storedToken) {
-    headers["Authorization"] = `Bearer ${storedToken}`;
-    headers["X-Access-Token"] = storedToken;
+  const activeToken = getAuthToken();
+  if (activeToken) {
+    headers["Authorization"] = `Bearer ${activeToken}`;
+    headers["X-Access-Token"] = activeToken;
   }
 
   if (!(body instanceof FormData)) {
@@ -192,8 +203,11 @@ export const apiRequest = async (endpoint, method = "GET", body = null) => {
       // Catch 401 specifically for auth cleanup
       if (response.status === 401 && !isPublicEndpoint) {
         console.warn("Session unauthorized or revoked. Logging out...");
+        setAuthToken(null);
         localStorage.removeItem("is_logged_in");
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("auth_token");
         
         // Redirect to root if not already there, to trigger re-render in App.jsx
         if (typeof window !== "undefined" && window.location.pathname !== "/") {

@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 	"context"
+	"math"
 	"bufio"
 
 	"github.com/gin-gonic/gin"
@@ -118,6 +119,8 @@ type AIExecutionItem struct {
 	StandardValueMax float64 `json:"standard_value_max"`
 	StandardOperator string  `json:"standard_operator"`
 	StandardUnit     string  `json:"standard_unit"`
+	StandardDisplay  string  `json:"standard_display"`
+	MatchedRubric    string  `json:"matched_rubric"`
 }
 
 func GenerateReport(c *gin.Context) {
@@ -200,39 +203,17 @@ func GenerateReport(c *gin.Context) {
 				continue
 			}
 			
-			actualVal, err := strconv.ParseFloat(item.ActualValue, 64)
-			if err != nil {
-				continue
-			}
-			
-			isPassed := false
-			switch strings.TrimSpace(strings.ToLower(item.StandardOperator)) {
-			case "range":
-				isPassed = actualVal >= item.StandardValue && actualVal <= item.StandardValueMax
-			case "<=":
-				isPassed = actualVal <= item.StandardValue
-			case "<":
-				isPassed = actualVal < item.StandardValue
-			case ">":
-				isPassed = actualVal > item.StandardValue
-			case "=":
-				isPassed = actualVal == item.StandardValue
-			default:
-				isPassed = actualVal >= item.StandardValue
-			}
+			// Parameter lulus jika Skor >= 65.0
+			isPassed := item.Score >= 65.0
 			
 			if isPassed {
 				aspectHasPassing = true
 				hasPassing = true
 				
 				// Standard string
-				stdStr := "-"
-				if item.StandardValue != 0 || item.StandardValueMax != 0 || item.StandardUnit != "" {
-					if strings.TrimSpace(strings.ToLower(item.StandardOperator)) == "range" {
-						stdStr = fmt.Sprintf("%v s.d %v %s", item.StandardValue, item.StandardValueMax, item.StandardUnit)
-					} else {
-						stdStr = fmt.Sprintf("%s %v %s", item.StandardOperator, item.StandardValue, item.StandardUnit)
-					}
+				stdStr := item.StandardDisplay
+				if stdStr == "" {
+					stdStr = "-"
 				}
 				
 				unitStr := item.StandardUnit
@@ -273,64 +254,30 @@ func GenerateReport(c *gin.Context) {
 				continue
 			}
 			
-			actualVal, err := strconv.ParseFloat(item.ActualValue, 64)
-			if err != nil {
-				continue
-			}
-			
-			isPassed := false
-			deviasiKet := "Tidak Memenuhi Standar"
-			op := strings.TrimSpace(strings.ToLower(item.StandardOperator))
-
-			switch op {
-			case "range":
-				isPassed = actualVal >= item.StandardValue && actualVal <= item.StandardValueMax
-				if !isPassed {
-					if actualVal > item.StandardValueMax {
-						deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimum standar (%.2f%s) / Terlalu Tinggi / Panas Berlebih (Overheat)", actualVal, item.StandardUnit, item.StandardValueMax, item.StandardUnit)
-					} else {
-						deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimum standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
-					}
-				}
-			case "<=":
-				isPassed = actualVal <= item.StandardValue
-				if !isPassed {
-					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimal standar (%.2f%s) / Terlalu Tinggi", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
-				}
-			case "<":
-				isPassed = actualVal < item.StandardValue
-				if !isPassed {
-					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimal standar (%.2f%s) / Terlalu Tinggi", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
-				}
-			case ">":
-				isPassed = actualVal > item.StandardValue
-				if !isPassed {
-					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimal standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
-				}
-			case "=":
-				isPassed = actualVal == item.StandardValue
-				if !isPassed {
-					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) TIDAK SAMA dengan target standar (%.2f%s)", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
-				}
-			default:
-				isPassed = actualVal >= item.StandardValue
-				if !isPassed {
-					deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimal standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
-				}
-			}
+			// Parameter gagal / deviasi jika Skor < 65.0
+			isPassed := item.Score >= 65.0
 			
 			if !isPassed {
 				aspectHasFailing = true
 				hasFailing = true
 				
-				// Standard string
-				stdStr := "-"
-				if item.StandardValue != 0 || item.StandardValueMax != 0 || item.StandardUnit != "" {
-					if strings.TrimSpace(strings.ToLower(item.StandardOperator)) == "range" {
-						stdStr = fmt.Sprintf("%v s.d %v %s", item.StandardValue, item.StandardValueMax, item.StandardUnit)
-					} else {
-						stdStr = fmt.Sprintf("%s %v %s", item.StandardOperator, item.StandardValue, item.StandardUnit)
+				deviasiKet := fmt.Sprintf("Skor hasil uji (%.1f) di bawah batas kelulusan minimal (65.00)", item.Score)
+				if item.MatchedRubric != "" {
+					deviasiKet = fmt.Sprintf("Skor hasil uji (%.1f) di bawah batas minimal kelulusan (65.00), Kategori hasil uji: '%s' (Standar yang dipersyaratkan: '%s')", item.Score, item.MatchedRubric, item.StandardDisplay)
+				} else if item.StandardValueMax > 0 {
+					actualVal, err := strconv.ParseFloat(item.ActualValue, 64)
+					if err == nil {
+						if actualVal > item.StandardValueMax {
+							deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) MELEBIHI batas maksimum standar (%.2f%s) / Terlalu Tinggi / Panas Berlebih (Overheat)", actualVal, item.StandardUnit, item.StandardValueMax, item.StandardUnit)
+						} else if actualVal < item.StandardValue {
+							deviasiKet = fmt.Sprintf("Nilai Terukur (%.2f%s) DI BAWAH batas minimum standar (%.2f%s) / Terlalu Rendah", actualVal, item.StandardUnit, item.StandardValue, item.StandardUnit)
+						}
 					}
+				}
+				
+				stdStr := item.StandardDisplay
+				if stdStr == "" {
+					stdStr = "-"
 				}
 				
 				unitStr := item.StandardUnit
@@ -385,15 +332,31 @@ func GenerateReport(c *gin.Context) {
 		}
 		aspectScoresText.WriteString(fmt.Sprintf("- Aspek: %s (%s) - Skor Hasil: %.2f - Standar Threshold Kelulusan: %.2f\n", name, aspectScore.AspectCode, aspectScore.Score, threshold))
 		
+		// Check failed sub-aspects in this aspect
+		var failedSubsInAspect []string
+		for _, item := range items {
+			if item.AspectCode == aspectScore.AspectCode && item.Score < 65.0 {
+				failedSubsInAspect = append(failedSubsInAspect, fmt.Sprintf("%s (%s, Skor: %.1f)", item.ParameterName, item.ParamCode, item.Score))
+			}
+		}
+		
 		if aspectScore.Score < threshold {
-			failedAspectsBuilder.WriteString(fmt.Sprintf("- Aspek %s (%s) dengan Skor Hasil %.2f (Threshold %.2f)\n", name, aspectScore.AspectCode, aspectScore.Score, threshold))
+			failedAspectsBuilder.WriteString(fmt.Sprintf("- Aspek %s (%s): Skor rata-rata %.2f berada DI BAWAH threshold kelulusan (%.2f)\n", name, aspectScore.AspectCode, aspectScore.Score, threshold))
+			hasFailedAspects = true
+		} else if len(failedSubsInAspect) > 0 {
+			failedAspectsBuilder.WriteString(fmt.Sprintf("- Aspek %s (%s): TIDAK LULUS karena terdapat parameter yang tidak memenuhi batas kelulusan minimal (skor < 65.00): %s (meskipun rata-rata skor aspek %.2f >= threshold %.2f)\n", 
+				name, aspectScore.AspectCode, strings.Join(failedSubsInAspect, ", "), aspectScore.Score, threshold))
 			hasFailedAspects = true
 		}
 	}
 	
 	failedAspectsText := failedAspectsBuilder.String()
 	if !hasFailedAspects {
-		failedAspectsText = "- Tidak ada (Semua aspek memenuhi threshold)\n"
+		if strings.EqualFold(app.FinalStatus, "Tidak Lulus") {
+			failedAspectsText = "- Terdapat parameter teknis yang tidak memenuhi batas kelulusan minimal sehingga hasil pengujian dinyatakan TIDAK LULUS.\n"
+		} else {
+			failedAspectsText = "- Tidak ada (Semua aspek dan parameter memenuhi standar kelulusan)\n"
+		}
 	}
 
 	// Build Prompts (Streamlined to minimize CPU prefill latency while maintaining strict formatting)
@@ -410,7 +373,7 @@ func GenerateReport(c *gin.Context) {
 		"   - Hasil Pengukuran: [Wajib cantumkan nilai terukur fisik beserta satuannya secara persis dari data, contoh: 150 °C]\n" +
 		"   - Dampak: [Analisis dampak teknis dan risiko operasional. Analisis HARUS SESUAI dengan Kondisi Deviasi pada data. Contoh: Jika Hasil Pengukuran melebihi batas maksimum standar seperti suhu 150 °C > 120 °C, jelaskan dampak sebagai PANAS BERLEBIH / OVERHEATING / SUHU TERLALU TINGGI seperti risiko kerusakan komponen, degradasi termal, atau kegagalan sistem pendingin. DILARANG KERAS mengatakan 'suhu terlalu rendah' jika hasil pengukuran lebih tinggi dari standar].\n" +
 		"5. Untuk Bagian D, berikan saran perbaikan spesifik sesuai kondisi deviasi (misal: perbaikan sistem pendingin / heatsink / ventilasi jika terjadi suhu overheat).\n" +
-		"6. Di Bagian A, sebutkan nilai akhir, status kelulusan, dan HANYA sebutkan aspek yang terdaftar di [ASPEK YANG BENAR-BENAR GAGAL].\n" +
+		"6. Di Bagian A (Ringkasan Eksekutif), sebutkan nilai skor akhir gabungan, status kelayakan kelulusan, dan aspek yang gagal. Jika Status Kelayakan Kelulusan adalah 'Tidak Lulus', DILARANG KERAS menyatakan 'Tidak ada aspek yang gagal' atau 'semua aspek memenuhi threshold'; sebutkan secara tegas aspek dan parameter yang menyebabkan ketidaklulusan sesuai data [ASPEK YANG GAGAL / PENYEBAB KETIDAKLULUSAN].\n" +
 		"7. Gunakan Bahasa Indonesia yang formal (dilarang bahasa Inggris)."
 
 	var userPrompt strings.Builder
@@ -433,11 +396,11 @@ func GenerateReport(c *gin.Context) {
 	userPrompt.WriteString(aspectScoresText.String())
 	userPrompt.WriteString("\n")
 
-	userPrompt.WriteString("[ASPEK YANG BENAR-BENAR GAGAL / DI BAWAH THRESHOLD]\n")
+	userPrompt.WriteString("[ASPEK YANG GAGAL / PENYEBAB KETIDAKLULUSAN]\n")
 	userPrompt.WriteString(failedAspectsText)
 	userPrompt.WriteString("\n")
 
-	userPrompt.WriteString("[DATA TRANSAKSI DETAIL PARAMETER HASIL UJI YANG GAGAL / DEVIASE]\n")
+	userPrompt.WriteString("[DATA TRANSAKSI DETAIL PARAMETER HASIL UJI YANG GAGAL / DEVIASI]\n")
 	userPrompt.WriteString(resultsText.String())
 
 	userPrompt.WriteString("\nTulis laporan persis dengan struktur A, C, dan D secara ringkas dalam Bahasa Indonesia.\n")
@@ -651,6 +614,14 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 		}
 	}
 
+	// Fetch all rubrics to populate StandardDisplay and MatchedRubric
+	var allRubrics []models.ScoringSubAspectItem
+	database.DB.Order("score desc").Find(&allRubrics)
+	rubricsMap := make(map[string][]models.ScoringSubAspectItem)
+	for _, r := range allRubrics {
+		rubricsMap[r.SubAspectCode] = append(rubricsMap[r.SubAspectCode], r)
+	}
+
 	for _, p := range plans {
 		asp := p.Aspect
 		var subAspects []models.ScoringSubAspect
@@ -664,6 +635,30 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 				testTypeCode = *asp.TestTypeCode
 			} else if asp.Methodology.TestTypeCode != "" {
 				testTypeCode = asp.Methodology.TestTypeCode
+			}
+
+			// Determine standard display string
+			subRubrics := rubricsMap[sub.Code]
+			stdDisplay := ""
+			if len(subRubrics) > 0 {
+				bestRubric := subRubrics[0]
+				for _, r := range subRubrics {
+					if r.Score > bestRubric.Score {
+						bestRubric = r
+					}
+				}
+				stdDisplay = bestRubric.Name
+			} else {
+				if sub.StandardValue != 0 || sub.StandardValueMax != 0 || sub.StandardUnit != "" {
+					op := strings.TrimSpace(strings.ToLower(sub.StandardOperator))
+					if op == "range" {
+						stdDisplay = fmt.Sprintf("%.2f s.d %.2f %s", sub.StandardValue, sub.StandardValueMax, sub.StandardUnit)
+					} else {
+						stdDisplay = fmt.Sprintf("%s %.2f %s", sub.StandardOperator, sub.StandardValue, sub.StandardUnit)
+					}
+				} else {
+					stdDisplay = ">= 65.00"
+				}
 			}
 
 			item := AIExecutionItem{
@@ -680,6 +675,7 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 				StandardValueMax: sub.StandardValueMax,
 				StandardOperator: sub.StandardOperator,
 				StandardUnit:     sub.StandardUnit,
+				StandardDisplay:  stdDisplay,
 			}
 			if exists {
 				if er.ActualValue != nil {
@@ -689,6 +685,34 @@ func getExecutionItemsForAI(appID uint64, isArchived bool) []AIExecutionItem {
 				}
 				item.Score = er.Score
 				item.Notes = er.Notes
+
+				// Match rubric if numeric value
+				if er.ActualValue != nil && len(subRubrics) > 0 {
+					val := *er.ActualValue
+					for _, itm := range subRubrics {
+						hasLow := itm.TestResultLow != nil
+						hasHigh := itm.TestResultHigh != nil
+						if hasLow || hasHigh {
+							low := -math.MaxFloat64
+							high := math.MaxFloat64
+							if hasLow {
+								low = *itm.TestResultLow
+							}
+							if hasHigh {
+								high = *itm.TestResultHigh
+							}
+							if hasLow && hasHigh && math.Abs(low-high) < 0.0001 {
+								if math.Abs(val-low) < 0.0001 {
+									item.MatchedRubric = itm.Name
+									break
+								}
+							} else if val >= (low-0.001) && val <= (high+0.001) {
+								item.MatchedRubric = itm.Name
+								break
+							}
+						}
+					}
+				}
 			}
 			items = append(items, item)
 		}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { apiRequest, getDownloadUrl, viewDocument, API_URL } from "@models/api";
+import { apiRequest, getDownloadUrl, viewDocument, API_URL, getAuthToken } from "@models/api";
 import { printTechnicalReport, printRegistrationProof, printAssetLabel, printApplicationHandover } from "@utils/print";
 import Modal from "./Modal";
 import WebcamModal from "./WebcamModal";
@@ -211,7 +211,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(filename);
     const directUrl = getDownloadUrl(path);
 
-    const storedToken = localStorage.getItem("token") || localStorage.getItem("auth_token");
+    const storedToken = getAuthToken();
     if (storedToken) {
       document.cookie = `auth_token=${storedToken}; path=/; SameSite=Lax`;
     }
@@ -932,7 +932,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     setShowAIModal(true); // Langsung buka modal untuk melihat efek ngetik
 
     try {
-      const token = localStorage.getItem("auth_token");
+      const token = getAuthToken();
       const appVersion = import.meta.env.VITE_APP_VERSION || "1.0";
       const appPlatform = (typeof window !== "undefined" && window.Capacitor) ? window.Capacitor.getPlatform() : "Web";
       
@@ -1098,21 +1098,6 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
               scoreVal = actVal;
             }
 
-            // Validasi Guard untuk parameter dropdown: Jika nilai terukur tidak memenuhi standar, pastikan skor tidak boleh lulus (> 65)
-            if (hasDropdown && actVal !== null && (p.standard_value || p.standard_value_max || p.standard_unit)) {
-              const op = (p.standard_operator || "").trim().toLowerCase();
-              let isPassed = false;
-              if (op === "range") isPassed = actVal >= p.standard_value && actVal <= p.standard_value_max;
-              else if (op === "<=") isPassed = actVal <= p.standard_value;
-              else if (op === "<") isPassed = actVal < p.standard_value;
-              else if (op === ">") isPassed = actVal > p.standard_value;
-              else if (op === "=") isPassed = actVal === p.standard_value;
-              else isPassed = actVal >= p.standard_value;
-
-              if (!isPassed && scoreVal >= 65) {
-                scoreVal = 0;
-              }
-            }
 
             return {
               param_code: p.param_code,
@@ -1224,38 +1209,41 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         (s.aspect_code || "").toString().trim().toUpperCase() === aspCode
       );
 
-      let aspScore;
-      if (persistedAspect) {
-        aspScore = persistedAspect.score;
-      } else {
-        let subWeighted = 0, subWeight = 0;
-        asp.items.forEach((sub) => {
-          if (sub.is_disabled) {
-            return;
-          }
-          const code = sub.param_code || sub.sub_aspect_code;
-          const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
-          const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+      let subWeighted = 0, subWeight = 0;
+      let hasSubFailure = false;
+      asp.items.forEach((sub) => {
+        if (sub.is_disabled) {
+          return;
+        }
+        const code = sub.param_code || sub.sub_aspect_code;
+        const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+        const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
 
-          let subScore = 0;
-          if (!hasDropdown && sub.actual_value !== undefined && sub.actual_value !== null && sub.actual_value !== "" && !isNaN(parseFloat(sub.actual_value))) {
-            subScore = parseFloat(sub.actual_value);
-          } else if (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score))) {
-            subScore = parseFloat(sub.score);
-          } else {
-            subScore = parseFloat(sub.actual_value) || 0;
-          }
-          subWeighted += subScore * (sub.weight || 0);
-          subWeight += sub.weight || 0;
-        });
-        aspScore = subWeight > 0 ? subWeighted / subWeight : 0;
-      }
+        let subScore = 0;
+        if (!hasDropdown && sub.actual_value !== undefined && sub.actual_value !== null && sub.actual_value !== "" && !isNaN(parseFloat(sub.actual_value))) {
+          subScore = parseFloat(sub.actual_value);
+        } else if (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score))) {
+          subScore = parseFloat(sub.score);
+        } else {
+          subScore = parseFloat(sub.actual_value) || 0;
+        }
+
+        const standardVal = parseFloat(sub.standard_value) || 65;
+        if (subScore < standardVal) {
+          hasSubFailure = true;
+        }
+
+        subWeighted += subScore * (sub.weight || 0);
+        subWeight += sub.weight || 0;
+      });
+
+      let aspScore = subWeight > 0 ? subWeighted / subWeight : (persistedAspect ? persistedAspect.score : 0);
 
       weightedSum += aspScore * asp.weight;
       totalWeight += asp.weight;
       if (asp.weight > 0) {
         minAspectScore = Math.min(minAspectScore, aspScore);
-        if (aspScore < 60) allPassed = false;
+        if (aspScore < 60 || hasSubFailure) allPassed = false;
       }
     });
 
@@ -1280,17 +1268,17 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
   const getPercentString = (actualValue, p) => {
     // 1. Jika p memiliki score (dari rubrik dropdown atau kalkulasi skor), tampilkan skor tersebut
     if (p && p.score !== undefined && p.score !== null && p.score !== "" && !isNaN(parseFloat(p.score))) {
-      return `${parseFloat(p.score).toFixed(0)}%`;
+      return `${parseFloat(p.score).toFixed(0)}`;
     }
 
     const code = p?.param_code || p?.sub_aspect_code;
     const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
     const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
 
-    // Jika tidak punya dropdown, skor sama dengan nilai aktual dan diformat dengan %
+    // Jika tidak punya dropdown, skor sama dengan nilai aktual
     if (!hasDropdown) {
       if (actualValue !== undefined && actualValue !== null && actualValue !== "" && !isNaN(parseFloat(actualValue))) {
-        return `${parseFloat(actualValue).toFixed(0)}%`;
+        return `${parseFloat(actualValue).toFixed(0)}`;
       }
       return "-";
     }
@@ -1302,14 +1290,14 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
     const op = (p.standard_operator || "").trim().toLowerCase();
     if (op === "range") {
       const isPassed = val >= p.standard_value && val <= p.standard_value_max;
-      return isPassed ? "100%" : "0%";
+      return isPassed ? "100" : "0";
     }
     if (op === "<=" || op === "<") {
-      if (val > 0) return ((p.standard_value / val) * 100).toFixed(0) + "%";
-      return "100%";
+      if (val > 0) return ((p.standard_value / val) * 100).toFixed(0);
+      return "100";
     }
     if (p.standard_value > 0) {
-      return ((val / p.standard_value) * 100).toFixed(0) + "%";
+      return ((val / p.standard_value) * 100).toFixed(0);
     }
     return "-";
   };
@@ -1399,34 +1387,35 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
             );
 
             const isPreExecution = ["REGISTERED", "VERIFIED", "APPROVED", "PLANNED", "REVISI"].includes((target.status || "").toUpperCase());
-            let aspScore;
-            if (persistedAspect) {
-              aspScore = persistedAspect.score;
-            } else if (isPreExecution) {
+            let subWeightedSum = 0, subTotalWeight = 0;
+            asp.items.forEach((sub) => {
+              if (sub.is_disabled) {
+                return;
+              }
+              const code = sub.param_code || sub.sub_aspect_code;
+              const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
+              const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
+
+              let score = 0;
+              if (!hasDropdown && sub.actual_value !== undefined && sub.actual_value !== null && sub.actual_value !== "" && !isNaN(parseFloat(sub.actual_value))) {
+                score = parseFloat(sub.actual_value);
+              } else if (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score))) {
+                score = parseFloat(sub.score);
+              } else {
+                score = parseFloat(sub.actual_value) || 0;
+              }
+
+              subWeightedSum += score * (sub.weight || 0);
+              subTotalWeight += sub.weight || 0;
+            });
+
+            let aspScore = 0;
+            if (isPreExecution && !persistedAspect) {
               aspScore = 0;
-            } else {
-              let subWeightedSum = 0, subTotalWeight = 0;
-              asp.items.forEach((sub) => {
-                if (sub.is_disabled) {
-                  return;
-                }
-                const code = sub.param_code || sub.sub_aspect_code;
-                const cfg = (dropdownConfigRef.current && Object.keys(dropdownConfigRef.current).length > 0) ? dropdownConfigRef.current : dropdownConfig;
-                const hasDropdown = Boolean(cfg && cfg[code] && cfg[code].length > 0);
-
-                let score = 0;
-                if (!hasDropdown && sub.actual_value !== undefined && sub.actual_value !== null && sub.actual_value !== "" && !isNaN(parseFloat(sub.actual_value))) {
-                  score = parseFloat(sub.actual_value);
-                } else if (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score))) {
-                  score = parseFloat(sub.score);
-                } else {
-                  score = parseFloat(sub.actual_value) || 0;
-                }
-
-                subWeightedSum += score * (sub.weight || 0);
-                subTotalWeight += sub.weight || 0;
-              });
-              aspScore = subTotalWeight > 0 ? subWeightedSum / subTotalWeight : 0;
+            } else if (subTotalWeight > 0) {
+              aspScore = subWeightedSum / subTotalWeight;
+            } else if (persistedAspect) {
+              aspScore = persistedAspect.score;
             }
             // 1. LIHAT DI TABEL RELASIONAL TERSTRUKTUR
             const structuredPlan = (target.testing_plans || []).find((p) => {
@@ -1537,7 +1526,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                           ? "N/A"
                           : (isPreExecution
                               ? "-"
-                              : `${scoreVal}%`);
+                              : `${scoreVal}`);
 
                         return (
                           <tr key={res.param_code || i} style={isParamDisabled ? { opacity: 0.6, background: "#f8fafc" } : {}}>
@@ -2210,7 +2199,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
                                 readOnly
                                 disabled
                                 value={getPercentString(item.actual_value, item)}
-                                title="Persentase hasil uji (% Hasil otomatis terkunci sesuai skor rubrik)"
+                                title="Skor hasil uji (otomatis terkunci sesuai skor rubrik)"
                                 style={{
                                   width: "65px",
                                   textAlign: "center",
@@ -2457,9 +2446,13 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
       calculatedStatus = "LULUS";
     }
 
-    let finalStatusLabel = overrideStatus || localApp.final_status || (isPreExecution && !localApp.final_status ? "-" : calculatedStatus);
-    if (stage !== "analysis" && stage !== "testing") {
-      finalStatusLabel = localApp.final_status || (isPreExecution && !localApp.final_status ? "-" : calculatedStatus);
+    let finalStatusLabel = overrideStatus;
+    if (!finalStatusLabel) {
+      if (!allAspectsPassed || finalScore < 65) {
+        finalStatusLabel = (isPreExecution && !localApp.final_status) ? "-" : "TIDAK LULUS";
+      } else {
+        finalStatusLabel = localApp.final_status || ((isPreExecution && !localApp.final_status) ? "-" : calculatedStatus);
+      }
     }
 
     const isLulus = finalStatusLabel && finalStatusLabel.toUpperCase().includes("LULUS") && !finalStatusLabel.toUpperCase().includes("TIDAK") && !isPreExecution;
@@ -2470,7 +2463,7 @@ const AppDetail = ({ app, stage, onSuccess, onCancel, appConfig = {}, checkPassw
         <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontSize: "0.65rem", color: "#64748b", fontWeight: 700 }}>SKOR AKHIR GABUNGAN</div>
-            <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#10b981" }}>{isPreExecution && finalScore === 0 ? "-" : finalScore.toFixed(2)}</div>
+            <div style={{ fontSize: "1.5rem", fontWeight: 800, color: isLulus ? "#10b981" : "#ef4444" }}>{isPreExecution && finalScore === 0 ? "-" : finalScore.toFixed(2)}</div>
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.65rem", color: "#64748b", fontWeight: 700 }}>KESIMPULAN</div>

@@ -415,21 +415,40 @@ const AssetManagementPage = ({ currentUser, user, appConfig, onClose }) => {
           <table style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
             <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: 'white' }}>
               <tr>
-                <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>Asset ID</th>
-                <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>S/N</th>
-                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>Peralatan</th>
-                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>App Status</th>
-                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>Status</th>
-                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>Lokasi</th>
-                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>Label</th>
-                <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9' }}>Aksi</th>
+                <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>Asset ID</th>
+                <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>
+                  <div>No. Registrasi</div>
+                  <div>S/N</div>
+                </th>
+                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>Peralatan</th>
+                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>App Status</th>
+                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>Status</th>
+                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>Lokasi</th>
+                 <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>Label</th>
+                <th style={{ background: 'white', borderBottom: '2px solid #f1f5f9', whiteSpace: 'nowrap' }}>Aksi</th>
               </tr>
             </thead>
             <tbody>
               {assets.length > 0 ? assets.map((a) => (
                 <tr key={a.id}>
                   <td style={{ fontWeight: 800 }}>{a.id || "-"}</td>
-                  <td>{a.serial_no || "-"}</td>
+                  <td>
+                    <div 
+                      style={{ 
+                        fontWeight: 700, 
+                        color: a.application_id ? '#2563eb' : '#0f172a',
+                        cursor: a.application_id ? 'pointer' : 'default',
+                        whiteSpace: 'nowrap'
+                      }}
+                      onClick={() => a.application_id && handleShowAppDetail(a.application_id)}
+                      title={a.application_id ? "Klik untuk melihat detil testing application" : ""}
+                    >
+                      {a.registration_no || a.app_reg_number || a.application?.reg_number || "-"}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                      {a.serial_no || "-"}
+                    </div>
+                  </td>
                   <td>
                     <div>{a.equipment_name}</div>
                     <small style={{ color: "#64748b" }}>{a.brand?.name} {a.model?.name}</small>

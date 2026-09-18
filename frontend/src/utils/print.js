@@ -229,7 +229,9 @@ export const printTechnicalReport = async (a, executionData = [], locationsMap =
             let subWeighted = 0;
             let subWeight = 0;
             asp.items.forEach(sub => {
-              const val = parseFloat(sub.actual_value) || 0;
+              const val = (sub.score !== undefined && sub.score !== null && sub.score !== "" && !isNaN(parseFloat(sub.score)))
+                ? parseFloat(sub.score)
+                : (parseFloat(sub.actual_value) || 0);
               subWeighted += val * (sub.weight || 0);
               subWeight += (sub.weight || 0);
             });
@@ -411,11 +413,14 @@ export const printTechnicalReport = async (a, executionData = [], locationsMap =
                                 <tbody>
                                     ${asp.items.map(r => {
                                         const actualVal = isInitialStage ? 0 : (parseFloat(r.actual_value) || 0);
-                                        const resultVal = ((actualVal * (r.weight || 0)) / 100);
+                                        const scoreVal = (r.score !== undefined && r.score !== null && r.score !== "" && !isNaN(parseFloat(r.score))) 
+                                            ? parseFloat(r.score) 
+                                            : actualVal;
+                                        const resultVal = ((scoreVal * (r.weight || 0)) / 100);
                                         return `
                                         <tr>
                                             <td style="font-size: 8.5pt; padding: 3px 10px;">${r.parameter_name}</td>
-                                            <td align="center" style="font-size: 8.5pt; padding: 3px 10px;">${actualVal === 0 && isInitialStage ? '-' : actualVal}</td>
+                                            <td align="center" style="font-size: 8.5pt; padding: 3px 10px;">${scoreVal === 0 && isInitialStage ? '-' : scoreVal}</td>
                                             <td align="center" style="font-size: 8.5pt; color: #64748b; padding: 3px 10px;">${r.weight || 0}%</td>
                                             <td align="center" style="font-size: 8.5pt; padding: 3px 10px;"><strong>${resultVal === 0 && isInitialStage ? '-' : resultVal.toFixed(2)}</strong></td>
                                             <td style="font-size: 8.5pt; padding: 3px 10px;">${escapeHtml(r.notes)}</td>

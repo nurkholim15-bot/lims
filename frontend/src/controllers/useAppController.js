@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiRequest } from "@models/api";
+import { apiRequest, setAuthToken } from "@models/api";
 
 export const useAppController = () => {
   const [user, setUser] = useState(null);
@@ -105,7 +105,9 @@ export const useAppController = () => {
   const login = async (username, password) => {
     const data = await apiRequest("/login", "POST", { username, password });
     if (data && data.token) {
-      localStorage.setItem("token", data.token);
+      setAuthToken(data.token);
+      localStorage.removeItem("token");
+      localStorage.removeItem("auth_token");
       setUser(data.user);
       await fetchMenus();
       return true;
@@ -114,7 +116,9 @@ export const useAppController = () => {
   };
 
   const logout = () => {
+    setAuthToken(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("auth_token");
     setUser(null);
     setMenuItems([]);
   };

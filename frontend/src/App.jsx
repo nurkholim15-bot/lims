@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import "@utils/dialog";
-import { apiRequest } from "@models/api";
+import { apiRequest, setAuthToken, getAuthToken } from "@models/api";
 import Login from "@pages/Login";
 import Sidebar from "@components/Sidebar";
 import Header from "@components/Header";
@@ -55,6 +55,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [appConfig, setAppConfig] = useState({});
+  const [isAuthChecking, setIsAuthChecking] = useState(() => localStorage.getItem("is_logged_in") === "true");
 
   useEffect(() => {
     if (appConfig?.BUTTON_BG) {
@@ -82,17 +83,18 @@ function App() {
         if (res && res.user) {
           localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(res.user));
-          const activeToken = localStorage.getItem("token") || localStorage.getItem("auth_token") || "ACTIVE";
-          if (activeToken && activeToken !== "ACTIVE") {
-            document.cookie = `auth_token=${activeToken}; path=/; SameSite=Lax`;
-          }
-          setToken(activeToken);
+          // OWASP: Ensure tokens are purged from localStorage
+          localStorage.removeItem("token");
+          localStorage.removeItem("auth_token");
+          setAuthToken(res.token || null);
+          setToken(res.token || "ACTIVE");
           setUser(res.user);
         } else {
           localStorage.removeItem("is_logged_in");
           localStorage.removeItem("user");
           localStorage.removeItem("token");
           localStorage.removeItem("auth_token");
+          setAuthToken(null);
           document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
           setToken(null);
           setUser(null);
@@ -102,8 +104,11 @@ function App() {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         localStorage.removeItem("auth_token");
+        setAuthToken(null);
         setToken(null);
         setUser(null);
+      } finally {
+        setIsAuthChecking(false);
       }
     };
     bootstrapSession();
@@ -120,6 +125,7 @@ function App() {
       } catch (err) {
         console.error("Auto logout request failed:", err);
       }
+      setAuthToken(null);
       localStorage.clear();
       setToken(null);
       setUser(null);
@@ -405,6 +411,7 @@ function App() {
     } catch (err) {
       console.error("Logout request failed:", err);
     }
+    setAuthToken(null);
     localStorage.clear();
     setToken(null);
     setUser(null);
@@ -480,6 +487,17 @@ function App() {
     return <ForceUpgradePage forceUpgrade={forceUpgrade} />;
   }
 
+  if (isAuthChecking) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#0f172a", color: "#94a3b8" }}>
+        <div style={{ textAlign: "center" }}>
+          <i className="fas fa-spinner fa-spin" style={{ fontSize: "2rem", marginBottom: "1rem", color: "#38bdf8" }}></i>
+          <div style={{ fontSize: "0.95rem" }}>Memverifikasi sesi pengguna...</div>
+        </div>
+      </div>
+    );
+  }
+
   if (!token) {
     return (
       <Login
@@ -491,11 +509,10 @@ function App() {
         onLoginComplete={(tokenVal, userVal) => {
           localStorage.setItem("is_logged_in", "true");
           localStorage.setItem("user", JSON.stringify(userVal));
-          if (tokenVal) {
-            localStorage.setItem("token", tokenVal);
-            localStorage.setItem("auth_token", tokenVal);
-            document.cookie = `auth_token=${tokenVal}; path=/; SameSite=Lax`;
-          }
+          // OWASP: Do not store JWT in localStorage to prevent XSS exfiltration
+          localStorage.removeItem("token");
+          localStorage.removeItem("auth_token");
+          setAuthToken(tokenVal || null);
           setToken(tokenVal || "ACTIVE");
           setUser(userVal);
         }}

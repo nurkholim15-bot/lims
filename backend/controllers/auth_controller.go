@@ -697,6 +697,8 @@ func VerifySession(c *gin.Context) {
 	username, _ := c.Get("username")
 	role, _ := c.Get("role")
 	roleIDVal, _ := c.Get("role_id")
+	tokenVal, _ := c.Get("token")
+	tokenString, _ := tokenVal.(string)
 
 	var userID uint
 	switch v := userIDVal.(type) {
@@ -715,6 +717,7 @@ func VerifySession(c *gin.Context) {
 	}
 
 	views.Success(c, gin.H{
+		"token": tokenString,
 		"user": gin.H{
 			"id":       userID,
 			"username": username,

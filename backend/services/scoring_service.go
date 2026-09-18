@@ -40,6 +40,8 @@ type SubAspectScore struct {
 	SubAspectName string  `json:"sub_aspect_name"`
 	Weight        float64 `json:"weight"`
 	Score         float64 `json:"score"`
+	StandardValue float64 `json:"standard_value"`
+	IsPassed      bool    `json:"is_passed"`
 	IsDisabled    bool    `json:"is_disabled"`
 }
 
@@ -192,6 +194,8 @@ func CalculateAspectScore(applicationID uint64, aspectCode string) (AspectScore,
 				SubAspectName: subAspect.Name,
 				Weight:        subAspect.Weight,
 				Score:         0,
+				StandardValue: subAspect.StandardValue,
+				IsPassed:      true,
 				IsDisabled:    true,
 			})
 			continue
@@ -208,11 +212,19 @@ func CalculateAspectScore(applicationID uint64, aspectCode string) (AspectScore,
 		weightedSum += weighted
 		totalWeight += subAspect.Weight
 
+		standardVal := subAspect.StandardValue
+		if standardVal == 0 {
+			standardVal = 65.0
+		}
+		isSubPassed := score >= standardVal
+
 		subAspectScores = append(subAspectScores, SubAspectScore{
 			SubAspectCode: subAspect.Code,
 			SubAspectName: subAspect.Name,
 			Weight:        subAspect.Weight,
 			Score:         score,
+			StandardValue: standardVal,
+			IsPassed:      isSubPassed,
 			IsDisabled:    false,
 		})
 	}
@@ -251,9 +263,17 @@ func CalculateAspectScore(applicationID uint64, aspectCode string) (AspectScore,
 		cachedResult.Score = 0
 	}
 
-	if (rawErr == nil || cachedResult.Score > 0) && cachedResult.Score > 0 {
-		log.Printf("[SCORING PERSISTENCE] Aspect %s FOUND persisted score: %.4f (Replacing calculated score %.4f)", aspectCode, cachedResult.Score, aspectScore)
+	if totalWeight == 0 && (rawErr == nil || cachedResult.Score > 0) && cachedResult.Score > 0 {
+		log.Printf("[SCORING PERSISTENCE] Aspect %s FOUND persisted score: %.4f (Using cached score since totalWeight is 0)", aspectCode, cachedResult.Score)
 		aspectScore = cachedResult.Score
+	}
+
+	allSubPassed := true
+	for _, sub := range subAspectScores {
+		if !sub.IsDisabled && !sub.IsPassed {
+			allSubPassed = false
+			break
+		}
 	}
 
 	threshold := aspect.Threshold
@@ -267,13 +287,13 @@ func CalculateAspectScore(applicationID uint64, aspectCode string) (AspectScore,
 		Weight:     aspect.Weight,
 		Score:      aspectScore,
 		Threshold:  threshold,
-		IsPassed:   aspectScore >= threshold,
+		IsPassed:   aspectScore >= threshold && allSubPassed,
 		SubAspects: subAspectScores,
 	}, nil
 }
 
-// ValidateAspectThresholds checks if ALL aspects meet minimum threshold
-// Returns: error if ANY aspect fails, nil if all pass
+// ValidateAspectThresholds checks if ALL aspects meet minimum threshold and all sub-aspects meet standard
+// Returns: list of failures and whether all aspects passed
 func ValidateAspectThresholds(aspectScores []AspectScore) ([]AspectFailure, bool) {
 	var failures []AspectFailure
 	allPassed := true
@@ -283,7 +303,16 @@ func ValidateAspectThresholds(aspectScores []AspectScore) ([]AspectFailure, bool
 		if threshold == 0 {
 			threshold = 60.0 // Default fallback
 		}
-		if aspectScores[i].Score < threshold {
+
+		hasSubFailure := false
+		for _, sub := range aspectScores[i].SubAspects {
+			if !sub.IsDisabled && !sub.IsPassed {
+				hasSubFailure = true
+				break
+			}
+		}
+
+		if aspectScores[i].Score < threshold || hasSubFailure {
 			aspectScores[i].IsPassed = false
 			allPassed = false
 			failures = append(failures, AspectFailure{
@@ -563,12 +592,14 @@ func generateCalculationDetails(aspectScores []AspectScore, finalScore float64, 
 			aspect.Score, status)
 
 		for _, sub := range aspect.SubAspects {
-			status := ""
+			status := "[✓ PASS]"
 			if sub.IsDisabled {
-				status = " (DISABLED)"
+				status = "[DISABLED]"
+			} else if !sub.IsPassed {
+				status = fmt.Sprintf("[✗ FAIL: < %.0f]", sub.StandardValue)
 			}
-			details += fmt.Sprintf("  └─ %s: %.2f (weight %.0f%%)%s\n",
-				sub.SubAspectName, sub.Score, sub.Weight, status)
+			details += fmt.Sprintf("  └─ %s: %.2f (std: >= %.0f, weight %.0f%%) %s\n",
+				sub.SubAspectName, sub.Score, sub.StandardValue, sub.Weight, status)
 		}
 	}
 

@@ -260,24 +260,25 @@ Berikut adalah penjelasan dan simulasi matematis perhitungan nilai pada **1 Aspe
   6. `KESEL`: Kemampuan - Penerima - Selektifitas (Bobot $W_6 = 20\%$)
   - *Total Bobot Sub-Aspek*: $25\% + 25\% + 20\% + 20\% + 20\% + 20\% = 130\%$.
 
-##### 2. Data Pengukuran Riil (Contoh Aplikasi ID: 212)
+##### 2. Data Pengukuran Riil Laporan Analisa Uji Lapangan (Aplikasi ID: 219)
 
-Pada pengujian riil (terekam pada tabel `lims.testing_results` untuk `application_id = 212`), analis menginput nilai uji fisik (`actual_value`) yang langsung menjadi nilai evaluasi parameter (`score` / $S_i$):
+Pada pengujian riil (terekam pada antarmuka Analisa Uji Lapangan dan database LIMS untuk permohonan `application_id = 219` / No. Reg `2026-00073`), analis mencatat pengukuran parameter fisik dan skor evaluasi kepatuhan standar sebagai berikut:
 
-| No | Kode Sub-Aspek | Nama Parameter Sub-Aspek | Bobot ($W_i$) | Standar Acuan Database | Nilai Uji / Skor ($S_i$) | Evaluasi Kepatuhan | Kontribusi Terbobot ($S_i \times W_i\%$) |
-| :-: | :--- | :--- | :-: | :---: | :-: | :---: | :---: |
-| 1 | `KESEN` | Kemampuan - Penerima - Sensitifitas | **25%** | $\ge 65$ | **$90.00$** | Memenuhi Standar | $90.00 \times 25\% = \mathbf{22.50}$ |
-| 2 | `KELCH` | Kemampuan - Sensitivitas squelch | **25%** | $\ge 65$ | **$100.00$** | Memenuhi Standar *(Opsi: "Dapat diatur")* | $100.00 \times 25\% = \mathbf{25.00}$ |
-| 3 | `KEDAI` | Kemampuan - Penerima - Daya out put audio | **20%** | $\ge 65$ | **$89.00$** | Memenuhi Standar | $89.00 \times 20\% = \mathbf{17.80}$ |
-| 4 | `KERUS` | Kemampuan - Pemakaian arus penerima | **20%** | $\ge 65$ | **$50.00$** | Di Bawah Standar Acuan | $50.00 \times 20\% = \mathbf{10.00}$ |
-| 5 | `KESUA` | Kemampuan - Kekerasan suara | **20%** | $\ge 65$ | **$90.00$** | Memenuhi Standar | $90.00 \times 20\% = \mathbf{18.00}$ |
-| 6 | `KESEL` | Kemampuan - Penerima - Selektifitas | **20%** | $\ge 65$ | **$90.00$** | Memenuhi Standar | $90.00 \times 20\% = \mathbf{18.00}$ |
-| **Total** | | | **130%** | | | | **111.30** |
+| No | Kode Sub-Aspek | Nama Parameter Sub-Aspek | Nilai Fisik (`actual_value`) | Skor Parameter ($S_i$) | Bobot ($W_i$) | Hasil / Kontribusi ($S_i \times W_i\%$) | Standar Acuan | Keterangan Evaluasi |
+| :-: | :--- | :--- | :-: | :-: | :-: | :-: | :-: | :--- |
+| 1 | `KEDAI` | Kemampuan - Penerima - Daya out put audio | **170** | **100** | **20%** | $100.00 \times 20\% = \mathbf{20.00}$ | $\ge 65$ | **Memenuhi** *(> 160 mW)* |
+| 2 | `KELCH` | Kemampuan - Sensitivitas squelch | **100** | **100** | **25%** | $100.00 \times 25\% = \mathbf{25.00}$ | $\ge 65$ | **Memenuhi** *(Opsi: "Dapat diatur")* |
+| 3 | `KERUS` | Kemampuan - Pemakaian arus penerima | **130** | **100** | **20%** | $100.00 \times 20\% = \mathbf{20.00}$ | $\ge 65$ | **Memenuhi** *(0 - 150 mA)* |
+| 4 | `KESEL` | Kemampuan - Penerima - Selektifitas | **100** | **20** | **20%** | $20.00 \times 20\% = \mathbf{4.00}$ | $\ge 65$ | <span style="color:red">**Tidak Memenuhi**</span> *(> 10 dB)* |
+| 5 | `KESEN` | Kemampuan - Penerima - Sensitifitas | **0.2** | **100** | **25%** | $100.00 \times 25\% = \mathbf{25.00}$ | $\ge 65$ | **Memenuhi** *(0 - 0.3 $\mu$V)* |
+| 6 | `KESUA` | Kemampuan - Kekerasan suara | **100** | **100** | **20%** | $100.00 \times 20\% = \mathbf{20.00}$ | $\ge 65$ | **Memenuhi** *(> 25 dB)* |
+| **Total** | | | | | **130%** | **114.00** | | |
 
 > [!NOTE]
-> **Karakteristik Parameter Fisik vs Dropdown List**:
-> 1. **Tanpa Dropdown (`scoring_sub_aspect_items`)**: Pada parameter kuantitatif seperti `KESEN`, `KEDAI`, `KERUS`, `KESUA`, dan `KESEL`, analis langsung menginput nilai angka hasil uji ke form (tanpa dropdown list), sehingga nilai fisik aktual (`actual_value`) langsung menjadi skor parameter ($S_i$).
-> 2. **Dengan Dropdown List**: Hanya parameter diskrit/kualitatif (seperti `KELCH`) yang memiliki opsi di tabel `scoring_sub_aspect_items` (misal: ID 45 *"Dapat diatur"* dengan skor 100, ID 46 *"Tidak dapat diatur"* dengan skor 50).
+> **Karakteristik Parameter Fisik vs Konversi Skor Rubrik**:
+> 1. **Evaluasi Sensitifitas (`KESEN`)**: Nilai fisik aktual **0.2 $\mu$V** dievaluasi terhadap rubrik master data (`scoring_sub_aspect_items`). Karena berada dalam rentang normal ($0 - 0.3\,\mu\text{V}$), parameter ini memperoleh skor penuh **100** dengan kontribusi terbobot **25.00** dan berstatus **"Memenuhi"**.
+> 2. **Evaluasi Selektifitas (`KESEL`)**: Nilai fisik aktual sebesar **100 dB** berada pada kategori abnormal ($> 10\,\text{dB}$), sehingga memperoleh skor **20** dengan kontribusi terbobot **4.00** dan berstatus **"Tidak Memenuhi"**.
+> 3. **Parameter Diskrit (`KELCH`)**: Memilih opsi rubrik terverifikasi *"Dapat diatur"* yang menghasilkan skor **100** (kontribusi **25.00**).
 
 ##### 3. Langkah Perhitungan Matematis Nilai Aspek
 
@@ -288,31 +289,34 @@ $$\text{Score}_{\text{KEPEN}} = \frac{\sum_{i=1}^{6} (S_i \times W_i\%)}{\sum_{i
 Substitusi nilai angka:
 
 $$\begin{aligned}
-\text{Score}_{\text{KEPEN}} &= \frac{(90 \times 25\%) + (100 \times 25\%) + (89 \times 20\%) + (50 \times 20\%) + (90 \times 20\%) + (90 \times 20\%)}{25\% + 25\% + 20\% + 20\% + 20\% + 20\%} \\
-&= \frac{22.50 + 25.00 + 17.80 + 10.00 + 18.00 + 18.00}{130\%} \\
-&= \frac{111.30}{1.30} = \mathbf{85.61538461538461}
+\text{Score}_{\text{KEPEN}} &= \frac{(100 \times 20\%) + (100 \times 25\%) + (100 \times 20\%) + (20 \times 20\%) + (100 \times 25\%) + (100 \times 20\%)}{20\% + 25\% + 20\% + 20\% + 25\% + 20\%} \\
+&= \frac{20.00 + 25.00 + 20.00 + 4.00 + 25.00 + 20.00}{130\%} \\
+&= \frac{114.00}{1.30} = \mathbf{87.6923076923077}
 \end{aligned}$$
 
 > **Verifikasi Data Database**:  
 > Nilai hasil kalkulasi matematis di atas terbukti **100% presisi** dengan data aktual yang tersimpan di database pada tabel `lims.testing_aspect_scores`:  
-> `SELECT score FROM lims.testing_aspect_scores WHERE application_id = 212 AND aspect_code = 'KEPEN';` $\implies$ **`85.61538461538461`**.
+> `SELECT score FROM lims.testing_aspect_scores WHERE application_id = 219 AND aspect_code = 'KEPEN';` $\implies$ **`87.6923076923077`**.
 
 ##### 4. Evaluasi Ambang Batas Kelulusan Aspek & Prasyarat Sub-Aspek (Aspect & Sub-Aspect Gating)
 
 Pada sistem LIMS, kelulusan suatu Aspek teknis menganut prinsip **Prasyarat Validasi Berlapis (*Dual-Layer Aspect Validation*)**:
 1. **Prasyarat 1 (Ambang Batas Nilai Rata-Rata Aspek)**:
    - Nilai rata-rata terbobot aspek wajib mencapai threshold minimum: $\text{Score}_{\text{Aspect}} \ge \text{Threshold}_{\text{Aspect}}$ (pada Aspek `KEPEN`, threshold adalah **60.00** merujuk ke kolom `lims.scoring_aspects.threshold`).
+   - Skor aspek `KEPEN` yang dicapai adalah **87.69** ($\ge 60.00$) $\implies$ **Memenuhi Ambang Batas Agregat Aspek (Lulus Prasyarat 1)**.
 2. **Prasyarat 2 (Kepatuhan Seluruh Sub-Aspek / Parameter Compliance)**:
    - Seluruh sub-aspek aktif di dalam aspek tersebut wajib memenuhi standar acuan minimumnya masing-masing: merujuk ke kolom `lims.scoring_sub_aspects.standard_value = 65.00` dengan `standard_operator = '>='` (Nilai Sub-Aspek $\ge 65.00$).
+   - Dari 6 parameter sub-aspek yang diuji, terdapat 1 parameter yaitu **`KESEL`** (*Kemampuan - Penerima - Selektifitas*) dengan skor uji **20.00**.
+   - Karena $20.00 < 65.00$, maka parameter `KESEL` berstatus **"Tidak Memenuhi"** (gagal standar spesifikasi teknis).
 
-**Analisis Hasil Evaluasi pada Contoh Aplikasi ID 212**:
-- **Evaluasi Prasyarat 1**: Skor rata-rata terbobot Aspek `KEPEN` adalah **85.62** ($\ge 60.00$) $\implies$ Memenuhi ambang batas agregat aspek.
-- **Evaluasi Prasyarat 2**: Dari 6 parameter sub-aspek yang diuji, terdapat 1 parameter yaitu **`KERUS`** (*Kemampuan - Pemakaian arus penerima*) dengan nilai uji **$50.00$**.
-  - Merujuk ke standar acuan database (`scoring_sub_aspects.standard_value = 65.00` dengan operator $\ge$), karena $50.00 < 65.00$, maka parameter `KERUS` berstatus **"Tidak Memenuhi"** (gagal standar spesifikasi teknis).
-- **Keputusan Kelulusan Aspek `KEPEN`**:
-  Karena terdapat salah satu sub-aspek yang tidak memenuhi standar acuan minimum (`KERUS` = $50.00 < 65.00$), maka Aspek Kemampuan Penerima (`KEPEN`) dinyatakan **TIDAK LULUS (FAILED)** ❌, meskipun nilai rata-rata terbobotnya mencapai 85.62!
-- **Dampak ke Kelulusan Sertifikasi Akhir (*Strict Aspect Gating*)**:
-  Kegagalan pada Aspek `KEPEN` ini secara otomatis menggugurkan seluruh pengujian, sehingga status akhir permohonan sertifikasi ditetapkan **TIDAK LULUS**, memastikan perangkat dengan parameter arus yang tidak aman/menyimpang tidak dapat diloloskan hanya karena nilai sub-aspek lainnya tinggi.
+**Hasil Akhir Permohonan Pengujian (Aplikasi ID: 219)**:
+
+- **SKOR AKHIR GABUNGAN**: **87.69**
+- **KESIMPULAN AKHIR**: <span style="color:red; font-weight:bold">TIDAK LULUS ❌</span>
+- **Evaluasi Aspek KEPEN**:
+  Meskipun nilai rata-rata terbobot mencapai **87.69**, karena terdapat salah satu sub-aspek yang tidak memenuhi standar acuan minimum (`KESEL` = $20.00\% < 65.00\%$), maka Aspek Kemampuan Penerima (`KEPEN`) dinyatakan **TIDAK LULUS (FAILED)**.
+- **Keputusan Sertifikasi (*Strict Dual-Layer Gating*)**:
+  Kegagalan pada parameter `KESEL` ini secara otomatis menggugurkan seluruh pengujian, sehingga status akhir permohonan sertifikasi (Nomor Registrasi: `2026-00073`) ditetapkan **TIDAK LULUS** (konsisten dengan studi kasus ID 212 sebelumnya: `KERUS` = 50.00% < 65.00%). Sistem menolak penerbitan sertifikat kelayakan.
 
 ### 5.6 Modul Keuangan & Perjalanan Dinas (Finance, SPD, Cash Advance)
 

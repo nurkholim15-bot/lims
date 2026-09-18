@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"math"
 	"lim-system/models"
 	"lim-system/services"
 	"lim-system/utils"
@@ -1701,10 +1702,19 @@ func GetExecution(c *gin.Context) {
 							}
 						}
 
-						if isPassed {
-							item.Keterangan = "Memenuhi"
+						if exists {
+							if er.Score >= 65.0 {
+								item.Keterangan = "Memenuhi"
+							} else {
+								item.Keterangan = "Tidak Memenuhi"
+							}
+							percentStr = fmt.Sprintf("%.0f", er.Score)
 						} else {
-							item.Keterangan = "Tidak Memenuhi"
+							if isPassed {
+								item.Keterangan = "Memenuhi"
+							} else {
+								item.Keterangan = "Tidak Memenuhi"
+							}
 						}
 						item.PercentResult = percentStr
 					}
@@ -1809,6 +1819,15 @@ func ExecuteApplication(c *gin.Context) {
 		subAspectMap[sa.Code] = sa
 	}
 
+	var allSubItems []models.ScoringSubAspectItem
+	if len(subCodes) > 0 {
+		database.DB.Where("sub_aspect_code IN ?", subCodes).Find(&allSubItems)
+	}
+	subItemsMap := make(map[string][]models.ScoringSubAspectItem)
+	for _, it := range allSubItems {
+		subItemsMap[it.SubAspectCode] = append(subItemsMap[it.SubAspectCode], it)
+	}
+
 	for _, r := range results {
 		var photoPath string
 
@@ -1895,32 +1914,75 @@ func ExecuteApplication(c *gin.Context) {
 		// Validasi Konsistensi Skor: Cek apakah hasil uji aktual konsisten dengan skor yang disubmit
 		if sa, ok := subAspectMap[subCode]; ok && actualValPtr != nil && !r.IsDisabled {
 			val := *actualValPtr
-			hasStandard := sa.StandardValue != 0 || sa.StandardValueMax != 0 || sa.StandardUnit != ""
-			if hasStandard {
-				isPassed := false
-				op := strings.TrimSpace(strings.ToLower(sa.StandardOperator))
-				switch op {
-				case "range":
-					isPassed = val >= sa.StandardValue && val <= sa.StandardValueMax
-				case "<=":
-					isPassed = val <= sa.StandardValue
-				case "<":
-					isPassed = val < sa.StandardValue
-				case ">":
-					isPassed = val > sa.StandardValue
-				case "=":
-					isPassed = val == sa.StandardValue
-				default:
-					isPassed = val >= sa.StandardValue
+			dropdownItems := subItemsMap[subCode]
+
+			if len(dropdownItems) > 0 {
+				// 1. Parameter berbasis Rubrik Dropdown (scoring_sub_aspect_items)
+				var matchedRubric *models.ScoringSubAspectItem
+				for _, itm := range dropdownItems {
+					hasLow := itm.TestResultLow != nil
+					hasHigh := itm.TestResultHigh != nil
+					if hasLow || hasHigh {
+						low := -math.MaxFloat64
+						high := math.MaxFloat64
+						if hasLow {
+							low = *itm.TestResultLow
+						}
+						if hasHigh {
+							high = *itm.TestResultHigh
+						}
+						if hasLow && hasHigh && math.Abs(low-high) < 0.0001 {
+							if math.Abs(val-low) < 0.0001 {
+								matchedRubric = &itm
+								break
+							}
+						} else if val >= (low-0.001) && val <= (high+0.001) {
+							matchedRubric = &itm
+							break
+						}
+					}
 				}
 
-				// Jika hasil uji TIDAK MEMENUHI standar, tetapi dikirim skor lulus (misal score >= 65 atau 100)
-				if !isPassed && finalScore >= 65.0 {
-					tx.Rollback()
-					c.JSON(http.StatusBadRequest, gin.H{
-						"error": fmt.Sprintf("Inkonsistensi skor pada parameter '%s': Nilai hasil uji (%.2f %s) Tidak Memenuhi standar, tetapi disubmit dengan skor lulus (%.2f). Skor untuk hasil tidak memenuhi tidak boleh lulus/100.", sa.Name, val, sa.StandardUnit, finalScore),
-					})
-					return
+				// Jika ditemukan opsi rubrik yang memetakan nilai hasil uji
+				if matchedRubric != nil {
+					// Jika nilai uji aktual terpetakan ke rubrik Tidak Memenuhi (skor < 65), tetapi disubmit dengan skor lulus (>= 65)
+					if matchedRubric.Score < 65.0 && finalScore >= 65.0 {
+						tx.Rollback()
+						c.JSON(http.StatusBadRequest, gin.H{
+							"error": fmt.Sprintf("Inkonsistensi skor pada parameter '%s': Nilai hasil uji (%.2f %s) tergolong Tidak Memenuhi sesuai rubrik '%s' (skor %.0f), tetapi disubmit dengan skor lulus (%.2f). Skor untuk hasil tidak memenuhi tidak boleh lulus/100.", sa.Name, val, sa.StandardUnit, matchedRubric.Name, matchedRubric.Score, finalScore),
+						})
+						return
+					}
+				}
+			} else {
+				// 2. Parameter langsung tanpa dropdown (menggunakan StandardValue & StandardOperator fisik)
+				hasStandard := sa.StandardValue != 0 || sa.StandardValueMax != 0 || sa.StandardUnit != ""
+				if hasStandard {
+					isPassed := false
+					op := strings.TrimSpace(strings.ToLower(sa.StandardOperator))
+					switch op {
+					case "range":
+						isPassed = val >= sa.StandardValue && val <= sa.StandardValueMax
+					case "<=":
+						isPassed = val <= sa.StandardValue
+					case "<":
+						isPassed = val < sa.StandardValue
+					case ">":
+						isPassed = val > sa.StandardValue
+					case "=":
+						isPassed = val == sa.StandardValue
+					default:
+						isPassed = val >= sa.StandardValue
+					}
+
+					// Jika hasil uji TIDAK MEMENUHI standar, tetapi dikirim skor lulus (misal score >= 65 atau 100)
+					if !isPassed && finalScore >= 65.0 {
+						tx.Rollback()
+						c.JSON(http.StatusBadRequest, gin.H{
+							"error": fmt.Sprintf("Inkonsistensi skor pada parameter '%s': Nilai hasil uji (%.2f %s) Tidak Memenuhi standar, tetapi disubmit dengan skor lulus (%.2f). Skor untuk hasil tidak memenuhi tidak boleh lulus/100.", sa.Name, val, sa.StandardUnit, finalScore),
+						})
+						return
+					}
 				}
 			}
 		}
